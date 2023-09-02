@@ -1,11 +1,24 @@
 Package: PGRcode
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Code from "A Practical Guide to Data Analysis Using R"
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Author: John H Maindonald <john@statsresearch.co.nz>, W John Braun
+  <braun@stats.uwo.ca>, and Jeffrey L Andrews <jeff.andrews@ubc.ca>.
+Maintainer: The package maintainer <jhmaindonald@gmail.com>
+Description: Vignettes included with this package give access to the
+  code used in the text.
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
+Depends: R (>= 3.5.0), knitr, rmarkdown
+Suggests: afex, AICcmodavg, BayesFactor, BHH2, BiocManager, boot, car, cobalt,
+  colorspace, DAAG, DAAGbio, datasets, devtools, DHARMa, dplyr, effects,
+  forecast, gamlss, ggplot2, ggsci, glmmTMB, gplots, gridExtra, hddplot,
+  HistData, investr, kableExtra, latticeExtra, leaps, limma, lme4, lmtest,
+  MASS, MatchIt, MCMCpack, MEMSS, mgcv, mice, micemd, mlbench, MPV,
+  mvtnorm, nlme, oz, plot, plotrix, qgam, qra, randomForest, RColorBrewer,
+  rpart, rpart.plot, sandwich, scam, splines, statsr, teigen, tibble,
+  tidyr, tseries, utils, WDI, xtable, zoo
+VignetteBuilder: knitr
+Repository: CRAN
+NeedsCompilation: no

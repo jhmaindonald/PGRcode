@@ -1,20 +1,18 @@
 ---
-title: "Chapter 6 Code"
-output: html_document
-  prettydoc::html_pretty:
-    theme: cayman
-    highlight: github
+title: "Chapter 6: Time series models"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Ch6-TimeSeries}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
-This document is primarily designed, whether in its source form as an 
-R Markdown document, or processed ('knitted') to provide a Markdown 
-document, to give access to the code.  Additionally, settings can be
-changed in the immediately following code chunk in the R Markdown (`Rmd`) 
-source so that, providing needed R packages are available, it should
-'knit' to give text and graphics output (needs better formatting) as 
-well as code. 
+On options for working with the code see the vignettes
+[Ch1-Learning](PGRcode/Ch1-Learning.html) and
+[UsingCode](PGRcode/UsingCode.html).
 
 ```{r CodeControl, echo=FALSE}
+options(rmarkdown.html_vignette.check_title = FALSE)
 ## xtras=TRUE
 xtras <- FALSE
 library(knitr)
@@ -26,7 +24,7 @@ opts_chunk[['set']](eval=F)
 ##### Packages required (plus any dependencies)
 DAAG ggsci latticeExtra ggplot2 mice car forecast mgcv tseries
 
-Additionally, knitr and Hmisc are required in order to process the Rmd source file.  The prettydoc package is by default used to format the html output
+Additionally, knitr and Hmisc are required in order to process the Rmd source file.
 
 ```{r r0-1, cache=FALSE, echo=FALSE}
 Hmisc::knitrSet(basename="ts", lang='markdown', fig.path="figs/g", w=6, h=6, width=70)
@@ -220,7 +218,7 @@ autocorrelations.{#fig:ma}}
 
 #### Subsection 6.1.5: ~Autoregressive moving average (ARMA) models -- theory
 #### Subsection 6.1.6: Automatic model selection?
-```{r F1_5a, eval=TRUE, message=FALSE, warning=FALSE}
+```{r F1_5a, message=FALSE, warning=FALSE}
 library(forecast, quietly=TRUE)
 (aaLH <- auto.arima(LakeHuron, approximation=F, stepwise=F))
 ```
@@ -230,15 +228,14 @@ library(forecast, quietly=TRUE)
 acf(resid(aaLH, type="innovation"))   # `type="innovation"` is the default
 ```
 
-```{r F1_5c, eval=TRUE, message=FALSE, warning=FALSE}
+```{r F1_5c, message=FALSE, warning=FALSE}
 auto.arima(LakeHuron)
 ```
 
-```{r F1_5d, eval=TRUE, message=FALSE, warning=FALSE}
+```{r F1_5d, message=FALSE, warning=FALSE}
 (aaLH0 <- auto.arima(LakeHuron, d=0, approximation=F, stepwise=F))
 ```
 
-\begin{figure}[h]%F1_5e
 ```{r 6_4, w=4.0, h=2.4, mgp=c(2,0.5,0), tcl=-0.25, ps=10, top=2.5,echo=FALSE, out.width="48%"}
 opar <- par(mar=c(3.1,4.1,2.1,0.6))
 y0 <- forecast(aaLH0,  h=12, level=80)
@@ -269,16 +266,6 @@ title("B: ARIMA forecast with 80% and 95% limits",
 grid()
 par(opar)
 ```
-\vspace*{-11pt}
-\caption[Predictions 12 years ahead, with pointwise CIs -- ARIMA(1,1,2) vs ETS]
-{Predictions 12 years ahead, with pointwise confidence 
-limits, are compared.  Panel A shows predictions and 80% limits
-for the ARMA model (d=0) chosen as `best' overall, and for the 
-default exponential time series (ETS) model. Panel B shows the 
-graph that results, with 80% and 95% limits, when the ARIMA(1,1,2) 
-model selected using {auto.arima()} is supplied as argument 
-to the {plot()} function.}{#fig:cfpreds}
-\end{figure}
 
 ```{r F1_5f}
 plot(forecast(aaLH,  h=12, level=c(80,95)))  
@@ -287,13 +274,12 @@ fcast <- forecast(LakeHuron, h=12)
 plot(fcast)
 ```
 
-```{r F1_5g, eval=TRUE, message=FALSE, warning=FALSE}
+```{r F1_5g, message=FALSE, warning=FALSE}
 auto.arima(LakeHuron, d=0, max.Q=0, approximation=F, stepwise=F)
 ```
 
 #####                    Use of simulation as a check
-\begin{figure}[h]%F1_6b
-\vspace*{-7pt}
+
 ```{r 6_5, w=4.25, h=2.1, echo=FALSE, out.width='100%'}
 col3 <- c('gray50','black','gray80')
 bw9 <- list(fontsize=list(text=9, points=6),
@@ -332,13 +318,6 @@ gph <- xyplot(acf~Lag|ma3, groups=gp, data = xy, layout = c(2,1),
 update(gph, scales=list(x=list(at=0:8), alternating=FALSE, tck=0.5),
        par.settings=bw9)
 ```
-\vspace*{-11pt}
-\caption[Two simulation runs each for alternative MA3 processes]
-{Results of two simulation runs (in different shades of gray), for an MA 
-process of order 3, with $b_1$ = $b_2$ = 0, in Panel A with
-$b_3$ = 0.25, and in Panel B with $b_3$ = 0.5.  The theoretical 
-autocorrelation is shown, in each case, in black.{#fig:simacf}}
-\end{figure}
 
 ```{r F1_6c}
 oldpar <- par(mfrow=c(2,2), mar=c(3.1,4.6,2.6, 1.1))
@@ -350,7 +329,7 @@ for(i in 1:2){
 par(oldpar)
 ```
 
-```{r F1_6d, cache=FALSE}
+```{r F1_6d}
 set.seed(29)         # Ensure that results are reproducible
 estMAord <- matrix(0, nrow=4, ncol=20)
 for(i in 1:4){
@@ -544,7 +523,7 @@ plot(fcast2, fg='gray', main="B: Forecast from ETS(M,N,N)", adj=0, font.main=1)
 ```
 
 ### Section 6.2:  Nonlinear time series
-```{r F5a, eval=TRUE}
+```{r F5a}
 x <- numeric(999)  # x will contain the ARCH(1) errors
 x0 <- rnorm(1)
 for (i in 1:999){

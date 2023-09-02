@@ -1,24 +1,28 @@
 ---
-title: "Chapter 8 Code"
-author: "John Maindonald"
-date: "`r Sys.Date()`"
-output:
-  prettydoc::html_pretty:
-    theme: cayman
-    highlight: github
+title: "Chapter 8: Tree-based Classification and Regression"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Ch8-TreeBased}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r CodeControl, echo=FALSE}
+options(rmarkdown.html_vignette.check_title = FALSE)
 xtras <- F
 library(knitr)
 ## opts_chunk[['set']](results="asis")
 opts_chunk[['set']](eval=F)
 ```
 
+On options for working with the code see the vignettes
+[Ch1-Learning](PGRcode/Ch1-Learning.html) and
+[UsingCode](PGRcode/UsingCode.html).
+
 ##### Packages required (plus any dependencies)
 DAAG latticeExtra plot rpart rpart.plot MASS ggplot2 car randomForest
 
-Additionally, knitr and Hmisc are required in order to process the Rmd source file.  The prettydoc package is by default used to format html output.
+Additionally, knitr and Hmisc are required in order to process the Rmd source file. 
 
 ```{r setup, cache=FALSE}
 Hmisc::knitrSet(basename="treebased", lang='markdown', fig.path="figs/g", w=7, h=7)

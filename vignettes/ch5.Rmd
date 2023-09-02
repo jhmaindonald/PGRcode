@@ -1,18 +1,16 @@
 ---
-title: "Chapter 5 Code"
-author: "John Maindonald"
+title: "Chapter 5: Generalized linear models and survival analysis"
 date: "`r Sys.Date()`"
-output:
-  html_document: default
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Ch5-GLMs}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
-This document is primarily designed, whether in its source form as an 
-R Markdown document, or processed ('knitted') to provide a Markdown 
-document, to give access to the code.  Additionally, settings can be
-changed in the immediately following code chunk in the R Markdown (`Rmd`) 
-source so that, providing needed R packages are available, it should
-'knit' to give text and graphics output (needs better formatting) as 
-well as code. 
+On options for working with the code see the vignettes
+[Ch1-Learning](PGRcode/Ch1-Learning.html) and
+[UsingCode](PGRcode/UsingCode.html).
 
 ```{r CodeControl, echo=FALSE}
 ## xtras=FALSE
@@ -21,12 +19,13 @@ library(knitr)
 ## opts_chunk[['set']](results="asis")
 opts_chunk[['set']](fig.width=5, fig.height=5, comment=NA, eval=F)
 ## opts_chunk[['set']](eval=F)
+options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
 ##### Packages required (with dependencies)
 DAAG car mgcv colorspace HistData gamlss dplyr tidyr MASS ggplot2 latticeExtra qgam VGAM survival
 
-Additionally, knitr is required in order to process the Rmd source file.  The prettydoc package is by default used to format the html output.
+Additionally, knitr is required in order to process the Rmd source file. 
 
 ### Section 5.1 Generalized linear models
 #### Subsection 5.1.1: Linking the expected value to the covariate

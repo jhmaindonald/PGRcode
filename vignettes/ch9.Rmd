@@ -1,25 +1,23 @@
 ---
-title: "Chapter 9 Code"
-date: "`r Sys.Date()`"
-output:
-  prettydoc::html_pretty:
-    theme: cayman
-    highlight: github
+title: "Chapter 9: Multivariate data exploration and discrimination"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Ch9-Multivariate}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
-This document is primarily designed, whether in its source form as an 
-R Markdown document, or processed ('knitted') to provide a Markdown 
-document, to give access to the code.  Additionally, settings can be
-changed in the immediately following code chunk in the R Markdown (`Rmd`) 
-source so that, providing needed R packages are available, it should
-'knit' to give text and graphics output as well as code.
+On options for working with the code see the vignettes
+[Ch1-Learning](PGRcode/Ch1-Learning.html) and
+[UsingCode](PGRcode/UsingCode.html).
 
 ```{r CodeControl, echo=FALSE}
-xtras=TRUE
-## xtras=FALSE
+options(rmarkdown.html_vignette.check_title = FALSE)
+## xtras=TRUE
+xtras=FALSE
 library(knitr)
 ## opts_chunk[['set']](results="asis")
-opts_chunk[['set']](eval=T)
+opts_chunk[['set']](eval=F)
 ## opts_chunk[['set']](eval=T)
 ```
 
@@ -30,7 +28,7 @@ hddplot lmtest splines cobalt mice datasets car micemd oz randomForest
 ggplot2 latticeExtra mvtnorm teigen limma hddplot mgcv MatchIt sandwich
 gridExtra DAAGbio mlbench (exercise).
 
-Additionally, knitr and Hmisc are required in order to process the Rmd source file.  The prettydoc package is by default used to format the html output.
+Additionally, knitr and Hmisc are required in order to process the Rmd source file.
 
 ```{r setup, cache=FALSE}
 Hmisc::knitrSet(basename="mva", lang='markdown', fig.path="figs/g", w=7, h=7)
@@ -46,7 +44,7 @@ suppressPackageStartupMessages(library(latticeExtra))
 ```
 
 ### Section 9.1: Multivariate exploratory data analysis
-```{r I1a, eval=TRUE}
+```{r I1a}
 ## Make the lattice package and the possum dataset available
 library(latticeExtra)
 possum <- DAAG::possum
@@ -596,7 +594,7 @@ summary(decideTests(fit2))
 ### Section 9.6: High dimensional data from expression arrays
 #### Subsection 9.6.1: Molecular classification of cancer --- an older technology
 #####    Breakdown of ALL B-type data, with one observation excluded
-```{r I6_1a, eval=TRUE}
+```{r I6_1a}
 library(hddplot)
 data(golubInfo)
 with(golubInfo, table(cancer, tissue.mf))
@@ -901,7 +899,7 @@ print(denplot(yvar="educ", takelog=FALSE, ylim=c(0,0.75), bw=0.5,
 ```{r 9_22, eval=F}
 ```
 
-```{r I7_1c, eval=TRUE}
+```{r I7_1c}
 addControl <-
 function(control, offset=30){
   nam <- deparse(substitute(control))

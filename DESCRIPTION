@@ -16,7 +16,7 @@ Suggests: afex, AICcmodavg, BayesFactor, BHH2, BiocManager, boot, car, cobalt,
   forecast, gamlss, ggplot2, ggsci, glmmTMB, gplots, gridExtra, hddplot,
   HistData, investr, kableExtra, latticeExtra, leaps, limma, lme4, lmtest,
   MASS, MatchIt, MCMCpack, MEMSS, mgcv, mice, micemd, mlbench, MPV,
-  mvtnorm, nlme, oz, plot, plotrix, qgam, qra, randomForest, RColorBrewer,
+  mvtnorm, nlme, oz, plotrix, qgam, qra, randomForest, RColorBrewer,
   rpart, rpart.plot, sandwich, scam, splines, statsr, teigen, tibble,
   tidyr, tseries, utils, WDI, xtable, zoo
 VignetteBuilder: knitr

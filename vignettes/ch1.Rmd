@@ -19,12 +19,12 @@ and theme as in the text.
 
 ```{r CodeControl, echo=TRUE}
 options(rmarkdown.html_vignette.check_title = FALSE)
-## xtras=FALSE    ## Set to TRUE to execute code 'extras'
-xtras <- F
+## xtras=TRUE    ## Set to TRUE to execute code 'extras'
+xtras <- FALSE
 library(knitr)
 ## opts_chunk[['set']](results="asis")
 ## opts_chunk[['set']](eval=FALSE)   ## Set to TRUE to execute main part of code
-opts_chunk[['set']](eval=F) 
+opts_chunk[['set']](eval=FALSE) 
 ```
 
 ```{r setup, cache=FALSE, echo=FALSE}
@@ -1284,54 +1284,60 @@ bf01 <- as.data.frame(ttBFint)[['bf']]
 
 #####                 The effect of changing sample size
 
+```{r 1_24a}
+t2bfInterval <- function(t, n=10, rscale="medium", mu=c(-.1,.1)){
+     null0 <- BayesFactor::ttest.tstat(t=t, n1=n, nullInterval=mu,
+                                       rscale=rscale,simple=TRUE)
+alt0 <- BayesFactor::ttest.tstat(t=t, n1=n, nullInterval=mu, rscale=rscale, 
+                                 complement=TRUE, simple=TRUE)
+alt0/null0
+}
+##
+## Calculate Bayes factors
+pval <- c(0.05,0.01,0.001); nval <- c(4,6,10,20,40,80,160)
+bfDF <- expand.grid(p=pval, n=nval)
+pcol <- 1; ncol <- 2; tcol <- 3
+bfDF[,'t'] <- apply(bfDF,1,function(x){qt(x[pcol]/2, df=x[ncol]-1,                                  lower.tail=FALSE)})
+other <- apply(bfDF,1,function(x)
+    c(BayesFactor::ttest.tstat(t=x[tcol], n1=x[ncol], rscale="medium",
+                               simple=TRUE),
+## Now specify a null interval
+    t2bfInterval(t=x[tcol], n=x[ncol], mu=c(-0.1,0.1),rscale="medium")
+  ))
+bfDF <- setNames(cbind(bfDF, t(other)),
+    c('p','n','t','bf','bfInterval'))
+```
+
 ```{r 1_24, echo=FALSE, fig.width=6.5, fig.asp=0.425, fig.pos='ht', message=F, warning=F, out.width='100%'}
-pval <- c(.05,.01,.001); np <- length(pval)
-Nval <- c(4,6,10,20,40,80,160); nlen <- length(Nval)
-t2BF <- function(p, N, rscale="medium"){t <- qt(p/2, df=N-1, lower.tail=FALSE)
-              BayesFactor::ttest.tstat(t=t, n1=N, rscale=rscale, simple=TRUE)}
-nullInt <- c(-.1,.1)
-nulltxt <- "null = (-0.1,0.1)"
-t2BFint <- function(p,N, rscale="medium"){t <- qt(p/2, df=N-1, lower.tail=FALSE)
-  null0 <- BayesFactor::ttest.tstat(t=t, n1=N, nullInterval=nullInt, rscale=rscale,
-                                    simple=TRUE)
-  alt0 <- BayesFactor::ttest.tstat(t=t, n1=N, nullInterval=nullInt,
-  complement=TRUE, rscale=rscale, simple=TRUE)
-  alt0/null0}
-BFval <- bfIntVal <- matrix(nrow=np,ncol=nlen)
-for(i in 1:np)for(j in 1:nlen){
-              BFval[i,j] <- t2BF(pval[i], Nval[j], rscale="medium")
-              bfIntVal[i,j] <- t2BFint(pval[i], Nval[j], rscale="medium")}
-bfDF <- data.frame(n=rep(Nval,rep(np,nlen)), bf=c(BFval), 
-  bfInt=c(bfIntVal), t = c(outer(pval/2, Nval-1, qt, lower.tail=FALSE)),
-  gp=rep(c("bf05", "bf01", "bf001"),nlen))   
-bfDF[['eff']] = bfDF[["t"]]/sqrt(bfDF[['n']])
-plabpos <- apply(bfDF[nlen*3-2:0,2:3],1,function(x)mean(log(x))-diff(log(x)*0.1))
-gphA1 <- lattice::xyplot(log(bf)~log(n), groups=gp, data=bfDF,
+plabpos <- with(subset(bfDF, n==max(bfDF$n)), log((bf+bfInterval)/2))
+gphA1 <- lattice::xyplot(log(bf)~log(n), groups=factor(p), data=bfDF,
                         panel=function(x,y,...){
                         lattice::panel.xyplot(x,y,type='b',...)})
 ylabA <- 10^((-3):6/2)
-scalesA <- list(x=list(at=log(Nval), labels=Nval),
+scalesA <- list(x=list(at=log(nval), labels=nval),
                 y=list(at=log(ylabA), labels=signif(ylabA,2)))
 keyA <- list(corner=c(0.99,0.98), lines=list(col=c(1,1), lty=1:2),
              text=list(c('Point null at 0', nulltxt)))
-ylim2 <- log(c(min(bfDF[['bfInt']])-0.05,150))  ## Leaves out two extreme values
-gphA2 <- lattice::xyplot(log(bfInt)~log(n), groups=gp, lty=2,
-  xlim=c(log(3.5),log(max(Nval)*3.25)), ylim=ylim2, data=bfDF,
+ylim2 <- log(c(min(bfDF[['bfInterval']])-0.05,150)) 
+gphA2 <- lattice::xyplot(log(bfInterval)~log(n), groups=factor(p), lty=2,
+  xlim=c(log(3.5),log(max(nval)*3.25)), ylim=ylim2, data=bfDF,
   panel=function(x,y,...){
     panel.xyplot(x,y,type='b',...)
     panel.grid(h=-1,v=-1)
-    panel.text(rep(log(max(Nval*1.25)),3), plabpos, 
-      labels=c('p=0.05','0.01','0.001'), offset=c(-0.5,0.5,0.5),pos=4)
+    panel.text(rep(log(max(nval*0.975)),3), plabpos, 
+      labels=c('p=0.05','0.01','0.001'), pos=4)
   },
   par.settings=DAAG::DAAGtheme(color=T),
   main="A: Bayes factor vs sample size", 
   xlab="Sample size", ylab="Bayes factor", scales=scalesA, key=keyA)
+## Panel B
+bfDF[['eff']] = bfDF[["t"]]/sqrt(bfDF[['n']])
 ylabB <- 10^((-3):2/3)
-scalesB= list(x=list(at=log(Nval), labels=Nval),
+scalesB= list(x=list(at=log(nval), labels=nval),
               y=list(at=log(ylabB), labels=signif(ylabB,2)))
 keyB <- list(corner=c(0.98,0.975), lines=list(lty=1:3), 
              points=list(pch=1:3), text=list(c('p=0.001','p=0.01','p=0.05')))
-gphB <- xyplot(log(eff)~log(n), groups=gp, data=bfDF, pch=1:3, lty=1:3, 
+gphB <- xyplot(log(eff)~log(n), groups=log(p), data=bfDF, pch=1:3, lty=1:3, 
                type='b', xlab="Sample size", ylab="Effect  size",
                par.settings=DAAG::DAAGtheme(color=T),
   main="B: Effect size vs sample size", key=keyB, scales=scalesB) +
@@ -1600,3 +1606,44 @@ with(diamonds, plot(carat, price, pch=16, cex=0.25))
 with(diamonds, smoothScatter(carat, price))
 ```
 
+```{r A10_31a, eval=xtras}
+t2bfInterval <- function(t, n=10, rscale="medium", mu=c(-.1,.1)){
+     null0 <- BayesFactor::ttest.tstat(t=t, n1=n, nullInterval=mu,
+                                       rscale=rscale,simple=TRUE)
+alt0 <- BayesFactor::ttest.tstat(t=t, n1=n, nullInterval=mu, rscale=rscale, 
+                                 complement=TRUE, simple=TRUE)
+alt0/null0
+}
+```
+
+```{r A10_31b, eval=xtras}
+pval <- c(0.05,0.01,0.001); nval <- c(10,40,160)
+bfDF <- expand.grid(p=pval, n=nval)
+pcol <- 1; ncol <- 2; tcol <- 3
+bfDF[,'t'] <- apply(bfDF,1,function(x){qt(x[pcol]/2, df=x[ncol]-1,                                  lower.tail=FALSE)})
+other <- apply(bfDF,1,function(x)
+    c(BayesFactor::ttest.tstat(t=x[tcol], n1=x[ncol], rscale="medium",
+                               simple=TRUE),
+      BayesFactor::ttest.tstat(t=x[tcol], n1=x[ncol], rscale="wide",
+                               simple=TRUE),
+## Now specify a null interval
+    t2bfInterval(t=x[tcol], n=x[ncol], mu=c(-0.1,0.1),rscale="medium"),
+    t2bfInterval(t=x[tcol], n=x[ncol], mu=c(-0.1,0.1),rscale="wide")
+  ))
+bfDF <- setNames(cbind(bfDF, t(other)),
+    c('p','n','t','bf','bfInterval'))
+```
+
+```{r A10_32, eval=xtras}
+df <- data.frame(d = with(datasets::sleep, extra[group==2] - extra[group==1]))
+library(statsr)
+BayesFactor::ttestBF(df$d, rscale=1/sqrt(2))   # Or, `rscale="medium"`
+  # `rscale="medium"` is the default
+bayes_inference(d, type='ht', data=df, statistic='mean', method='t', rscale=1/sqrt(2),
+                alternative='twosided', null=0, prior_family = "JZS")
+  # Set `rscale=1/sqrt(2)` (default is 1.0) as for BayesFactor; gives same BF
+  # `prior_family = "JZS"` is the default
+# Compare with `prior_family = "JUI"`, with (if not supplied) default settings
+bayes_inference(d, type='ht', data=df, statistic='mean', method='t',
+                alternative='twosided', null=0, prior_family = "JUI")
+```

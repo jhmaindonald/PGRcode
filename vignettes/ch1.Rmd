@@ -1317,7 +1317,7 @@ ylabA <- 10^((-3):6/2)
 scalesA <- list(x=list(at=log(nval), labels=nval),
                 y=list(at=log(ylabA), labels=signif(ylabA,2)))
 keyA <- list(corner=c(0.99,0.98), lines=list(col=c(1,1), lty=1:2),
-             text=list(c('Point null at 0', nulltxt)))
+             text=list(c('Point null at 0', "null=(-0.1,0.1)")))
 ylim2 <- log(c(min(bfDF[['bfInterval']])-0.05,150)) 
 gphA2 <- lattice::xyplot(log(bfInterval)~log(n), groups=factor(p), lty=2,
   xlim=c(log(3.5),log(max(nval)*3.25)), ylim=ylim2, data=bfDF,

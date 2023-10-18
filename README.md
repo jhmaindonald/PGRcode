@@ -3,7 +3,7 @@ R package holding code for "A Practical Guide to Data Analysis Using R"
 
 To install the package, do 
 ```
-remotes::install_github('jhmaindonald/PGRcode', build_vignettes=TRUE)
+remotes::install_github('jhmaindonald/PGRcode')
 ```
 
 Individual code files or other vignette files can be downloaded thus:

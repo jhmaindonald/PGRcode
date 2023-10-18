@@ -238,11 +238,11 @@ auto.arima(LakeHuron)
 
 ```{r 6_4, w=4.0, h=2.4, mgp=c(2,0.5,0), tcl=-0.25, ps=10, top=2.5,echo=FALSE, out.width="48%"}
 opar <- par(mar=c(3.1,4.1,2.1,0.6))
-y0 <- forecast(aaLH0,  h=12, level=80)
-fcast <- forecast(LakeHuron, h=12, level=80)
-datall <- cbind(d0=y0[['mean']], ets=fcast[['mean']],
-            "ui0"=y0[['upper']],etsUI=fcast[['upper']],
-            "li0"=y0[['lower']],etsLI=fcast[['lower']])
+fcARMA <- forecast(aaLH0,  h=12, level=80)
+fcETS <- forecast(LakeHuron, h=12, level=80)
+datall <- cbind(d0=fcARMA[['mean']], ets=fcETS[['mean']],
+            "ui0"=fcARMA[['upper']], etsUI=fcETS[['upper']],
+            "li0"=fcARMA[['lower']], etsLI=fcETS[['lower']])
 ylim <- range(c(range(datall), range(LakeHuron)))+c(-0.1,0)
 dat <- datall[,1:2]
 datui <- datall[,3:4]
@@ -252,12 +252,13 @@ txt <- c("ARMA (d=0)","ETS")
 xlim <- range(c(time(LakeHuron), time(datall)))
 gph <- xyplot.ts(LakeHuron, type='p', xlim=xlim, ylim=ylim, col='gray20')+
   latticeExtra::layer(panel.grid(h=-1,v=-1))
-gph.pred <- xyplot.ts(dat, superpose=T, ylim=ylim, lwd=2, xlab="")
-gph.ui <- xyplot.ts(datui, superpose=T, lty=2, lwd=2)
-gph.li <- xyplot.ts(datli, superpose=T, lty=2, lwd=2)
+gph.pred <- xyplot.ts(dat, superpose=T, ylim=ylim, lwd=1, xlab="")
+gph.ui <- xyplot.ts(datui, superpose=T, lwd=2)
+gph.li <- xyplot.ts(datli, superpose=T, lwd=2)
 update(gph+as.layer(gph.pred)+as.layer(gph.li)+as.layer(gph.ui), xlab="", 
   scales=list(cex=1.0, rot=c(0,90), y=list(tick.number=7)), 
-  auto.key=list(columns=2, text=txt, points=F, lines=T, lwd=2, y=1.15),
+  par.settings=simpleTheme(lty=2:1, lwd=2), theme=DAAG::DAAGtheme(color=TRUE),
+  auto.key=list(columns=2, text=txt, points=F, lines=T, y=1.15),
   main=list("A: ARMA and ETS forecasts with 80% limits", font=1, x=0, y=0.4,
                  just="left", cex=1.25))
 plot(forecast(aaLH, h=12), main="", fg="gray", ylim=ylim)
@@ -268,10 +269,10 @@ par(opar)
 ```
 
 ```{r F1_5f}
-plot(forecast(aaLH,  h=12, level=c(80,95)))  
 plot(forecast(aaLH0,  h=12))  ## `level=c(80,95)` is the default
-fcast <- forecast(LakeHuron, h=12)
-plot(fcast)
+fcETS <- forecast(LakeHuron, h=12)
+plot(fcETS)
+plot(forecast(aaLH,  h=12, level=c(80,95)))  # Panel B; ARIMA(2,1,1)
 ```
 
 ```{r F1_5g, message=FALSE, warning=FALSE}

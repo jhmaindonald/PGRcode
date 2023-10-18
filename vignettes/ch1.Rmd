@@ -340,6 +340,7 @@ for(i in 1:4){
   lines(rep(xpoints[i],2), c(0, 0.15*par()[["cxy"]][2]), lty=1)
 }
 axpos <- 1250*cumprod(c(1, rep(1.2,2)))
+axis(1, at=c(axpos,1840), labels=F, lwd.ticks=0)
 lab <- round(axpos)
 axis(1, at=axpos, labels=lab)
 lab2 <- lapply(round(log2(xpoints),3), function(x)substitute(2^a, list(a=x)))
@@ -351,7 +352,7 @@ axis(1, at=xpoints, labels=as.expression(lab10), line=-6.5, lwd=0)
 par(family="mono", xpd=TRUE)
 axis(1, at=1220, labels="log=2", line=-3.5, hadj=0, lwd=0)
 axis(1, at=1220, labels='log="e"', line=-5, hadj=0, lwd=0)
-axis(1, at=1220, labels="log=10", line=-6.5, hadj=0, lwd=0)
+axis(1, at=1220, labels="log=10", line=-6.5, hadj=0, lwd=0)  
 wid2 <- strwidth("log=2")
 par(family="sans")
 ```

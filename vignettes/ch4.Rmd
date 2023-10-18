@@ -614,7 +614,7 @@ Box.test(resid(gas.gam)[whiteside$Insul=='After'], lag=1)
 #####              Departures from independence assumptions
 #### Subsection 4.4.8: Multiple spline smoothing terms --- dewpoint data
 
-```{r 4_12, echo=FALSE, w=4.5, h=2.0, left=-1, fig.pos='h', ps=9, mfrow=c(1,2), out.width="68%"}
+```{r 4_12, echo=FALSE, w=5.5, h=2.0, left=-1, fig.pos='h', ps=9, mfrow=c(1,2), out.width="80%"}
 ## GAM model -- `dewpoint` data
 dewpoint <- DAAG::dewpoint
 ds.gam <- gam(dewpt ~ s(mintemp) + s(maxtemp), data=dewpoint)

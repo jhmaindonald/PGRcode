@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Chapter 9: Multivariate data exploration and discrimination</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Chapter 9: Multivariate data exploration
+and discrimination</h1>
+
+
+
+<p>On options for working with the code see the vignettes <a href="PGRcode/Ch1-Learning.html">Ch1-Learning</a> and <a href="PGRcode/UsingCode.html">UsingCode</a>.</p>
+<div id="packages-required-plus-any-dependencies" class="section level5">
+<h5>Packages required (plus any dependencies)</h5>
+<p>Packages used are: DAAG MASS RColorBrewer teigen BiocManager DAAGbio
+hddplot lmtest splines cobalt mice datasets car micemd oz randomForest
+ggplot2 latticeExtra mvtnorm teigen limma hddplot mgcv MatchIt sandwich
+gridExtra DAAGbio mlbench (exercise).</p>
+<p>Additionally, knitr and Hmisc are required in order to process the
+Rmd source file.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>Hmisc<span class="sc">::</span><span class="fu">knitrSet</span>(<span class="at">basename=</span><span class="st">&quot;mva&quot;</span>, <span class="at">lang=</span><span class="st">&#39;markdown&#39;</span>, <span class="at">fig.path=</span><span class="st">&quot;figs/g&quot;</span>, <span class="at">w=</span><span class="dv">7</span>, <span class="at">h=</span><span class="dv">7</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>oldopt <span class="ot">&lt;-</span> <span class="fu">options</span>(<span class="at">digits=</span><span class="dv">4</span>, <span class="at">formatR.arrow=</span><span class="cn">FALSE</span>, <span class="at">width=</span><span class="dv">70</span>, <span class="at">scipen=</span><span class="dv">999</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>opts_chunk[[<span class="st">&#39;set&#39;</span>]](<span class="at">cache.path=</span><span class="st">&#39;cache-&#39;</span>, <span class="at">out.width=</span><span class="st">&quot;80%&quot;</span>, <span class="at">fig.align=</span><span class="st">&quot;center&quot;</span>, </span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>                    <span class="at">fig.show=</span><span class="st">&#39;hold&#39;</span>, <span class="at">ps=</span><span class="dv">10</span>, <span class="at">strip.white =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>                    <span class="at">comment=</span><span class="cn">NA</span>, <span class="at">width=</span><span class="dv">70</span>, <span class="at">tidy.opts =</span> <span class="fu">list</span>(<span class="at">replace.assign=</span><span class="cn">FALSE</span>))</span></code></pre></div>
+</div>
+<div id="section-9.1-multivariate-exploratory-data-analysis" class="section level3">
+<h3>Section 9.1: Multivariate exploratory data analysis</h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="do">## Make the lattice package and the possum dataset available</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="fu">library</span>(latticeExtra)</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>possum <span class="ot">&lt;-</span> DAAG<span class="sc">::</span>possum</span></code></pre></div>
+<div id="subsection-9.1.1-scatterplot-matrices" class="section level4">
+<h4>Subsection 9.1.1: Scatterplot matrices</h4>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="do">## Colors distinguish sexes; symbols distinguish sites</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>sitenames <span class="ot">&lt;-</span> <span class="fu">row.names</span>(DAAG<span class="sc">::</span>possumsites)[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">4</span><span class="sc">:</span><span class="dv">6</span>,<span class="dv">3</span>,<span class="dv">7</span>)]</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>key <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">points =</span> <span class="fu">list</span>(<span class="at">pch=</span><span class="dv">0</span><span class="sc">:</span><span class="dv">6</span>), <span class="at">text=</span><span class="fu">list</span>(sitenames),</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>            <span class="at">columns=</span><span class="dv">4</span>, <span class="at">between=</span><span class="dv">1</span>, <span class="at">between.columns=</span><span class="dv">2</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>colr <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;red&quot;</span>,<span class="st">&quot;blue&quot;</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>vnames <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;tail</span><span class="sc">\n</span><span class="st">length&quot;</span>,<span class="st">&quot;foot</span><span class="sc">\n</span><span class="st">length&quot;</span>, <span class="st">&quot;conch</span><span class="sc">\n</span><span class="st">length&quot;</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>gphA <span class="ot">&lt;-</span> <span class="fu">with</span>(possum, <span class="fu">splom</span>(<span class="sc">~</span> possum[, <span class="dv">9</span><span class="sc">:</span><span class="dv">11</span>], <span class="at">pch=</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">6</span>)[site], <span class="at">col=</span>colr[sex],</span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>            <span class="at">xlab=</span><span class="st">&quot;&quot;</span>,  <span class="at">varnames=</span>vnames, <span class="at">key=</span>key, <span class="at">axis.line.tck=</span><span class="fl">0.6</span>))</span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>gphB <span class="ot">&lt;-</span> <span class="fu">with</span>(possum, <span class="fu">cloud</span>(earconch<span class="sc">~</span>taill<span class="sc">+</span>footlgth, <span class="at">data=</span>possum, </span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>  <span class="at">col=</span>colr[sex], <span class="at">key=</span>key, <span class="at">pch =</span> (<span class="dv">0</span><span class="sc">:</span><span class="dv">6</span>)[site], </span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>  <span class="at">zlab=</span><span class="fu">list</span>(<span class="st">&quot;earconch&quot;</span>, <span class="at">rot=</span><span class="dv">90</span>), <span class="at">zoom=</span><span class="fl">0.925</span>))</span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="fu">update</span>(<span class="fu">c</span>(<span class="st">&quot;A: Scatterplot matrix&quot;</span><span class="ot">=</span>gphA, <span class="st">&quot;B: Cloud plot&quot;</span><span class="ot">=</span>gphB),</span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a>       <span class="at">between=</span><span class="fu">list</span>(<span class="at">x=</span><span class="dv">1</span>))</span></code></pre></div>
+</div>
+<div id="subsection-9.1.2-principal-components-analysis" class="section level4">
+<h4>Subsection 9.1.2: Principal components analysis</h4>
+<div id="preliminary-data-scrutiny" class="section level5">
+<h5>Preliminary data scrutiny</h5>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="do">## Ratios of largest to smallest values: possum[, 6:14] (DAAG)</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>possum <span class="ot">&lt;-</span> DAAG<span class="sc">::</span>possum</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="fu">sapply</span>(<span class="fu">na.omit</span>(possum[, <span class="dv">6</span><span class="sc">:</span><span class="dv">14</span>]), <span class="cf">function</span>(x)<span class="fu">round</span>(<span class="fu">max</span>(x)<span class="sc">/</span><span class="fu">min</span>(x),<span class="dv">2</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="do">## Principal components calculations: possum[, 6:14] (DAAG)</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>here <span class="ot">&lt;-</span> <span class="fu">complete.cases</span>(possum[, <span class="dv">6</span><span class="sc">:</span><span class="dv">14</span>])</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>possum.prc <span class="ot">&lt;-</span> <span class="fu">prcomp</span>(<span class="fu">log</span>(possum[here, <span class="dv">6</span><span class="sc">:</span><span class="dv">14</span>]))</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>scores <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="fu">predict</span>(possum.prc), possum[here, <span class="fu">c</span>(<span class="st">&#39;sex&#39;</span>, <span class="st">&#39;site&#39;</span>)])</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="do">## For parset, key and colr; see code for Fig 9.1</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>pchr <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">0</span>,<span class="dv">8</span>,<span class="dv">2</span>,<span class="dv">10</span>,<span class="dv">1</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>parset <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">fontsize=</span><span class="fu">list</span>(<span class="at">text=</span><span class="dv">10</span>, <span class="at">points=</span><span class="dv">6</span>), <span class="at">cex=</span><span class="fl">0.75</span>, <span class="at">pch=</span>pchr, <span class="at">alpha=</span><span class="fl">0.8</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>key <span class="ot">&lt;-</span> <span class="fu">modifyList</span>(key, <span class="fu">list</span>(<span class="at">columns=</span><span class="dv">1</span>, <span class="at">space=</span><span class="st">&quot;right&quot;</span>))</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>gph <span class="ot">&lt;-</span> <span class="fu">with</span>(scores, <span class="fu">xyplot</span>(PC2 <span class="sc">~</span> PC1, <span class="at">aspect=</span><span class="st">&quot;iso&quot;</span>, <span class="at">key =</span> key,</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>            <span class="at">col =</span> colr[sex], <span class="at">pch =</span> (<span class="dv">0</span><span class="sc">:</span><span class="dv">6</span>)[site]))</span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="fu">update</span>(gph, <span class="at">scales=</span><span class="fu">list</span>(<span class="at">tck=</span><span class="fl">0.5</span>), <span class="at">par.settings=</span>parset,</span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>       <span class="at">xlab=</span><span class="st">&quot;1st Principal Component&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;2nd Principal Component&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">summary</span>(possum.prc),<span class="at">digits=</span><span class="dv">2</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">Rotations (otherwise called Loadings)</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="fu">print</span>(possum.prc<span class="sc">$</span>rotation, <span class="at">digits=</span><span class="dv">2</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="do">## By default, blanks are shown for loadings &lt; 0.1 in magnitude</span></span></code></pre></div>
+</div>
+<div id="the-stability-of-the-principal-components-plot" class="section level5">
+<h5>The stability of the principal components plot</h5>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(ggplot2))</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_gray</span>(<span class="at">base_size=</span><span class="dv">8</span>))</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="do">## Bootstrap principal components calculations: possum (DAAG)</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="do">## Sample from rows where there are no missing values</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>rowsfrom <span class="ot">&lt;-</span> (<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(possum))[<span class="fu">complete.cases</span>(possum[, <span class="dv">6</span><span class="sc">:</span><span class="dv">14</span>])]</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>logpossum6to14 <span class="ot">&lt;-</span> <span class="fu">log</span>(possum[rowsfrom, <span class="dv">6</span><span class="sc">:</span><span class="dv">14</span>])</span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>sexPop <span class="ot">&lt;-</span> possum[rowsfrom, <span class="fu">c</span>(<span class="st">&quot;sex&quot;</span>,<span class="st">&quot;Pop&quot;</span>)]</span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(rowsfrom); ntimes <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>bootscores <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">scores1=</span><span class="fu">numeric</span>(ntimes<span class="sc">*</span>n), <span class="at">scores2=</span><span class="fu">numeric</span>(ntimes<span class="sc">*</span>n))</span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>ntimes){</span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>  samprows <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>n, n, <span class="at">replace=</span><span class="cn">TRUE</span>)</span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>  bootscores[n<span class="sc">*</span>(i<span class="dv">-1</span>)<span class="sc">+</span>(<span class="dv">1</span><span class="sc">:</span>n), <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>] <span class="ot">&lt;-</span></span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a>  <span class="fu">prcomp</span>(logpossum6to14[samprows, ])<span class="sc">$</span>x[, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]</span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a>}</span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a>bootscores[, <span class="fu">c</span>(<span class="st">&quot;sex&quot;</span>,<span class="st">&quot;Pop&quot;</span>)] <span class="ot">&lt;-</span> sexPop[samprows, ]</span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a>bootscores<span class="sc">$</span>sampleID <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span>ntimes, <span class="fu">rep</span>(n,ntimes)))</span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a>gph <span class="ot">&lt;-</span> <span class="fu">quickplot</span>(<span class="at">x=</span>scores1, <span class="at">y=</span>scores2, <span class="at">colour=</span>sex, <span class="at">size=</span><span class="fu">I</span>(<span class="fl">1.0</span>),</span>
+<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a>  <span class="at">asp=</span><span class="dv">1</span>, <span class="at">shape=</span>Pop, <span class="at">facets=</span>.<span class="sc">~</span>sampleID, <span class="at">data=</span>bootscores) <span class="sc">+</span> </span>
+<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a>  <span class="fu">scale_shape_discrete</span>(<span class="at">solid=</span>F)</span>
+<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a>gph <span class="sc">+</span> <span class="fu">scale_colour_manual</span>(<span class="at">values=</span><span class="fu">c</span>(<span class="st">&quot;m&quot;</span><span class="ot">=</span><span class="st">&quot;blue&quot;</span>,<span class="st">&quot;f&quot;</span><span class="ot">=</span><span class="st">&quot;red&quot;</span>))  <span class="sc">+</span></span>
+<span id="cb8-21"><a href="#cb8-21" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&quot;First Principal Component&quot;</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">&quot;Second Principal Component&quot;</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="subsection-9.1.3-multi-dimensional-scaling" class="section level4">
+<h4>Subsection 9.1.3: Multi-dimensional scaling</h4>
+<div id="distance-measures" class="section level5">
+<h5>Distance measures</h5>
+</div>
+<div id="ordination" class="section level5">
+<h5>Ordination</h5>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="do">## Code that will display individual graphs</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>d.possum <span class="ot">&lt;-</span> <span class="fu">dist</span>(possum[,<span class="dv">6</span><span class="sc">:</span><span class="dv">14</span>])  <span class="co"># Euclidean distance matrix</span></span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>MASS<span class="sc">::</span><span class="fu">sammon</span>(d.possum, <span class="at">k=</span><span class="dv">2</span>, <span class="at">trace=</span><span class="cn">FALSE</span>)<span class="sc">$</span>points <span class="sc">|&gt;</span> <span class="fu">as.data.frame</span>() <span class="sc">|&gt;</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>  <span class="fu">setNames</span>(<span class="fu">paste0</span>(<span class="st">&quot;ord&quot;</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>)) <span class="sc">|&gt;</span> <span class="fu">cbind</span>(<span class="at">Pop=</span>DAAG<span class="sc">::</span>possum<span class="sc">$</span>Pop) <span class="ot">-&gt;</span> sammon.possum</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>MASS<span class="sc">::</span><span class="fu">isoMDS</span>(d.possum, <span class="at">k=</span><span class="dv">2</span>, <span class="at">trace=</span><span class="cn">FALSE</span>) <span class="sc">|&gt;</span> <span class="fu">as.data.frame</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>  <span class="fu">setNames</span>(<span class="fu">paste0</span>(<span class="st">&quot;ord&quot;</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>)) <span class="sc">|&gt;</span> <span class="fu">cbind</span>(<span class="at">Pop=</span>DAAG<span class="sc">::</span>possum<span class="sc">$</span>Pop) <span class="ot">-&gt;</span> mds.possum</span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>gph1 <span class="ot">&lt;-</span> <span class="fu">xyplot</span>(ord2<span class="sc">~</span>ord1, <span class="at">groups=</span>Pop, <span class="at">aspect=</span><span class="st">&quot;iso&quot;</span>, <span class="at">data=</span>sammon.possum)</span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>gph2 <span class="ot">&lt;-</span> <span class="fu">xyplot</span>(ord2<span class="sc">~</span>ord1, <span class="at">groups=</span>Pop, <span class="at">aspect=</span><span class="st">&quot;iso&quot;</span>, <span class="at">data=</span>mds.possum)</span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="fu">update</span>(<span class="fu">c</span>(gph1, gph2, <span class="at">layout=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">1</span>)), </span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a>       <span class="at">par.settings=</span><span class="fu">simpleTheme</span>(<span class="at">pch=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>)),</span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a>       <span class="at">between=</span><span class="fu">list</span>(<span class="at">x=</span><span class="fl">0.5</span>), <span class="at">auto.key=</span><span class="fu">list</span>(<span class="at">columns=</span><span class="dv">2</span>),</span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a>       <span class="at">strip=</span><span class="fu">strip.custom</span>(<span class="at">factor.levels=</span><span class="fu">c</span>(<span class="st">&quot;A: Sammon&quot;</span>,<span class="st">&quot;B: ISOmds&quot;</span>)))</span></code></pre></div>
+</div>
+<div id="binary-data" class="section level5">
+<h5>Binary data</h5>
+</div>
+</div>
+</div>
+<div id="section-9.2-principal-component-scores-in-regression" class="section level3">
+<h3>Section 9.2: Principal component scores in regression</h3>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="do">## Principal components: data frame socsupport (DAAG)</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>socsupport <span class="ot">&lt;-</span> DAAG<span class="sc">::</span>socsupport</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>ss.pr1 <span class="ot">&lt;-</span> <span class="fu">prcomp</span>(<span class="fu">as.matrix</span>(<span class="fu">na.omit</span>(socsupport[, <span class="dv">9</span><span class="sc">:</span><span class="dv">19</span>])), <span class="at">retx=</span><span class="cn">TRUE</span>, <span class="at">scale=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>oldpar <span class="ot">&lt;-</span> <span class="fu">par</span>(<span class="at">fg=</span><span class="st">&#39;gray40&#39;</span>,<span class="at">col.axis=</span><span class="st">&#39;gray20&#39;</span>,<span class="at">lwd=</span><span class="fl">0.5</span>,<span class="at">col.lab=</span><span class="st">&#39;gray20&#39;</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="fu">pairs</span>(ss.pr1<span class="sc">$</span>x[, <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>], <span class="at">col=</span><span class="st">&#39;gray40&#39;</span>, <span class="at">gap=</span><span class="fl">0.2</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="fu">par</span>(oldpar)</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">sort</span>(ss.pr1<span class="sc">$</span>rotation[,<span class="dv">1</span>]))</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="do">## Note the very large maximum value</span></span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="fu">which.max</span>(ss.pr1<span class="sc">$</span>x[,<span class="dv">1</span>])</span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a><span class="do">## Try also boxplot(ss.pr1$x[,1])</span></span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a><span class="do">## ss.pr1$x[&quot;36&quot;,1]  ## Check that this returns 42</span></span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>use <span class="ot">&lt;-</span> <span class="fu">complete.cases</span>(socsupport[, <span class="dv">9</span><span class="sc">:</span><span class="dv">19</span>])</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>use[<span class="dv">36</span>] <span class="ot">&lt;-</span> <span class="cn">FALSE</span></span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>ss.pr <span class="ot">&lt;-</span> <span class="fu">prcomp</span>(<span class="fu">as.matrix</span>(socsupport[use, <span class="dv">9</span><span class="sc">:</span><span class="dv">19</span>]))</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="do">## Output from summary()</span></span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">summary</span>(ss.pr), <span class="at">digits=</span><span class="dv">1</span>)  <span class="co"># Compare contributions</span></span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>comp <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(ss.pr<span class="sc">$</span>x[,<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>])</span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>ss.lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(socsupport[use, <span class="st">&quot;BDI&quot;</span>] <span class="sc">~</span> ., <span class="at">data=</span>comp)</span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a><span class="fu">signif</span>(<span class="fu">round</span>(<span class="fu">coef</span>(<span class="fu">summary</span>(ss.lm)),<span class="dv">5</span>), <span class="at">digits=</span><span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="fu">print</span>(ss.pr<span class="sc">$</span>rotation[, <span class="dv">1</span>], <span class="at">digits=</span><span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="do">## Plot BDI against first principal component score</span></span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>gph <span class="ot">&lt;-</span> <span class="fu">xyplot</span>(BDI <span class="sc">~</span> ss.pr<span class="sc">$</span>x[ ,<span class="dv">1</span>], <span class="at">groups=</span>gender, <span class="at">data=</span>socsupport[use,],</span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a><span class="at">par.settings=</span><span class="fu">simpleTheme</span>(<span class="at">pch=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>), <span class="at">auto.key=</span><span class="fu">list</span>(<span class="at">columns=</span><span class="dv">2</span>))</span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a>bw9 <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">pch=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>), <span class="fu">list</span>(<span class="at">text=</span><span class="dv">9</span>, <span class="at">points=</span><span class="dv">5</span>))</span>
+<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a><span class="fu">update</span>(gph, <span class="at">scales=</span><span class="fu">list</span>(<span class="at">tck=</span><span class="fl">0.5</span>), <span class="at">par.settings=</span>bw9,</span>
+<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a><span class="at">xlab =</span><span class="st">&quot;1st principal component&quot;</span>)</span></code></pre></div>
+</div>
+<div id="section-9.3-cluster-analysis" class="section level3">
+<h3>Section 9.3: Cluster analysis</h3>
+<div id="subsection-9.3.1-hierarchical-clustering" class="section level4">
+<h4>Subsection 9.3.1: Hierarchical Clustering</h4>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="fu">library</span>(mvtnorm)</span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>makeClust <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">n=</span><span class="dv">6</span>, <span class="at">d1=</span><span class="dv">4</span>, <span class="at">d2=</span><span class="dv">4</span>, <span class="at">sigs=</span><span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>), <span class="at">seed=</span><span class="cn">NULL</span>){</span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.null</span>(seed))<span class="fu">set.seed</span>(seed)</span>
+<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a>  g1 <span class="ot">&lt;-</span> <span class="fu">rmvnorm</span>(n, <span class="at">mean =</span> <span class="fu">c</span>(<span class="sc">-</span>d1,d2), <span class="at">sigma=</span>sigs[<span class="dv">1</span>]<span class="sc">*</span><span class="fu">diag</span>(<span class="dv">2</span>))</span>
+<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a>  g2 <span class="ot">&lt;-</span> <span class="fu">rmvnorm</span>(n, <span class="at">mean =</span> <span class="fu">c</span>(d1,d2), <span class="at">sigma=</span>sigs[<span class="dv">2</span>]<span class="sc">*</span><span class="fu">diag</span>(<span class="dv">2</span>))</span>
+<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a>  g3 <span class="ot">&lt;-</span> <span class="fu">rmvnorm</span>(n, <span class="at">mean =</span> <span class="fu">c</span>(<span class="sc">-</span>d1,<span class="sc">-</span>d2), <span class="at">sigma=</span>sigs[<span class="dv">3</span>]<span class="sc">*</span><span class="fu">diag</span>(<span class="dv">2</span>))</span>
+<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a>  g4 <span class="ot">&lt;-</span> <span class="fu">rmvnorm</span>(n, <span class="at">mean =</span> <span class="fu">c</span>(d1,<span class="sc">-</span>d2), <span class="at">sigma=</span>sigs[<span class="dv">4</span>]<span class="sc">*</span><span class="fu">diag</span>(<span class="dv">2</span>))</span>
+<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a>  <span class="fu">rbind</span>(g1,g2,g3,g4)</span>
+<span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="do">## Code for the plots</span></span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a>datA <span class="ot">&lt;-</span> <span class="fu">makeClust</span>(<span class="at">seed=</span><span class="dv">35151</span>)</span>
+<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a>datB <span class="ot">&lt;-</span> <span class="fu">makeClust</span>(<span class="at">d2=</span><span class="dv">16</span>, <span class="at">seed=</span><span class="dv">35151</span>)</span>
+<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a>datC <span class="ot">&lt;-</span> <span class="fu">makeClust</span>(<span class="at">d1=</span><span class="dv">2</span>,<span class="at">d2=</span><span class="dv">2</span>, <span class="at">seed=</span><span class="dv">35151</span>)</span>
+<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a><span class="fu">plot</span>(datA, <span class="at">xlab=</span><span class="st">&quot;X1&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;X2&quot;</span>, <span class="at">fg=</span><span class="st">&quot;gray&quot;</span>)  </span>
+<span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a><span class="fu">title</span>(<span class="at">main=</span><span class="st">&quot;A: 4blobsA&quot;</span>, <span class="at">adj=</span><span class="dv">0</span>, <span class="at">line=</span><span class="fl">0.5</span>, <span class="at">font.main=</span><span class="dv">1</span>)</span>
+<span id="cb19-7"><a href="#cb19-7" tabindex="-1"></a><span class="do">## Repeat previous two lines for datB and datC</span></span>
+<span id="cb19-8"><a href="#cb19-8" tabindex="-1"></a><span class="fu">plot</span>(datB, <span class="at">xlab=</span><span class="st">&quot;X1&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;X2&quot;</span>, <span class="at">fg=</span><span class="st">&quot;gray&quot;</span>)  </span>
+<span id="cb19-9"><a href="#cb19-9" tabindex="-1"></a><span class="fu">title</span>(<span class="at">main=</span><span class="st">&quot;B: 4blobsB&quot;</span>, <span class="at">adj=</span><span class="dv">0</span>, <span class="at">line=</span><span class="fl">0.5</span>, <span class="at">font.main=</span><span class="dv">1</span>)</span>
+<span id="cb19-10"><a href="#cb19-10" tabindex="-1"></a><span class="fu">plot</span>(datC, <span class="at">xlab=</span><span class="st">&quot;X1&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;X2&quot;</span>, <span class="at">fg=</span><span class="st">&quot;gray&quot;</span>)  </span>
+<span id="cb19-11"><a href="#cb19-11" tabindex="-1"></a><span class="fu">title</span>(<span class="at">main=</span><span class="st">&quot;C: 4blobsC&quot;</span>, <span class="at">adj=</span><span class="dv">0</span>, <span class="at">line=</span><span class="fl">0.5</span>, <span class="at">font.main=</span><span class="dv">1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a><span class="do">## Possible alternative</span></span>
+<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a>config <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&#39;Equidistant blobs&#39;</span>, <span class="st">&#39;Pulled vertically&#39;</span>, <span class="st">&#39;Closer centers&#39;</span>)</span>
+<span id="cb20-3"><a href="#cb20-3" tabindex="-1"></a>dat123 <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="fu">as.data.frame</span>(<span class="fu">rbind</span>(datA, datB, datC)), </span>
+<span id="cb20-4"><a href="#cb20-4" tabindex="-1"></a>                              <span class="at">gp=</span><span class="fu">factor</span>(<span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="fu">rep</span>(<span class="dv">6</span><span class="sc">*</span><span class="dv">4</span>,<span class="dv">3</span>)), <span class="at">labels=</span>config))</span>
+<span id="cb20-5"><a href="#cb20-5" tabindex="-1"></a><span class="fu">xyplot</span>(V2 <span class="sc">~</span> V1 <span class="sc">|</span> gp, <span class="at">data=</span>dat123, <span class="at">scales=</span><span class="fu">list</span>(<span class="at">relation=</span><span class="st">&#39;free&#39;</span>),</span>
+<span id="cb20-6"><a href="#cb20-6" tabindex="-1"></a>       <span class="at">strip=</span><span class="fu">strip.custom</span>(<span class="at">factor.levels=</span>config), <span class="at">between=</span><span class="fu">list</span>(<span class="at">x=</span><span class="fl">0.5</span>),</span>
+<span id="cb20-7"><a href="#cb20-7" tabindex="-1"></a>       <span class="at">par.settings=</span>DAAG<span class="sc">::</span><span class="fu">DAAGtheme</span>(<span class="at">color=</span>F))</span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="do">## Code for single linkage plots: `?plot.hclust` gives help for the plot method</span></span>
+<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a>clusres_sing <span class="ot">&lt;-</span> <span class="fu">hclust</span>(<span class="fu">dist</span>(datA), <span class="at">method=</span><span class="st">&quot;single&quot;</span>)</span>
+<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a><span class="fu">par</span>(<span class="at">fig=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">0.75</span>,<span class="dv">0</span>,<span class="dv">1</span>))</span>
+<span id="cb21-4"><a href="#cb21-4" tabindex="-1"></a><span class="fu">plot</span>(clusres_sing, <span class="at">sub=</span><span class="st">&quot;&quot;</span>, <span class="at">xlab=</span><span class="st">&quot;&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;Distance joined&quot;</span>, <span class="at">adj=</span><span class="fl">0.5</span>, </span>
+<span id="cb21-5"><a href="#cb21-5" tabindex="-1"></a>     <span class="at">main=</span><span class="st">&quot;&quot;</span>, <span class="at">fg=</span><span class="st">&quot;gray&quot;</span>)</span>
+<span id="cb21-6"><a href="#cb21-6" tabindex="-1"></a><span class="fu">mtext</span>(<span class="st">&#39;A: Single linkage cluster dendrogram, for 4blobsA layout&#39;</span>, <span class="at">side=</span><span class="dv">3</span>, <span class="at">adj=</span><span class="dv">0</span>, </span>
+<span id="cb21-7"><a href="#cb21-7" tabindex="-1"></a>      <span class="at">font=</span><span class="dv">1</span>, <span class="at">line=</span><span class="dv">1</span>, <span class="at">cex=</span><span class="fl">1.15</span>)</span>
+<span id="cb21-8"><a href="#cb21-8" tabindex="-1"></a><span class="fu">par</span>(<span class="at">fig=</span><span class="fu">c</span>(<span class="fl">0.72</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span>), <span class="at">new=</span><span class="cn">TRUE</span>)</span>
+<span id="cb21-9"><a href="#cb21-9" tabindex="-1"></a>membs <span class="ot">&lt;-</span> <span class="fu">cutree</span>(clusres_sing, <span class="dv">4</span>)</span>
+<span id="cb21-10"><a href="#cb21-10" tabindex="-1"></a>col4<span class="ot">=</span> RColorBrewer<span class="sc">::</span><span class="fu">brewer.pal</span>(<span class="dv">4</span>,<span class="st">&#39;Set1&#39;</span>)</span>
+<span id="cb21-11"><a href="#cb21-11" tabindex="-1"></a><span class="fu">plot</span>(datA, <span class="at">xlab=</span><span class="st">&quot;X1&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;X2&quot;</span>, <span class="at">col=</span>col4[membs], <span class="at">fg=</span><span class="st">&#39;gray&#39;</span>, <span class="at">pch=</span>membs<span class="sc">+</span><span class="dv">1</span>)</span>
+<span id="cb21-12"><a href="#cb21-12" tabindex="-1"></a><span class="fu">mtext</span>(<span class="st">&#39;B: 4blobsA, by color&#39;</span>, <span class="at">side=</span><span class="dv">3</span>, <span class="at">adj=</span><span class="fl">1.0</span>, <span class="at">font=</span><span class="dv">1</span>, <span class="at">cex=</span><span class="fl">1.15</span>, <span class="at">line=</span><span class="dv">1</span>)</span>
+<span id="cb21-13"><a href="#cb21-13" tabindex="-1"></a><span class="do">## To see plots from &#39;average&#39; and &#39;complete&#39; linkage methods,do:</span></span>
+<span id="cb21-14"><a href="#cb21-14" tabindex="-1"></a><span class="co"># plot(hclust(dist(datB), method=&quot;average&quot;))</span></span>
+<span id="cb21-15"><a href="#cb21-15" tabindex="-1"></a><span class="co"># plot(hclust(dist(datC), method=&quot;complete&quot;))</span></span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="do">## Dendrograms from data where blobs were pulled vertically</span></span>
+<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a><span class="do">## Follow each use of `hclust()` with a `plot()` command</span></span>
+<span id="cb22-3"><a href="#cb22-3" tabindex="-1"></a>sclusres_sing <span class="ot">&lt;-</span> <span class="fu">hclust</span>(<span class="fu">dist</span>(datB), <span class="at">method=</span><span class="st">&quot;single&quot;</span>)</span>
+<span id="cb22-4"><a href="#cb22-4" tabindex="-1"></a><span class="fu">plot</span>(sclusres_sing, <span class="at">sub=</span><span class="st">&quot;&quot;</span>, <span class="at">xlab=</span><span class="st">&quot;&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;Distance Joined&quot;</span>, <span class="at">main=</span><span class="st">&quot;&quot;</span>)</span>
+<span id="cb22-5"><a href="#cb22-5" tabindex="-1"></a><span class="fu">title</span>(<span class="at">main=</span><span class="st">&#39;A: Single linkage, blobs pulled vertically (4blobsB)&#39;</span>, </span>
+<span id="cb22-6"><a href="#cb22-6" tabindex="-1"></a>      <span class="at">adj=</span><span class="dv">0</span>, <span class="at">font.main=</span><span class="dv">1</span>)</span>
+<span id="cb22-7"><a href="#cb22-7" tabindex="-1"></a>sclusres_sing_s <span class="ot">&lt;-</span> <span class="fu">hclust</span>(<span class="fu">dist</span>(<span class="fu">scale</span>(datA)), <span class="at">method=</span><span class="st">&quot;single&quot;</span>)</span>
+<span id="cb22-8"><a href="#cb22-8" tabindex="-1"></a><span class="fu">plot</span>(sclusres_sing_s, <span class="at">sub=</span><span class="st">&quot;&quot;</span>, <span class="at">xlab=</span><span class="st">&quot;&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;Distance Joined&quot;</span>, <span class="at">main=</span><span class="st">&quot;&quot;</span>)</span>
+<span id="cb22-9"><a href="#cb22-9" tabindex="-1"></a><span class="fu">title</span>(<span class="at">main=</span><span class="st">&#39;B: Single linkage, (4blobsB, rescaled to variance 1)&#39;</span>, </span>
+<span id="cb22-10"><a href="#cb22-10" tabindex="-1"></a>      <span class="at">adj=</span><span class="dv">0</span>, <span class="at">font.main=</span><span class="dv">1</span>)</span>
+<span id="cb22-11"><a href="#cb22-11" tabindex="-1"></a><span class="co"># sclusres_avg_s &lt;- hclust(dist(scale(datB)), method=&quot;average&quot;)</span></span>
+<span id="cb22-12"><a href="#cb22-12" tabindex="-1"></a><span class="co"># #plot(sclusres_avg_s, sub=&quot;&quot;, xlab=&quot;&quot;, ylab=&quot;&quot;)</span></span>
+<span id="cb22-13"><a href="#cb22-13" tabindex="-1"></a><span class="co"># sclusres_comp_s &lt;- hclust(dist(scale(datB)), method=&quot;complete&quot;)</span></span>
+<span id="cb22-14"><a href="#cb22-14" tabindex="-1"></a><span class="co"># #plot(sclusres_comp_s, sub=&quot;&quot;, xlab=&quot;&quot;, ylab=&quot;&quot;)</span></span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a><span class="do">## Code. Follow each use of `hclust()` with a `plot()` command</span></span>
+<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a>clusres_sing2 <span class="ot">&lt;-</span> <span class="fu">hclust</span>(<span class="fu">dist</span>(datC), <span class="at">method=</span><span class="st">&quot;single&quot;</span>)</span>
+<span id="cb23-3"><a href="#cb23-3" tabindex="-1"></a><span class="fu">plot</span>(clusres_sing2, <span class="at">sub=</span><span class="st">&quot;&quot;</span>, <span class="at">xlab=</span><span class="st">&quot;&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;&quot;</span>, <span class="at">cex=</span><span class="fl">1.25</span>, <span class="at">cex.main=</span><span class="fl">1.65</span>,</span>
+<span id="cb23-4"><a href="#cb23-4" tabindex="-1"></a>     <span class="at">main=</span><span class="st">&quot;A: Single linkage, closer clusters (4blobsC)&quot;</span>, <span class="at">adj=</span><span class="dv">0</span>, <span class="at">font.main=</span><span class="dv">1</span>)</span>
+<span id="cb23-5"><a href="#cb23-5" tabindex="-1"></a>clusres_avg2 <span class="ot">&lt;-</span> <span class="fu">hclust</span>(<span class="fu">dist</span>(datC), <span class="at">method=</span><span class="st">&quot;average&quot;</span>)</span>
+<span id="cb23-6"><a href="#cb23-6" tabindex="-1"></a><span class="fu">plot</span>(clusres_avg2, <span class="at">sub=</span><span class="st">&quot;&quot;</span>, <span class="at">xlab=</span><span class="st">&quot;&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;&quot;</span>, <span class="at">cex=</span><span class="fl">1.25</span>, <span class="at">cex.main=</span><span class="fl">1.65</span>,</span>
+<span id="cb23-7"><a href="#cb23-7" tabindex="-1"></a>     <span class="at">main=</span><span class="st">&quot;B: Average linkage, closer clusters (4blobsC)&quot;</span>, <span class="at">adj=</span><span class="dv">0</span>, <span class="at">font.main=</span><span class="dv">1</span>)</span>
+<span id="cb23-8"><a href="#cb23-8" tabindex="-1"></a>clusres_comp2 <span class="ot">&lt;-</span> <span class="fu">hclust</span>(<span class="fu">dist</span>(datC), <span class="at">method=</span><span class="st">&quot;complete&quot;</span>)</span>
+<span id="cb23-9"><a href="#cb23-9" tabindex="-1"></a><span class="fu">plot</span>(clusres_comp2, <span class="at">sub=</span><span class="st">&quot;&quot;</span>, <span class="at">xlab=</span><span class="st">&quot;&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;&quot;</span>, <span class="at">cex=</span><span class="fl">1.25</span>, <span class="at">cex.main=</span><span class="fl">1.65</span>, </span>
+<span id="cb23-10"><a href="#cb23-10" tabindex="-1"></a>     <span class="at">main=</span><span class="st">&quot;C: Complete linkage, closer clusters (4blobsC)&quot;</span>, <span class="at">adj=</span><span class="dv">0</span>, <span class="at">font.main=</span><span class="dv">1</span>)</span></code></pre></div>
+</div>
+<div id="subsection-9.3.2-k-means-clustering" class="section level4">
+<h4>Subsection 9.3.2: <span class="math inline">\(k\)</span>-Means
+Clustering</h4>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">35151</span>)</span>
+<span id="cb24-2"><a href="#cb24-2" tabindex="-1"></a>kdat <span class="ot">&lt;-</span> <span class="fu">makeClust</span>(<span class="at">n=</span><span class="dv">100</span>, <span class="at">d1=</span><span class="dv">5</span>, <span class="at">d2=</span><span class="dv">5</span>, <span class="at">sigs=</span><span class="fu">c</span>(.<span class="dv">5</span>, .<span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">6</span>))</span>
+<span id="cb24-3"><a href="#cb24-3" tabindex="-1"></a><span class="fu">plot</span>(kdat, <span class="at">xlab=</span><span class="st">&quot;X1&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;X2&quot;</span>, <span class="at">fg=</span><span class="st">&quot;gray&quot;</span>)</span>
+<span id="cb24-4"><a href="#cb24-4" tabindex="-1"></a>kmres <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(kdat, <span class="dv">4</span>, <span class="at">nstart=</span><span class="dv">30</span>)</span>
+<span id="cb24-5"><a href="#cb24-5" tabindex="-1"></a><span class="fu">plot</span>(kdat, <span class="at">col=</span><span class="fu">rainbow</span>(<span class="dv">4</span>)[kmres<span class="sc">$</span>cluster], <span class="at">pch=</span>kmres<span class="sc">$</span>cluster<span class="sc">+</span><span class="dv">1</span>, </span>
+<span id="cb24-6"><a href="#cb24-6" tabindex="-1"></a>     <span class="at">xlab=</span><span class="st">&quot;X1&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;X2&quot;</span>, <span class="at">fg=</span><span class="st">&quot;gray&quot;</span>)</span></code></pre></div>
+<div id="comments-on-k-means-and-hierarchical-clustering" class="section level5">
+<h5>Comments on <span class="math inline">\(k\)</span>-means and
+hierarchical clustering</h5>
+</div>
+</div>
+<div id="subsection-9.3.3-mixture-model-based-clustering" class="section level4">
+<h4>Subsection 9.3.3: Mixture model-based clustering</h4>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a><span class="do">## Code</span></span>
+<span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a>plotMix2 <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">taus=</span><span class="fu">c</span>(.<span class="dv">5</span>, .<span class="dv">5</span>), <span class="at">means=</span><span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">15</span>), <span class="at">sds=</span><span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">1</span>), <span class="at">xlims=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">20</span>)){</span>
+<span id="cb25-3"><a href="#cb25-3" tabindex="-1"></a>  <span class="fu">curve</span>(taus[<span class="dv">1</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x, <span class="at">mean=</span>means[<span class="dv">1</span>], <span class="at">sd=</span>sds[<span class="dv">1</span>]) <span class="sc">+</span> </span>
+<span id="cb25-4"><a href="#cb25-4" tabindex="-1"></a>          taus[<span class="dv">2</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x, <span class="at">mean=</span>means[<span class="dv">2</span>], <span class="at">sd=</span>sds[<span class="dv">2</span>]), </span>
+<span id="cb25-5"><a href="#cb25-5" tabindex="-1"></a>        <span class="at">from=</span>xlims[<span class="dv">1</span>], <span class="at">to=</span>xlims[<span class="dv">2</span>], <span class="at">ylab=</span><span class="st">&quot;Density&quot;</span>, <span class="at">fg=</span><span class="st">&quot;gray&quot;</span>)</span>
+<span id="cb25-6"><a href="#cb25-6" tabindex="-1"></a>  <span class="fu">curve</span>(taus[<span class="dv">1</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x, <span class="at">mean=</span>means[<span class="dv">1</span>], <span class="at">sd=</span>sds[<span class="dv">1</span>]), </span>
+<span id="cb25-7"><a href="#cb25-7" tabindex="-1"></a>        <span class="at">from=</span>xlims[<span class="dv">1</span>], <span class="at">to=</span>xlims[<span class="dv">2</span>], <span class="at">col=</span><span class="st">&quot;red&quot;</span>, <span class="at">lty=</span><span class="dv">2</span>, <span class="at">add=</span><span class="cn">TRUE</span>, <span class="at">fg=</span><span class="st">&quot;gray&quot;</span>)</span>
+<span id="cb25-8"><a href="#cb25-8" tabindex="-1"></a>  <span class="fu">curve</span>(taus[<span class="dv">2</span>]<span class="sc">*</span><span class="fu">dnorm</span>(x, <span class="at">mean=</span>means[<span class="dv">2</span>], <span class="at">sd=</span>sds[<span class="dv">2</span>]), </span>
+<span id="cb25-9"><a href="#cb25-9" tabindex="-1"></a>        <span class="at">from=</span>xlims[<span class="dv">1</span>], <span class="at">to=</span>xlims[<span class="dv">2</span>], <span class="at">col=</span><span class="st">&quot;blue&quot;</span>, <span class="at">lty=</span><span class="dv">3</span>, <span class="at">add=</span><span class="cn">TRUE</span>, <span class="at">fg=</span><span class="st">&quot;gray&quot;</span>)</span>
+<span id="cb25-10"><a href="#cb25-10" tabindex="-1"></a>}</span>
+<span id="cb25-11"><a href="#cb25-11" tabindex="-1"></a><span class="fu">plotMix2</span>(<span class="at">taus=</span><span class="fu">c</span>(.<span class="dv">2</span>, .<span class="dv">8</span>))</span>
+<span id="cb25-12"><a href="#cb25-12" tabindex="-1"></a><span class="fu">plotMix2</span>(<span class="at">taus=</span><span class="fu">c</span>(.<span class="dv">5</span>, .<span class="dv">5</span>))</span>
+<span id="cb25-13"><a href="#cb25-13" tabindex="-1"></a><span class="fu">plotMix2</span>(<span class="at">taus=</span><span class="fu">c</span>(.<span class="dv">9</span>, .<span class="dv">1</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a><span class="fu">library</span>(teigen)</span>
+<span id="cb26-2"><a href="#cb26-2" tabindex="-1"></a>possml <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(DAAG<span class="sc">::</span>possum[,<span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">9</span><span class="sc">:</span><span class="dv">11</span>)])</span>
+<span id="cb26-3"><a href="#cb26-3" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">513451</span>)</span>
+<span id="cb26-4"><a href="#cb26-4" tabindex="-1"></a>gaus_fit <span class="ot">&lt;-</span> <span class="fu">teigen</span>(possml[,<span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>], <span class="at">models=</span><span class="st">&quot;UUUU&quot;</span>, <span class="at">gauss=</span><span class="cn">TRUE</span>, <span class="at">verbose=</span><span class="cn">FALSE</span>, </span>
+<span id="cb26-5"><a href="#cb26-5" tabindex="-1"></a>                    <span class="at">scale=</span><span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a><span class="do">## BIC values are plotted against number of groups</span></span>
+<span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a>gaus_fit<span class="sc">$</span>allbic</span>
+<span id="cb27-3"><a href="#cb27-3" tabindex="-1"></a><span class="fu">plot</span>(gaus_fit<span class="sc">$</span>allbic, <span class="at">type=</span><span class="st">&quot;b&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;&quot;</span>, <span class="at">xlab=</span><span class="st">&quot;Number of Groups&quot;</span>, <span class="at">fg=</span><span class="st">&quot;gray&quot;</span>)</span>
+<span id="cb27-4"><a href="#cb27-4" tabindex="-1"></a><span class="fu">mtext</span>(<span class="at">side=</span><span class="dv">2</span>, <span class="at">line=</span><span class="fl">3.5</span>, <span class="st">&quot;BIC&quot;</span>, <span class="at">las=</span><span class="dv">0</span>)</span>
+<span id="cb27-5"><a href="#cb27-5" tabindex="-1"></a><span class="fu">axis</span>(<span class="dv">1</span>, <span class="at">at=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">9</span>, <span class="at">fg=</span><span class="st">&quot;gray&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a><span class="fu">table</span>(possml<span class="sc">$</span>Pop, gaus_fit<span class="sc">$</span>classification)</span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" tabindex="-1"></a><span class="fu">par</span>(<span class="at">fig=</span><span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="dv">1</span>))</span>
+<span id="cb29-2"><a href="#cb29-2" tabindex="-1"></a><span class="fu">plot</span>(gaus_fit, <span class="at">what=</span><span class="st">&quot;contour&quot;</span>, <span class="at">xmarg=</span><span class="dv">1</span>, <span class="at">ymarg=</span><span class="dv">2</span>, <span class="at">draw.legend=</span><span class="cn">FALSE</span>, <span class="at">fg=</span><span class="st">&quot;gray&quot;</span>)</span>
+<span id="cb29-3"><a href="#cb29-3" tabindex="-1"></a><span class="do">## See ?teigen::plot.teigen for details of the plot command used here.</span></span>
+<span id="cb29-4"><a href="#cb29-4" tabindex="-1"></a><span class="fu">par</span>(<span class="at">fig=</span><span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.5</span>, <span class="dv">0</span>, <span class="fl">0.5</span>), <span class="at">new=</span><span class="cn">TRUE</span>)</span>
+<span id="cb29-5"><a href="#cb29-5" tabindex="-1"></a><span class="fu">plot</span>(gaus_fit, <span class="at">what=</span><span class="st">&quot;contour&quot;</span>, <span class="at">xmarg=</span><span class="dv">1</span>, <span class="at">ymarg=</span><span class="dv">3</span>, <span class="at">draw.legend=</span><span class="cn">FALSE</span>, <span class="at">fg=</span><span class="st">&quot;gray&quot;</span>)</span>
+<span id="cb29-6"><a href="#cb29-6" tabindex="-1"></a><span class="fu">par</span>(<span class="at">fig=</span><span class="fu">c</span>(<span class="fl">0.5</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="fl">0.5</span>), <span class="at">new=</span><span class="cn">TRUE</span>)</span>
+<span id="cb29-7"><a href="#cb29-7" tabindex="-1"></a><span class="fu">plot</span>(gaus_fit, <span class="at">what=</span><span class="st">&quot;contour&quot;</span>, <span class="at">xmarg=</span><span class="dv">2</span>, <span class="at">ymarg=</span><span class="dv">3</span>, <span class="at">draw.legend=</span><span class="cn">FALSE</span>, <span class="at">fg=</span><span class="st">&quot;gray&quot;</span>)</span>
+<span id="cb29-8"><a href="#cb29-8" tabindex="-1"></a><span class="fu">par</span>(<span class="at">fig=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span>))</span></code></pre></div>
+<div id="issues-of-high-parametrization-and-scaling" class="section level5">
+<h5>Issues of high parametrization and scaling</h5>
+</div>
+</div>
+<div id="subsection-9.3.4-relationship-between-k-means-and-mixture-models" class="section level4">
+<h4>Subsection 9.3.4: Relationship between <span class="math inline">\(k\)</span>-means and mixture models</h4>
+</div>
+</div>
+<div id="section-9.4-discriminant-analysis" class="section level3">
+<h3>Section 9.4: Discriminant analysis</h3>
+<div id="subsection-9.4.1-example-plant-architecture" class="section level4">
+<h4>Subsection 9.4.1: Example – plant architecture</h4>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a>leafshape17 <span class="ot">&lt;-</span> DAAG<span class="sc">::</span>leafshape17</span>
+<span id="cb30-2"><a href="#cb30-2" tabindex="-1"></a><span class="fu">plot</span>(bladelen <span class="sc">~</span> bladewid, <span class="at">data=</span>leafshape17, <span class="at">pch=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>)[arch<span class="sc">+</span><span class="dv">1</span>])</span>
+<span id="cb30-3"><a href="#cb30-3" tabindex="-1"></a><span class="do">## For panel B, specify log=&quot;xy&quot; in the call to plot()</span></span></code></pre></div>
+<div id="logistic-regression-versus-linear-discriminant-analysis" class="section level5">
+<h5>Logistic regression, versus linear discriminant analysis</h5>
+</div>
+</div>
+<div id="subsection-9.4.2-logistic-regression" class="section level4">
+<h4>Subsection 9.4.2: Logistic regression</h4>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" tabindex="-1"></a><span class="do">## Fit logistic regression model</span></span>
+<span id="cb31-2"><a href="#cb31-2" tabindex="-1"></a>leafshape17 <span class="ot">&lt;-</span> DAAG<span class="sc">::</span>leafshape17</span>
+<span id="cb31-3"><a href="#cb31-3" tabindex="-1"></a>leaf17.glm <span class="ot">&lt;-</span> <span class="fu">glm</span>(arch <span class="sc">~</span> logwid <span class="sc">+</span> loglen, <span class="at">family=</span><span class="fu">binomial</span>(<span class="at">link=</span>logit),</span>
+<span id="cb31-4"><a href="#cb31-4" tabindex="-1"></a><span class="at">data=</span>leafshape17)</span>
+<span id="cb31-5"><a href="#cb31-5" tabindex="-1"></a><span class="fu">print</span>(DAAG<span class="sc">::</span><span class="fu">sumry</span>(leaf17.glm)<span class="sc">$</span>coef, <span class="at">digits=</span><span class="dv">2</span>)</span></code></pre></div>
+<div id="predictive-accuracy" class="section level5">
+<h5>Predictive accuracy</h5>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">29</span>)</span>
+<span id="cb32-2"><a href="#cb32-2" tabindex="-1"></a>leaf17.cv <span class="ot">&lt;-</span> DAAG<span class="sc">::</span><span class="fu">CVbinary</span>(leaf17.glm)</span>
+<span id="cb32-3"><a href="#cb32-3" tabindex="-1"></a>tCV <span class="ot">&lt;-</span> <span class="fu">table</span>(DAAG<span class="sc">::</span>leafshape17[[<span class="st">&quot;arch&quot;</span>]], <span class="fu">round</span>(leaf17.cv<span class="sc">$</span>cvhat))</span>
+<span id="cb32-4"><a href="#cb32-4" tabindex="-1"></a><span class="fu">rownames</span>(tCV) <span class="ot">&lt;-</span> <span class="fu">colnames</span>(tCV) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;0=Plagiotropic&quot;</span>,<span class="st">&quot;1=Orthotropic&quot;</span>)</span>
+<span id="cb32-5"><a href="#cb32-5" tabindex="-1"></a><span class="fu">cbind</span>(tCV, <span class="st">&quot;Proportion correct&quot;</span><span class="ot">=</span><span class="fu">c</span>(tCV[<span class="dv">1</span>,<span class="dv">1</span>], tCV[<span class="dv">2</span>,<span class="dv">2</span>])<span class="sc">/</span>(tCV[,<span class="dv">1</span>]<span class="sc">+</span>tCV[,<span class="dv">2</span>]))</span></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">unlist</span>(leaf17.cv[<span class="fu">c</span>(<span class="st">&quot;acc.training&quot;</span>,<span class="st">&quot;acc.cv&quot;</span>)]),<span class="dv">3</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="subsection-9.4.3-linear-discriminant-analysis" class="section level4">
+<h4>Subsection 9.4.3: Linear discriminant analysis</h4>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(MASS))</span>
+<span id="cb34-2"><a href="#cb34-2" tabindex="-1"></a><span class="do">## Discriminant analysis; data frame leafshape17 (DAAG)</span></span>
+<span id="cb34-3"><a href="#cb34-3" tabindex="-1"></a>leaf17.lda <span class="ot">&lt;-</span> <span class="fu">lda</span>(arch <span class="sc">~</span> logwid<span class="sc">+</span>loglen, <span class="at">data=</span>DAAG<span class="sc">::</span>leafshape17)</span>
+<span id="cb34-4"><a href="#cb34-4" tabindex="-1"></a><span class="fu">print</span>(leaf17.lda)</span></code></pre></div>
+<div id="assessments-of-predictive-accuracy" class="section level5">
+<h5>Assessments of predictive accuracy</h5>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">29</span>)</span>
+<span id="cb35-2"><a href="#cb35-2" tabindex="-1"></a>leaf17cv.lda <span class="ot">&lt;-</span> <span class="fu">lda</span>(arch <span class="sc">~</span> logwid<span class="sc">+</span>loglen, <span class="at">data=</span>leafshape17, <span class="at">CV=</span><span class="cn">TRUE</span>)</span>
+<span id="cb35-3"><a href="#cb35-3" tabindex="-1"></a><span class="do">## the list element &#39;class&#39; gives the predicted class</span></span>
+<span id="cb35-4"><a href="#cb35-4" tabindex="-1"></a><span class="do">## The list element &#39;posterior&#39; holds posterior probabilities</span></span>
+<span id="cb35-5"><a href="#cb35-5" tabindex="-1"></a>tab <span class="ot">&lt;-</span> <span class="fu">table</span>(leafshape17<span class="sc">$</span>arch, leaf17cv.lda<span class="sc">$</span>class)</span>
+<span id="cb35-6"><a href="#cb35-6" tabindex="-1"></a><span class="fu">rownames</span>(tab) <span class="ot">&lt;-</span> <span class="fu">colnames</span>(tab) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;0=Plagiotropic&quot;</span>,<span class="st">&quot;1=Orthotropic&quot;</span>)</span>
+<span id="cb35-7"><a href="#cb35-7" tabindex="-1"></a><span class="fu">cbind</span>(tab, <span class="st">&quot;Proportion correct&quot;</span><span class="ot">=</span><span class="fu">c</span>(tCV[<span class="dv">1</span>,<span class="dv">1</span>], tCV[<span class="dv">2</span>,<span class="dv">2</span>])<span class="sc">/</span>(tCV[,<span class="dv">1</span>]<span class="sc">+</span>tCV[,<span class="dv">2</span>]))</span>
+<span id="cb35-8"><a href="#cb35-8" tabindex="-1"></a><span class="fu">cbind</span>(tab, <span class="fu">c</span>(tab[<span class="dv">1</span>,<span class="dv">1</span>], <span class="at">class.acc=</span>tab[<span class="dv">2</span>,<span class="dv">2</span>])<span class="sc">/</span>(tab[,<span class="dv">1</span>]<span class="sc">+</span>tab[,<span class="dv">2</span>]))</span>
+<span id="cb35-9"><a href="#cb35-9" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Overall proportion correct =&quot;</span>, <span class="fu">sum</span>(tab[<span class="fu">row</span>(tab)<span class="sc">==</span><span class="fu">col</span>(tab)])<span class="sc">/</span><span class="fu">sum</span>(tab), <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+</div>
+<div id="the-function-qda-and-other-alternatives-to-lda" class="section level5">
+<h5>The function qda(), and other alternatives to lda()</h5>
+</div>
+</div>
+<div id="subsection-9.4.4-an-example-with-more-than-two-groups" class="section level4">
+<h4>Subsection 9.4.4: An example with more than two groups</h4>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" tabindex="-1"></a><span class="do">## Linear discriminant calculations for possum data</span></span>
+<span id="cb36-2"><a href="#cb36-2" tabindex="-1"></a>possum <span class="ot">&lt;-</span> DAAG<span class="sc">::</span>possum</span>
+<span id="cb36-3"><a href="#cb36-3" tabindex="-1"></a>possum.lda <span class="ot">&lt;-</span> <span class="fu">lda</span>(site <span class="sc">~</span> hdlngth <span class="sc">+</span> skullw <span class="sc">+</span> totlngth <span class="sc">+</span> taill <span class="sc">+</span> footlgth <span class="sc">+</span></span>
+<span id="cb36-4"><a href="#cb36-4" tabindex="-1"></a>                  earconch <span class="sc">+</span> eye <span class="sc">+</span> chest <span class="sc">+</span> belly, <span class="at">data=</span><span class="fu">na.omit</span>(possum))</span>
+<span id="cb36-5"><a href="#cb36-5" tabindex="-1"></a><span class="co"># na.omit() omits any rows that have one or more missing values</span></span></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" tabindex="-1"></a><span class="fu">plot</span>(possum.lda, <span class="at">dimen=</span><span class="dv">3</span>, <span class="at">col=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">9</span>)</span>
+<span id="cb37-2"><a href="#cb37-2" tabindex="-1"></a><span class="co"># Scatterplot matrix - scores on 1st 3 canonical variates</span></span>
+<span id="cb37-3"><a href="#cb37-3" tabindex="-1"></a><span class="co"># See `?plot.lda` for details of the generic lda plot function</span></span></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" tabindex="-1"></a><span class="do">## Linear discriminant calculations for possum data</span></span>
+<span id="cb38-2"><a href="#cb38-2" tabindex="-1"></a><span class="fu">print</span>(possum.lda, <span class="at">digits=</span><span class="dv">3</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="section-9.5-high-dimensional-data-rna-seq-gene-expression" class="section level3">
+<h3>Section 9.5: *High-dimensional data — RNA-Seq gene expression</h3>
+<div id="setup-for-installing-and-using-bioconductor-packages" class="section level5">
+<h5>Setup for installing and using Bioconductor packages</h5>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" tabindex="-1"></a><span class="do">## For latest details, see: https://www.bioconductor.org/install/</span></span>
+<span id="cb39-2"><a href="#cb39-2" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(<span class="st">&quot;BiocManager&quot;</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb39-3"><a href="#cb39-3" tabindex="-1"></a>    <span class="fu">install.packages</span>(<span class="st">&quot;BiocManager&quot;</span>)</span>
+<span id="cb39-4"><a href="#cb39-4" tabindex="-1"></a>BiocManager<span class="sc">::</span><span class="fu">install</span>()</span>
+<span id="cb39-5"><a href="#cb39-5" tabindex="-1"></a>BiocManager<span class="sc">::</span><span class="fu">install</span>(<span class="st">&#39;limma&#39;</span>,<span class="st">&#39;multtest&#39;</span>)</span></code></pre></div>
+</div>
+<div id="brief-note-on-mrna-technical-issues" class="section level5">
+<h5>*Brief note on mRNA technical issues</h5>
+</div>
+<div id="subsection-9.5.1-data-and-design-matrix-setup" class="section level4">
+<h4>Subsection 9.5.1: Data and design matrix setup</h4>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" tabindex="-1"></a>counts <span class="ot">&lt;-</span> DAAGbio<span class="sc">::</span>plantStressCounts</span>
+<span id="cb40-2"><a href="#cb40-2" tabindex="-1"></a><span class="fu">colSums</span>(counts)</span></code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" tabindex="-1"></a><span class="do">## Require at least 3 counts per million that are &gt; 1</span></span>
+<span id="cb41-2"><a href="#cb41-2" tabindex="-1"></a>keep <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(counts)<span class="sc">&gt;=</span><span class="dv">3</span></span>
+<span id="cb41-3"><a href="#cb41-3" tabindex="-1"></a>counts <span class="ot">&lt;-</span> counts[keep,]</span></code></pre></div>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" tabindex="-1"></a>treatment <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">&quot;CTL&quot;</span>, <span class="st">&quot;L&quot;</span>, <span class="st">&quot;D&quot;</span>), <span class="fu">rep</span>(<span class="dv">3</span>,<span class="dv">3</span>)))</span>
+<span id="cb42-2"><a href="#cb42-2" tabindex="-1"></a>design <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(<span class="sc">~</span><span class="dv">0</span><span class="sc">+</span>treatment)</span>
+<span id="cb42-3"><a href="#cb42-3" tabindex="-1"></a><span class="fu">colnames</span>(design) <span class="ot">&lt;-</span> <span class="fu">levels</span>(treatment)</span></code></pre></div>
+<div id="a-two-dimensional-representation" class="section level5">
+<h5>A two-dimensional representation</h5>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" tabindex="-1"></a><span class="fu">library</span>(limma)</span>
+<span id="cb43-2"><a href="#cb43-2" tabindex="-1"></a>v <span class="ot">&lt;-</span> <span class="fu">voom</span>(counts, design, <span class="at">plot=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" tabindex="-1"></a><span class="fu">par</span>(<span class="at">oma=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>))</span>
+<span id="cb44-2"><a href="#cb44-2" tabindex="-1"></a><span class="fu">library</span>(limma)</span>
+<span id="cb44-3"><a href="#cb44-3" tabindex="-1"></a>v <span class="ot">&lt;-</span> <span class="fu">voom</span>(counts, design, <span class="at">plot=</span><span class="cn">TRUE</span>)</span>
+<span id="cb44-4"><a href="#cb44-4" tabindex="-1"></a>firstchar <span class="ot">&lt;-</span> <span class="fu">substring</span>(<span class="fu">colnames</span>(counts),<span class="dv">1</span>,<span class="dv">1</span>)</span>
+<span id="cb44-5"><a href="#cb44-5" tabindex="-1"></a><span class="fu">plotMDS</span>(counts, <span class="at">labels=</span><span class="fu">paste0</span>(firstchar, <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>,<span class="dv">3</span>)), <span class="at">cex=</span><span class="fl">0.8</span>)</span>
+<span id="cb44-6"><a href="#cb44-6" tabindex="-1"></a><span class="fu">box</span>(<span class="at">col=</span><span class="st">&quot;gray&quot;</span>)</span>
+<span id="cb44-7"><a href="#cb44-7" tabindex="-1"></a><span class="fu">mtext</span>(<span class="at">side=</span><span class="dv">3</span>, <span class="at">line=</span><span class="fl">0.4</span>, <span class="at">adj=</span><span class="dv">0</span>, <span class="st">&quot;MDS summary plot&quot;</span>)</span>
+<span id="cb44-8"><a href="#cb44-8" tabindex="-1"></a><span class="fu">mtext</span>(<span class="at">side=</span><span class="dv">3</span>, <span class="at">line=</span><span class="sc">-</span><span class="fl">0.25</span>, <span class="at">adj=</span><span class="fl">0.105</span>, <span class="st">&quot;A&quot;</span>, <span class="at">outer=</span><span class="cn">TRUE</span>)</span>
+<span id="cb44-9"><a href="#cb44-9" tabindex="-1"></a><span class="fu">mtext</span>(<span class="at">side=</span><span class="dv">3</span>, <span class="at">line=</span><span class="sc">-</span><span class="fl">0.25</span>, <span class="at">adj=</span><span class="fl">0.605</span>, <span class="st">&quot;B&quot;</span>, <span class="at">outer=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+</div>
+<div id="fitting-the-model" class="section level5">
+<h5>Fitting the model</h5>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">lmFit</span>(v, design)</span></code></pre></div>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" tabindex="-1"></a>contrs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;D-CTL&quot;</span>, <span class="st">&quot;L-CTL&quot;</span>, <span class="st">&quot;L-D&quot;</span>)</span>
+<span id="cb46-2"><a href="#cb46-2" tabindex="-1"></a>contr.matrix <span class="ot">&lt;-</span> <span class="fu">makeContrasts</span>(<span class="at">contrasts=</span>contrs,</span>
+<span id="cb46-3"><a href="#cb46-3" tabindex="-1"></a><span class="at">levels=</span><span class="fu">levels</span>(treatment))</span>
+<span id="cb46-4"><a href="#cb46-4" tabindex="-1"></a>fit2 <span class="ot">&lt;-</span> <span class="fu">contrasts.fit</span>(fit, contr.matrix)</span>
+<span id="cb46-5"><a href="#cb46-5" tabindex="-1"></a>efit2 <span class="ot">&lt;-</span> <span class="fu">eBayes</span>(fit2)</span></code></pre></div>
+</div>
+</div>
+<div id="subsection-9.5.2-from-p-values-to-false-discovery-rate-fdr" class="section level4">
+<h4>Subsection 9.5.2: From <span class="math inline">\(p\)</span>-values
+to false discovery rate (FDR)</h4>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" tabindex="-1"></a><span class="do">## First contrast only; Drought-CTL</span></span>
+<span id="cb47-2"><a href="#cb47-2" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">round</span>(<span class="fu">topTable</span>(efit2, <span class="at">coef=</span><span class="dv">1</span>, <span class="at">number=</span><span class="dv">4</span>),<span class="dv">15</span>), <span class="at">digits=</span><span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">sort</span>(<span class="fu">p.adjust</span>(<span class="at">p=</span>efit2<span class="sc">$</span>p.value[,<span class="dv">1</span>], <span class="at">method=</span><span class="st">&quot;BH&quot;</span>))[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>], <span class="dv">15</span>) <span class="co"># Not run</span></span></code></pre></div>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">topTable</span>(efit2, <span class="at">number=</span><span class="dv">4</span>), <span class="dv">15</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">decideTests</span>(fit2),<span class="dv">5</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">decideTests</span>(fit2))</span>
+<span id="cb51-2"><a href="#cb51-2" tabindex="-1"></a><span class="do">## Try also</span></span>
+<span id="cb51-3"><a href="#cb51-3" tabindex="-1"></a><span class="do">## summary(decideTests(fit2, p.value=0.001))</span></span></code></pre></div>
+</div>
+</div>
+<div id="section-9.6-high-dimensional-data-from-expression-arrays" class="section level3">
+<h3>Section 9.6: High dimensional data from expression arrays</h3>
+<div id="subsection-9.6.1-molecular-classification-of-cancer-an-older-technology" class="section level4">
+<h4>Subsection 9.6.1: Molecular classification of cancer — an older
+technology</h4>
+<div id="breakdown-of-all-b-type-data-with-one-observation-excluded" class="section level5">
+<h5>Breakdown of ALL B-type data, with one observation excluded</h5>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" tabindex="-1"></a><span class="fu">library</span>(hddplot)</span>
+<span id="cb52-2"><a href="#cb52-2" tabindex="-1"></a><span class="fu">data</span>(golubInfo)</span>
+<span id="cb52-3"><a href="#cb52-3" tabindex="-1"></a><span class="fu">with</span>(golubInfo, <span class="fu">table</span>(cancer, tissue.mf))</span></code></pre></div>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" tabindex="-1"></a><span class="do">## Identify allB samples that are BM:f or BM:m or PB:m</span></span>
+<span id="cb53-2"><a href="#cb53-2" tabindex="-1"></a>subsetB <span class="ot">&lt;-</span> <span class="fu">with</span>(golubInfo,</span>
+<span id="cb53-3"><a href="#cb53-3" tabindex="-1"></a>cancer<span class="sc">==</span><span class="st">&quot;allB&quot;</span> <span class="sc">&amp;</span> tissue.mf<span class="sc">%in%</span><span class="fu">c</span>(<span class="st">&quot;BM:f&quot;</span>,<span class="st">&quot;BM:m&quot;</span>,<span class="st">&quot;PB:m&quot;</span>))</span>
+<span id="cb53-4"><a href="#cb53-4" tabindex="-1"></a><span class="do">## Separate off the relevant columns of the matrix Golub</span></span>
+<span id="cb53-5"><a href="#cb53-5" tabindex="-1"></a><span class="do">## NB: variables (rows) by cases (columns)</span></span>
+<span id="cb53-6"><a href="#cb53-6" tabindex="-1"></a>GolubB <span class="ot">&lt;-</span> <span class="fu">with</span>(golubInfo, Golub[, subsetB])</span>
+<span id="cb53-7"><a href="#cb53-7" tabindex="-1"></a><span class="do">## Form vector that identifies these as BM:f or BM:m or PB:m</span></span>
+<span id="cb53-8"><a href="#cb53-8" tabindex="-1"></a>tissue.mfB <span class="ot">&lt;-</span> <span class="fu">with</span>(golubInfo, tissue.mf[subsetB, <span class="at">drop=</span><span class="cn">TRUE</span>])</span>
+<span id="cb53-9"><a href="#cb53-9" tabindex="-1"></a><span class="do">## Change the level names to leave out the colons</span></span>
+<span id="cb53-10"><a href="#cb53-10" tabindex="-1"></a><span class="fu">levels</span>(tissue.mfB) <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="st">&quot;b_f&quot;</span><span class="ot">=</span><span class="st">&quot;BM:f&quot;</span>, <span class="st">&quot;b_m&quot;</span><span class="ot">=</span><span class="st">&quot;BM:m&quot;</span>, <span class="st">&quot;PBm&quot;</span><span class="ot">=</span><span class="st">&quot;PB:m&quot;</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="subsection-9.6.2-classifications-and-associated-graphs" class="section level4">
+<h4>Subsection 9.6.2: Classifications and associated graphs</h4>
+<div id="preliminary-data-manipulation" class="section level5">
+<h5>Preliminary data manipulation</h5>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" tabindex="-1"></a><span class="do">## Display distributions for the first 20 observations</span></span>
+<span id="cb54-2"><a href="#cb54-2" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="fu">data.frame</span>(GolubB[, <span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>]))  <span class="co"># First 20 columns (observations)</span></span>
+<span id="cb54-3"><a href="#cb54-3" tabindex="-1"></a><span class="do">## Random selection of 20 rows (features)</span></span>
+<span id="cb54-4"><a href="#cb54-4" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="fu">data.frame</span>(GolubB[<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">7129</span>, <span class="dv">20</span>), ]))</span></code></pre></div>
+</div>
+<div id="flawed-graphs" class="section level5">
+<h5>Flawed graphs</h5>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" tabindex="-1"></a>colr <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;red&quot;</span>,<span class="st">&quot;blue&quot;</span>,<span class="st">&quot;gray40&quot;</span>, <span class="st">&quot;magenta&quot;</span>)</span>
+<span id="cb55-2"><a href="#cb55-2" tabindex="-1"></a>tissue.mf <span class="ot">&lt;-</span> golubInfo[, <span class="st">&quot;tissue.mf&quot;</span>]</span>
+<span id="cb55-3"><a href="#cb55-3" tabindex="-1"></a>cancer <span class="ot">&lt;-</span> golubInfo[, <span class="st">&quot;cancer&quot;</span>]</span>
+<span id="cb55-4"><a href="#cb55-4" tabindex="-1"></a>G.PBf <span class="ot">&lt;-</span> Golub[, tissue.mf<span class="sc">==</span><span class="st">&quot;PB:f&quot;</span> <span class="sc">&amp;</span> cancer<span class="sc">==</span><span class="st">&quot;allB&quot;</span>, drop<span class="ot">=</span><span class="cn">FALSE</span>]</span>
+<span id="cb55-5"><a href="#cb55-5" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">41</span>)</span>
+<span id="cb55-6"><a href="#cb55-6" tabindex="-1"></a>rGolubB <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="fu">prod</span>(<span class="fu">dim</span>(GolubB))), <span class="at">nrow=</span><span class="fu">dim</span>(GolubB)[<span class="dv">1</span>])</span>
+<span id="cb55-7"><a href="#cb55-7" tabindex="-1"></a><span class="fu">rownames</span>(rGolubB) <span class="ot">&lt;-</span> <span class="fu">rownames</span>(Golub)</span>
+<span id="cb55-8"><a href="#cb55-8" tabindex="-1"></a>rG.PBf <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="fu">prod</span>(<span class="fu">dim</span>(G.PBf))), <span class="at">nrow=</span><span class="fu">dim</span>(G.PBf)[<span class="dv">1</span>])</span>
+<span id="cb55-9"><a href="#cb55-9" tabindex="-1"></a>plot2 <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">x =</span> GolubB, <span class="at">cl=</span>tissue.mfB, <span class="at">x.omit=</span>Golub.PBf, <span class="at">cl.omit=</span><span class="st">&quot;PBf&quot;</span>, </span>
+<span id="cb55-10"><a href="#cb55-10" tabindex="-1"></a>                  <span class="at">ncol =</span> <span class="fu">length</span>(cl), <span class="at">nfeatures=</span><span class="dv">12</span>, <span class="at">device =</span> <span class="st">&quot;&quot;</span>, <span class="at">seed =</span> <span class="dv">37</span>,</span>
+<span id="cb55-11"><a href="#cb55-11" tabindex="-1"></a>                  <span class="at">pretext=</span><span class="st">&quot;&quot;</span>, <span class="at">colr=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">levnames =</span> <span class="cn">NULL</span>,</span>
+<span id="cb55-12"><a href="#cb55-12" tabindex="-1"></a>                  <span class="at">ylab=</span><span class="st">&quot;2nd discriminant function&quot;</span>){</span>
+<span id="cb55-13"><a href="#cb55-13" tabindex="-1"></a>  cl <span class="ot">&lt;-</span> <span class="fu">factor</span>(cl)</span>
+<span id="cb55-14"><a href="#cb55-14" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.null</span>(levnames))<span class="fu">levels</span>(cl) <span class="ot">&lt;-</span> levnames</span>
+<span id="cb55-15"><a href="#cb55-15" tabindex="-1"></a>  ord15 <span class="ot">&lt;-</span> <span class="fu">orderFeatures</span>(x, <span class="at">cl=</span>cl)[<span class="dv">1</span><span class="sc">:</span>nfeatures]</span>
+<span id="cb55-16"><a href="#cb55-16" tabindex="-1"></a>  dfB <span class="ot">&lt;-</span> <span class="fu">t</span>(x[ord15, ])</span>
+<span id="cb55-17"><a href="#cb55-17" tabindex="-1"></a>  dfB.lda <span class="ot">&lt;-</span>  <span class="fu">lda</span>(dfB, <span class="at">grouping=</span>cl)</span>
+<span id="cb55-18"><a href="#cb55-18" tabindex="-1"></a>  scores <span class="ot">&lt;-</span> <span class="fu">predict</span>(dfB.lda, <span class="at">dimen=</span><span class="dv">2</span>)<span class="sc">$</span>x</span>
+<span id="cb55-19"><a href="#cb55-19" tabindex="-1"></a>  df.PBf <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">t</span>(x.omit[ord15, <span class="at">drop=</span><span class="cn">FALSE</span>]))</span>
+<span id="cb55-20"><a href="#cb55-20" tabindex="-1"></a>  <span class="fu">colnames</span>(df.PBf) <span class="ot">&lt;-</span> <span class="fu">colnames</span>(dfB)</span>
+<span id="cb55-21"><a href="#cb55-21" tabindex="-1"></a>  scores.other <span class="ot">&lt;-</span> <span class="fu">predict</span>(dfB.lda, <span class="at">newdata=</span>df.PBf)<span class="sc">$</span>x</span>
+<span id="cb55-22"><a href="#cb55-22" tabindex="-1"></a>  <span class="fu">scoreplot</span>(<span class="fu">list</span>(<span class="at">scores=</span>scores, <span class="at">cl=</span>cl, <span class="at">other=</span>scores.other, <span class="at">cl.other=</span>cl.omit,                       <span class="at">nfeatures=</span>nfeatures), <span class="at">prefix.title=</span>pretext, <span class="at">adj.title=</span><span class="dv">0</span>, </span>
+<span id="cb55-23"><a href="#cb55-23" tabindex="-1"></a>                 <span class="at">fg=</span><span class="st">&quot;gray&quot;</span>, <span class="at">params=</span><span class="fu">list</span>(<span class="at">other=</span><span class="fu">list</span>(<span class="at">pch=</span><span class="dv">4</span>, <span class="at">cex=</span><span class="fl">1.5</span>)),</span>
+<span id="cb55-24"><a href="#cb55-24" tabindex="-1"></a>            <span class="at">xlab=</span><span class="st">&quot;1st discriminant function&quot;</span>, <span class="at">ylab=</span>ylab)</span>
+<span id="cb55-25"><a href="#cb55-25" tabindex="-1"></a>}</span>
+<span id="cb55-26"><a href="#cb55-26" tabindex="-1"></a><span class="fu">plot2</span>(<span class="at">x =</span> GolubB, <span class="at">cl =</span> tissue.mfB, <span class="at">x.omit=</span>G.PBf, <span class="at">cl.omit=</span><span class="st">&quot;PBf&quot;</span>,</span>
+<span id="cb55-27"><a href="#cb55-27" tabindex="-1"></a>      <span class="at">nfeatures=</span><span class="dv">15</span>, <span class="at">device =</span> <span class="st">&quot;&quot;</span>, <span class="at">seed =</span> <span class="dv">37</span>, <span class="at">ylab=</span><span class="st">&quot;2nd discriminant function&quot;</span>,</span>
+<span id="cb55-28"><a href="#cb55-28" tabindex="-1"></a>      <span class="at">colr=</span>colr, <span class="at">pretext=</span><span class="st">&quot;A: ALL B-cell:&quot;</span>)</span>
+<span id="cb55-29"><a href="#cb55-29" tabindex="-1"></a><span class="fu">plot2</span>(<span class="at">x =</span> rGolubB, <span class="at">cl =</span> tissue.mfB, <span class="at">x.omit=</span>rG.PBf, <span class="at">cl.omit=</span><span class="st">&quot;Gp 4&quot;</span>, </span>
+<span id="cb55-30"><a href="#cb55-30" tabindex="-1"></a>     <span class="at">device =</span> <span class="st">&quot;&quot;</span>, <span class="at">seed =</span> <span class="dv">37</span>, <span class="at">colr=</span>colr, <span class="at">levnames =</span> <span class="fu">c</span>(<span class="st">&quot;Gp 1&quot;</span>, <span class="st">&quot;Gp 2&quot;</span>, <span class="st">&quot;Gp 3&quot;</span>),</span>
+<span id="cb55-31"><a href="#cb55-31" tabindex="-1"></a>     <span class="at">pretext=</span><span class="st">&quot;B: Random data:&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" tabindex="-1"></a><span class="do">## Uses orderFeatures() (hddplot); see below</span></span>
+<span id="cb56-2"><a href="#cb56-2" tabindex="-1"></a>ord15 <span class="ot">&lt;-</span> <span class="fu">orderFeatures</span>(GolubB, <span class="at">cl=</span>tissue.mfB)[<span class="dv">1</span><span class="sc">:</span><span class="dv">15</span>]</span></code></pre></div>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" tabindex="-1"></a><span class="do">## Panel A: Take 1st 15 features &amp; transpose to observations by features</span></span>
+<span id="cb57-2"><a href="#cb57-2" tabindex="-1"></a>dfB15 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">t</span>(GolubB[ord15, ]))</span>
+<span id="cb57-3"><a href="#cb57-3" tabindex="-1"></a>dfB15.lda <span class="ot">&lt;-</span>  MASS<span class="sc">::</span><span class="fu">lda</span>(dfB15, <span class="at">grouping=</span>tissue.mfB)</span>
+<span id="cb57-4"><a href="#cb57-4" tabindex="-1"></a>scores <span class="ot">&lt;-</span> <span class="fu">predict</span>(dfB15.lda, <span class="at">dimen=</span><span class="dv">2</span>)<span class="sc">$</span>x</span>
+<span id="cb57-5"><a href="#cb57-5" tabindex="-1"></a><span class="do">## Scores for the single PB:f observation</span></span>
+<span id="cb57-6"><a href="#cb57-6" tabindex="-1"></a>chooseCols <span class="ot">&lt;-</span> <span class="fu">with</span>(golubInfo, tissue.mf<span class="sc">==</span><span class="st">&quot;PB:f&quot;</span><span class="sc">&amp;</span> cancer<span class="sc">==</span><span class="st">&quot;allB&quot;</span>)</span>
+<span id="cb57-7"><a href="#cb57-7" tabindex="-1"></a>df.PBf <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">t</span>(Golub[ord15, chooseCols, <span class="at">drop=</span><span class="cn">FALSE</span>]))</span>
+<span id="cb57-8"><a href="#cb57-8" tabindex="-1"></a>scores.PBf <span class="ot">&lt;-</span> <span class="fu">predict</span>(dfB15.lda, <span class="at">newdata=</span>df.PBf, <span class="at">dimen=</span><span class="dv">2</span>)<span class="sc">$</span>x</span>
+<span id="cb57-9"><a href="#cb57-9" tabindex="-1"></a><span class="do">## Warning! The plot that now follows may be misleading!</span></span>
+<span id="cb57-10"><a href="#cb57-10" tabindex="-1"></a><span class="do">## Use hddplot::scoreplot()</span></span>
+<span id="cb57-11"><a href="#cb57-11" tabindex="-1"></a><span class="fu">scoreplot</span>(<span class="fu">list</span>(<span class="at">scores=</span>scores, <span class="at">cl=</span>tissue.mfB, <span class="at">other=</span>scores.PBf, <span class="at">cl.other=</span><span class="st">&quot;PB:f&quot;</span>),</span>
+<span id="cb57-12"><a href="#cb57-12" tabindex="-1"></a>          <span class="at">fg=</span><span class="st">&quot;gray&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" tabindex="-1"></a><span class="do">## Panel B: Repeat plot, now with random normal data</span></span>
+<span id="cb58-2"><a href="#cb58-2" tabindex="-1"></a>simscores <span class="ot">&lt;-</span> <span class="fu">simulateScores</span>(<span class="at">nrow=</span><span class="dv">7129</span>, <span class="at">cl=</span><span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="fu">c</span>(<span class="dv">19</span>,<span class="dv">10</span>,<span class="dv">2</span>)),</span>
+<span id="cb58-3"><a href="#cb58-3" tabindex="-1"></a><span class="at">cl.other=</span><span class="dv">4</span>, <span class="at">nfeatures=</span><span class="dv">15</span>, <span class="at">seed=</span><span class="dv">41</span>)</span>
+<span id="cb58-4"><a href="#cb58-4" tabindex="-1"></a><span class="co"># Returns list elements: scores, cl, scores.other &amp; cl.other</span></span>
+<span id="cb58-5"><a href="#cb58-5" tabindex="-1"></a><span class="fu">scoreplot</span>(simscores)</span></code></pre></div>
+</div>
+</div>
+<div id="subsection-9.6.3-the-mean-variance-relationship" class="section level4">
+<h4>Subsection 9.6.3: The mean-variance relationship</h4>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" tabindex="-1"></a><span class="fu">par</span>(<span class="at">oma=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>))</span>
+<span id="cb59-2"><a href="#cb59-2" tabindex="-1"></a>designG <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(<span class="sc">~</span><span class="dv">0</span><span class="sc">+</span>tissue.mfB)</span>
+<span id="cb59-3"><a href="#cb59-3" tabindex="-1"></a><span class="fu">colnames</span>(designG) <span class="ot">&lt;-</span> <span class="fu">levels</span>(tissue.mfB)</span>
+<span id="cb59-4"><a href="#cb59-4" tabindex="-1"></a>vG <span class="ot">&lt;-</span> <span class="fu">vooma</span>(GolubB, designG, <span class="at">plot=</span><span class="cn">TRUE</span>)         <span class="co"># Panel A</span></span>
+<span id="cb59-5"><a href="#cb59-5" tabindex="-1"></a><span class="fu">plotMDS</span>(vG, <span class="at">pch=</span><span class="fu">unclass</span>(tissue.mfB), <span class="at">cex=</span><span class="fl">0.8</span>)   <span class="co"># Panel B</span></span>
+<span id="cb59-6"><a href="#cb59-6" tabindex="-1"></a>leglabs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;BM:female&quot;</span>,<span class="st">&quot;BM:male&quot;</span>,<span class="st">&quot;PB:female&quot;</span>)</span>
+<span id="cb59-7"><a href="#cb59-7" tabindex="-1"></a><span class="fu">legend</span>(<span class="at">x=</span><span class="st">&quot;bottomright&quot;</span>, <span class="at">bty=</span><span class="st">&quot;n&quot;</span>, <span class="at">legend=</span>leglabs, <span class="at">pch=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)</span>
+<span id="cb59-8"><a href="#cb59-8" tabindex="-1"></a><span class="fu">mtext</span>(<span class="at">side=</span><span class="dv">3</span>, <span class="at">line=</span><span class="fl">0.4</span>, <span class="at">adj=</span><span class="dv">0</span>, <span class="st">&quot;MDS summary plot&quot;</span>)</span>
+<span id="cb59-9"><a href="#cb59-9" tabindex="-1"></a><span class="fu">mtext</span>(<span class="at">side=</span><span class="dv">3</span>, <span class="at">line=</span><span class="sc">-</span><span class="fl">0.275</span>, <span class="at">adj=</span><span class="fl">0.085</span>, <span class="st">&quot;A&quot;</span>, <span class="at">outer=</span><span class="cn">TRUE</span>)</span>
+<span id="cb59-10"><a href="#cb59-10" tabindex="-1"></a><span class="fu">mtext</span>(<span class="at">side=</span><span class="dv">3</span>, <span class="at">line=</span><span class="sc">-</span><span class="fl">0.275</span>, <span class="at">adj=</span><span class="fl">0.585</span>, <span class="st">&quot;B&quot;</span>, <span class="at">outer=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<div id="cross-validation-to-determine-the-optimum-number-of-features" class="section level5">
+<h5>Cross-validation to determine the optimum number of features</h5>
+</div>
+<div id="cross-validation-for-a-range-of-choices-of-number-of-features" class="section level5">
+<h5>Cross-validation for a range of choices of number of features</h5>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" tabindex="-1"></a><span class="do">##  Cross-validation to determine the optimum number of features</span></span>
+<span id="cb60-2"><a href="#cb60-2" tabindex="-1"></a><span class="do">## 10-fold (x4). Warning messages are omitted.</span></span>
+<span id="cb60-3"><a href="#cb60-3" tabindex="-1"></a><span class="do">## Accuracy measure will be: tissue.mfB.cv$acc.cv</span></span>
+<span id="cb60-4"><a href="#cb60-4" tabindex="-1"></a>tissue.mfB.cv <span class="ot">&lt;-</span> <span class="fu">cvdisc</span>(GolubB, <span class="at">cl=</span>tissue.mfB, <span class="at">nfeatures=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">23</span>,</span>
+<span id="cb60-5"><a href="#cb60-5" tabindex="-1"></a><span class="at">nfold=</span><span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">4</span>), <span class="at">print.progress=</span><span class="cn">FALSE</span>)</span>
+<span id="cb60-6"><a href="#cb60-6" tabindex="-1"></a><span class="do">## Defective measures will be in acc.resub (resubstitution)</span></span>
+<span id="cb60-7"><a href="#cb60-7" tabindex="-1"></a><span class="do">## and acc.sel1 (select features prior to cross-validation)</span></span>
+<span id="cb60-8"><a href="#cb60-8" tabindex="-1"></a>tissue.mfB.badcv <span class="ot">&lt;-</span> <span class="fu">defectiveCVdisc</span>(GolubB, <span class="at">cl=</span>tissue.mfB,</span>
+<span id="cb60-9"><a href="#cb60-9" tabindex="-1"></a><span class="at">foldids=</span>tissue.mfB.cv<span class="sc">$</span>folds, <span class="at">nfeatures=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">23</span>)</span>
+<span id="cb60-10"><a href="#cb60-10" tabindex="-1"></a><span class="do">##</span></span>
+<span id="cb60-11"><a href="#cb60-11" tabindex="-1"></a><span class="do">## Calculations for random normal data:</span></span>
+<span id="cb60-12"><a href="#cb60-12" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">43</span>)</span>
+<span id="cb60-13"><a href="#cb60-13" tabindex="-1"></a>rGolubB <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="fu">prod</span>(<span class="fu">dim</span>(GolubB))), <span class="at">nrow=</span><span class="fu">nrow</span>(GolubB))</span>
+<span id="cb60-14"><a href="#cb60-14" tabindex="-1"></a>rtissue.mfB.cv <span class="ot">&lt;-</span> <span class="fu">cvdisc</span>(rGolubB, <span class="at">cl=</span>tissue.mfB, <span class="at">nfeatures=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">23</span>,</span>
+<span id="cb60-15"><a href="#cb60-15" tabindex="-1"></a><span class="at">nfold=</span><span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">4</span>), <span class="at">print.progress=</span><span class="cn">FALSE</span>)</span>
+<span id="cb60-16"><a href="#cb60-16" tabindex="-1"></a>rtissue.mfB.badcv <span class="ot">&lt;-</span> <span class="fu">defectiveCVdisc</span>(rGolubB, <span class="at">cl=</span>tissue.mfB,</span>
+<span id="cb60-17"><a href="#cb60-17" tabindex="-1"></a><span class="at">nfeatures=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">23</span>,</span>
+<span id="cb60-18"><a href="#cb60-18" tabindex="-1"></a><span class="at">foldids=</span>rtissue.mfB.cv<span class="sc">$</span>folds)</span></code></pre></div>
+</div>
+<div id="which-features" class="section level5">
+<h5>Which features?</h5>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" tabindex="-1"></a>genelist <span class="ot">&lt;-</span> <span class="fu">matrix</span>(tissue.mfB.cv<span class="sc">$</span>genelist[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, ,], <span class="at">nrow=</span><span class="dv">3</span>)</span>
+<span id="cb61-2"><a href="#cb61-2" tabindex="-1"></a>tab <span class="ot">&lt;-</span> <span class="fu">table</span>(genelist, <span class="fu">row</span>(genelist))</span>
+<span id="cb61-3"><a href="#cb61-3" tabindex="-1"></a>ord <span class="ot">&lt;-</span> <span class="fu">order</span>(tab[,<span class="dv">1</span>], tab[,<span class="dv">2</span>], tab[,<span class="dv">3</span>], <span class="at">decreasing=</span><span class="cn">TRUE</span>)</span>
+<span id="cb61-4"><a href="#cb61-4" tabindex="-1"></a>tab[ord,]</span></code></pre></div>
+</div>
+</div>
+<div id="subsection-9.6.4-graphs-derived-from-the-cross-validation-process" class="section level4">
+<h4>Subsection 9.6.4: Graphs derived from the cross-validation
+process</h4>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" tabindex="-1"></a><span class="do">## Uses tissue.mfB.acc from above</span></span>
+<span id="cb62-2"><a href="#cb62-2" tabindex="-1"></a>tissue.mfB.scores <span class="ot">&lt;-</span></span>
+<span id="cb62-3"><a href="#cb62-3" tabindex="-1"></a><span class="fu">cvscores</span>(<span class="at">cvlist =</span> tissue.mfB.cv, <span class="at">nfeatures =</span> <span class="dv">3</span>, <span class="at">cl.other =</span> <span class="cn">NULL</span>)</span>
+<span id="cb62-4"><a href="#cb62-4" tabindex="-1"></a><span class="fu">scoreplot</span>(<span class="at">scorelist =</span> tissue.mfB.scores, <span class="at">cl.circle=</span><span class="cn">NULL</span>,</span>
+<span id="cb62-5"><a href="#cb62-5" tabindex="-1"></a><span class="at">prefix=</span><span class="st">&quot;B-cell subset -&quot;</span>, <span class="at">fg=</span><span class="st">&#39;gray&#39;</span>)</span></code></pre></div>
+<div id="the-key-role-of-cross-validation" class="section level5">
+<h5>The key role of cross-validation</h5>
+</div>
+</div>
+<div id="subsection-9.6.5-estimating-contrasts-and-calculating-false-discovery-rates" class="section level4">
+<h4>Subsection 9.6.5: Estimating contrasts, and calculating False
+Discovery Rates</h4>
+<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" tabindex="-1"></a>fitG <span class="ot">&lt;-</span> <span class="fu">lmFit</span>(vG, designG)</span>
+<span id="cb63-2"><a href="#cb63-2" tabindex="-1"></a>contrs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;b_f-b_m&quot;</span>, <span class="st">&quot;b_f-PBm&quot;</span>, <span class="st">&quot;b_m-PBm&quot;</span>)</span>
+<span id="cb63-3"><a href="#cb63-3" tabindex="-1"></a>contr.matrix <span class="ot">&lt;-</span> <span class="fu">makeContrasts</span>(<span class="at">contrasts=</span>contrs,</span>
+<span id="cb63-4"><a href="#cb63-4" tabindex="-1"></a><span class="at">levels=</span><span class="fu">levels</span>(tissue.mfB))</span>
+<span id="cb63-5"><a href="#cb63-5" tabindex="-1"></a>fit2 <span class="ot">&lt;-</span> <span class="fu">contrasts.fit</span>(fitG, contr.matrix)</span>
+<span id="cb63-6"><a href="#cb63-6" tabindex="-1"></a>fit2 <span class="ot">&lt;-</span> <span class="fu">eBayes</span>(fit2)</span></code></pre></div>
+<div id="from-p-values-to-false-discovery-rate-fdr" class="section level5">
+<h5>From <span class="math inline">\(p\)</span>-values to false
+discovery rate (FDR)</h5>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">topTable</span>(fit2, <span class="at">number=</span><span class="dv">5</span>), <span class="at">digits=</span><span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">decideTests</span>(fit2))</span>
+<span id="cb65-2"><a href="#cb65-2" tabindex="-1"></a><span class="do">## Try also</span></span>
+<span id="cb65-3"><a href="#cb65-3" tabindex="-1"></a><span class="do">## summary(decideTests(fit2, p.value=0.001))</span></span></code></pre></div>
+</div>
+<div id="distributional-extremes" class="section level5">
+<h5>Distributional extremes</h5>
+</div>
+</div>
+</div>
+<div id="section-9.7-causal-inference-from-observational-data-balance-and-matching" class="section level3">
+<h3>Section 9.7: Causal inference from observational data — balance and
+matching</h3>
+<div id="subsection-9.7.1-tools-for-the-task" class="section level4">
+<h4>Subsection 9.7.1: Tools for the task</h4>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" tabindex="-1"></a><span class="fu">library</span>(DAAG)</span>
+<span id="cb66-2"><a href="#cb66-2" tabindex="-1"></a><span class="do">## Columns 4:7 are factors; columns 9:10 (re75 &amp; re78) are continuous</span></span>
+<span id="cb66-3"><a href="#cb66-3" tabindex="-1"></a>propmat <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">0</span>, <span class="at">ncol=</span><span class="dv">6</span>, <span class="at">nrow=</span><span class="dv">8</span>)</span>
+<span id="cb66-4"><a href="#cb66-4" tabindex="-1"></a><span class="fu">dimnames</span>(propmat) <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;psid1&quot;</span>, <span class="st">&quot;psid2&quot;</span>, <span class="st">&quot;psid3&quot;</span>, <span class="st">&quot;cps1&quot;</span>, <span class="st">&quot;cps2&quot;</span>, <span class="st">&quot;cps3&quot;</span>,</span>
+<span id="cb66-5"><a href="#cb66-5" tabindex="-1"></a><span class="st">&quot;nsw-ctl&quot;</span>, <span class="st">&quot;nsw-trt&quot;</span>), <span class="fu">names</span>(nswdemo)[<span class="fu">c</span>(<span class="dv">4</span><span class="sc">:</span><span class="dv">7</span>, <span class="dv">9</span><span class="sc">:</span><span class="dv">10</span>)])</span>
+<span id="cb66-6"><a href="#cb66-6" tabindex="-1"></a><span class="cf">for</span>(k <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>){</span>
+<span id="cb66-7"><a href="#cb66-7" tabindex="-1"></a>  dframe <span class="ot">&lt;-</span> <span class="cf">switch</span>(k, psid1, psid2, psid3, cps1, cps2, cps3,</span>
+<span id="cb66-8"><a href="#cb66-8" tabindex="-1"></a>  <span class="fu">subset</span>(nswdemo, trt<span class="sc">==</span><span class="dv">0</span>), <span class="fu">subset</span>(nswdemo, trt<span class="sc">==</span><span class="dv">1</span>))</span>
+<span id="cb66-9"><a href="#cb66-9" tabindex="-1"></a>  propmat[k,] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">sapply</span>(dframe[,<span class="dv">4</span><span class="sc">:</span><span class="dv">7</span>], <span class="cf">function</span>(x){</span>
+<span id="cb66-10"><a href="#cb66-10" tabindex="-1"></a>                   z <span class="ot">&lt;-</span> <span class="fu">table</span>(x); z[<span class="dv">2</span>]<span class="sc">/</span><span class="fu">sum</span>(z)}),</span>
+<span id="cb66-11"><a href="#cb66-11" tabindex="-1"></a>                   <span class="fu">sapply</span>(dframe[,<span class="dv">9</span><span class="sc">:</span><span class="dv">10</span>], <span class="cf">function</span>(x)<span class="fu">sum</span>(x<span class="sc">&gt;</span><span class="dv">0</span>)<span class="sc">/</span><span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(x))))</span>
+<span id="cb66-12"><a href="#cb66-12" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" tabindex="-1"></a>PGtheme <span class="ot">&lt;-</span> DAAG<span class="sc">::</span><span class="fu">DAAGtheme</span>(<span class="at">color=</span><span class="cn">TRUE</span>)</span>
+<span id="cb67-2"><a href="#cb67-2" tabindex="-1"></a><span class="fu">library</span>(DAAG)</span>
+<span id="cb67-3"><a href="#cb67-3" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(grid))<span class="fu">return</span>(<span class="st">&quot;Package &#39;grid&#39; is not installed -- cannot proceed&quot;</span>)</span>
+<span id="cb67-4"><a href="#cb67-4" tabindex="-1"></a>dsetnames <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;nsw-ctl&quot;</span>, <span class="st">&quot;nsw-trt&quot;</span>, <span class="st">&quot;psid1&quot;</span>, <span class="st">&quot;psid2&quot;</span>, <span class="st">&quot;psid3&quot;</span>,</span>
+<span id="cb67-5"><a href="#cb67-5" tabindex="-1"></a>               <span class="st">&quot;cps1&quot;</span>, <span class="st">&quot;cps2&quot;</span>, <span class="st">&quot;cps3&quot;</span>)</span>
+<span id="cb67-6"><a href="#cb67-6" tabindex="-1"></a>colrs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;gray&quot;</span>,<span class="st">&quot;black&quot;</span>, PGtheme<span class="sc">$</span>superpose.line<span class="sc">$</span>col[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>])</span>
+<span id="cb67-7"><a href="#cb67-7" tabindex="-1"></a>lty <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>)</span>
+<span id="cb67-8"><a href="#cb67-8" tabindex="-1"></a>lwd <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="fl">0.75</span>,<span class="fl">0.75</span>,<span class="fl">0.75</span>,<span class="fl">0.75</span>)</span>
+<span id="cb67-9"><a href="#cb67-9" tabindex="-1"></a>denplot <span class="ot">&lt;-</span></span>
+<span id="cb67-10"><a href="#cb67-10" tabindex="-1"></a>  <span class="cf">function</span>(<span class="at">sel=</span><span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>,<span class="dv">6</span><span class="sc">:</span><span class="dv">8</span>), <span class="at">yvar=</span><span class="st">&quot;re75&quot;</span>, <span class="at">offset=</span><span class="dv">30</span>, <span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">1.75</span>),</span>
+<span id="cb67-11"><a href="#cb67-11" tabindex="-1"></a>    <span class="at">from=</span><span class="cn">NULL</span>, <span class="at">at=</span><span class="fu">c</span>(.<span class="dv">5</span>,<span class="dv">1</span>,<span class="fl">1.5</span>), <span class="at">labels=</span><span class="fu">paste</span>(at), <span class="at">bw=</span><span class="st">&quot;nrd0&quot;</span>,</span>
+<span id="cb67-12"><a href="#cb67-12" tabindex="-1"></a>    <span class="at">ylab=</span><span class="st">&quot;Density&quot;</span>, <span class="at">takelog=</span><span class="cn">TRUE</span>, <span class="at">col.axis=</span><span class="st">&quot;black&quot;</span>){</span>
+<span id="cb67-13"><a href="#cb67-13" tabindex="-1"></a>      nzre <span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(<span class="fu">list</span>(<span class="fu">subset</span>(nswdemo, trt<span class="sc">==</span><span class="dv">0</span>),</span>
+<span id="cb67-14"><a href="#cb67-14" tabindex="-1"></a>                                 <span class="fu">subset</span>(nswdemo, trt<span class="sc">==</span><span class="dv">1</span>),</span>
+<span id="cb67-15"><a href="#cb67-15" tabindex="-1"></a>                                 psid1, psid2, psid3, cps1, cps2, cps3)[sel],</span>
+<span id="cb67-16"><a href="#cb67-16" tabindex="-1"></a>                            <span class="cf">function</span>(x){z <span class="ot">&lt;-</span> x[,yvar]; z[z<span class="sc">&gt;</span><span class="dv">0</span>]}))</span>
+<span id="cb67-17"><a href="#cb67-17" tabindex="-1"></a>num <span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(<span class="fu">list</span>(<span class="fu">subset</span>(nswdemo, trt<span class="sc">==</span><span class="dv">0</span>), <span class="fu">subset</span>(nswdemo, trt<span class="sc">==</span><span class="dv">1</span>),</span>
+<span id="cb67-18"><a href="#cb67-18" tabindex="-1"></a>                          psid1, psid2, psid3, cps1, cps2, cps3),</span>
+<span id="cb67-19"><a href="#cb67-19" tabindex="-1"></a>                     <span class="cf">function</span>(x){z <span class="ot">&lt;-</span> x[,yvar]; <span class="fu">sum</span>(z<span class="sc">&gt;</span><span class="dv">0</span>)}))</span>
+<span id="cb67-20"><a href="#cb67-20" tabindex="-1"></a>xy <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">nzre=</span>nzre, <span class="at">fac =</span> <span class="fu">factor</span>(<span class="fu">rep</span>(dsetnames[sel], num[sel]),</span>
+<span id="cb67-21"><a href="#cb67-21" tabindex="-1"></a>                 <span class="at">levels=</span>dsetnames[sel]))</span>
+<span id="cb67-22"><a href="#cb67-22" tabindex="-1"></a><span class="cf">if</span>(takelog) {</span>
+<span id="cb67-23"><a href="#cb67-23" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">log</span>(xy<span class="sc">$</span>nzre<span class="sc">+</span>offset)</span>
+<span id="cb67-24"><a href="#cb67-24" tabindex="-1"></a>xlab <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="st">&quot;log(&quot;</span>, yvar, <span class="st">&quot;+&quot;</span>, offset, <span class="st">&quot;)&quot;</span>, <span class="at">sep=</span><span class="st">&quot;&quot;</span>)} <span class="cf">else</span> </span>
+<span id="cb67-25"><a href="#cb67-25" tabindex="-1"></a>  {</span>
+<span id="cb67-26"><a href="#cb67-26" tabindex="-1"></a>  y <span class="ot">&lt;-</span> xy<span class="sc">$</span>nzre</span>
+<span id="cb67-27"><a href="#cb67-27" tabindex="-1"></a>  xlab <span class="ot">&lt;-</span> yvar</span>
+<span id="cb67-28"><a href="#cb67-28" tabindex="-1"></a>}</span>
+<span id="cb67-29"><a href="#cb67-29" tabindex="-1"></a><span class="fu">densityplot</span>(<span class="sc">~</span> y, <span class="at">groups=</span>fac, <span class="at">data=</span>xy, <span class="at">bw=</span>bw, <span class="at">from=</span>from,</span>
+<span id="cb67-30"><a href="#cb67-30" tabindex="-1"></a>  <span class="at">scales=</span><span class="fu">list</span>(<span class="at">y=</span><span class="fu">list</span>(<span class="at">at=</span>at, <span class="at">labels=</span>labels, <span class="at">col=</span>col.axis), <span class="at">tck=</span><span class="fl">0.25</span>),</span>
+<span id="cb67-31"><a href="#cb67-31" tabindex="-1"></a>  <span class="at">plot.points=</span><span class="cn">FALSE</span>, <span class="at">col=</span>colrs[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>], <span class="at">lwd=</span>lwd, <span class="at">lty=</span>lty, </span>
+<span id="cb67-32"><a href="#cb67-32" tabindex="-1"></a>  <span class="at">key=</span><span class="fu">list</span>(<span class="at">x=</span><span class="fl">0.01</span>, <span class="at">y=</span><span class="fl">0.99</span>, <span class="at">text=</span><span class="fu">list</span>(dsetnames[sel[<span class="dv">3</span><span class="sc">:</span><span class="dv">5</span>]]), <span class="at">col=</span>colrs[<span class="dv">3</span><span class="sc">:</span><span class="dv">5</span>],</span>
+<span id="cb67-33"><a href="#cb67-33" tabindex="-1"></a>           <span class="at">cex=</span><span class="fl">0.75</span>, <span class="at">lines=</span><span class="fu">list</span>(<span class="at">lwd=</span><span class="fu">rep</span>(<span class="fl">1.5</span>,<span class="dv">3</span>)), <span class="at">between=</span><span class="dv">1</span>),</span>
+<span id="cb67-34"><a href="#cb67-34" tabindex="-1"></a>  <span class="at">par.settings=</span><span class="fu">list</span>(<span class="at">col=</span>colrs, <span class="at">lty=</span>lty, <span class="at">cex=</span><span class="fl">0.75</span>, <span class="at">lwd=</span>lwd, </span>
+<span id="cb67-35"><a href="#cb67-35" tabindex="-1"></a>                    <span class="at">fontsize=</span><span class="fu">list</span>(<span class="at">text=</span><span class="dv">9</span>, <span class="at">points=</span><span class="dv">5</span>)),</span>
+<span id="cb67-36"><a href="#cb67-36" tabindex="-1"></a>  <span class="at">fg=</span><span class="st">&quot;gray&quot;</span>, <span class="at">ylim=</span>ylim, <span class="at">ylab=</span>ylab, <span class="at">xlab=</span>xlab)</span>
+<span id="cb67-37"><a href="#cb67-37" tabindex="-1"></a>}</span>
+<span id="cb67-38"><a href="#cb67-38" tabindex="-1"></a><span class="do">## Plot base graph; overlay with lattice graphs on same page</span></span>
+<span id="cb67-39"><a href="#cb67-39" tabindex="-1"></a><span class="fu">par</span>(<span class="at">fig=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span>), <span class="at">mar=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>))</span>
+<span id="cb67-40"><a href="#cb67-40" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">1</span>,<span class="dv">0</span><span class="sc">:</span><span class="dv">1</span>, <span class="at">axes=</span><span class="cn">FALSE</span>, <span class="at">type=</span><span class="st">&quot;n&quot;</span>, <span class="at">bty=</span><span class="st">&quot;n&quot;</span>, <span class="at">xlab=</span><span class="st">&quot;&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;&quot;</span>)</span>
+<span id="cb67-41"><a href="#cb67-41" tabindex="-1"></a><span class="fu">legend</span>(<span class="at">x=</span><span class="st">&quot;top&quot;</span>,<span class="at">legend=</span>dsetnames[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>], <span class="at">lty=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="at">lwd=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="fl">0.75</span>),</span>
+<span id="cb67-42"><a href="#cb67-42" tabindex="-1"></a>       <span class="at">col=</span>colrs[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>], <span class="at">bty=</span><span class="st">&quot;n&quot;</span>, <span class="at">ncol=</span><span class="dv">2</span>, <span class="at">yjust=</span><span class="fl">0.75</span>)</span>
+<span id="cb67-43"><a href="#cb67-43" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">denplot</span>(), <span class="at">position=</span><span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.32</span>, <span class="fl">0.505</span>), <span class="at">newpage=</span><span class="cn">FALSE</span>)</span>
+<span id="cb67-44"><a href="#cb67-44" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">denplot</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">ylab=</span><span class="st">&quot; &quot;</span>, <span class="at">col.axis=</span><span class="st">&quot;white&quot;</span>),</span>
+<span id="cb67-45"><a href="#cb67-45" tabindex="-1"></a>      <span class="at">position=</span><span class="fu">c</span>(<span class="fl">0.21</span>, <span class="dv">0</span>, .<span class="dv">53</span>, <span class="fl">0.505</span>), <span class="at">newpage=</span><span class="cn">FALSE</span>)</span>
+<span id="cb67-46"><a href="#cb67-46" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">denplot</span>(<span class="at">ylab=</span><span class="st">&quot; &quot;</span>, <span class="at">yvar=</span><span class="st">&quot;re78&quot;</span>, <span class="at">col.axis=</span><span class="st">&quot;white&quot;</span>),</span>
+<span id="cb67-47"><a href="#cb67-47" tabindex="-1"></a>      <span class="at">position=</span><span class="fu">c</span>(<span class="fl">0.47</span>, <span class="dv">0</span>, <span class="fl">0.79</span>, <span class="fl">0.505</span>), <span class="at">newpage=</span><span class="cn">FALSE</span>)</span>
+<span id="cb67-48"><a href="#cb67-48" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">denplot</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">ylab=</span><span class="st">&quot; &quot;</span>, <span class="at">yvar=</span><span class="st">&quot;re78&quot;</span>, <span class="at">col.axis=</span><span class="st">&quot;white&quot;</span>),</span>
+<span id="cb67-49"><a href="#cb67-49" tabindex="-1"></a>      <span class="at">position=</span><span class="fu">c</span>(<span class="fl">0.68</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="fl">0.505</span>), <span class="at">newpage=</span><span class="cn">FALSE</span>)</span>
+<span id="cb67-50"><a href="#cb67-50" tabindex="-1"></a><span class="do">## Age</span></span>
+<span id="cb67-51"><a href="#cb67-51" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">denplot</span>(<span class="at">yvar=</span><span class="st">&quot;age&quot;</span>, <span class="at">takelog=</span><span class="cn">FALSE</span>, <span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">0.1</span>), <span class="at">from=</span><span class="dv">16</span>,</span>
+<span id="cb67-52"><a href="#cb67-52" tabindex="-1"></a>      <span class="at">at=</span><span class="fu">c</span>(.<span class="dv">02</span>,.<span class="dv">04</span>,.<span class="dv">06</span>,.<span class="dv">08</span>), <span class="at">labels=</span><span class="fu">c</span>(<span class="st">&quot;.02&quot;</span>,<span class="st">&quot;.04&quot;</span>,<span class="st">&quot;.06&quot;</span>,<span class="st">&quot;.08&quot;</span>)),</span>
+<span id="cb67-53"><a href="#cb67-53" tabindex="-1"></a>      <span class="at">position=</span><span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.475</span>, <span class="fl">0.32</span>, .<span class="dv">98</span>), <span class="at">newpage=</span><span class="cn">FALSE</span>)</span>
+<span id="cb67-54"><a href="#cb67-54" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">denplot</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">yvar=</span><span class="st">&quot;age&quot;</span>, <span class="at">takelog=</span><span class="cn">FALSE</span>, <span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">0.1</span>), <span class="at">from=</span><span class="dv">16</span>,</span>
+<span id="cb67-55"><a href="#cb67-55" tabindex="-1"></a>      <span class="at">at=</span><span class="fu">c</span>(.<span class="dv">02</span>,.<span class="dv">04</span>,.<span class="dv">06</span>,.<span class="dv">08</span>), <span class="at">labels=</span><span class="fu">c</span>(<span class="st">&quot;.02&quot;</span>,<span class="st">&quot;.04&quot;</span>,<span class="st">&quot;.06&quot;</span>,<span class="st">&quot;.08&quot;</span>),</span>
+<span id="cb67-56"><a href="#cb67-56" tabindex="-1"></a>      <span class="at">ylab=</span><span class="st">&quot; &quot;</span>, <span class="at">col.axis=</span><span class="st">&quot;white&quot;</span>),</span>
+<span id="cb67-57"><a href="#cb67-57" tabindex="-1"></a>      <span class="at">position=</span><span class="fu">c</span>(<span class="fl">0.21</span>, <span class="fl">0.475</span>, .<span class="dv">53</span>, .<span class="dv">98</span>), <span class="at">newpage=</span><span class="cn">FALSE</span>)</span>
+<span id="cb67-58"><a href="#cb67-58" tabindex="-1"></a><span class="do">## educ</span></span>
+<span id="cb67-59"><a href="#cb67-59" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">denplot</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">yvar=</span><span class="st">&quot;educ&quot;</span>, <span class="at">takelog=</span><span class="cn">FALSE</span>, <span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">0.5</span>), <span class="at">bw=</span><span class="fl">0.5</span>,</span>
+<span id="cb67-60"><a href="#cb67-60" tabindex="-1"></a>      <span class="at">at=</span><span class="fu">c</span>(.<span class="dv">1</span>,.<span class="dv">2</span>,.<span class="dv">3</span>,.<span class="dv">4</span>), <span class="at">ylab=</span><span class="st">&quot; &quot;</span>),</span>
+<span id="cb67-61"><a href="#cb67-61" tabindex="-1"></a>      <span class="at">position=</span><span class="fu">c</span>(<span class="fl">0.47</span>, <span class="fl">0.475</span>, .<span class="dv">79</span>, .<span class="dv">98</span>), <span class="at">newpage=</span><span class="cn">FALSE</span>)</span>
+<span id="cb67-62"><a href="#cb67-62" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">denplot</span>(<span class="at">yvar=</span><span class="st">&quot;educ&quot;</span>, <span class="at">takelog=</span><span class="cn">FALSE</span>, <span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">0.75</span>), <span class="at">bw=</span><span class="fl">0.5</span>,</span>
+<span id="cb67-63"><a href="#cb67-63" tabindex="-1"></a>      <span class="at">at=</span><span class="fu">c</span>(.<span class="dv">1</span>,.<span class="dv">2</span>,.<span class="dv">3</span>,.<span class="dv">4</span>), <span class="at">ylab=</span><span class="st">&quot; &quot;</span>, <span class="at">col.axis=</span><span class="st">&quot;white&quot;</span>),</span>
+<span id="cb67-64"><a href="#cb67-64" tabindex="-1"></a>      <span class="at">position=</span><span class="fu">c</span>(<span class="fl">0.68</span>, <span class="fl">0.475</span>, <span class="dv">1</span>, .<span class="dv">98</span>), <span class="at">newpage=</span><span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" tabindex="-1"></a>addControl <span class="ot">&lt;-</span></span>
+<span id="cb68-2"><a href="#cb68-2" tabindex="-1"></a><span class="cf">function</span>(control, <span class="at">offset=</span><span class="dv">30</span>){</span>
+<span id="cb68-3"><a href="#cb68-3" tabindex="-1"></a>  nam <span class="ot">&lt;-</span> <span class="fu">deparse</span>(<span class="fu">substitute</span>(control))</span>
+<span id="cb68-4"><a href="#cb68-4" tabindex="-1"></a>  <span class="cf">if</span>(nam<span class="sc">==</span><span class="st">&quot;nswdemo&quot;</span>)nsw0 <span class="ot">&lt;-</span> nswdemo <span class="cf">else</span></span>
+<span id="cb68-5"><a href="#cb68-5" tabindex="-1"></a>    nsw0 <span class="ot">&lt;-</span> <span class="fu">rbind</span>(control, <span class="fu">subset</span>(DAAG<span class="sc">::</span>nswdemo, trt<span class="sc">==</span><span class="dv">1</span>))</span>
+<span id="cb68-6"><a href="#cb68-6" tabindex="-1"></a>  nsw0<span class="sc">$</span>z75 <span class="ot">&lt;-</span> <span class="fu">factor</span>(nsw0<span class="sc">$</span>re75<span class="sc">==</span><span class="dv">0</span>, <span class="at">labels=</span><span class="fu">c</span>(<span class="st">&quot;0&quot;</span>,<span class="st">&quot;&gt;0&quot;</span>))</span>
+<span id="cb68-7"><a href="#cb68-7" tabindex="-1"></a>  nsw0<span class="sc">$</span>ethnicid <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="fu">with</span>(nsw0, <span class="fu">ifelse</span>(black<span class="sc">==</span><span class="dv">1</span>, <span class="st">&quot;black&quot;</span>,</span>
+<span id="cb68-8"><a href="#cb68-8" tabindex="-1"></a>    <span class="fu">ifelse</span>(hisp<span class="sc">==</span><span class="dv">1</span>, <span class="st">&quot;hisp&quot;</span>, <span class="st">&quot;other&quot;</span>))), <span class="at">levels=</span><span class="fu">c</span>(<span class="st">&quot;other&quot;</span>,<span class="st">&quot;black&quot;</span>,<span class="st">&quot;hisp&quot;</span>))</span>
+<span id="cb68-9"><a href="#cb68-9" tabindex="-1"></a>nsw0 <span class="ot">&lt;-</span> nsw0[, <span class="sc">-</span><span class="fu">match</span>(<span class="fu">c</span>(<span class="st">&quot;black&quot;</span>,<span class="st">&quot;hisp&quot;</span>), <span class="fu">names</span>(nsw0))]</span>
+<span id="cb68-10"><a href="#cb68-10" tabindex="-1"></a>nsw0</span>
+<span id="cb68-11"><a href="#cb68-11" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" tabindex="-1"></a><span class="do">## Create dataset that will be used for later analyses</span></span>
+<span id="cb69-2"><a href="#cb69-2" tabindex="-1"></a>nsw <span class="ot">&lt;-</span> <span class="fu">addControl</span>(psid1)</span>
+<span id="cb69-3"><a href="#cb69-3" tabindex="-1"></a>nsw <span class="ot">&lt;-</span> <span class="fu">within</span>(nsw, {re75log <span class="ot">&lt;-</span> <span class="fu">log</span>(re75<span class="sc">+</span><span class="dv">30</span>);</span>
+<span id="cb69-4"><a href="#cb69-4" tabindex="-1"></a>                    re78log <span class="ot">&lt;-</span> <span class="fu">log</span>(re78<span class="sc">+</span><span class="dv">30</span>);</span>
+<span id="cb69-5"><a href="#cb69-5" tabindex="-1"></a>                    trt <span class="ot">&lt;-</span> <span class="fu">factor</span>(trt, <span class="at">labels=</span><span class="fu">c</span>(<span class="st">&quot;Control&quot;</span>,<span class="st">&quot;Treat&quot;</span>))})</span>
+<span id="cb69-6"><a href="#cb69-6" tabindex="-1"></a><span class="do">## A treated values only dataset will be required below</span></span>
+<span id="cb69-7"><a href="#cb69-7" tabindex="-1"></a>trtdat <span class="ot">&lt;-</span> <span class="fu">subset</span>(nsw, trt<span class="sc">==</span><span class="st">&quot;Treat&quot;</span>)</span>
+<span id="cb69-8"><a href="#cb69-8" tabindex="-1"></a>trtdat<span class="sc">$</span>pres74 <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="sc">!</span><span class="fu">is.na</span>(trtdat<span class="sc">$</span>re74), <span class="at">labels=</span><span class="fu">c</span>(<span class="st">&quot;&lt;NA&gt;&quot;</span>,<span class="st">&quot;pres&quot;</span>))</span>
+<span id="cb69-9"><a href="#cb69-9" tabindex="-1"></a><span class="fu">table</span>(trtdat<span class="sc">$</span>pres74)</span></code></pre></div>
+<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" tabindex="-1"></a><span class="fu">with</span>(trtdat, <span class="fu">table</span>(pres74,z75))</span></code></pre></div>
+</div>
+<div id="subsection-9.7.2-regression-comparisons" class="section level4">
+<h4>Subsection 9.7.2: Regression comparisons</h4>
+<div id="regression-calculations" class="section level5">
+<h5>Regression calculations</h5>
+<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" tabindex="-1"></a>nsw.gam <span class="ot">&lt;-</span> <span class="fu">gam</span>(<span class="fu">log</span>(re78<span class="sc">+</span><span class="dv">30</span>)<span class="sc">~</span> trt <span class="sc">+</span> ethnicid <span class="sc">+</span> z75 <span class="sc">+</span> nodeg <span class="sc">+</span> <span class="fu">s</span>(age) <span class="sc">+</span></span>
+<span id="cb71-2"><a href="#cb71-2" tabindex="-1"></a>               <span class="fu">s</span>(educ) <span class="sc">+</span> <span class="fu">log</span>(re75<span class="sc">+</span><span class="dv">30</span>), <span class="at">data=</span>nsw)</span></code></pre></div>
+</div>
+</div>
+<div id="subsection-9.7.3-the-use-of-scores-to-replace-covariates" class="section level4">
+<h4>Subsection 9.7.3: The use of scores to replace covariates</h4>
+</div>
+<div id="subsection-9.7.4-two-dimensional-representation-using-randomforest-proximities" class="section level4">
+<h4>Subsection 9.7.4: Two-dimensional representation using randomForest
+proximities</h4>
+<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(randomForest))</span>
+<span id="cb72-2"><a href="#cb72-2" tabindex="-1"></a>form <span class="ot">&lt;-</span> trt <span class="sc">~</span> age <span class="sc">+</span> educ <span class="sc">+</span> ethnicid <span class="sc">+</span> marr <span class="sc">+</span> nodeg <span class="sc">+</span> z75 <span class="sc">+</span> re75log</span>
+<span id="cb72-3"><a href="#cb72-3" tabindex="-1"></a>nsw.rf <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(form, <span class="at">data=</span>nsw, <span class="at">sampsize=</span><span class="fu">c</span>(<span class="dv">297</span>,<span class="dv">297</span>))</span>
+<span id="cb72-4"><a href="#cb72-4" tabindex="-1"></a>p.rf <span class="ot">&lt;-</span> <span class="fu">predict</span>(nsw.rf,<span class="at">type=</span><span class="st">&quot;prob&quot;</span>)[,<span class="dv">2</span>]</span>
+<span id="cb72-5"><a href="#cb72-5" tabindex="-1"></a>sc.rf <span class="ot">&lt;-</span> <span class="fu">log</span>((p.rf<span class="fl">+0.001</span>)<span class="sc">/</span>(<span class="dv">1</span><span class="sc">-</span>p.rf<span class="fl">+0.001</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" tabindex="-1"></a>omitn <span class="ot">&lt;-</span> <span class="fu">match</span>(<span class="fu">c</span>(<span class="st">&quot;PropScore&quot;</span>,<span class="st">&quot;weights&quot;</span>,<span class="st">&quot;subclass&quot;</span>), <span class="fu">names</span>(dat2RF), <span class="at">nomatch=</span><span class="dv">0</span>)</span>
+<span id="cb73-2"><a href="#cb73-2" tabindex="-1"></a>matchISO.rf <span class="ot">&lt;-</span><span class="fu">matchit</span>(trt <span class="sc">~</span> age <span class="sc">+</span> educ <span class="sc">+</span> ethnicid <span class="sc">+</span> marr <span class="sc">+</span> nodeg <span class="sc">+</span> z75 <span class="sc">+</span></span>
+<span id="cb73-3"><a href="#cb73-3" tabindex="-1"></a>                      re75log, <span class="at">ratio=</span><span class="dv">1</span>, <span class="at">data=</span>dat2RF[,<span class="sc">-</span>omitn], <span class="at">distance=</span>isoScores[,<span class="dv">1</span>])</span>
+<span id="cb73-4"><a href="#cb73-4" tabindex="-1"></a><span class="do">## summary(match.rf,un=F,improvement=F)</span></span>
+<span id="cb73-5"><a href="#cb73-5" tabindex="-1"></a><span class="do">## summary(match.rf, un=F, interactions=T, improvement=F)$sum.matched[,1:4]</span></span>
+<span id="cb73-6"><a href="#cb73-6" tabindex="-1"></a><span class="do">## In the first place, look only at the first 4 columns</span></span></code></pre></div>
+<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" tabindex="-1"></a>dat1RF <span class="ot">&lt;-</span> <span class="fu">match.data</span>(matchISO.rf, <span class="at">distance=</span><span class="st">&quot;PropScore&quot;</span>)</span>
+<span id="cb74-2"><a href="#cb74-2" tabindex="-1"></a>dat1RF.lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(re78log <span class="sc">~</span> trt, <span class="at">data =</span> dat1RF, <span class="at">weights =</span> weights)</span>
+<span id="cb74-3"><a href="#cb74-3" tabindex="-1"></a><span class="fu">library</span>(sandwich)   <span class="co"># Allows use of `vcovCL()` from the `sandwich` package</span></span>
+<span id="cb74-4"><a href="#cb74-4" tabindex="-1"></a>lmtest<span class="sc">::</span><span class="fu">coeftest</span>(dat1RF.lm, <span class="at">vcov. =</span> vcovCL, <span class="at">cluster =</span> <span class="sc">~</span>subclass)</span>
+<span id="cb74-5"><a href="#cb74-5" tabindex="-1"></a><span class="do">## Check for increase in number with non-zero earnings</span></span>
+<span id="cb74-6"><a href="#cb74-6" tabindex="-1"></a>dat1RF.glm <span class="ot">&lt;-</span> <span class="fu">glm</span>(<span class="fu">I</span>(re78<span class="sc">&gt;</span><span class="dv">0</span>) <span class="sc">~</span> trt, <span class="at">data =</span> dat1RF, <span class="at">weights =</span> weights, </span>
+<span id="cb74-7"><a href="#cb74-7" tabindex="-1"></a>                  <span class="at">family=</span>binomial)</span>
+<span id="cb74-8"><a href="#cb74-8" tabindex="-1"></a>lmtest<span class="sc">::</span><span class="fu">coeftest</span>(dat1RF.glm, <span class="at">vcov. =</span> vcovCL, <span class="at">cluster =</span> <span class="sc">~</span>subclass)</span></code></pre></div>
+<div id="derivation-and-investigation-of-scores" class="section level5">
+<h5>Derivation and investigation of scores</h5>
+<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" tabindex="-1"></a><span class="fu">library</span>(mgcv)</span>
+<span id="cb75-2"><a href="#cb75-2" tabindex="-1"></a>formG <span class="ot">&lt;-</span> trt <span class="sc">~</span> ethnicid <span class="sc">+</span> marr<span class="sc">+</span> z75 <span class="sc">+</span> <span class="fu">s</span>(age) <span class="sc">+</span> <span class="fu">s</span>(educ) <span class="sc">+</span> <span class="fu">s</span>(re75log)</span>
+<span id="cb75-3"><a href="#cb75-3" tabindex="-1"></a>nsw.gam <span class="ot">&lt;-</span> <span class="fu">gam</span>(formG, <span class="at">family=</span><span class="fu">binomial</span>(<span class="at">link=</span><span class="st">&quot;logit&quot;</span>), <span class="at">data=</span>nsw)</span>
+<span id="cb75-4"><a href="#cb75-4" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(nsw.gam, <span class="at">type=</span><span class="st">&#39;response&#39;</span>)</span>
+<span id="cb75-5"><a href="#cb75-5" tabindex="-1"></a><span class="fu">table</span>(nsw<span class="sc">$</span>trt, <span class="fu">round</span>(pred))</span>
+<span id="cb75-6"><a href="#cb75-6" tabindex="-1"></a><span class="do">## Alternative</span></span>
+<span id="cb75-7"><a href="#cb75-7" tabindex="-1"></a><span class="fu">library</span>(splines)  <span class="do">## Fit normal cubic splines using splines::ns()</span></span>
+<span id="cb75-8"><a href="#cb75-8" tabindex="-1"></a>formNS <span class="ot">&lt;-</span> trt <span class="sc">~</span> ethnicid <span class="sc">+</span> marr<span class="sc">+</span> z75 <span class="sc">+</span> <span class="fu">ns</span>(age,<span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb75-9"><a href="#cb75-9" tabindex="-1"></a><span class="fu">ns</span>(educ) <span class="sc">+</span> <span class="fu">ns</span>(re75log,<span class="dv">3</span>)</span>
+<span id="cb75-10"><a href="#cb75-10" tabindex="-1"></a>nsw.glm <span class="ot">&lt;-</span> <span class="fu">glm</span>(formNS, <span class="at">family=</span><span class="fu">binomial</span>(<span class="at">link=</span><span class="st">&quot;logit&quot;</span>), <span class="at">data=</span>nsw)</span>
+<span id="cb75-11"><a href="#cb75-11" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(nsw.glm, <span class="at">type=</span><span class="st">&#39;response&#39;</span>)</span>
+<span id="cb75-12"><a href="#cb75-12" tabindex="-1"></a><span class="fu">table</span>(nsw<span class="sc">$</span>trt, <span class="fu">round</span>(pred))</span>
+<span id="cb75-13"><a href="#cb75-13" tabindex="-1"></a><span class="fu">cbind</span>(<span class="fu">AIC</span>(nsw.glm,nsw.gam), <span class="fu">BIC</span>(nsw.glm, nsw.gam))</span></code></pre></div>
+<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" tabindex="-1"></a><span class="do">## Include factor by factor and variable interactions with ethnicid</span></span>
+<span id="cb76-2"><a href="#cb76-2" tabindex="-1"></a><span class="do">## and marr (Result not shown)</span></span>
+<span id="cb76-3"><a href="#cb76-3" tabindex="-1"></a>formGx <span class="ot">&lt;-</span> trt <span class="sc">~</span> (ethnicid<span class="sc">+</span>marr<span class="sc">+</span>z75)<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> <span class="fu">s</span>(age, <span class="at">by=</span>ethnicid)<span class="sc">+</span></span>
+<span id="cb76-4"><a href="#cb76-4" tabindex="-1"></a>                <span class="fu">s</span>(educ, <span class="at">by=</span>ethnicid) <span class="sc">+</span> <span class="fu">s</span>(re75log,<span class="at">by=</span>ethnicid)<span class="sc">+</span></span>
+<span id="cb76-5"><a href="#cb76-5" tabindex="-1"></a>                <span class="fu">s</span>(age, <span class="at">by=</span>marr)<span class="sc">+</span> <span class="fu">s</span>(educ, <span class="at">by=</span>marr) <span class="sc">+</span> <span class="fu">s</span>(re75log,<span class="at">by=</span>marr)</span>
+<span id="cb76-6"><a href="#cb76-6" tabindex="-1"></a>nswx.gam <span class="ot">&lt;-</span> <span class="fu">gam</span>(<span class="at">formula =</span> formGx, <span class="at">data =</span> nsw, <span class="at">family=</span><span class="fu">binomial</span>(<span class="at">link =</span> <span class="st">&quot;logit&quot;</span>))</span>
+<span id="cb76-7"><a href="#cb76-7" tabindex="-1"></a>predx <span class="ot">&lt;-</span> <span class="fu">predict</span>(nswx.gam, <span class="at">type=</span><span class="st">&#39;response&#39;</span>)</span>
+<span id="cb76-8"><a href="#cb76-8" tabindex="-1"></a><span class="fu">table</span>(nsw<span class="sc">$</span>trt, <span class="fu">round</span>(predx))</span>
+<span id="cb76-9"><a href="#cb76-9" tabindex="-1"></a><span class="fu">AIC</span>(nsw.glm,nsw.gam,nswx.gam)</span></code></pre></div>
+<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" tabindex="-1"></a><span class="fu">library</span>(MatchIt)</span>
+<span id="cb77-2"><a href="#cb77-2" tabindex="-1"></a><span class="do">## Use data frame that omits re74. Otherwise matchit() will generate NAs</span></span>
+<span id="cb77-3"><a href="#cb77-3" tabindex="-1"></a><span class="do">## where they occur in re74, even though re74 is not in the model formula.</span></span>
+<span id="cb77-4"><a href="#cb77-4" tabindex="-1"></a>nswG <span class="ot">&lt;-</span> nsw[, <span class="fu">c</span>(<span class="st">&quot;trt&quot;</span>,<span class="st">&quot;age&quot;</span>,<span class="st">&quot;educ&quot;</span>,<span class="st">&quot;ethnicid&quot;</span>, <span class="st">&quot;marr&quot;</span>,<span class="st">&quot;nodeg&quot;</span>,<span class="st">&quot;z75&quot;</span>,</span>
+<span id="cb77-5"><a href="#cb77-5" tabindex="-1"></a>                <span class="st">&quot;re75log&quot;</span>,<span class="st">&quot;re78log&quot;</span>,<span class="st">&quot;re78&quot;</span>)]</span>
+<span id="cb77-6"><a href="#cb77-6" tabindex="-1"></a>formG <span class="ot">&lt;-</span> trt <span class="sc">~</span> ethnicid <span class="sc">+</span> marr<span class="sc">+</span> z75 <span class="sc">+</span> <span class="fu">s</span>(age) <span class="sc">+</span> <span class="fu">s</span>(educ) <span class="sc">+</span> <span class="fu">s</span>(re75log)</span>
+<span id="cb77-7"><a href="#cb77-7" tabindex="-1"></a>match.gam <span class="ot">&lt;-</span> <span class="fu">matchit</span>(<span class="at">formula =</span> formG, <span class="at">data =</span> nswG, <span class="at">method =</span> <span class="st">&quot;nearest&quot;</span>,</span>
+<span id="cb77-8"><a href="#cb77-8" tabindex="-1"></a>                     <span class="at">distance =</span> <span class="st">&quot;gam&quot;</span>, <span class="at">link =</span> <span class="st">&quot;logit&quot;</span>, <span class="at">reestimate=</span><span class="cn">TRUE</span>)</span>
+<span id="cb77-9"><a href="#cb77-9" tabindex="-1"></a>datG <span class="ot">&lt;-</span> <span class="fu">match.data</span>(match.gam, <span class="at">distance=</span><span class="st">&quot;PropScore&quot;</span>)</span>
+<span id="cb77-10"><a href="#cb77-10" tabindex="-1"></a><span class="do">## Summary information</span></span>
+<span id="cb77-11"><a href="#cb77-11" tabindex="-1"></a>match.gam</span>
+<span id="cb77-12"><a href="#cb77-12" tabindex="-1"></a><span class="do">## summary(match.gam,un=F,improvement=F)</span></span>
+<span id="cb77-13"><a href="#cb77-13" tabindex="-1"></a><span class="do">## summary(match.gam, un=F, interactions=T, improvement=F)$sum.matched[,1:4]</span></span>
+<span id="cb77-14"><a href="#cb77-14" tabindex="-1"></a><span class="do">## In the first place, look only at the first 4 columns</span></span></code></pre></div>
+<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(gridExtra))</span>
+<span id="cb78-2"><a href="#cb78-2" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(ggplot2))</span>
+<span id="cb78-3"><a href="#cb78-3" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(cobalt))</span>
+<span id="cb78-4"><a href="#cb78-4" tabindex="-1"></a>gg1<span class="ot">&lt;-</span> cobalt<span class="sc">::</span><span class="fu">love.plot</span>(match.gam, <span class="at">position=</span><span class="st">&quot;bottom&quot;</span>, <span class="at">grid=</span><span class="cn">TRUE</span>,</span>
+<span id="cb78-5"><a href="#cb78-5" tabindex="-1"></a>                        <span class="at">star.char=</span><span class="st">&quot;&quot;</span>,<span class="at">stars=</span><span class="st">&#39;raw&#39;</span>) <span class="sc">+</span></span>
+<span id="cb78-6"><a href="#cb78-6" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;A: Differences from balance&quot;</span>) <span class="sc">+</span></span>
+<span id="cb78-7"><a href="#cb78-7" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust=</span><span class="dv">0</span>, <span class="at">vjust=</span><span class="fl">0.5</span>, <span class="at">size=</span><span class="dv">11</span>),</span>
+<span id="cb78-8"><a href="#cb78-8" tabindex="-1"></a>        <span class="at">plot.margin=</span><span class="fu">unit</span>(<span class="fu">c</span>(<span class="dv">9</span>,<span class="dv">15</span>,<span class="dv">0</span>,<span class="dv">9</span>), <span class="st">&#39;pt&#39;</span>))</span>
+<span id="cb78-9"><a href="#cb78-9" tabindex="-1"></a>sub <span class="ot">&lt;-</span> <span class="fu">match</span>(<span class="fu">with</span>(<span class="fu">subset</span>(datG, trt<span class="sc">==</span><span class="st">&quot;Control&quot;</span>),subclass),</span>
+<span id="cb78-10"><a href="#cb78-10" tabindex="-1"></a>             <span class="fu">with</span>(<span class="fu">subset</span>(datG, trt<span class="sc">==</span><span class="st">&quot;Treat&quot;</span>),subclass))</span>
+<span id="cb78-11"><a href="#cb78-11" tabindex="-1"></a>datGpaired <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="fu">subset</span>(datG, trt<span class="sc">==</span><span class="st">&quot;Treat&quot;</span>),</span>
+<span id="cb78-12"><a href="#cb78-12" tabindex="-1"></a>                    <span class="fu">with</span>(<span class="fu">subset</span>(datG, trt<span class="sc">==</span><span class="st">&quot;Control&quot;</span>)[sub,],</span>
+<span id="cb78-13"><a href="#cb78-13" tabindex="-1"></a>                    <span class="fu">cbind</span>(<span class="st">&quot;Cre78log&quot;</span><span class="ot">=</span>re78log,<span class="st">&quot;CPropScore&quot;</span><span class="ot">=</span>PropScore)))</span>
+<span id="cb78-14"><a href="#cb78-14" tabindex="-1"></a>gg2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(datGpaired)<span class="sc">+</span></span>
+<span id="cb78-15"><a href="#cb78-15" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(PropScore,<span class="fu">I</span>(re78log<span class="sc">-</span>Cre78log)), <span class="at">size=</span><span class="dv">1</span>)<span class="sc">+</span></span>
+<span id="cb78-16"><a href="#cb78-16" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="fu">aes</span>(PropScore,<span class="fu">I</span>(re78log<span class="sc">-</span>Cre78log)), <span class="at">method =</span> <span class="st">&quot;gam&quot;</span>, </span>
+<span id="cb78-17"><a href="#cb78-17" tabindex="-1"></a>              <span class="at">formula =</span> y <span class="sc">~</span> <span class="fu">s</span>(x, <span class="at">bs =</span> <span class="st">&quot;cs&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb78-18"><a href="#cb78-18" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&quot;Propensity score for treated&quot;</span>)<span class="sc">+</span></span>
+<span id="cb78-19"><a href="#cb78-19" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;Treatment vs control differences&quot;</span>) <span class="sc">+</span></span>
+<span id="cb78-20"><a href="#cb78-20" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;B: Treatment vs control differences&quot;</span>) <span class="sc">+</span></span>
+<span id="cb78-21"><a href="#cb78-21" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust=</span><span class="dv">0</span>, <span class="at">vjust=</span><span class="fl">0.5</span>, <span class="at">size=</span><span class="dv">11</span>),</span>
+<span id="cb78-22"><a href="#cb78-22" tabindex="-1"></a>        <span class="at">plot.margin=</span><span class="fu">unit</span>(<span class="fu">c</span>(<span class="dv">9</span>,<span class="dv">9</span>,<span class="dv">0</span>,<span class="dv">15</span>), <span class="st">&#39;pt&#39;</span>))</span>
+<span id="cb78-23"><a href="#cb78-23" tabindex="-1"></a><span class="fu">grid.arrange</span>(gg1, gg2, <span class="at">ncol=</span><span class="dv">2</span>) </span></code></pre></div>
+<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" tabindex="-1"></a><span class="fu">library</span>(sandwich)</span>
+<span id="cb79-2"><a href="#cb79-2" tabindex="-1"></a>datG.lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(re78log <span class="sc">~</span> trt, <span class="at">data =</span> datG, <span class="at">weights =</span> weights)</span>
+<span id="cb79-3"><a href="#cb79-3" tabindex="-1"></a><span class="do">## With 1:1 matching, the weights argument is not really needed</span></span>
+<span id="cb79-4"><a href="#cb79-4" tabindex="-1"></a><span class="do">## Print first two coefficients only. </span></span>
+<span id="cb79-5"><a href="#cb79-5" tabindex="-1"></a>lmtest<span class="sc">::</span><span class="fu">coeftest</span>(datG.lm, <span class="at">vcov. =</span> vcovCL, <span class="at">cluster =</span> <span class="sc">~</span>subclass)[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>,]</span>
+<span id="cb79-6"><a href="#cb79-6" tabindex="-1"></a><span class="do">## Check number whose income was greater than 0</span></span>
+<span id="cb79-7"><a href="#cb79-7" tabindex="-1"></a>datG.glm <span class="ot">&lt;-</span> <span class="fu">glm</span>(<span class="fu">I</span>(re78<span class="sc">&gt;</span><span class="dv">0</span>) <span class="sc">~</span> trt, <span class="at">data =</span> datG, <span class="at">weights =</span> weights, <span class="at">family=</span>binomial)</span>
+<span id="cb79-8"><a href="#cb79-8" tabindex="-1"></a>lmtest<span class="sc">::</span><span class="fu">coeftest</span>(datG.glm, <span class="at">vcov. =</span> vcovCL, <span class="at">cluster =</span> <span class="sc">~</span>subclass)[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>,]</span></code></pre></div>
+</div>
+<div id="alternative-matching-approaches" class="section level5">
+<h5>Alternative matching approaches</h5>
+</div>
+</div>
+<div id="subsection-9.7.5-coarsened-exact-matching" class="section level4">
+<h4>Subsection 9.7.5: Coarsened exact matching</h4>
+<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" tabindex="-1"></a>form <span class="ot">&lt;-</span> trt <span class="sc">~</span> age <span class="sc">+</span> educ <span class="sc">+</span> ethnicid <span class="sc">+</span> marr <span class="sc">+</span> nodeg <span class="sc">+</span> z75 <span class="sc">+</span> re75log</span>
+<span id="cb80-2"><a href="#cb80-2" tabindex="-1"></a>match5.cem <span class="ot">&lt;-</span> <span class="fu">matchit</span>(<span class="at">formula=</span>form, <span class="at">data=</span>nswG, <span class="at">method=</span><span class="st">&quot;cem&quot;</span>, <span class="at">cutpoints=</span><span class="dv">5</span>)</span>
+<span id="cb80-3"><a href="#cb80-3" tabindex="-1"></a>datcem5 <span class="ot">&lt;-</span> <span class="fu">match.data</span>(match5.cem)</span>
+<span id="cb80-4"><a href="#cb80-4" tabindex="-1"></a>match6.cem <span class="ot">&lt;-</span> <span class="fu">matchit</span>(<span class="at">formula=</span>form, <span class="at">data=</span>nswG, <span class="at">method=</span><span class="st">&quot;cem&quot;</span>, <span class="at">cutpoints=</span><span class="dv">6</span>)</span>
+<span id="cb80-5"><a href="#cb80-5" tabindex="-1"></a>datcem6 <span class="ot">&lt;-</span> <span class="fu">match.data</span>(match6.cem)</span>
+<span id="cb80-6"><a href="#cb80-6" tabindex="-1"></a><span class="do">## Show the effect of adding another cutpoint</span></span>
+<span id="cb80-7"><a href="#cb80-7" tabindex="-1"></a>match5.cem</span>
+<span id="cb80-8"><a href="#cb80-8" tabindex="-1"></a>match6.cem</span></code></pre></div>
+<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" tabindex="-1"></a><span class="fu">library</span>(sandwich)</span>
+<span id="cb81-2"><a href="#cb81-2" tabindex="-1"></a>datcem5.lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(re78log <span class="sc">~</span> trt, <span class="at">data =</span> datcem5, <span class="at">weights =</span> weights)</span>
+<span id="cb81-3"><a href="#cb81-3" tabindex="-1"></a><span class="do">## The function vcovHC() provides cluster robust standard errors</span></span>
+<span id="cb81-4"><a href="#cb81-4" tabindex="-1"></a>lmtest<span class="sc">::</span><span class="fu">coeftest</span>(datcem5.lm, <span class="at">vcov. =</span> vcovHC)</span>
+<span id="cb81-5"><a href="#cb81-5" tabindex="-1"></a><span class="do">## Estimate treatment effect on number with some earnings:</span></span>
+<span id="cb81-6"><a href="#cb81-6" tabindex="-1"></a>datcem6.glm <span class="ot">&lt;-</span> <span class="fu">glm</span>(<span class="fu">I</span>(re78<span class="sc">&gt;</span><span class="dv">0</span>) <span class="sc">~</span> trt, <span class="at">data =</span> datcem6, <span class="at">weights =</span> weights,</span>
+<span id="cb81-7"><a href="#cb81-7" tabindex="-1"></a><span class="at">family=</span>binomial)</span>
+<span id="cb81-8"><a href="#cb81-8" tabindex="-1"></a>lmtest<span class="sc">::</span><span class="fu">coeftest</span>(datcem6.glm, <span class="at">vcov. =</span> vcovHC)</span></code></pre></div>
+</div>
+</div>
+<div id="section-9.8-multiple-imputation" class="section level3">
+<h3>Section 9.8: Multiple imputation</h3>
+<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(mice))</span>
+<span id="cb82-2"><a href="#cb82-2" tabindex="-1"></a>Boys <span class="ot">&lt;-</span> <span class="fu">with</span>(<span class="fu">subset</span>(mice<span class="sc">::</span>boys, age<span class="sc">&gt;=</span><span class="dv">9</span>), </span>
+<span id="cb82-3"><a href="#cb82-3" tabindex="-1"></a>             <span class="fu">data.frame</span>(<span class="at">age=</span>age, <span class="at">loghgt=</span><span class="fu">log</span>(hgt), <span class="at">logbmi=</span><span class="fu">log</span>(bmi), <span class="at">loghc=</span><span class="fu">log</span>(hc)))</span>
+<span id="cb82-4"><a href="#cb82-4" tabindex="-1"></a>(Pattern <span class="ot">&lt;-</span> <span class="fu">md.pattern</span>(Boys, <span class="at">plot=</span>F))</span></code></pre></div>
+<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">31</span>)       <span class="co"># Set to reproduce result shown</span></span>
+<span id="cb83-2"><a href="#cb83-2" tabindex="-1"></a>PatternB <span class="ot">&lt;-</span> <span class="fu">rbind</span>(Pattern[<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="fu">nrow</span>(Pattern)), <span class="sc">-</span><span class="fu">ncol</span>(Pattern)],</span>
+<span id="cb83-3"><a href="#cb83-3" tabindex="-1"></a>             <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>), <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>), <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>))</span>
+<span id="cb83-4"><a href="#cb83-4" tabindex="-1"></a>boys <span class="ot">&lt;-</span> <span class="fu">rbind</span>(<span class="fu">ic</span>(Boys), </span>
+<span id="cb83-5"><a href="#cb83-5" tabindex="-1"></a>              <span class="fu">ampute</span>(<span class="fu">cc</span>(Boys), <span class="at">pattern=</span>PatternB, <span class="at">freq=</span><span class="fu">c</span>(.<span class="dv">3</span>,.<span class="dv">15</span>,.<span class="dv">15</span>,.<span class="dv">2</span>,.<span class="dv">1</span>,.<span class="dv">1</span>), </span>
+<span id="cb83-6"><a href="#cb83-6" tabindex="-1"></a>                     <span class="at">prop=</span><span class="fl">0.75</span>)<span class="sc">$</span>amp)</span>
+<span id="cb83-7"><a href="#cb83-7" tabindex="-1"></a><span class="fu">md.pattern</span>(boys, <span class="at">plot=</span><span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">17</span>)       <span class="co"># Set to reproduce result shown</span></span>
+<span id="cb84-2"><a href="#cb84-2" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">capture.output</span>(        <span class="co"># Evaluate; send screen output to text string</span></span>
+<span id="cb84-3"><a href="#cb84-3" tabindex="-1"></a>  boys.mids <span class="ot">&lt;-</span> <span class="fu">mice</span>(boys, <span class="at">method=</span><span class="st">&#39;pmm&#39;</span>, <span class="at">m=</span><span class="dv">8</span>)  )</span>
+<span id="cb84-4"><a href="#cb84-4" tabindex="-1"></a>impDFs <span class="ot">&lt;-</span> <span class="fu">complete</span>(boys.mids, <span class="at">action=</span><span class="st">&#39;all&#39;</span>)   <span class="co"># Returns a list of m=8 dataframes</span></span>
+<span id="cb84-5"><a href="#cb84-5" tabindex="-1"></a><span class="do">## Average over imputed dataframes (use for exploratory purposes only)</span></span>
+<span id="cb84-6"><a href="#cb84-6" tabindex="-1"></a>impArray <span class="ot">&lt;-</span> <span class="fu">sapply</span>(impDFs, <span class="cf">function</span>(x)<span class="fu">as.matrix</span>(x), <span class="at">simplify=</span><span class="st">&#39;array&#39;</span>)</span>
+<span id="cb84-7"><a href="#cb84-7" tabindex="-1"></a>boysAv <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">apply</span>(impArray, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, mean))  </span></code></pre></div>
+<div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" tabindex="-1"></a>fits <span class="ot">&lt;-</span> <span class="fu">with</span>(boys.mids, <span class="fu">lm</span>(logbmi<span class="sc">~</span>age<span class="sc">+</span>loghgt))</span>
+<span id="cb85-2"><a href="#cb85-2" tabindex="-1"></a>pool.coef <span class="ot">&lt;-</span> <span class="fu">summary</span>(<span class="fu">pool</span>(fits))  <span class="co"># Include in table below</span></span></code></pre></div>
+<div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" tabindex="-1"></a><span class="do">## 2) Regression that leaves out rows with NAs</span></span>
+<span id="cb86-2"><a href="#cb86-2" tabindex="-1"></a>omitNArows.coef <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">summary</span>(<span class="fu">lm</span>(logbmi<span class="sc">~</span>age<span class="sc">+</span>loghgt, <span class="at">data=</span>boys)))</span>
+<span id="cb86-3"><a href="#cb86-3" tabindex="-1"></a><span class="do">## 3) Regression fit to average over data frames after imputation</span></span>
+<span id="cb86-4"><a href="#cb86-4" tabindex="-1"></a>boysAv.coef <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">summary</span>(<span class="fu">lm</span>(logbmi<span class="sc">~</span>age<span class="sc">+</span>loghgt, <span class="at">data=</span>boysAv)))</span>
+<span id="cb86-5"><a href="#cb86-5" tabindex="-1"></a><span class="do">## 4) Fit to original data, with 36 rows had missing data</span></span>
+<span id="cb86-6"><a href="#cb86-6" tabindex="-1"></a>Orig.coef <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">summary</span>(<span class="fu">lm</span>(logbmi <span class="sc">~</span> age<span class="sc">+</span>loghgt, <span class="at">data=</span>Boys)))</span></code></pre></div>
+<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" tabindex="-1"></a>ctab <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="fu">summary</span>(<span class="fu">pool</span>(fits))[,<span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>], omitNArows.coef[,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>], boysAv.coef[,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>], </span>
+<span id="cb87-2"><a href="#cb87-2" tabindex="-1"></a>      Orig.coef[,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>])</span>
+<span id="cb87-3"><a href="#cb87-3" tabindex="-1"></a>tab <span class="ot">&lt;-</span> <span class="fu">setNames</span>(<span class="fu">cbind</span>(ctab[,<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">5</span>,<span class="dv">7</span>)], ctab[,<span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">6</span>,<span class="dv">8</span>)]),</span>
+<span id="cb87-4"><a href="#cb87-4" tabindex="-1"></a>                <span class="fu">paste0</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">&#39;Est&#39;</span>,<span class="st">&#39;SE&#39;</span>), <span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">4</span>)), <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, <span class="dv">2</span>)))</span>
+<span id="cb87-5"><a href="#cb87-5" tabindex="-1"></a><span class="fu">round</span>(tab,<span class="dv">3</span>)</span></code></pre></div>
+<div id="time-series-cross-sectional-data-an-example" class="section level5">
+<h5>Time series cross-sectional data – an example</h5>
+<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" tabindex="-1"></a>airquality <span class="ot">&lt;-</span> datasets<span class="sc">::</span>airquality</span>
+<span id="cb88-2"><a href="#cb88-2" tabindex="-1"></a>airq <span class="ot">&lt;-</span> <span class="fu">cbind</span>(airquality[, <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>], <span class="at">day=</span><span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(airquality))</span>
+<span id="cb88-3"><a href="#cb88-3" tabindex="-1"></a>  <span class="co"># &#39;day&#39; (starting May 1) replaces columns &#39;Month&#39; &amp; &#39;Day&#39;)</span></span>
+<span id="cb88-4"><a href="#cb88-4" tabindex="-1"></a><span class="do">## Replace `Ozone` with `rt4ozone`:</span></span>
+<span id="cb88-5"><a href="#cb88-5" tabindex="-1"></a>airq <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="at">rt4ozone=</span>airq<span class="sc">$</span>Ozone<span class="sc">^</span><span class="fl">0.25</span>, airq[,<span class="sc">-</span><span class="dv">1</span>])</span></code></pre></div>
+<div class="sourceCode" id="cb89"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" tabindex="-1"></a><span class="do">## Generate the scatterplot matrix, now with `rt4ozone` replacing `Ozone`</span></span>
+<span id="cb89-2"><a href="#cb89-2" tabindex="-1"></a>smoothPars <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">col.smooth=</span><span class="st">&#39;red&#39;</span>, <span class="at">lty.smooth=</span><span class="dv">2</span>, <span class="at">spread=</span><span class="dv">0</span>)</span>
+<span id="cb89-3"><a href="#cb89-3" tabindex="-1"></a>car<span class="sc">::</span><span class="fu">spm</span>(airq, <span class="at">cex.labels=</span><span class="fl">1.2</span>, <span class="at">regLine=</span><span class="cn">FALSE</span>, <span class="at">col=</span><span class="st">&#39;blue&#39;</span>, </span>
+<span id="cb89-4"><a href="#cb89-4" tabindex="-1"></a>         <span class="at">oma=</span><span class="fu">c</span>(<span class="fl">1.95</span>,<span class="dv">3</span>,<span class="dv">4</span>, <span class="dv">3</span>), <span class="at">gap=</span>.<span class="dv">25</span>, <span class="at">smooth=</span>smoothPars)</span></code></pre></div>
+<div class="sourceCode" id="cb90"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" tabindex="-1"></a>airq.imp <span class="ot">&lt;-</span> <span class="fu">mice</span>(airq, <span class="at">m=</span><span class="dv">20</span>, <span class="at">print=</span><span class="cn">FALSE</span>)</span>
+<span id="cb90-2"><a href="#cb90-2" tabindex="-1"></a>  <span class="do">## 20 imputations shows up issues of concern very clearly</span></span></code></pre></div>
+<div class="sourceCode" id="cb91"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" tabindex="-1"></a><span class="do">## Code for figure</span></span>
+<span id="cb91-2"><a href="#cb91-2" tabindex="-1"></a>out <span class="ot">&lt;-</span> micemd<span class="sc">::</span><span class="fu">overimpute</span>(airq.imp)</span></code></pre></div>
+</div>
+<div id="some-further-points" class="section level5">
+<h5>Some further points</h5>
+</div>
+</div>
+<div id="section-9.9-further-reading" class="section level3">
+<h3>Section 9.9: Further reading</h3>
+<div id="data-with-more-variables-than-observations" class="section level5">
+<h5>Data with more variables than observations</h5>
+</div>
+<div id="causal-inference" class="section level5">
+<h5>Causal inference</h5>
+</div>
+<div id="multiple-imputation" class="section level5">
+<h5>Multiple imputation</h5>
+</div>
+</div>
+<div id="section-9.10-exercises" class="section level3">
+<h3>Section 9.10: Exercises</h3>
+<div class="sourceCode" id="cb92"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" tabindex="-1"></a><span class="fu">library</span>(DAAG)</span>
+<span id="cb92-2"><a href="#cb92-2" tabindex="-1"></a>oz<span class="sc">::</span><span class="fu">oz</span>(<span class="at">sections=</span><span class="fu">c</span>(<span class="dv">3</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">11</span><span class="sc">:</span><span class="dv">16</span>))</span>
+<span id="cb92-3"><a href="#cb92-3" tabindex="-1"></a><span class="fu">names</span>(possumsites)[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;long&quot;</span>, <span class="st">&quot;lat&quot;</span>)</span>
+<span id="cb92-4"><a href="#cb92-4" tabindex="-1"></a><span class="fu">with</span>(possumsites, {</span>
+<span id="cb92-5"><a href="#cb92-5" tabindex="-1"></a><span class="fu">points</span>(long, lat);</span>
+<span id="cb92-6"><a href="#cb92-6" tabindex="-1"></a><span class="fu">text</span>(long, lat, <span class="fu">row.names</span>(possumsites), <span class="at">pos=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">2</span>,<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">2</span>,<span class="dv">2</span>))</span>
+<span id="cb92-7"><a href="#cb92-7" tabindex="-1"></a>})</span></code></pre></div>
+<div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" tabindex="-1"></a><span class="fu">data</span>(wine, <span class="at">package=</span><span class="st">&#39;gclus&#39;</span>)</span>
+<span id="cb93-2"><a href="#cb93-2" tabindex="-1"></a>mat <span class="ot">&lt;-</span> <span class="fu">with</span>(wine, </span>
+<span id="cb93-3"><a href="#cb93-3" tabindex="-1"></a>  <span class="fu">round</span>(<span class="dv">1</span><span class="sc">-</span><span class="fu">cor</span>(<span class="fu">cbind</span>(Alcohol, Malic, Magnesium, Phenols, Flavanoids)),<span class="dv">2</span>))</span>
+<span id="cb93-4"><a href="#cb93-4" tabindex="-1"></a><span class="fu">colnames</span>(mat) <span class="ot">&lt;-</span> <span class="fu">rownames</span>(mat) <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span></span>
+<span id="cb93-5"><a href="#cb93-5" tabindex="-1"></a><span class="fu">print</span>(mat)</span></code></pre></div>
+<div class="sourceCode" id="cb94"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" tabindex="-1"></a><span class="st">`</span><span class="at">confusion</span><span class="st">`</span> <span class="ot">&lt;-</span></span>
+<span id="cb94-2"><a href="#cb94-2" tabindex="-1"></a><span class="cf">function</span>(actual, predicted, <span class="at">digits=</span><span class="dv">4</span>){</span>
+<span id="cb94-3"><a href="#cb94-3" tabindex="-1"></a>  tab <span class="ot">&lt;-</span> <span class="fu">table</span>(actual, predicted)</span>
+<span id="cb94-4"><a href="#cb94-4" tabindex="-1"></a>  confuse <span class="ot">&lt;-</span> <span class="fu">apply</span>(tab, <span class="dv">1</span>, <span class="cf">function</span>(x)x<span class="sc">/</span><span class="fu">sum</span>(x))</span>
+<span id="cb94-5"><a href="#cb94-5" tabindex="-1"></a>  <span class="fu">print</span>(<span class="fu">round</span>(confuse, digits))</span>
+<span id="cb94-6"><a href="#cb94-6" tabindex="-1"></a>  acc <span class="ot">&lt;-</span> <span class="fu">sum</span>(tab[<span class="fu">row</span>(tab)<span class="sc">==</span><span class="fu">col</span>(tab)])<span class="sc">/</span><span class="fu">sum</span>(tab)</span>
+<span id="cb94-7"><a href="#cb94-7" tabindex="-1"></a>  <span class="fu">invisible</span>(<span class="fu">print</span>(<span class="fu">c</span>(<span class="st">&quot;Overall accuracy&quot;</span> <span class="ot">=</span> <span class="fu">round</span>(acc,digits))))</span>
+<span id="cb94-8"><a href="#cb94-8" tabindex="-1"></a>}</span>
+<span id="cb94-9"><a href="#cb94-9" tabindex="-1"></a><span class="fu">data</span>(Vehicle, <span class="at">package=</span><span class="st">&quot;mlbench&quot;</span>)</span>
+<span id="cb94-10"><a href="#cb94-10" tabindex="-1"></a>lhat <span class="ot">&lt;-</span> MASS<span class="sc">::</span><span class="fu">lda</span>(Class <span class="sc">~</span> ., <span class="at">data=</span>Vehicle, <span class="at">CV=</span><span class="cn">TRUE</span>)<span class="sc">$</span>class</span>
+<span id="cb94-11"><a href="#cb94-11" tabindex="-1"></a>qhat <span class="ot">&lt;-</span> MASS<span class="sc">::</span><span class="fu">qda</span>(Class <span class="sc">~</span> ., <span class="at">data=</span>Vehicle, <span class="at">CV=</span><span class="cn">TRUE</span>)<span class="sc">$</span>class</span>
+<span id="cb94-12"><a href="#cb94-12" tabindex="-1"></a>DAAG<span class="sc">::</span><span class="fu">confusion</span>(Vehicle<span class="sc">$</span>Class, lhat)</span>
+<span id="cb94-13"><a href="#cb94-13" tabindex="-1"></a>DAAG<span class="sc">::</span><span class="fu">confusion</span>(Vehicle<span class="sc">$</span>Class, qhat)</span>
+<span id="cb94-14"><a href="#cb94-14" tabindex="-1"></a>randomForest<span class="sc">::</span><span class="fu">randomForest</span>(Class <span class="sc">~</span> ., <span class="at">data=</span>Vehicle, <span class="at">CV=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb95"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" tabindex="-1"></a>Vehicle.lda <span class="ot">&lt;-</span> MASS<span class="sc">::</span><span class="fu">lda</span>(Class <span class="sc">~</span> ., <span class="at">data=</span>Vehicle)</span>
+<span id="cb95-2"><a href="#cb95-2" tabindex="-1"></a>twoD <span class="ot">&lt;-</span> <span class="fu">predict</span>(Vehicle.lda)<span class="sc">$</span>x</span>
+<span id="cb95-3"><a href="#cb95-3" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">quickplot</span>(twoD[,<span class="dv">1</span>], twoD[,<span class="dv">2</span>], <span class="at">color=</span>Vehicle<span class="sc">$</span>Class,</span>
+<span id="cb95-4"><a href="#cb95-4" tabindex="-1"></a>                   <span class="at">geom=</span><span class="fu">c</span>(<span class="st">&quot;point&quot;</span>,<span class="st">&quot;density2d&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb96"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1" tabindex="-1"></a><span class="fu">library</span>(ape); <span class="fu">library</span>(MASS)</span>
+<span id="cb96-2"><a href="#cb96-2" tabindex="-1"></a>webpage <span class="ot">&lt;-</span></span>
+<span id="cb96-3"><a href="#cb96-3" tabindex="-1"></a><span class="st">&quot;http://evolution.genetics.washington.edu/book/primates.dna&quot;</span></span>
+<span id="cb96-4"><a href="#cb96-4" tabindex="-1"></a>primates.dna <span class="ot">&lt;-</span> <span class="fu">read.dna</span>(webpage)</span>
+<span id="cb96-5"><a href="#cb96-5" tabindex="-1"></a><span class="co"># Alternatively, work with primateDNA from the DAAGbio package</span></span>
+<span id="cb96-6"><a href="#cb96-6" tabindex="-1"></a><span class="fu">library</span>(DAAGbio)</span>
+<span id="cb96-7"><a href="#cb96-7" tabindex="-1"></a>primates.dna <span class="ot">&lt;-</span> <span class="fu">as.DNAbin</span>(primateDNA)</span>
+<span id="cb96-8"><a href="#cb96-8" tabindex="-1"></a>primates.dist <span class="ot">&lt;-</span> <span class="fu">dist.dna</span>(primates.dna, <span class="at">model=</span><span class="st">&quot;K80&quot;</span>)</span>
+<span id="cb96-9"><a href="#cb96-9" tabindex="-1"></a>primates.cmd <span class="ot">&lt;-</span> <span class="fu">cmdscale</span>(primates.dist)</span>
+<span id="cb96-10"><a href="#cb96-10" tabindex="-1"></a><span class="fu">eqscplot</span>(primates.cmd)</span>
+<span id="cb96-11"><a href="#cb96-11" tabindex="-1"></a>rtleft <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">2</span>)[<span class="fu">unclass</span>(<span class="fu">cut</span>(primates.cmd[,<span class="dv">1</span>], <span class="at">breaks=</span><span class="dv">4</span>))]</span>
+<span id="cb96-12"><a href="#cb96-12" tabindex="-1"></a><span class="fu">text</span>(primates.cmd, <span class="at">labels=</span><span class="fu">row.names</span>(primates.cmd), <span class="at">pos=</span>rtleft)</span></code></pre></div>
+<div class="sourceCode" id="cb97"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb97-1"><a href="#cb97-1" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">dist</span>(primates.cmd)</span>
+<span id="cb97-2"><a href="#cb97-2" tabindex="-1"></a><span class="fu">sum</span>((d<span class="sc">-</span>primates.dist)<span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span><span class="fu">sum</span>(primates.dist<span class="sc">^</span><span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb98"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" tabindex="-1"></a><span class="fu">library</span>(DAAG)</span>
+<span id="cb98-2"><a href="#cb98-2" tabindex="-1"></a>pacific.dist <span class="ot">&lt;-</span> <span class="fu">dist</span>(<span class="at">x =</span> <span class="fu">as.matrix</span>(rockArt[<span class="sc">-</span><span class="fu">c</span>(<span class="dv">47</span>,<span class="dv">54</span>,<span class="dv">60</span>,<span class="dv">63</span>,<span class="dv">92</span>),<span class="dv">28</span><span class="sc">:</span><span class="dv">641</span>]), </span>
+<span id="cb98-3"><a href="#cb98-3" tabindex="-1"></a>                     <span class="at">method =</span> <span class="st">&quot;binary&quot;</span>)</span>
+<span id="cb98-4"><a href="#cb98-4" tabindex="-1"></a><span class="fu">sum</span>(pacific.dist<span class="sc">==</span><span class="dv">1</span>)<span class="sc">/</span><span class="fu">length</span>(pacific.dist)</span>
+<span id="cb98-5"><a href="#cb98-5" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">density</span>(pacific.dist, <span class="at">to =</span> <span class="dv">1</span>))</span>
+<span id="cb98-6"><a href="#cb98-6" tabindex="-1"></a><span class="do">## Check that all columns have at least one distance &lt; 1</span></span>
+<span id="cb98-7"><a href="#cb98-7" tabindex="-1"></a>symmat <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(pacific.dist)</span>
+<span id="cb98-8"><a href="#cb98-8" tabindex="-1"></a><span class="fu">table</span>(<span class="fu">apply</span>(symmat, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="fu">sum</span>(x<span class="sc">&lt;</span><span class="dv">1</span>)))</span>
+<span id="cb98-9"><a href="#cb98-9" tabindex="-1"></a>pacific.cmd <span class="ot">&lt;-</span> <span class="fu">cmdscale</span>(pacific.dist)</span>
+<span id="cb98-10"><a href="#cb98-10" tabindex="-1"></a>pacific.sam <span class="ot">&lt;-</span> <span class="fu">sammon</span>(pacific.dist)</span></code></pre></div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+<meta name="date" content="2023-10-18" />
+
+<title>Chapter 4: Exploiting the linear model framework</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Chapter 4: Exploiting the linear model
+framework</h1>
+<h4 class="date">2023-10-18</h4>
+
+
+
+<p>On options for working with the code see the vignettes <a href="PGRcode/Ch1-Learning.html">Ch1-Learning</a> and <a href="PGRcode/UsingCode.html">UsingCode</a>.</p>
+<div id="packages-required-with-dependencies" class="section level5">
+<h5>Packages required (with dependencies)</h5>
+<p>DAAG effects mgcv splines scam MASS latticeExtra car WDI AICcmodavg
+ggplot2 kableExtra qgam</p>
+<p>Additionally, Hmisc and knitr are required in order to process the
+Rmd source file.</p>
+<p>Note the use of the ‘patchwork’ package to make it easy to place two
+ggplot2 plots side by side.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>Hmisc<span class="sc">::</span><span class="fu">knitrSet</span>(<span class="at">basename=</span><span class="st">&quot;exploit&quot;</span>, <span class="at">lang=</span><span class="st">&#39;markdown&#39;</span>, <span class="at">fig.path=</span><span class="st">&quot;figs/g&quot;</span>, <span class="at">w=</span><span class="dv">7</span>, <span class="at">h=</span><span class="dv">7</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>oldopt <span class="ot">&lt;-</span> <span class="fu">options</span>(<span class="at">digits=</span><span class="dv">4</span>, <span class="at">width=</span><span class="dv">70</span>, <span class="at">scipen=</span><span class="dv">999</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="do">## knitr::render_listings()</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>opts_chunk[[<span class="st">&#39;set&#39;</span>]](<span class="at">cache.path=</span><span class="st">&#39;cache-&#39;</span>, <span class="at">out.width=</span><span class="st">&quot;80%&quot;</span>, <span class="at">fig.align=</span><span class="st">&quot;center&quot;</span>, </span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>                    <span class="at">fig.show=</span><span class="st">&#39;hold&#39;</span>, <span class="at">formatR.arrow=</span><span class="cn">FALSE</span>, <span class="at">ps=</span><span class="dv">10</span>, </span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>                    <span class="at">strip.white =</span> <span class="cn">TRUE</span>, <span class="at">comment=</span><span class="cn">NA</span>, <span class="at">width=</span><span class="dv">70</span>, </span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>                    <span class="at">tidy.opts =</span> <span class="fu">list</span>(<span class="at">replace.assign=</span><span class="cn">FALSE</span>))</span></code></pre></div>
+</div>
+<div id="section-4.1-levels-of-a-factor-using-indicator-variables" class="section level3">
+<h3>Section 4.1 Levels of a factor – using indicator variables</h3>
+<div id="subsection-4.1.1-example-sugar-weight" class="section level4">
+<h4>Subsection 4.1.1: Example – sugar weight</h4>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>sugar <span class="ot">&lt;-</span> DAAG<span class="sc">::</span>sugar  <span class="co"># Copy dataset &#39;sugar&#39; into the workspace</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="do">## Ensure that &quot;Control&quot; is the first level</span></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>sugar[[<span class="st">&quot;trt&quot;</span>]] <span class="ot">&lt;-</span> <span class="fu">relevel</span>(sugar[[<span class="st">&quot;trt&quot;</span>]], <span class="at">ref=</span><span class="st">&quot;Control&quot;</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="fu">options</span>()[[<span class="st">&quot;contrasts&quot;</span>]]  <span class="co"># Check the default factor contrasts</span></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="do">## If your output does not agree with the above, then enter</span></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="do">## options(contrasts=c(&quot;contr.treatment&quot;, &quot;contr.poly&quot;))</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>sugar.aov <span class="ot">&lt;-</span> <span class="fu">aov</span>(weight <span class="sc">~</span> trt, <span class="at">data=</span>sugar)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="do">## To display the model matrix, enter: model.matrix(sugar.aov)</span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="do">## Note the use of summary.lm(), not summary() or summary.aov()</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">signif</span>(<span class="fu">coef</span>(<span class="fu">summary.lm</span>(sugar.aov)), <span class="dv">3</span>), <span class="dv">4</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>sem <span class="ot">&lt;-</span> <span class="fu">summary.lm</span>(sugar.aov)<span class="sc">$</span>sigma<span class="sc">/</span><span class="fu">sqrt</span>(<span class="dv">3</span>)  <span class="co"># 3 results/trt</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co"># Alternatively, sem &lt;- 6.33/sqrt(2)</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="fu">qtukey</span>(<span class="at">p=</span>.<span class="dv">95</span>, <span class="at">nmeans=</span><span class="dv">4</span>, <span class="at">df=</span><span class="dv">8</span>) <span class="sc">*</span> sem</span></code></pre></div>
+</div>
+<div id="subsection-4.1.2-different-choices-for-the-model-matrix-when-there-are-factors" class="section level4">
+<h4>Subsection 4.1.2: Different choices for the model matrix when there
+are factors</h4>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">contrasts</span>(sugar<span class="sc">$</span>trt) <span class="ot">&lt;-</span> <span class="st">&#39;contr.sum&#39;</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>sugarSum.aov <span class="ot">&lt;-</span> <span class="fu">aov</span>(weight <span class="sc">~</span> trt, <span class="at">data =</span> sugar)</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">signif</span>(<span class="fu">coef</span>(<span class="fu">summary.lm</span>(sugarSum.aov)), <span class="dv">3</span>),<span class="dv">4</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">dummy.coef</span>(sugarSum.aov)</span></code></pre></div>
+<div id="factor-contrasts-further-details" class="section level5">
+<h5>Factor contrasts – further details</h5>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">contrasts</span>(sugar<span class="sc">$</span>trt) <span class="ot">&lt;-</span> <span class="st">&quot;contr.sum&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>fish <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">labels=</span><span class="fu">c</span>(<span class="st">&quot;Trout&quot;</span>,<span class="st">&quot;Cod&quot;</span>,<span class="st">&quot;Perch&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">contr.treatment</span>(fish)</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="co"># Base is &quot;Trout&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">contr.SAS</span>(fish)</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="co"># Base is &quot;Perch&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">contr.sum</span>(fish)</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="co"># Base is mean of levels</span></span></code></pre></div>
+</div>
+<div id="tests-for-main-effects-in-the-presence-of-interactions" class="section level5">
+<h5>*Tests for main effects in the presence of interactions?</h5>
+</div>
+</div>
+</div>
+<div id="section-4.2-block-designs-and-balanced-incomplete-block-designs" class="section level3">
+<h3>Section 4.2 Block designs and balanced incomplete block designs</h3>
+<div id="subsection-4.2.1-analysis-of-the-rice-data-allowing-for-block-effects" class="section level4">
+<h4>Subsection 4.2.1: Analysis of the rice data, allowing for block
+effects</h4>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>rice <span class="ot">&lt;-</span> DAAG<span class="sc">::</span>rice</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>ricebl.aov <span class="ot">&lt;-</span> <span class="fu">aov</span>(ShootDryMass <span class="sc">~</span> Block <span class="sc">+</span> variety <span class="sc">*</span> fert, <span class="at">data=</span>rice)</span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">summary</span>(ricebl.aov), <span class="at">digits=</span><span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">signif</span>(<span class="fu">coef</span>(<span class="fu">summary.lm</span>(ricebl.aov)), <span class="dv">3</span>), <span class="dv">5</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="fu">with</span>(<span class="fu">summary.lm</span>(ricebl.aov),</span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Residual standard error: &quot;</span>, sigma, <span class="st">&quot;on&quot;</span>, df[<span class="dv">2</span>], <span class="st">&quot;degrees of freedom&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="do">## AOV calculations, ignoring block effects</span></span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>rice.aov <span class="ot">&lt;-</span> <span class="fu">aov</span>(ShootDryMass <span class="sc">~</span> variety <span class="sc">*</span> fert, <span class="at">data=</span>rice)</span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a><span class="fu">summary.lm</span>(rice.aov)<span class="sc">$</span>sigma</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>ricebl.aov <span class="ot">&lt;-</span> <span class="fu">aov</span>(ShootDryMass <span class="sc">~</span> <span class="fu">factor</span>(Block) <span class="sc">+</span> variety <span class="sc">*</span> fert, <span class="at">data=</span>rice)</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="fu">model.tables</span>(ricebl.aov, <span class="at">type=</span><span class="st">&quot;means&quot;</span>, <span class="at">se=</span><span class="cn">TRUE</span>, <span class="at">cterms=</span><span class="st">&quot;variety:fert&quot;</span>)</span></code></pre></div>
+</div>
+<div id="subsection-4.2.2-a-balanced-incomplete-block-design" class="section level4">
+<h4>Subsection 4.2.2: A balanced incomplete block design</h4>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>appletaste <span class="ot">&lt;-</span> DAAG<span class="sc">::</span>appletaste</span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a><span class="fu">with</span>(appletaste, <span class="fu">table</span>(product, panelist))</span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="fu">sapply</span>(appletaste, is.factor)  <span class="co"># panelist &amp; product are factors</span></span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>appletaste.aov <span class="ot">&lt;-</span> <span class="fu">aov</span>(aftertaste <span class="sc">~</span> product <span class="sc">+</span> panelist, <span class="at">data=</span>appletaste)</span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a><span class="fu">summary</span>(appletaste.aov)</span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="fu">as.data.frame</span>(effects<span class="sc">::</span><span class="fu">Effect</span>(<span class="st">&quot;product&quot;</span>, appletaste.aov, <span class="at">confidence.level=</span><span class="fl">0.95</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a><span class="do">## NB that &#39;product&#39; was first term in the model formula</span></span>
+<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a><span class="do">## Thus, the 1st 4 coefficients have the information required</span></span>
+<span id="cb20-3"><a href="#cb20-3" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">summary.lm</span>(appletaste.aov))[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, ]</span></code></pre></div>
+</div>
+</div>
+<div id="section-4.3-fitting-multiple-lines" class="section level3">
+<h3>Section 4.3 Fitting multiple lines</h3>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="do">## Fit various models to columns of data frame leaftemp (DAAG)</span></span>
+<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a>leaftemp <span class="ot">&lt;-</span> DAAG<span class="sc">::</span>leaftemp</span>
+<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a>leaf.lm1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(tempDiff <span class="sc">~</span> <span class="dv">1</span> , <span class="at">data =</span> leaftemp)</span>
+<span id="cb21-4"><a href="#cb21-4" tabindex="-1"></a>leaf.lm2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(tempDiff <span class="sc">~</span> vapPress, <span class="at">data =</span> leaftemp)</span>
+<span id="cb21-5"><a href="#cb21-5" tabindex="-1"></a>leaf.lm3 <span class="ot">&lt;-</span> <span class="fu">lm</span>(tempDiff <span class="sc">~</span> CO2level <span class="sc">+</span> vapPress, <span class="at">data =</span> leaftemp)</span>
+<span id="cb21-6"><a href="#cb21-6" tabindex="-1"></a>leaf.lm4 <span class="ot">&lt;-</span> <span class="fu">lm</span>(tempDiff <span class="sc">~</span> CO2level <span class="sc">+</span> vapPress <span class="sc">+</span></span>
+<span id="cb21-7"><a href="#cb21-7" tabindex="-1"></a>               vapPress<span class="sc">:</span>CO2level, <span class="at">data =</span> leaftemp)</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="fu">anova</span>(leaf.lm1, leaf.lm2, leaf.lm3, leaf.lm4)</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">coef</span>(<span class="fu">summary</span>(leaf.lm3)), <span class="at">digits=</span><span class="dv">2</span>)</span></code></pre></div>
+</div>
+<div id="section-4.4-methods-for-fitting-smooth-curves" class="section level3">
+<h3>Section 4.4 Methods for fitting smooth curves</h3>
+<div id="subsection-4.4.1-polynomial-regression" class="section level4">
+<h4>Subsection 4.4.1: Polynomial Regression</h4>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a>seedrates <span class="ot">&lt;-</span> DAAG<span class="sc">::</span>seedrates</span>
+<span id="cb24-2"><a href="#cb24-2" tabindex="-1"></a>form2 <span class="ot">&lt;-</span> grain <span class="sc">~</span> rate <span class="sc">+</span> <span class="fu">I</span>(rate<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb24-3"><a href="#cb24-3" tabindex="-1"></a><span class="co"># Without the wrapper function I(), rate^2 would be interpreted</span></span>
+<span id="cb24-4"><a href="#cb24-4" tabindex="-1"></a><span class="co"># as the model formula term rate:rate, and hence as rate.</span></span>
+<span id="cb24-5"><a href="#cb24-5" tabindex="-1"></a>quad.lm2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(form2, <span class="at">data =</span> seedrates)</span>
+<span id="cb24-6"><a href="#cb24-6" tabindex="-1"></a><span class="do">## Alternative, using gam()</span></span>
+<span id="cb24-7"><a href="#cb24-7" tabindex="-1"></a><span class="do">## quad.gam &lt;- mgcv::gam(form2, data = seedrates)</span></span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(ggplot2))</span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a><span class="do">## Use ggplot2 functions to plot points, line, curve, &amp; 95% CIs</span></span>
+<span id="cb26-2"><a href="#cb26-2" tabindex="-1"></a><span class="do">## library(ggplot2)</span></span>
+<span id="cb26-3"><a href="#cb26-3" tabindex="-1"></a>gph <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(DAAG<span class="sc">::</span>seedrates, <span class="fu">aes</span>(rate,grain))<span class="sc">+</span></span>
+<span id="cb26-4"><a href="#cb26-4" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">size=</span><span class="dv">3</span>), <span class="at">color=</span><span class="st">&#39;magenta&#39;</span>)<span class="sc">+</span><span class="fu">xlim</span>(<span class="fu">c</span>(<span class="dv">25</span>,<span class="dv">185</span>))</span>
+<span id="cb26-5"><a href="#cb26-5" tabindex="-1"></a>colors <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Linear&quot;</span><span class="ot">=</span><span class="st">&quot;blue&quot;</span>, <span class="st">&quot;Quadratic&quot;</span><span class="ot">=</span><span class="st">&quot;red&quot;</span>)</span>
+<span id="cb26-6"><a href="#cb26-6" tabindex="-1"></a>ggdat <span class="ot">&lt;-</span> <span class="fu">ggplot_build</span>(gph<span class="sc">+</span><span class="fu">geom_smooth</span>(<span class="fu">aes</span>(rate,grain,<span class="at">color=</span><span class="st">&quot;Linear&quot;</span>),</span>
+<span id="cb26-7"><a href="#cb26-7" tabindex="-1"></a>  <span class="at">method=</span>lm, <span class="at">formula=</span>y<span class="sc">~</span><span class="fu">poly</span>(x,<span class="dv">2</span>),<span class="at">fullrange=</span><span class="cn">TRUE</span>))<span class="sc">$</span>data[[<span class="dv">2</span>]]</span>
+<span id="cb26-8"><a href="#cb26-8" tabindex="-1"></a>gph1 <span class="ot">&lt;-</span> gph<span class="sc">+</span><span class="fu">geom_smooth</span>(<span class="fu">aes</span>(<span class="at">color=</span><span class="st">&quot;Linear&quot;</span>), <span class="at">method=</span>lm, <span class="at">formula=</span>y<span class="sc">~</span>x, <span class="at">fullrange=</span><span class="cn">TRUE</span>, <span class="at">fill=</span><span class="st">&#39;dodgerblue&#39;</span>)</span>
+<span id="cb26-9"><a href="#cb26-9" tabindex="-1"></a>gph1 <span class="sc">+</span>  <span class="fu">geom_line</span>(<span class="at">data =</span> ggdat, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">color=</span><span class="st">&quot;Quadratic&quot;</span>),</span>
+<span id="cb26-10"><a href="#cb26-10" tabindex="-1"></a>                  <span class="at">linewidth=</span><span class="fl">0.75</span>)<span class="sc">+</span></span>
+<span id="cb26-11"><a href="#cb26-11" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="at">data=</span>ggdat, <span class="fu">aes</span>(<span class="at">x=</span>x,<span class="at">y=</span>y, <span class="at">ymin=</span>ymin, <span class="at">ymax=</span>ymax,</span>
+<span id="cb26-12"><a href="#cb26-12" tabindex="-1"></a>                              <span class="at">color=</span><span class="st">&quot;Quadratic&quot;</span>), <span class="at">linewidth=</span><span class="fl">0.75</span>,</span>
+<span id="cb26-13"><a href="#cb26-13" tabindex="-1"></a>  <span class="at">fill=</span><span class="cn">NA</span>, <span class="at">linetype=</span><span class="dv">2</span>, <span class="at">outline.type=</span><span class="st">&#39;both&#39;</span>, <span class="at">show.legend=</span><span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb26-14"><a href="#cb26-14" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values=</span>colors, <span class="at">aesthetics =</span> <span class="st">&quot;color&quot;</span>)<span class="sc">+</span></span>
+<span id="cb26-15"><a href="#cb26-15" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="fu">c</span>(.<span class="dv">8</span>,.<span class="dv">78</span>)) <span class="sc">+</span></span>
+<span id="cb26-16"><a href="#cb26-16" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">expand=</span><span class="cn">FALSE</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">&quot;Seeding rate (kg/ha)&quot;</span>) <span class="sc">+</span></span>
+<span id="cb26-17"><a href="#cb26-17" tabindex="-1"></a>    <span class="fu">ylab</span>(<span class="st">&quot;Grains per head&quot;</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">color=</span><span class="st">&quot;Model&quot;</span>) <span class="sc">+</span></span>
+<span id="cb26-18"><a href="#cb26-18" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">size=</span><span class="st">&#39;none&#39;</span>,</span>
+<span id="cb26-19"><a href="#cb26-19" tabindex="-1"></a>         <span class="at">color =</span> <span class="fu">guide_legend</span>(<span class="at">override.aes =</span> <span class="fu">list</span>(<span class="at">fill=</span><span class="st">&quot;transparent&quot;</span>) ) )</span>
+<span id="cb26-20"><a href="#cb26-20" tabindex="-1"></a><span class="do">## detach(&quot;package:ggplot2&quot;)</span></span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a>quad.lm2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(grain <span class="sc">~</span> rate <span class="sc">+</span> <span class="fu">I</span>(rate<span class="sc">^</span><span class="dv">2</span>), <span class="at">data =</span> DAAG<span class="sc">::</span>seedrates)</span>
+<span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">coef</span>(<span class="fu">summary</span>(quad.lm2)), <span class="at">digits=</span><span class="dv">2</span>)</span>
+<span id="cb27-3"><a href="#cb27-3" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">Correlation matrix</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb27-4"><a href="#cb27-4" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">summary</span>(quad.lm2, <span class="at">corr=</span><span class="cn">TRUE</span>)<span class="sc">$</span>correlation, <span class="at">digits=</span><span class="dv">2</span>)</span></code></pre></div>
+<div id="an-alternative-formulation-using-orthogonal-polynomials" class="section level5">
+<h5>*An alternative formulation using orthogonal polynomials</h5>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a>seedratesP.lm2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(grain <span class="sc">~</span> <span class="fu">poly</span>(rate,<span class="dv">2</span>), <span class="at">data =</span> seedrates)</span>
+<span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">coef</span>(<span class="fu">summary</span>(seedratesP.lm2)), <span class="at">digits=</span><span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" tabindex="-1"></a><span class="do">## Alternative, using mgcv::gam()</span></span>
+<span id="cb29-2"><a href="#cb29-2" tabindex="-1"></a>seedratesP.gam <span class="ot">&lt;-</span> mgcv<span class="sc">::</span><span class="fu">gam</span>(grain <span class="sc">~</span> <span class="fu">poly</span>(rate,<span class="dv">2</span>), <span class="at">data =</span> seedrates)</span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a>logseed.lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="fu">log</span>(grain) <span class="sc">~</span> <span class="fu">log</span>(rate), <span class="at">data=</span>DAAG<span class="sc">::</span>seedrates)</span>
+<span id="cb30-2"><a href="#cb30-2" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">summary</span>(logseed.lm))</span></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" tabindex="-1"></a><span class="do">## Use ggplot2 functions to plot points, line, curve, &amp; 95% CIs</span></span>
+<span id="cb31-2"><a href="#cb31-2" tabindex="-1"></a><span class="do">## library(ggplot2)</span></span>
+<span id="cb31-3"><a href="#cb31-3" tabindex="-1"></a>gph <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(DAAG<span class="sc">::</span>seedrates, <span class="fu">aes</span>(rate,grain)) <span class="sc">+</span></span>
+<span id="cb31-4"><a href="#cb31-4" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size=</span><span class="dv">3</span>, <span class="at">color=</span><span class="st">&quot;magenta&quot;</span>)<span class="sc">+</span><span class="fu">xlim</span>(<span class="fu">c</span>(<span class="dv">25</span>,<span class="dv">185</span>))</span>
+<span id="cb31-5"><a href="#cb31-5" tabindex="-1"></a>colors <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Loglinear&quot;</span><span class="ot">=</span><span class="st">&quot;gray40&quot;</span>, <span class="st">&quot;Quadratic&quot;</span><span class="ot">=</span><span class="st">&quot;red&quot;</span>)</span>
+<span id="cb31-6"><a href="#cb31-6" tabindex="-1"></a>ggdat <span class="ot">&lt;-</span> <span class="fu">ggplot_build</span>(gph<span class="sc">+</span><span class="fu">geom_smooth</span>(<span class="at">method=</span>lm, <span class="at">formula=</span>y<span class="sc">~</span><span class="fu">poly</span>(x,<span class="dv">2</span>),</span>
+<span id="cb31-7"><a href="#cb31-7" tabindex="-1"></a>                                      <span class="at">fullrange=</span><span class="cn">TRUE</span>))<span class="sc">$</span>data[[<span class="dv">2</span>]]</span>
+<span id="cb31-8"><a href="#cb31-8" tabindex="-1"></a>ggln <span class="ot">&lt;-</span> <span class="fu">ggplot_build</span>(gph<span class="sc">+</span><span class="fu">geom_smooth</span>(<span class="at">method=</span>lm,</span>
+<span id="cb31-9"><a href="#cb31-9" tabindex="-1"></a>                        <span class="at">formula=</span><span class="fu">log</span>(y)<span class="sc">~</span><span class="fu">log</span>(x),<span class="at">fullrange=</span><span class="cn">TRUE</span>))<span class="sc">$</span>data[[<span class="dv">2</span>]]</span>
+<span id="cb31-10"><a href="#cb31-10" tabindex="-1"></a><span class="do">## Assign to gphA rather than (as in text) plotting at this point</span></span>
+<span id="cb31-11"><a href="#cb31-11" tabindex="-1"></a>gphA <span class="ot">&lt;-</span> gph <span class="sc">+</span>  <span class="fu">geom_line</span>(<span class="at">data =</span> ggdat, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y, <span class="at">color=</span><span class="st">&quot;Quadratic&quot;</span>),</span>
+<span id="cb31-12"><a href="#cb31-12" tabindex="-1"></a>                 <span class="at">linewidth=</span><span class="fl">0.75</span>) <span class="sc">+</span></span>
+<span id="cb31-13"><a href="#cb31-13" tabindex="-1"></a><span class="fu">geom_ribbon</span>(<span class="at">data=</span>ggdat, <span class="fu">aes</span>(<span class="at">x=</span>x,<span class="at">y=</span>y, <span class="at">ymin=</span>ymin, <span class="at">ymax=</span>ymax, <span class="at">color=</span><span class="st">&quot;Quadratic&quot;</span>),</span>
+<span id="cb31-14"><a href="#cb31-14" tabindex="-1"></a>            <span class="at">linewidth=</span><span class="fl">0.75</span>, <span class="at">fill=</span><span class="cn">NA</span>, <span class="at">linetype=</span><span class="dv">2</span>, <span class="at">outline.type=</span><span class="st">&#39;both&#39;</span>,</span>
+<span id="cb31-15"><a href="#cb31-15" tabindex="-1"></a>            <span class="at">show.legend=</span><span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb31-16"><a href="#cb31-16" tabindex="-1"></a><span class="fu">geom_line</span>(<span class="at">data =</span> ggln, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> <span class="fu">exp</span>(y), <span class="at">color=</span><span class="st">&quot;Loglinear&quot;</span>),</span>
+<span id="cb31-17"><a href="#cb31-17" tabindex="-1"></a>          <span class="at">linewidth =</span> <span class="fl">0.75</span>) <span class="sc">+</span></span>
+<span id="cb31-18"><a href="#cb31-18" tabindex="-1"></a><span class="fu">geom_ribbon</span>(<span class="at">data=</span>ggln, <span class="fu">aes</span>(<span class="at">x=</span>x,<span class="at">y=</span><span class="fu">exp</span>(y), <span class="at">ymin=</span><span class="fu">exp</span>(ymin), <span class="at">ymax=</span><span class="fu">exp</span>(ymax),</span>
+<span id="cb31-19"><a href="#cb31-19" tabindex="-1"></a>            <span class="at">color=</span><span class="st">&quot;Loglinear&quot;</span>), <span class="at">fill=</span><span class="cn">NA</span>, <span class="at">linewidth=</span><span class="fl">0.75</span>, <span class="at">linetype=</span><span class="dv">3</span>,</span>
+<span id="cb31-20"><a href="#cb31-20" tabindex="-1"></a>            <span class="at">outline.type=</span><span class="st">&#39;both&#39;</span>, <span class="at">show.legend=</span><span class="cn">FALSE</span>)<span class="sc">+</span></span>
+<span id="cb31-21"><a href="#cb31-21" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values=</span>colors, <span class="at">aesthetics =</span> <span class="st">&quot;color&quot;</span>)<span class="sc">+</span></span>
+<span id="cb31-22"><a href="#cb31-22" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">expand=</span><span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb31-23"><a href="#cb31-23" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&quot;Seeding rate (kg/ha)&quot;</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">&quot;Grains per head&quot;</span>) <span class="sc">+</span></span>
+<span id="cb31-24"><a href="#cb31-24" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">&quot;A: Loglinear fit vs quadratic fit&quot;</span>, <span class="at">color=</span><span class="st">&quot;Model&quot;</span>) <span class="sc">+</span></span>
+<span id="cb31-25"><a href="#cb31-25" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">size=</span><span class="st">&#39;none&#39;</span>,</span>
+<span id="cb31-26"><a href="#cb31-26" tabindex="-1"></a>         <span class="at">color =</span> <span class="fu">guide_legend</span>(<span class="at">override.aes =</span> <span class="fu">list</span>(<span class="at">fill=</span><span class="st">&quot;transparent&quot;</span>) ) ) <span class="sc">+</span></span>
+<span id="cb31-27"><a href="#cb31-27" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="fu">c</span>(.<span class="dv">8</span>,.<span class="dv">78</span>))</span>
+<span id="cb31-28"><a href="#cb31-28" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">rate=</span><span class="fu">rep</span>(DAAG<span class="sc">::</span>seedrates<span class="sc">$</span>rate,<span class="dv">2</span>), <span class="at">res=</span><span class="fu">c</span>(<span class="fu">resid</span>(logseed.lm),</span>
+<span id="cb31-29"><a href="#cb31-29" tabindex="-1"></a>  <span class="fu">log</span>(DAAG<span class="sc">::</span>seedrates<span class="sc">$</span>grain)<span class="sc">-</span><span class="fu">log</span>(<span class="fu">fitted</span>(quad.lm2))),</span>
+<span id="cb31-30"><a href="#cb31-30" tabindex="-1"></a>  <span class="at">Model=</span><span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">&quot;Loglinear&quot;</span>,<span class="st">&quot;Quadratic&quot;</span>),<span class="fu">rep</span>(<span class="fu">nrow</span>(DAAG<span class="sc">::</span>seedrates),<span class="dv">2</span>)))</span>
+<span id="cb31-31"><a href="#cb31-31" tabindex="-1"></a><span class="do">## Assign to gphB rather than (as in text) plotting at this point</span></span>
+<span id="cb31-32"><a href="#cb31-32" tabindex="-1"></a>gphB <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x=</span>rate, <span class="at">y=</span>res, <span class="at">shape=</span>Model,<span class="at">color=</span>Model))<span class="sc">+</span></span>
+<span id="cb31-33"><a href="#cb31-33" tabindex="-1"></a><span class="fu">geom_point</span>(<span class="at">size=</span><span class="fl">2.5</span>) <span class="sc">+</span> <span class="fu">scale_color_manual</span>(<span class="at">values=</span>colors) <span class="sc">+</span></span>
+<span id="cb31-34"><a href="#cb31-34" tabindex="-1"></a><span class="fu">xlab</span>(<span class="st">&quot;Seeding rate (kg/ha)&quot;</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">&quot;Residuals on log scale&quot;</span>) <span class="sc">+</span></span>
+<span id="cb31-35"><a href="#cb31-35" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">title=</span><span class="st">&quot;B: Residuals&quot;</span>) <span class="sc">+</span></span>
+<span id="cb31-36"><a href="#cb31-36" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">size=</span><span class="st">&#39;none&#39;</span>,</span>
+<span id="cb31-37"><a href="#cb31-37" tabindex="-1"></a>         <span class="at">color =</span> <span class="fu">guide_legend</span>(<span class="at">override.aes =</span> <span class="fu">list</span>(<span class="at">fill=</span><span class="st">&quot;transparent&quot;</span>) ) ) <span class="sc">+</span></span>
+<span id="cb31-38"><a href="#cb31-38" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="fu">c</span>(.<span class="dv">8</span>,.<span class="dv">78</span>))</span>
+<span id="cb31-39"><a href="#cb31-39" tabindex="-1"></a><span class="do">## Now take advantage of the magic of the &#39;patchwork&#39; package</span></span>
+<span id="cb31-40"><a href="#cb31-40" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb31-41"><a href="#cb31-41" tabindex="-1"></a>gphA<span class="sc">+</span>gphB</span>
+<span id="cb31-42"><a href="#cb31-42" tabindex="-1"></a><span class="do">## detach(&quot;package:ggplot2&quot;)</span></span></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" tabindex="-1"></a>aic <span class="ot">&lt;-</span> <span class="fu">AIC</span>(quad.lm2, logseed.lm)</span>
+<span id="cb32-2"><a href="#cb32-2" tabindex="-1"></a>aic[<span class="st">&quot;logseed.lm&quot;</span>,<span class="dv">2</span>] <span class="ot">&lt;-</span> aic[<span class="st">&quot;logseed.lm&quot;</span>,<span class="dv">2</span>] <span class="sc">+</span> <span class="fu">sum</span>(<span class="dv">2</span><span class="sc">*</span><span class="fu">log</span>(seedrates<span class="sc">$</span>grain))</span>
+<span id="cb32-3"><a href="#cb32-3" tabindex="-1"></a><span class="fu">round</span>(aic,<span class="dv">1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" tabindex="-1"></a>seedrates<span class="ot">&lt;-</span>DAAG<span class="sc">::</span>seedrates</span>
+<span id="cb33-2"><a href="#cb33-2" tabindex="-1"></a>quad.lm2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(grain <span class="sc">~</span> <span class="fu">poly</span>(rate,<span class="at">degree=</span><span class="dv">2</span>), <span class="at">data=</span>seedrates)</span>
+<span id="cb33-3"><a href="#cb33-3" tabindex="-1"></a>ns.lm2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(grain <span class="sc">~</span> splines<span class="sc">::</span><span class="fu">ns</span>(rate,<span class="at">df=</span><span class="dv">2</span>), <span class="at">data=</span>seedrates)</span>
+<span id="cb33-4"><a href="#cb33-4" tabindex="-1"></a>tps.gam2 <span class="ot">&lt;-</span> mgcv<span class="sc">::</span><span class="fu">gam</span>(grain <span class="sc">~</span> <span class="fu">s</span>(rate, <span class="at">k=</span><span class="dv">3</span>, <span class="at">fx=</span>T), <span class="at">data=</span>seedrates)</span></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" tabindex="-1"></a>mflist <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="fu">list</span>(<span class="at">quad=</span>quad.lm2, <span class="at">nsplines=</span>ns.lm2, <span class="at">tps=</span>tps.gam2), model.matrix)</span>
+<span id="cb34-2"><a href="#cb34-2" tabindex="-1"></a>mftab <span class="ot">&lt;-</span> <span class="fu">with</span>(mflist, <span class="fu">cbind</span>(quad, nsplines, tps))</span>
+<span id="cb34-3"><a href="#cb34-3" tabindex="-1"></a><span class="fu">colnames</span>(mftab) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;(Int)&quot;</span>, <span class="st">&quot;poly2.1&quot;</span>, <span class="st">&quot;poly2.2&quot;</span>, <span class="st">&quot;(Int)&quot;</span>, <span class="st">&quot;ns2.1&quot;</span>, <span class="st">&quot;ns2.2&quot;</span>, <span class="st">&quot;(Int)&quot;</span>, <span class="st">&quot;s3.1&quot;</span>, <span class="st">&quot;s3.2&quot;</span>)</span>
+<span id="cb34-4"><a href="#cb34-4" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
+<span id="cb34-5"><a href="#cb34-5" tabindex="-1"></a>linesep <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&#39;&#39;</span>, <span class="st">&#39;&#39;</span>, <span class="st">&#39;&#39;</span>, <span class="st">&#39;</span><span class="sc">\\</span><span class="st">addlinespace&#39;</span>)</span>
+<span id="cb34-6"><a href="#cb34-6" tabindex="-1"></a><span class="fu">kbl</span>(mftab, <span class="at">booktabs=</span><span class="cn">TRUE</span>, <span class="at">format=</span><span class="st">&#39;latex&#39;</span>, <span class="at">toprule=</span><span class="cn">FALSE</span>,</span>
+<span id="cb34-7"><a href="#cb34-7" tabindex="-1"></a><span class="at">format.args=</span><span class="fu">list</span>(<span class="at">justify=</span><span class="st">&quot;right&quot;</span>, <span class="at">width=</span><span class="dv">8</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb34-8"><a href="#cb34-8" tabindex="-1"></a><span class="fu">kable_styling</span>(<span class="at">latex_options =</span> <span class="fu">c</span>(<span class="st">&quot;scale_down&quot;</span>,<span class="at">latex_options =</span> <span class="st">&quot;hold_position&quot;</span>), <span class="at">position=</span><span class="st">&#39;center&#39;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb34-9"><a href="#cb34-9" tabindex="-1"></a><span class="fu">add_header_above</span>(<span class="fu">c</span>(<span class="st">&#39;poly(rate,2)&#39;</span> <span class="ot">=</span> <span class="dv">3</span>, <span class="st">&#39;splines::ns(rate,df=2)&#39;</span> <span class="ot">=</span> <span class="dv">3</span>, <span class="st">&#39;s(rate, k=3, fx=T)&#39;</span> <span class="ot">=</span> <span class="dv">3</span>),</span>
+<span id="cb34-10"><a href="#cb34-10" tabindex="-1"></a><span class="at">align=</span><span class="st">&#39;c&#39;</span>, <span class="at">monospace=</span><span class="fu">rep</span>(T,<span class="dv">3</span>))<span class="sc">|&gt;</span></span>
+<span id="cb34-11"><a href="#cb34-11" tabindex="-1"></a><span class="fu">add_header_above</span>(<span class="fu">c</span>(<span class="st">&#39;lm: grain~&#39;</span> <span class="ot">=</span> <span class="dv">3</span>, <span class="st">&#39;lm: grain~&#39;</span><span class="ot">=</span><span class="dv">3</span>, <span class="st">&#39;gam: grain~&#39;</span><span class="ot">=</span><span class="dv">3</span>),</span>
+<span id="cb34-12"><a href="#cb34-12" tabindex="-1"></a>                 <span class="at">align=</span><span class="st">&#39;c&#39;</span>, <span class="at">monospace=</span><span class="fu">rep</span>(T,<span class="dv">3</span>), <span class="at">line=</span>F)</span></code></pre></div>
+</div>
+<div id="gam-models-versus-models-fitted-using-lm" class="section level5">
+<h5>GAM models versus models fitted using lm()</h5>
+</div>
+<div id="alternative-fits-what-is-the-best-choice" class="section level5">
+<h5>Alternative fits – what is the best choice?</h5>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" tabindex="-1"></a><span class="do">## Load required packages</span></span>
+<span id="cb35-2"><a href="#cb35-2" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(splines))</span>
+<span id="cb35-3"><a href="#cb35-3" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(mgcv))</span></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" tabindex="-1"></a>ohms.tp <span class="ot">&lt;-</span> <span class="fu">gam</span>(kohms<span class="sc">~</span><span class="fu">s</span>(juice, <span class="at">bs=</span><span class="st">&quot;tp&quot;</span>), <span class="at">data=</span>fruitohms)</span>
+<span id="cb36-2"><a href="#cb36-2" tabindex="-1"></a>ohms.cs <span class="ot">&lt;-</span> <span class="fu">gam</span>(kohms<span class="sc">~</span><span class="fu">s</span>(juice, <span class="at">bs=</span><span class="st">&quot;cs&quot;</span>), <span class="at">data=</span>fruitohms)</span>
+<span id="cb36-3"><a href="#cb36-3" tabindex="-1"></a><span class="fu">range</span>(<span class="fu">fitted</span>(ohms.tp)<span class="sc">-</span><span class="fu">fitted</span>(ohms.cs))</span></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" tabindex="-1"></a><span class="fu">summary</span>(ohms.tp)</span></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" tabindex="-1"></a><span class="fu">summary</span>(ohms.tpBIC)</span></code></pre></div>
+</div>
+</div>
+<div id="subsection-4.4.3-the-contributions-of-basis-curves-to-the-fit" class="section level4">
+<h4>Subsection 4.4.3: The contributions of basis curves to the fit</h4>
+</div>
+<div id="subsection-4.4.4-checks-on-the-fitted-model" class="section level4">
+<h4>Subsection 4.4.4: Checks on the fitted model</h4>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" tabindex="-1"></a><span class="do">## Printed output from `gam.check(ohms.tpBIC)`</span></span>
+<span id="cb39-2"><a href="#cb39-2" tabindex="-1"></a><span class="fu">cat</span>(out, <span class="at">sep=</span><span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span></code></pre></div>
+</div>
+<div id="subsection-4.3.5-monotone-curves" class="section level4">
+<h4>Subsection 4.3.5: Monotone curves</h4>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" tabindex="-1"></a>ohms.scam <span class="ot">&lt;-</span> scam<span class="sc">::</span><span class="fu">scam</span>(kohms <span class="sc">~</span> <span class="fu">s</span>(juice,<span class="at">bs=</span><span class="st">&quot;mpd&quot;</span>), <span class="at">data=</span>fruitohms)</span>
+<span id="cb40-2"><a href="#cb40-2" tabindex="-1"></a><span class="fu">summary</span>(ohms.scam)</span></code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" tabindex="-1"></a><span class="fu">AIC</span>(ohms.scam, ohms.tp)</span></code></pre></div>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" tabindex="-1"></a><span class="fu">BIC</span>(ohms.scam, ohms.tp)</span></code></pre></div>
+</div>
+<div id="subsection-4.4.6-different-smooths-for-different-levels-of-a-factor" class="section level4">
+<h4>Subsection 4.4.6: Different smooths for different levels of a
+factor</h4>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" tabindex="-1"></a>whiteside <span class="ot">&lt;-</span> MASS<span class="sc">::</span>whiteside</span>
+<span id="cb43-2"><a href="#cb43-2" tabindex="-1"></a>gas.gam <span class="ot">&lt;-</span> <span class="fu">gam</span>(Gas <span class="sc">~</span> Insul<span class="sc">+</span><span class="fu">s</span>(Temp, <span class="at">by=</span>Insul), <span class="at">data=</span>whiteside)</span></code></pre></div>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" tabindex="-1"></a><span class="fu">summary</span>(gas.gam)</span></code></pre></div>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" tabindex="-1"></a><span class="fu">Box.test</span>(<span class="fu">resid</span>(gas.gam)[whiteside<span class="sc">$</span>Insul<span class="sc">==</span><span class="st">&#39;Before&#39;</span>], <span class="at">lag=</span><span class="dv">1</span>)</span>
+<span id="cb45-2"><a href="#cb45-2" tabindex="-1"></a><span class="fu">Box.test</span>(<span class="fu">resid</span>(gas.gam)[whiteside<span class="sc">$</span>Insul<span class="sc">==</span><span class="st">&#39;After&#39;</span>], <span class="at">lag=</span><span class="dv">1</span>)</span></code></pre></div>
+</div>
+<div id="subsection-4.4.7-the-remarkable-reach-of-mgcv-and-related-packages" class="section level4">
+<h4>Subsection 4.4.7: The remarkable reach of mgcv and related
+packages</h4>
+<div id="departures-from-independence-assumptions" class="section level5">
+<h5>Departures from independence assumptions</h5>
+</div>
+</div>
+<div id="subsection-4.4.8-multiple-spline-smoothing-terms-dewpoint-data" class="section level4">
+<h4>Subsection 4.4.8: Multiple spline smoothing terms — dewpoint
+data</h4>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" tabindex="-1"></a><span class="do">## GAM model -- `dewpoint` data</span></span>
+<span id="cb46-2"><a href="#cb46-2" tabindex="-1"></a>dewpoint <span class="ot">&lt;-</span> DAAG<span class="sc">::</span>dewpoint</span>
+<span id="cb46-3"><a href="#cb46-3" tabindex="-1"></a>ds.gam <span class="ot">&lt;-</span> <span class="fu">gam</span>(dewpt <span class="sc">~</span> <span class="fu">s</span>(mintemp) <span class="sc">+</span> <span class="fu">s</span>(maxtemp), <span class="at">data=</span>dewpoint)</span>
+<span id="cb46-4"><a href="#cb46-4" tabindex="-1"></a><span class="fu">plot</span>(ds.gam, <span class="at">resid=</span><span class="cn">TRUE</span>, <span class="at">pch=</span><span class="st">&quot;.&quot;</span>, <span class="at">se=</span><span class="dv">2</span>, <span class="at">cex=</span><span class="dv">2</span>, <span class="at">fg=</span><span class="st">&quot;gray&quot;</span>)</span></code></pre></div>
+<div id="using-residuals-as-a-check-for-non-additive-effects" class="section level5">
+<h5>Using residuals as a check for non-additive effects</h5>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" tabindex="-1"></a><span class="fu">library</span>(lattice)</span>
+<span id="cb47-2"><a href="#cb47-2" tabindex="-1"></a><span class="do">## Residuals vs maxtemp, for different mintemp ranges</span></span>
+<span id="cb47-3"><a href="#cb47-3" tabindex="-1"></a>mintempRange <span class="ot">&lt;-</span> <span class="fu">equal.count</span>(dewpoint<span class="sc">$</span>mintemp, <span class="at">number=</span><span class="dv">3</span>)</span>
+<span id="cb47-4"><a href="#cb47-4" tabindex="-1"></a>ds.xy <span class="ot">&lt;-</span> <span class="fu">xyplot</span>(<span class="fu">residuals</span>(ds.gam) <span class="sc">~</span> maxtemp<span class="sc">|</span>mintempRange, <span class="at">data=</span>dewpoint,</span>
+<span id="cb47-5"><a href="#cb47-5" tabindex="-1"></a>                <span class="at">layout=</span><span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">1</span>), <span class="at">scales=</span><span class="fu">list</span>(<span class="at">tck=</span><span class="fl">0.5</span>), <span class="at">aspect=</span><span class="dv">1</span>, <span class="at">cex=</span><span class="fl">0.65</span>,</span>
+<span id="cb47-6"><a href="#cb47-6" tabindex="-1"></a>                <span class="at">par.strip.text=</span><span class="fu">list</span>(<span class="at">cex=</span><span class="fl">0.75</span>), <span class="at">type=</span><span class="fu">c</span>(<span class="st">&quot;p&quot;</span>,<span class="st">&quot;smooth&quot;</span>),</span>
+<span id="cb47-7"><a href="#cb47-7" tabindex="-1"></a>                <span class="at">xlab=</span><span class="st">&quot;Maximum temperature&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;Residual&quot;</span>)</span>
+<span id="cb47-8"><a href="#cb47-8" tabindex="-1"></a>ds.xy</span></code></pre></div>
+</div>
+<div id="a-smooth-surface" class="section level5">
+<h5>*A smooth surface</h5>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" tabindex="-1"></a><span class="do">## Fit surface</span></span>
+<span id="cb48-2"><a href="#cb48-2" tabindex="-1"></a>ds.tp <span class="ot">&lt;-</span> <span class="fu">gam</span>(dewpt <span class="sc">~</span> <span class="fu">s</span>(mintemp, maxtemp), <span class="at">data=</span>DAAG<span class="sc">::</span>dewpoint)</span>
+<span id="cb48-3"><a href="#cb48-3" tabindex="-1"></a><span class="fu">vis.gam</span>(ds.tp, <span class="at">plot.type=</span><span class="st">&quot;contour&quot;</span>)   <span class="co"># gives a contour plot of the</span></span>
+<span id="cb48-4"><a href="#cb48-4" tabindex="-1"></a><span class="co"># fitted regression surface</span></span>
+<span id="cb48-5"><a href="#cb48-5" tabindex="-1"></a><span class="fu">vis.gam</span>(ds.gam, <span class="at">plot.type=</span><span class="st">&quot;contour&quot;</span>)  <span class="co"># cf, model with 2 smooth terms</span></span></code></pre></div>
+</div>
+</div>
+<div id="subsection-4.4.9-atlantic-hurricanes-that-made-landfall-in-the-us" class="section level4">
+<h4>Subsection 4.4.9: Atlantic hurricanes that made landfall in the
+US</h4>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" tabindex="-1"></a>hurricNamed <span class="ot">&lt;-</span> DAAG<span class="sc">::</span>hurricNamed</span>
+<span id="cb49-2"><a href="#cb49-2" tabindex="-1"></a>hurricS.gam <span class="ot">&lt;-</span> <span class="fu">gam</span>(car<span class="sc">::</span><span class="fu">yjPower</span>(deaths, <span class="at">lambda=</span><span class="sc">-</span><span class="fl">0.2</span>) <span class="sc">~</span></span>
+<span id="cb49-3"><a href="#cb49-3" tabindex="-1"></a>  <span class="fu">s</span>(<span class="fu">log</span>(BaseDam2014)) <span class="sc">+</span> <span class="fu">s</span>(LF.PressureMB),</span>
+<span id="cb49-4"><a href="#cb49-4" tabindex="-1"></a>  <span class="at">data=</span>hurricNamed, <span class="at">method=</span><span class="st">&quot;ML&quot;</span>)</span>
+<span id="cb49-5"><a href="#cb49-5" tabindex="-1"></a><span class="fu">anova</span>(hurricS.gam)</span></code></pre></div>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" tabindex="-1"></a><span class="fu">plot</span>(hurricS.gam, <span class="at">resid=</span><span class="cn">TRUE</span>, <span class="at">pch=</span><span class="dv">16</span>, <span class="at">cex=</span><span class="fl">0.5</span>, <span class="at">select=</span><span class="dv">1</span>, <span class="at">fg=</span><span class="st">&quot;gray&quot;</span>)</span>
+<span id="cb50-2"><a href="#cb50-2" tabindex="-1"></a><span class="fu">mtext</span>(<span class="at">side=</span><span class="dv">3</span>, <span class="at">line=</span><span class="dv">1</span>, <span class="st">&quot;A: Term in log(BaseDam2014)&quot;</span>, <span class="at">cex=</span><span class="fl">1.0</span>, <span class="at">adj=</span><span class="dv">0</span>, <span class="at">at=</span><span class="sc">-</span><span class="fl">3.75</span>)</span>
+<span id="cb50-3"><a href="#cb50-3" tabindex="-1"></a><span class="fu">plot</span>(hurricS.gam, <span class="at">resid=</span><span class="cn">TRUE</span>, <span class="at">pch=</span><span class="dv">16</span>, <span class="at">cex=</span><span class="fl">0.5</span>, <span class="at">select=</span><span class="dv">2</span>, <span class="at">fg=</span><span class="st">&quot;gray&quot;</span>)</span>
+<span id="cb50-4"><a href="#cb50-4" tabindex="-1"></a><span class="fu">mtext</span>(<span class="at">side=</span><span class="dv">3</span>, <span class="at">line=</span><span class="dv">1</span>, <span class="st">&quot;B: Term in LF.PressureMB&quot;</span>, <span class="at">cex=</span><span class="fl">1.0</span>, <span class="at">adj=</span><span class="dv">0</span>, <span class="at">at=</span><span class="dv">878</span>)</span>
+<span id="cb50-5"><a href="#cb50-5" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">resid</span>(hurricS.gam), <span class="at">main=</span><span class="st">&quot;&quot;</span>, <span class="at">fg=</span><span class="st">&quot;gray&quot;</span>)</span>
+<span id="cb50-6"><a href="#cb50-6" tabindex="-1"></a><span class="fu">mtext</span>(<span class="at">side=</span><span class="dv">3</span>, <span class="at">line=</span><span class="dv">1</span>, <span class="st">&quot;C: Q-Q plot of residuals&quot;</span>, <span class="at">cex=</span><span class="fl">1.0</span>, <span class="at">adj=</span><span class="dv">0</span>, <span class="at">at=</span><span class="sc">-</span><span class="fl">4.25</span>)</span></code></pre></div>
+<div id="an-explanatory-variable-with-an-overly-long-tailed-distribution" class="section level5">
+<h5>An explanatory variable with an overly long-tailed distribution</h5>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" tabindex="-1"></a>hurricSlog1.gam <span class="ot">&lt;-</span> <span class="fu">gam</span>(<span class="fu">log</span>(deaths<span class="sc">+</span><span class="dv">1</span>) <span class="sc">~</span> <span class="fu">s</span>(<span class="fu">log</span>(BaseDam2014)), <span class="at">data=</span>hurricNamed)</span>
+<span id="cb51-2"><a href="#cb51-2" tabindex="-1"></a>hurricSlog2.gam <span class="ot">&lt;-</span> <span class="fu">gam</span>(<span class="fu">log</span>(deaths<span class="sc">+</span><span class="dv">1</span>) <span class="sc">~</span> <span class="fu">s</span>(BaseDam2014), <span class="at">data=</span>hurricNamed)</span></code></pre></div>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" tabindex="-1"></a><span class="fu">plot</span>(hurricSlog1.gam, <span class="at">resid=</span><span class="cn">TRUE</span>, <span class="at">pch=</span><span class="dv">16</span>, <span class="at">cex=</span><span class="fl">0.5</span>, <span class="at">adj=</span><span class="dv">0</span>, <span class="at">fg=</span><span class="st">&quot;gray&quot;</span>)</span>
+<span id="cb52-2"><a href="#cb52-2" tabindex="-1"></a><span class="fu">mtext</span>(<span class="at">side=</span><span class="dv">3</span>, <span class="st">&quot;A: Use log(BaseDam2014)&quot;</span>, <span class="at">cex=</span><span class="fl">1.4</span>, <span class="at">adj=</span><span class="dv">0</span>, <span class="at">line=</span><span class="dv">1</span>, <span class="at">at=</span><span class="sc">-</span><span class="fl">3.15</span>)</span>
+<span id="cb52-3"><a href="#cb52-3" tabindex="-1"></a><span class="fu">plot</span>(hurricSlog2.gam, <span class="at">resid=</span><span class="cn">TRUE</span>, <span class="at">pch=</span><span class="dv">16</span>, <span class="at">cex=</span><span class="fl">0.5</span>, <span class="at">fg=</span><span class="st">&quot;gray&quot;</span>)</span>
+<span id="cb52-4"><a href="#cb52-4" tabindex="-1"></a><span class="fu">mtext</span>(<span class="at">side=</span><span class="dv">3</span>, <span class="st">&quot;B: Use BaseDam2014&quot;</span>, <span class="at">cex=</span><span class="fl">1.4</span>, <span class="at">adj=</span><span class="dv">0</span>, <span class="at">line=</span><span class="dv">1</span>, <span class="at">at=</span><span class="sc">-</span><span class="dv">28500</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="subsection-4.4.10-other-smoothing-methods" class="section level4">
+<h4>Subsection 4.4.10: Other smoothing methods</h4>
+</div>
+</div>
+<div id="section-4.5-quantile-regression" class="section level3">
+<h3>Section 4.5 Quantile regression</h3>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" tabindex="-1"></a><span class="do">## If necessary, install the &#39;WDI&#39; package &amp; download data</span></span>
+<span id="cb53-2"><a href="#cb53-2" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">file.exists</span>(<span class="st">&quot;wdi.RData&quot;</span>)){</span>
+<span id="cb53-3"><a href="#cb53-3" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.element</span>(<span class="st">&quot;WDI&quot;</span>, <span class="fu">installed.packages</span>()[,<span class="dv">1</span>]) )<span class="fu">install.packages</span>(<span class="st">&quot;WDI&quot;</span>)</span>
+<span id="cb53-4"><a href="#cb53-4" tabindex="-1"></a>inds <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&#39;SP.DYN.TFRT.IN&#39;</span>,<span class="st">&#39;SP.DYN.LE00.IN&#39;</span>, <span class="st">&#39;SP.POP.TOTL&#39;</span>)</span>
+<span id="cb53-5"><a href="#cb53-5" tabindex="-1"></a>indnams <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;FertilityRate&quot;</span>, <span class="st">&quot;LifeExpectancy&quot;</span>, <span class="st">&quot;population&quot;</span>)</span>
+<span id="cb53-6"><a href="#cb53-6" tabindex="-1"></a>wdi2020 <span class="ot">&lt;-</span> WDI<span class="sc">::</span><span class="fu">WDI</span>(<span class="at">country=</span><span class="st">&quot;all&quot;</span>, <span class="at">indicator=</span>inds, <span class="at">start=</span><span class="dv">2020</span>, <span class="at">end=</span><span class="dv">2020</span>,</span>
+<span id="cb53-7"><a href="#cb53-7" tabindex="-1"></a>                    <span class="at">extra=</span><span class="cn">TRUE</span>)</span>
+<span id="cb53-8"><a href="#cb53-8" tabindex="-1"></a>wdi2020 <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(<span class="fu">droplevels</span>(<span class="fu">subset</span>(wdi2020, <span class="sc">!</span>region <span class="sc">%in%</span> <span class="st">&quot;Aggregates&quot;</span>)))</span>
+<span id="cb53-9"><a href="#cb53-9" tabindex="-1"></a>wdi <span class="ot">&lt;-</span> <span class="fu">setNames</span>(wdi2020[<span class="fu">order</span>(wdi2020[, inds[<span class="dv">1</span>]]),inds], indnams)</span>
+<span id="cb53-10"><a href="#cb53-10" tabindex="-1"></a><span class="fu">save</span>(wdi, <span class="at">file=</span><span class="st">&quot;wdi.RData&quot;</span>)</span>
+<span id="cb53-11"><a href="#cb53-11" tabindex="-1"></a>}</span></code></pre></div>
+<div id="world-bank-data-on-fertility-and-life-expectancy" class="section level5">
+<h5>2020 World Bank data on fertility and life expectancy</h5>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;wdi.RData&quot;</span>)  <span class="co"># Needs `wdi.RData` in working directory; see footnote</span></span>
+<span id="cb54-2"><a href="#cb54-2" tabindex="-1"></a><span class="fu">library</span>(qgam)</span>
+<span id="cb54-3"><a href="#cb54-3" tabindex="-1"></a>wdi[, <span class="st">&quot;ppop&quot;</span>] <span class="ot">&lt;-</span> <span class="fu">with</span>(wdi, population<span class="sc">/</span><span class="fu">sum</span>(population))</span>
+<span id="cb54-4"><a href="#cb54-4" tabindex="-1"></a>wdi[,<span class="st">&quot;logFert&quot;</span>] <span class="ot">&lt;-</span> <span class="fu">log</span>(wdi[,<span class="st">&quot;FertilityRate&quot;</span>])</span>
+<span id="cb54-5"><a href="#cb54-5" tabindex="-1"></a>form <span class="ot">&lt;-</span> LifeExpectancy <span class="sc">~</span> <span class="fu">s</span>(logFert)</span>
+<span id="cb54-6"><a href="#cb54-6" tabindex="-1"></a><span class="do">## Panel A model</span></span>
+<span id="cb54-7"><a href="#cb54-7" tabindex="-1"></a>fit.qgam <span class="ot">&lt;-</span> <span class="fu">qgam</span>(form, <span class="at">data=</span>wdi, <span class="at">qu=</span>.<span class="dv">5</span>)</span>
+<span id="cb54-8"><a href="#cb54-8" tabindex="-1"></a><span class="do">## Panel B: Multiple (10%, 90% quantiles; unweighted, then weighted</span></span>
+<span id="cb54-9"><a href="#cb54-9" tabindex="-1"></a>fit19.mqgam <span class="ot">&lt;-</span> <span class="fu">mqgam</span>(form, <span class="at">data=</span>wdi, <span class="at">qu=</span><span class="fu">c</span>(.<span class="dv">1</span>,.<span class="dv">9</span>))</span>
+<span id="cb54-10"><a href="#cb54-10" tabindex="-1"></a>wtd19.mqgam <span class="ot">&lt;-</span> <span class="fu">mqgam</span>(form, <span class="at">data=</span>wdi, <span class="at">qu=</span><span class="fu">c</span>(.<span class="dv">1</span>,.<span class="dv">9</span>),</span>
+<span id="cb54-11"><a href="#cb54-11" tabindex="-1"></a>                      <span class="at">argGam=</span><span class="fu">list</span>(<span class="at">weights=</span>wdi[[<span class="st">&quot;ppop&quot;</span>]]))</span></code></pre></div>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" tabindex="-1"></a>hat50 <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="at">LifeExpectancy=</span>wdi[, <span class="st">&quot;LifeExpectancy&quot;</span>], <span class="at">logFert=</span>wdi[,<span class="st">&quot;logFert&quot;</span>],</span>
+<span id="cb55-2"><a href="#cb55-2" tabindex="-1"></a>                <span class="fu">as.data.frame</span>(<span class="fu">predict</span>(fit.qgam, <span class="at">se=</span>T)))</span>
+<span id="cb55-3"><a href="#cb55-3" tabindex="-1"></a>hat50 <span class="ot">&lt;-</span> <span class="fu">within</span>(hat50, {lo <span class="ot">&lt;-</span> fit<span class="dv">-2</span><span class="sc">*</span>se.fit; hi <span class="ot">&lt;-</span> fit<span class="sc">+</span><span class="dv">2</span><span class="sc">*</span>se.fit})</span>
+<span id="cb55-4"><a href="#cb55-4" tabindex="-1"></a>hat19 <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">matrix</span>(<span class="at">nrow=</span><span class="fu">nrow</span>(wdi), <span class="at">ncol=</span><span class="dv">4</span>))</span>
+<span id="cb55-5"><a href="#cb55-5" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>){hat19[[i]] <span class="ot">&lt;-</span> <span class="fu">qdo</span>(fit19.mqgam, <span class="fu">c</span>(.<span class="dv">1</span>,.<span class="dv">9</span>)[i], predict)</span>
+<span id="cb55-6"><a href="#cb55-6" tabindex="-1"></a>              hat19[[i<span class="sc">+</span><span class="dv">2</span>]] <span class="ot">&lt;-</span> <span class="fu">qdo</span>(wtd19.mqgam, <span class="fu">c</span>(.<span class="dv">1</span>,.<span class="dv">9</span>)[i], predict) }</span>
+<span id="cb55-7"><a href="#cb55-7" tabindex="-1"></a>  <span class="do">## NB, can replace `predict` by `plot`, or `summary`</span></span>
+<span id="cb55-8"><a href="#cb55-8" tabindex="-1"></a><span class="fu">colnames</span>(hat19) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">paste0</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">&#39;q&#39;</span>,<span class="st">&#39;qwt&#39;</span>),<span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">2</span>)), <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">&#39;10&#39;</span>,<span class="st">&#39;90&#39;</span>),<span class="dv">2</span>)))</span>
+<span id="cb55-9"><a href="#cb55-9" tabindex="-1"></a>hat19 <span class="ot">&lt;-</span> <span class="fu">cbind</span>(hat19, <span class="at">logFert=</span>wdi[,<span class="st">&quot;logFert&quot;</span>])</span></code></pre></div>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" tabindex="-1"></a><span class="do">## Panel A: Fit with SE limits, 50% quantile</span></span>
+<span id="cb56-2"><a href="#cb56-2" tabindex="-1"></a>gphA <span class="ot">&lt;-</span> <span class="fu">xyplot</span>(lo<span class="sc">+</span>fit<span class="sc">+</span>hi<span class="sc">~</span>logFert, <span class="at">data=</span>hat50, <span class="at">lty=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">2</span>),<span class="at">lwd=</span><span class="fl">1.5</span>,<span class="at">type=</span><span class="st">&#39;l&#39;</span>) <span class="sc">+</span></span>
+<span id="cb56-3"><a href="#cb56-3" tabindex="-1"></a>  latticeExtra<span class="sc">::</span><span class="fu">as.layer</span>(<span class="fu">xyplot</span>(LifeExpectancy<span class="sc">~</span>logFert,</span>
+<span id="cb56-4"><a href="#cb56-4" tabindex="-1"></a>                                <span class="at">data=</span>hat50, <span class="at">pch=</span><span class="st">&#39;.&#39;</span>, <span class="at">cex=</span><span class="dv">2</span>))</span>
+<span id="cb56-5"><a href="#cb56-5" tabindex="-1"></a><span class="do">## Panel B: Multiple quantiles; unweighted and weighted fits</span></span>
+<span id="cb56-6"><a href="#cb56-6" tabindex="-1"></a>gph19 <span class="ot">&lt;-</span> <span class="fu">xyplot</span>(q10<span class="sc">+</span>q90<span class="sc">+</span>qwt10<span class="sc">+</span>qwt90 <span class="sc">~</span> logFert, <span class="at">type=</span><span class="st">&quot;l&quot;</span>,</span>
+<span id="cb56-7"><a href="#cb56-7" tabindex="-1"></a>                <span class="at">data=</span>hat19, <span class="at">lty=</span><span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>,<span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">2</span>)),<span class="at">lwd=</span><span class="fl">1.5</span>)</span>
+<span id="cb56-8"><a href="#cb56-8" tabindex="-1"></a>gphB <span class="ot">&lt;-</span> <span class="fu">xyplot</span>(LifeExpectancy <span class="sc">~</span> logFert, <span class="at">data=</span>wdi) <span class="sc">+</span> <span class="fu">as.layer</span>(gph19)</span>
+<span id="cb56-9"><a href="#cb56-9" tabindex="-1"></a><span class="fu">update</span>(<span class="fu">c</span>(<span class="st">&quot;A: 50% curve, 2 SE limits&quot;</span><span class="ot">=</span>gphA, <span class="st">&quot;B: 0.1, 0.9 quantiles&quot;</span><span class="ot">=</span>gphB,</span>
+<span id="cb56-10"><a href="#cb56-10" tabindex="-1"></a>         <span class="at">x.same=</span>T, <span class="at">y.same=</span>T), <span class="at">between=</span><span class="fu">list</span>(<span class="at">x=</span><span class="fl">0.5</span>),</span>
+<span id="cb56-11"><a href="#cb56-11" tabindex="-1"></a>       <span class="at">xlab=</span><span class="st">&quot;Fertility Rate&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;Life Expectancy&quot;</span>,</span>
+<span id="cb56-12"><a href="#cb56-12" tabindex="-1"></a>       <span class="at">scales=</span><span class="fu">list</span>(<span class="at">x=</span><span class="fu">list</span>(<span class="at">at=</span><span class="fu">log</span>(<span class="dv">2</span><span class="sc">^</span>((<span class="dv">0</span><span class="sc">:</span><span class="dv">5</span>)<span class="sc">/</span><span class="dv">2</span>)), <span class="at">labels=</span><span class="fu">round</span>(<span class="dv">2</span><span class="sc">^</span>((<span class="dv">0</span><span class="sc">:</span><span class="dv">5</span>)<span class="sc">/</span><span class="dv">2</span>),<span class="dv">1</span>)),</span>
+<span id="cb56-13"><a href="#cb56-13" tabindex="-1"></a>                   <span class="at">alternating=</span>F),</span>
+<span id="cb56-14"><a href="#cb56-14" tabindex="-1"></a>       <span class="at">par.settings=</span>DAAG<span class="sc">::</span><span class="fu">DAAGtheme</span>(<span class="at">color=</span>F, <span class="at">col=</span><span class="st">&#39;gray50&#39;</span>, <span class="at">cex=</span><span class="dv">2</span>, <span class="at">pch=</span><span class="st">&#39;.&#39;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" tabindex="-1"></a><span class="do">## Plots for the individual quantiles can be obtained thus:</span></span>
+<span id="cb57-2"><a href="#cb57-2" tabindex="-1"></a><span class="do">## ## Panel A</span></span>
+<span id="cb57-3"><a href="#cb57-3" tabindex="-1"></a><span class="fu">plot</span>(fit.qgam, <span class="at">shift=</span><span class="fu">mean</span>(<span class="fu">predict</span>(fit.qgam)))</span>
+<span id="cb57-4"><a href="#cb57-4" tabindex="-1"></a><span class="do">## Panel B, 10% quantile</span></span>
+<span id="cb57-5"><a href="#cb57-5" tabindex="-1"></a>fitm10 <span class="ot">&lt;-</span> <span class="fu">qdo</span>(fit19.mqgam, <span class="at">qu=</span><span class="fl">0.1</span>)</span>
+<span id="cb57-6"><a href="#cb57-6" tabindex="-1"></a><span class="fu">plot</span>(fitm10, <span class="at">resid=</span>T, <span class="at">shift=</span><span class="fu">mean</span>(<span class="fu">predict</span>(fitm10)),</span>
+<span id="cb57-7"><a href="#cb57-7" tabindex="-1"></a>     <span class="at">ylim=</span><span class="fu">range</span>(wdi<span class="sc">$</span>LifeExpectancy), <span class="at">cex=</span><span class="dv">2</span>)</span>
+<span id="cb57-8"><a href="#cb57-8" tabindex="-1"></a>wfitm10 <span class="ot">&lt;-</span> <span class="fu">qdo</span>(wtd19.mqgam, <span class="at">qu=</span><span class="fl">0.1</span>)</span>
+<span id="cb57-9"><a href="#cb57-9" tabindex="-1"></a><span class="fu">plot</span>(wfitm10, <span class="at">resid=</span>T, <span class="at">shift=</span><span class="fu">mean</span>(<span class="fu">predict</span>(wfitm10)),</span>
+<span id="cb57-10"><a href="#cb57-10" tabindex="-1"></a>     <span class="at">ylim=</span><span class="fu">range</span>(wdi<span class="sc">$</span>LifeExpectancy), <span class="at">cex=</span><span class="dv">2</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="section-4.6-further-reading-and-remarks" class="section level3">
+<h3>Section 4.6: Further reading and remarks</h3>
+</div>
+<div id="exercises-4.7" class="section level3">
+<h3>Exercises (4.7)</h3>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" tabindex="-1"></a>roller.lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(depression<span class="sc">~</span>weight, <span class="at">data=</span>DAAG<span class="sc">::</span>roller)</span>
+<span id="cb58-2"><a href="#cb58-2" tabindex="-1"></a>roller.lm2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(depression<span class="sc">~</span>weight<span class="sc">+</span><span class="fu">I</span>(weight<span class="sc">^</span><span class="dv">2</span>), <span class="at">data=</span>DAAG<span class="sc">::</span>roller)</span></code></pre></div>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" tabindex="-1"></a>toycars <span class="ot">&lt;-</span> DAAG<span class="sc">::</span>toycars</span>
+<span id="cb59-2"><a href="#cb59-2" tabindex="-1"></a>lattice<span class="sc">::</span><span class="fu">xyplot</span>(distance <span class="sc">~</span> angle, <span class="at">groups=</span><span class="fu">factor</span>(car), <span class="at">type=</span><span class="fu">c</span>(<span class="st">&#39;p&#39;</span>,<span class="st">&#39;r&#39;</span>),</span>
+<span id="cb59-3"><a href="#cb59-3" tabindex="-1"></a>                <span class="at">data=</span>toycars, <span class="at">auto.key=</span><span class="fu">list</span>(<span class="at">columns=</span><span class="dv">3</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" tabindex="-1"></a>parLines.lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(distance <span class="sc">~</span> <span class="dv">0</span><span class="sc">+</span><span class="fu">factor</span>(car)<span class="sc">+</span>angle, <span class="at">data=</span>toycars)</span>
+<span id="cb60-2"><a href="#cb60-2" tabindex="-1"></a>sepLines.lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(distance <span class="sc">~</span> <span class="fu">factor</span>(car)<span class="sc">/</span>angle, <span class="at">data=</span>toycars)</span></code></pre></div>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" tabindex="-1"></a>sepPol3.lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(distance <span class="sc">~</span> <span class="fu">factor</span>(car)<span class="sc">/</span>angle<span class="sc">+</span><span class="fu">poly</span>(angle,<span class="dv">3</span>)[,<span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>], <span class="at">data=</span>toycars)</span></code></pre></div>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" tabindex="-1"></a><span class="fu">sapply</span>(<span class="fu">list</span>(parLines.lm, sepLines.lm, sepPol3.lm), AICcmodavg<span class="sc">::</span>AICc)</span></code></pre></div>
+<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" tabindex="-1"></a><span class="fu">setNames</span>(<span class="fu">sapply</span>(<span class="fu">list</span>(parLines.lm, sepLines.lm, sepPol3.lm),</span>
+<span id="cb63-2"><a href="#cb63-2" tabindex="-1"></a>  <span class="cf">function</span>(x)<span class="fu">summary</span>(x)<span class="sc">$</span>adj.r.squared), <span class="fu">c</span>(<span class="st">&quot;parLines&quot;</span>,<span class="st">&quot;sepLines&quot;</span>,<span class="st">&quot;sepPol3&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" tabindex="-1"></a>seedrates.lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(grain <span class="sc">~</span> rate <span class="sc">+</span> <span class="fu">I</span>(rate<span class="sc">^</span><span class="dv">2</span>), <span class="at">data=</span>seedrates)</span>
+<span id="cb64-2"><a href="#cb64-2" tabindex="-1"></a>seedrates.pol <span class="ot">&lt;-</span> <span class="fu">lm</span>(grain <span class="sc">~</span> <span class="fu">poly</span>(rate,<span class="dv">2</span>), <span class="at">data=</span>seedrates)</span></code></pre></div>
+<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" tabindex="-1"></a>geo.gam <span class="ot">&lt;-</span> <span class="fu">gam</span>(thickness <span class="sc">~</span> <span class="fu">s</span>(distance), <span class="at">data=</span>DAAG<span class="sc">::</span>geophones)</span></code></pre></div>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" tabindex="-1"></a><span class="fu">plot</span>(DAAG<span class="sc">::</span>geophones<span class="sc">$</span>distance, <span class="fu">acf</span>(<span class="fu">resid</span>(geo.gam), <span class="at">lag.max=</span><span class="dv">55</span>)<span class="sc">$</span>acf)</span>
+<span id="cb66-2"><a href="#cb66-2" tabindex="-1"></a><span class="fu">Box.test</span>(<span class="fu">resid</span>(geo.gam), <span class="at">lag=</span><span class="dv">10</span>)</span>
+<span id="cb66-3"><a href="#cb66-3" tabindex="-1"></a><span class="fu">Box.test</span>(<span class="fu">resid</span>(geo.gam), <span class="at">lag=</span><span class="dv">20</span>)</span>
+<span id="cb66-4"><a href="#cb66-4" tabindex="-1"></a><span class="fu">Box.test</span>(<span class="fu">resid</span>(geo.gam), <span class="at">lag=</span><span class="dv">20</span>, <span class="at">type=</span><span class="st">&quot;Ljung&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" tabindex="-1"></a><span class="fu">library</span>(mgcv)</span>
+<span id="cb67-2"><a href="#cb67-2" tabindex="-1"></a>xy <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">200</span>, <span class="at">y=</span><span class="fu">arima.sim</span>(<span class="fu">list</span>(<span class="at">ar=</span><span class="fl">0.75</span>), <span class="at">n=</span><span class="dv">200</span>))</span>
+<span id="cb67-3"><a href="#cb67-3" tabindex="-1"></a>df.gam <span class="ot">&lt;-</span> <span class="fu">gam</span>(y <span class="sc">~</span> <span class="fu">s</span>(x), <span class="at">data=</span>xy)</span>
+<span id="cb67-4"><a href="#cb67-4" tabindex="-1"></a><span class="fu">plot</span>(df.gam, <span class="at">residuals=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

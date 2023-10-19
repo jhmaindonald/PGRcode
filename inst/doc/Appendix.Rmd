@@ -280,7 +280,7 @@ write.csv(CO2byYear, file='gas.csv')                  # Write data frame
 CO2byYear <- read.csv(file="gas.csv", row.names=1)    # Read data back in
 ```
 
-#####   Data input from the RStudio menu --- data frames vs phtibbles
+#####   Data input from the RStudio menu --- data frames vs tibbles
 #### Subsection 10.2.6: Issues for working with data frames and tibbles
 #####         Extraction of columns from data frames and tibbles
 ```{r J2_7a}

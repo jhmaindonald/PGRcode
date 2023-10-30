@@ -11,7 +11,7 @@ vignette: >
 options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
-This new text, which should appear in the first quarter of 2024, is a
+This new text, which should appear in May 2024, is a
 derivative of the "Data Analysis and Graphics Using R" text
 (Maindonald and Braun, CUP, 3rd edn, 2010.)  The following is a
 summary of changes in content, style, and emphasis.
@@ -42,12 +42,12 @@ get much more attention than in the earlier text.
 substantial number of published experimental results have been
 independently replicated offer on what p-values mean in practice.
 Selection effects that result from the use of a $p$ <= 0.05 criterion
-for publication have been a major contributor to over-estimation, on
-average, of effect sizes by a factor that may be 2.0 or more.  A case is
-made for the publication in some form of all studies that meet minimum
-design and execution standards. A stricter criterion than $p \leq 0.05$,
-perhaps designing for $p \leq 0.005$ is called for when experiments are
-planned.
+for publication have been a major contributor to effect size estimates
+that may on average be too large by a factor that may be 2.0 or more. 
+A case is made for the publication in some form of all studies that 
+meet minimum design and execution standards. Stricter experimental
+design criteria are called for, perhaps designing for $p \leq 0.005$ 
+rather than the common $p \leq 0.05$, 
 
 6. Simulation and resampling approaches get more extended use -- as
 sources of insight, as devices for building intuition, and as mechanisms

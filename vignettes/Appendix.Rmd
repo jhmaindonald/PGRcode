@@ -272,7 +272,7 @@ byYear <- tidyr::pivot_wider(handYear, names_from='hand', values_from="Freq")
 
 #### Subsection 10.2.5: Writing data to a file, and reading data from a file
 ```{r J2_6a}
-CO2byYear <- data.frame(year = c(1900, 1920, 1940, 1960, 1980, 2000, 2020),
+CO2byYear <- data.frame(year = seq(from=1900, to=2020, by=20),
                         co2gas = c(1.94, 3.52, 4.84, 9.38, 19.49, 25.46, 35.25))
 write.table(CO2byYear, file='gas.txt')    # Write data frame to file
 CO2byYear <- read.table(file="gas.txt")   # Read data back in

@@ -530,7 +530,7 @@ setNames(diff(c(ambient=244.1, heated=253.5))/c(sd=10.91), "Effect size")
 Data are available in the data frame `DAAG::two65`.
 
 ```{r A3_6b, eval=FALSE}
-vignette('effsize', package='effsize')
+vignette('effectsize', package='effectsize')
 ```
 
 #### Subsection 1.3.7: Correlation

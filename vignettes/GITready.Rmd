@@ -16,8 +16,9 @@ knitr::opts_chunk$set(
 )
 ```
 
-Run as a minimum the first and last lines of the following code before committing
-to GitHub.
+The main purpose of this "vignette" is to remind the maintainer of the steps
+needed when a vignette is changed or added.  Run as a minimum the first 
+and last lines of the following code before committing to GitHub.
 
 ```{r exampleCode, eval=F}
 tools::buildVignettes(dir = ".", tangle=TRUE)

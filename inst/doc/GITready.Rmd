@@ -21,9 +21,8 @@ is changed or added, prior to committing changes that include static
 html files to GitHub.
 
 ```{r exampleCode, eval=F}
-tools::buildVignettes(dir = ".", tangle=TRUE)
-if(!dir.exists('inst'))dir.create("~/pkgs/PGRcode/inst")   
-if(!dir.exists('inst/doc'))dir.create("~/pkgs/PGRcode/inst/doc") 
+tools::buildVignettes(dir = ".", lib.loc='~/pkgs/PGRcode', tangle=TRUE)
+if(!dir.exists('inst/doc')dir.create("inst/doc")
 ## On installation, files in 'inst/doc/' are copied to 'doc/'
-file.copy(dir("vignettes", full.names=TRUE), "~/pkgs/PGRcode/inst/doc", overwrite=TRUE)
+file.copy(dir("vignettes", full.names=TRUE), "inst/doc", overwrite=TRUE)
 ```

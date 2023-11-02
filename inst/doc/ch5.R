@@ -1,0 +1,1091 @@
+## ----CodeControl, echo=FALSE--------------------------------------------------------------------
+## xtras=FALSE
+xtras <- F
+library(knitr)
+## opts_chunk[['set']](results="asis")
+opts_chunk[['set']](fig.width=5, fig.height=5, comment=NA, eval=F)
+## opts_chunk[['set']](eval=F)
+options(rmarkdown.html_vignette.check_title = FALSE)
+
+## ----E1_1a, eval=FALSE--------------------------------------------------------------------------
+#  ## Simplified plot showing the logit link function
+#  p <- (1:39)/40
+#  logitp <- log(p/(1 - p))
+#  plot(p, logitp, xlab = "Proportion", ylab = "logit(p)", type = "l", pch = 1)
+
+## ----5_1, fig.width=4.0, fig.height=3.75, top=1.5, rt=2.0, ps=9, cex.lab=0.85, mgp=c(2.75,0.5,0), tcl=-0.35, echo=FALSE, out.width="32%"----
+#  par(las=0)
+#  p <- seq(from=1, to=99, by=1)/100; n<- 150; eps=0.001
+#  gitp <- log(p/(1 - p))
+#  plot(p, gitp, xlab = "", ylab = "", type = "l", pch = 1,
+#  las=1, xlim=0:1, xaxs="i", fg="gray")
+#  mtext(side = 1, line = 1.75, expression("Proportion "*pi))
+#  mtext(side = 2, line = 1.75,
+#  expression("logit("*pi*") = log(Odds)"))
+#  mtext(side = 3, line = 0.5, "A: Logit link", adj=0, cex=1.0)
+#  pval <- c(0.001, 0.01, 0.1, 0.5, 0.9, 0.99, 0.999)
+#  par(mgp = c(2.5, 0.5, 0))
+#  ##  axis(1, at=c(0,1), lwd=0, labels=c(0,1), xpd=TRUE)
+#  axis(4, adj=0.075, at = log(pval/(1 - pval)), las=1,
+#  col="gray", labels = paste(pval), lwd=0, lwd.ticks=1)
+#  seP <- sqrt(p*(1-p)/100)
+#  plot(p, seP, xlab = "", ylab = "", type = "l", pch = 1,
+#  las=1, xlim=0:1, xaxs="i", fg="gray")
+#  ##  axis(1, at=c(0,1), lwd=0, labels=c(0,1), xpd=TRUE)
+#  mtext(side = 1, line = 1.75, expression("Proportion "*pi))
+#  mtext(side = 2, line = 2.25, expression("SD["*p*"], "*n*"=100"))
+#  mtext(side = 3, line = 0.5,
+#  expression("B: SD["*p*"], "*n*"=100"), adj=0, cex=1.0)
+#  seLP <- (p*(1-p)/n)*((p+eps)*(1-p+eps))^-2
+#  plot(p, seLP, xlab = "", ylab = "", type = "l", pch = 1,
+#  las=1, xlim=0:1, xaxs="i", fg="gray")
+#  ##  axis(1, at=c(0,1), lwd=0, labels=c(0,1), xpd=TRUE)
+#  mtext(side = 1, line = 1.75, expression("Proportion "*pi))
+#  mtext(side = 2, line = 1.75, expression("SD[logit("*p*")], "*n*"=100"))
+#  mtext(side = 3, line = 0.5, "C: SD[logit(p)]", adj=0, cex=1.0)
+
+## ----5_1, eval=F--------------------------------------------------------------------------------
+#  par(las=0)
+#  p <- seq(from=1, to=99, by=1)/100; n<- 150; eps=0.001
+#  gitp <- log(p/(1 - p))
+#  plot(p, gitp, xlab = "", ylab = "", type = "l", pch = 1,
+#  las=1, xlim=0:1, xaxs="i", fg="gray")
+#  mtext(side = 1, line = 1.75, expression("Proportion "*pi))
+#  mtext(side = 2, line = 1.75,
+#  expression("logit("*pi*") = log(Odds)"))
+#  mtext(side = 3, line = 0.5, "A: Logit link", adj=0, cex=1.0)
+#  pval <- c(0.001, 0.01, 0.1, 0.5, 0.9, 0.99, 0.999)
+#  par(mgp = c(2.5, 0.5, 0))
+#  ##  axis(1, at=c(0,1), lwd=0, labels=c(0,1), xpd=TRUE)
+#  axis(4, adj=0.075, at = log(pval/(1 - pval)), las=1,
+#  col="gray", labels = paste(pval), lwd=0, lwd.ticks=1)
+#  seP <- sqrt(p*(1-p)/100)
+#  plot(p, seP, xlab = "", ylab = "", type = "l", pch = 1,
+#  las=1, xlim=0:1, xaxs="i", fg="gray")
+#  ##  axis(1, at=c(0,1), lwd=0, labels=c(0,1), xpd=TRUE)
+#  mtext(side = 1, line = 1.75, expression("Proportion "*pi))
+#  mtext(side = 2, line = 2.25, expression("SD["*p*"], "*n*"=100"))
+#  mtext(side = 3, line = 0.5,
+#  expression("B: SD["*p*"], "*n*"=100"), adj=0, cex=1.0)
+#  seLP <- (p*(1-p)/n)*((p+eps)*(1-p+eps))^-2
+#  plot(p, seLP, xlab = "", ylab = "", type = "l", pch = 1,
+#  las=1, xlim=0:1, xaxs="i", fg="gray")
+#  ##  axis(1, at=c(0,1), lwd=0, labels=c(0,1), xpd=TRUE)
+#  mtext(side = 1, line = 1.75, expression("Proportion "*pi))
+#  mtext(side = 2, line = 1.75, expression("SD[logit("*p*")], "*n*"=100"))
+#  mtext(side = 3, line = 0.5, "C: SD[logit(p)]", adj=0, cex=1.0)
+
+## ----E1_5a--------------------------------------------------------------------------------------
+#  anestot <- aggregate(DAAG::anesthetic[, c("move","nomove")],
+#  by=list(conc=DAAG::anesthetic$conc), FUN=sum)
+#  ## The column 'conc', because from the 'by' list, is then a factor.
+#  ## The next line recovers the numeric values
+#  anestot$conc <- as.numeric(as.character(anestot[["conc"]]))
+#  anestot$total <- apply(anestot[, c("move","nomove")], 1 , sum)
+#  anestot$prop <- anestot$nomove/anestot$total
+
+## ----5_2, w=2.75, h=2.5, ps=9, tcl=-0.35, echo=FALSE, out.width="40%"---------------------------
+#  par(mgp=c(2.5,.5,0))
+#  anesthetic <- DAAG::anesthetic
+#  z <- table(anesthetic$nomove, anesthetic$conc)
+#  tot <- apply(z, 2, sum)
+#  prop <- z[2,  ]/(tot)
+#  oprop <- sum(z[2,  ])/sum(tot)
+#  conc <- as.numeric(dimnames(z)[[2]])
+#  par(las=0)
+#  plot(conc, prop, xlab = "Concentration", ylab = "Proportion",
+#       xlim=c(0.5, 2.5), ylim = c(0, 1), pch = 16, axes=F)
+#  axis(1, cex=0.9, lwd=0, lwd.ticks=1)
+#  axis(2, at=c(0, 0.5, 1.0), cex=0.9, lwd=0, lwd.ticks=1)
+#  axis(2, at=c(0.25, 0.75), cex=0.9, lwd=0, lwd.ticks=1)
+#  box(col="gray")
+#  chh <- par()$cxy[2]
+#  chw <- par()$cxy[1]
+#  text(conc - 0.3 * chw, prop-sign(prop-0.5)*chh/4, paste(tot),
+#  adj = 1, cex=0.65)
+#  abline(h = oprop, lty = 2)
+
+## ----5_2, eval=FALSE----------------------------------------------------------------------------
+#  par(mgp=c(2.5,.5,0))
+#  anesthetic <- DAAG::anesthetic
+#  z <- table(anesthetic$nomove, anesthetic$conc)
+#  tot <- apply(z, 2, sum)
+#  prop <- z[2,  ]/(tot)
+#  oprop <- sum(z[2,  ])/sum(tot)
+#  conc <- as.numeric(dimnames(z)[[2]])
+#  par(las=0)
+#  plot(conc, prop, xlab = "Concentration", ylab = "Proportion",
+#       xlim=c(0.5, 2.5), ylim = c(0, 1), pch = 16, axes=F)
+#  axis(1, cex=0.9, lwd=0, lwd.ticks=1)
+#  axis(2, at=c(0, 0.5, 1.0), cex=0.9, lwd=0, lwd.ticks=1)
+#  axis(2, at=c(0.25, 0.75), cex=0.9, lwd=0, lwd.ticks=1)
+#  box(col="gray")
+#  chh <- par()$cxy[2]
+#  chw <- par()$cxy[1]
+#  text(conc - 0.3 * chw, prop-sign(prop-0.5)*chh/4, paste(tot),
+#  adj = 1, cex=0.65)
+#  abline(h = oprop, lty = 2)
+
+## ----E1_5c--------------------------------------------------------------------------------------
+#  ## Fit model directly to the 0/1 data in nomove
+#  anes.glm <- glm(nomove ~ conc, family=binomial(link="logit"),
+#                  data=DAAG::anesthetic)
+#  ## Fit model to the proportions; supply total numbers as weights
+#  anes1.logit <- glm(prop ~ conc, family=binomial(link="logit"),
+#                    weights=total, data=anestot)
+
+## ----5_3, w=2.75, h=2.5, ps=9, tcl=-0.35, echo=FALSE, out.width="40%"---------------------------
+#  par(mgp=c(2.25,.5,0), mar=c(5.1,5.1,4.1,2.1))
+#  tab <- table(anesthetic$nomove, anesthetic$conc)
+#  tot <- colSums(tab)               # totals at each concentration
+#  unique.conc <- as.numeric(colnames(tab))
+#  emplogit <- log((tab[2,]+0.5)/(tot-tab[2,]+0.5))
+#  plot(unique.conc, log((tab[2,] +0.5)/(tab[1,]+0.5)), fg="gray",
+#       xlab = "Concentration", xlim = c(0, 2.75), xaxs="i",
+#       ylab = expression("Empirical logit = "*log(frac(x+0.5,n-x+0.5))),
+#       ylim=c(-2, 2.4), cex=1.5, pch = 16)
+#  prop <- tab[2,  ]/tot
+#  text(unique.conc, emplogit, paste(round(prop,2)),
+#       pos=c(2,4,2,4,4,4), cex=0.8)
+#  abline(-6.47, 5.57, lwd=0.8)
+
+## ----E1_5e--------------------------------------------------------------------------------------
+#  DAAG::sumry(anes.glm, digits=2)
+
+## ----E1_5f--------------------------------------------------------------------------------------
+#  ## Tp get coefficients, SEs, and associated statistics, specify:
+#  print(coef(summary(anes.glm)), digits=2)
+#  ## Get full default output
+#  summary(anes.glm, digits=2)
+
+## ----E2a----------------------------------------------------------------------------------------
+#  frogs <- DAAG::frogs
+
+## ----5_4, w=6, h=2.8, echo=FALSE, mgp=c(2.75, .75, 0), mar=c(4.6, 0.5, 1.6, 1), warning=FALSE, out.width="80%"----
+#  ## Presence/absence information: data frame frogs (DAAGS)
+#  suppressMessages(library(ggplot2))
+#  p <- ggplot(frogs, aes(easting, northing)) +
+#    geom_point(size=3, alpha=0.25) + coord_fixed() +
+#    xlab("Meters east of reference point")+ylab("Meters north") +
+#    theme(axis.title=element_text(size=11), axis.text=element_text(size=8))
+#  p + geom_point(data=subset(frogs, pres.abs==1),
+#                 aes(easting, northing), alpha=1, shape=3, col="white", size=1.5)
+
+## ----5_4, eval=F--------------------------------------------------------------------------------
+#  ## Presence/absence information: data frame frogs (DAAGS)
+#  suppressMessages(library(ggplot2))
+#  p <- ggplot(frogs, aes(easting, northing)) +
+#    geom_point(size=3, alpha=0.25) + coord_fixed() +
+#    xlab("Meters east of reference point")+ylab("Meters north") +
+#    theme(axis.title=element_text(size=11), axis.text=element_text(size=8))
+#  p + geom_point(data=subset(frogs, pres.abs==1),
+#                 aes(easting, northing), alpha=1, shape=3, col="white", size=1.5)
+
+## ----E2d----------------------------------------------------------------------------------------
+#  frogs <- within(frogs, {maxSubmin <- meanmax-meanmin
+#                          maxAddmin <- meanmax+meanmin})
+
+## ----E2e, echo=FALSE----------------------------------------------------------------------------
+#  frogmatT <- with(frogs, cbind(logdist=log(distance),logNpools=log(NoOfPools),
+#                   rt2Nsites=sqrt(NoOfSites), avrain=avrain,
+#                   maxSubmin=maxSubmin, maxAddmin= maxAddmin))
+#  panel.cor <- function(x, y, digits = 3, prefix = "", cex.cor=0.8, ...)
+#  {
+#  ## usr <- par("usr"); on.exit(par(usr))
+#  ## par(usr = c(0, 1, 0, 1))
+#  r <- abs(cor(x, y))
+#  txt <- format(c(r, 0.123456789), digits = digits)[1]
+#  txt <- paste0(prefix, txt)
+#  if(missing(cex.cor)) cex.cor <- 0.5/strwidth(txt)
+#  text(0.5, 0.5, txt, cex = cex.cor * sqrt(r), col="gray40")
+#  }
+#  panel.D <- function(x,...){den <-density(x); ## usr <- par("usr"); on.exit(par(usr))
+#    ## par(usr = c(usr[1:2], 0, 1.04*max(den$y)))
+#    lines(den,...)}
+
+## ----5_5, w=5,h=5,fig.show="hold", echo=FALSE, out.width="49%"----------------------------------
+#  oldpar <- par(col.axis='gray20',lwd=0.5,col.lab='gray20', tcl=-0.25, oma=c(0,0,1.5,0))
+#  pairs(frogs[,c("meanmin","meanmax","altitude")],
+#        gap=0.25, col=adjustcolor("blue", alpha=0.8), upper.panel=panel.cor,
+#        lower.panel=panel.smooth, lwd=2, diag.panel=panel.D)
+#  mtext(side=3, line=4.5, "A: Pairs plot, min/max temperature variables",
+#        cex=1.25, at=0, adj=0, col="gray40")
+#  pairs(frogs[,c('maxSubmin', 'maxAddmin', 'altitude')],
+#        gap=0.4, col=adjustcolor("blue", alpha=0.9), upper.panel=panel.cor,
+#        lower.panel=panel.smooth, lwd=2, diag.panel=panel.D)
+#  mtext(side=3, line=4.5, "B: Pairs plot, difference/sum variables", cex=1.25, at=0,
+#        adj=0, col="gray40")
+#  par(oldpar)
+
+## ----E2g----------------------------------------------------------------------------------------
+#  ## Find power transformations
+#  useCols <- c('distance','NoOfPools','NoOfSites','avrain','maxAddmin','maxSubmin')
+#  tfrogs <- car::powerTransform(frogs[,useCols], family="yjPower")
+#  ## Create, for later use, a matrix with variables transformed as suggested
+#  transY <- car::yjPower(frogs[,useCols], coef(tfrogs, round=TRUE))
+#  summary(tfrogs, digits=2)
+
+## ----5_6, w=5.5, h=5.5, left=-1, lwd=0.5, ps=9, tcl=-0.35, echo=FALSE, out.width="75%"----------
+#  oldpar <- par(fg='gray20',col.axis='gray20',lwd=0.5,col.lab='gray20', tcl=-0.25)
+#  frogmatT <- with(frogs, cbind(logdist=log(distance),logNpools=log(NoOfPools),
+#                   rt2Nsites=sqrt(NoOfSites), avrain=avrain,
+#                   maxSubmin=maxSubmin, maxAddmin=maxAddmin))
+#  panel.cor <- function(x, y, digits = 3, prefix = "", cex.cor=0.8, ...)
+#  {
+#  ## usr <- par("usr"); on.exit(par(usr))
+#  ## par(usr = c(0, 1, 0, 1))
+#  r <- abs(cor(x, y))
+#  txt <- format(c(r, 0.123456789), digits = digits)[1]
+#  txt <- paste0(prefix, txt)
+#  if(missing(cex.cor)) cex.cor <- 0.9/strwidth(txt)
+#  text(0.5, 0.5, txt, cex = cex.cor * r^0.25)
+#  }
+#  panel.D <- function(x,...){den <-density(x); ## usr <- par("usr"); on.exit(par(usr))
+#  ## par(usr = c(usr[1:2], 0, 1.04*max(den$y)))
+#  lines(den,...)}
+#  pairs(frogmatT, labels=c('log\ndistance','log\nNoOfPools','sqrt\nNoOfSites','avrain',
+#        'meanmin-\nmeanmax', 'meanmin+\nmeanmax'), lwd=2,
+#        gap=0.4, col=adjustcolor("blue", alpha=0.8), upper.panel=panel.cor,
+#        lower.panel=panel.smooth, diag.panel=panel.D, cex.labels=1.0, label.pos=0.5)
+#  par(oldpar)
+
+## ----E2_1a--------------------------------------------------------------------------------------
+#  frogs0.glm <- glm(formula = pres.abs ~ log(distance) + log(NoOfPools)+
+#                    sqrt(NoOfSites) + avrain + maxAddmin + maxSubmin,
+#                    family = binomial, data = frogs)
+#  DAAG::sumry(frogs0.glm, digits=1)
+
+## ----E2_1b--------------------------------------------------------------------------------------
+#  ## Check effect of omitting sqrt(NoOfSites) and avrain from the model
+#  ## ~ . takes the existing formula. Precede terms to be
+#  ## omitted by '-'.  (For additions, precede with '+')
+#  frogs.glm <- update(frogs0.glm, ~ . -sqrt(NoOfSites)-avrain)
+#  frogsAlt.glm <- update(frogs.glm, ~ . -maxAddmin+altitude)
+#  AIC(frogs0.glm, frogs.glm,frogsAlt.glm)
+
+## ----E2_1c--------------------------------------------------------------------------------------
+#  rbind(
+#  'frogs0.glm'=coef(frogs0.glm)[c('log(distance)','log(NoOfPools)','maxAddmin','maxSubmin')],
+#  'frogs.glm'=coef(frogs.glm)[c('log(distance)','log(NoOfPools)','maxAddmin','maxSubmin')]
+#  )
+#  coef(frogsAlt.glm)[c('log(distance)','log(NoOfPools)','altitude','maxSubmin')]
+
+## ----E2_1e--------------------------------------------------------------------------------------
+#  coef(summary(frogs.glm))
+
+## ----E2_2a, eval=xtras--------------------------------------------------------------------------
+#  ## Use of `predict()` and `fitted()` --- examples
+#  fitted(frogs.glm)    # Fitted values' scale of response
+#  predict(frogs.glm, type="response")  # Same as fitted(frogs.glm)
+#  predict(frogs.glm, type="link")      # Scale of linear predictor
+#  ## For approximate SEs, specify
+#  predict(frogs.glm, type="link", se.fit=TRUE)
+
+## ----5_7, w=6, h=2.8, echo=FALSE, mgp=c(2.75, .75, 0), mar=c(4.6, 0.5, 1.6, 1), out.width="90%"----
+#  library(ggplot2)
+#  frogs$Prob. <- fitted(frogs.glm)
+#  frogs$presAbs <- factor(frogs$pres.abs)
+#  p <- ggplot(frogs, aes(easting, northing, color=Prob.)) +
+#    geom_point(size=2, alpha=0.5) + coord_fixed() +
+#    xlab("Meters east of reference point")+ylab("Meters north") +
+#     theme(axis.title=element_text(size=9), axis.text=element_text(size=6))
+#  p2 <- p+scale_color_gradientn(colours=colorspace::heat_hcl(10,h=c(0,-100),
+#                                l=c(75,40), c=c(40,80), power=1)) +
+#    guides(fill=guide_legend(title=NULL))
+#  p2 + geom_point(data=subset(frogs, presAbs==1),
+#                  aes(easting, northing), alpha=1, shape=3, col="white", size=1)
+
+## ----5_7, eval=F--------------------------------------------------------------------------------
+#  library(ggplot2)
+#  frogs$Prob. <- fitted(frogs.glm)
+#  frogs$presAbs <- factor(frogs$pres.abs)
+#  p <- ggplot(frogs, aes(easting, northing, color=Prob.)) +
+#    geom_point(size=2, alpha=0.5) + coord_fixed() +
+#    xlab("Meters east of reference point")+ylab("Meters north") +
+#     theme(axis.title=element_text(size=9), axis.text=element_text(size=6))
+#  p2 <- p+scale_color_gradientn(colours=colorspace::heat_hcl(10,h=c(0,-100),
+#                                l=c(75,40), c=c(40,80), power=1)) +
+#    guides(fill=guide_legend(title=NULL))
+#  p2 + geom_point(data=subset(frogs, presAbs==1),
+#                  aes(easting, northing), alpha=1, shape=3, col="white", size=1)
+
+## ----5_8, echo=FALSE, fig.width=3.5, fig.height=3.75, left=-0.5, mfrow=c(1,4), mgp=c(1.85,0.5,0), top=1, ps=9, echo=FALSE, out.width="23.5%"----
+#  termplot(frogs.glm, transform.x=TRUE, col.term=1, fg='gray')
+
+## ----5_9, eval=F--------------------------------------------------------------------------------
+#  opar <- par(mgp=c(2.1,.4,0), mfrow=c(1,3))
+#  Cholera <- HistData::Cholera
+#  fitP2.glm <- glm(cholera_deaths ~ offset(log(popn)) + water +
+#                   log(elevation+3) + poly(poor_rate,2) +I(elevation==350),
+#                   data=Cholera, family=quasipoisson)
+#  Cholera[["water"]] <- factor(Cholera[["water"]], labels=c("Battersea",
+#                               "NewRiver","Kew"))
+#  termplot(fitP2.glm, partial=T, se=TRUE, pch =1,
+#  ylabs=rep("Partial residual",3), terms='water', fg="gray")
+#  axis(1, at=2, labels="NewRiver", lwd=0, line=0.75)
+#  termplot(fitP2.glm, partial=T, se=TRUE, pch =1,
+#           ylabs=rep("Partial residual",3), terms='log(elevation + 3)', fg="gray")
+#  termplot(fitP2.glm, partial=T, se=TRUE, pch =1,
+#           ylabs=rep("Partial residual",3), terms='poly(poor_rate, 2)', fg="gray")
+#  par(opar)
+
+## ----E2_4a--------------------------------------------------------------------------------------
+#  DAAG::CVbinary(frogs.glm)
+
+## ----E2_4b--------------------------------------------------------------------------------------
+#  set.seed(19)
+#  frogs.acc <- frogs0.acc <- numeric(6)
+#  for (j in 1:6){
+#    randsam <- sample(1:10, 212, replace=TRUE)
+#    ## Sample 212 values (one per pbservation) from 1:10
+#    frogs.acc[j] <- DAAG::CVbinary(frogs.glm, rand=randsam,
+#                                  print.details=FALSE)$acc.cv
+#    frogs0.acc[j] <- DAAG::CVbinary(frogs0.glm, rand=randsam,
+#    print.details=FALSE)$acc.cv
+#  }
+#  print(rbind("frogs (all variables)" = frogs.acc,
+#              "frogs0 (selected variables)" = frogs0.acc), digits=3)
+
+## ----5_9, fig.width=7, fig.height=2.25, fig.show='hold', echo=F, out.width="100%"---------------
+#  opar <- par(mgp=c(2.1,.4,0), mfrow=c(1,3))
+#  Cholera <- HistData::Cholera
+#  fitP2.glm <- glm(cholera_deaths ~ offset(log(popn)) + water +
+#                   log(elevation+3) + poly(poor_rate,2) +I(elevation==350),
+#                   data=Cholera, family=quasipoisson)
+#  Cholera[["water"]] <- factor(Cholera[["water"]], labels=c("Battersea",
+#                               "NewRiver","Kew"))
+#  termplot(fitP2.glm, partial=T, se=TRUE, pch =1,
+#  ylabs=rep("Partial residual",3), terms='water', fg="gray")
+#  axis(1, at=2, labels="NewRiver", lwd=0, line=0.75)
+#  termplot(fitP2.glm, partial=T, se=TRUE, pch =1,
+#           ylabs=rep("Partial residual",3), terms='log(elevation + 3)', fg="gray")
+#  termplot(fitP2.glm, partial=T, se=TRUE, pch =1,
+#           ylabs=rep("Partial residual",3), terms='poly(poor_rate, 2)', fg="gray")
+#  par(opar)
+
+## ----5_9, eval=F--------------------------------------------------------------------------------
+#  opar <- par(mgp=c(2.1,.4,0), mfrow=c(1,3))
+#  Cholera <- HistData::Cholera
+#  fitP2.glm <- glm(cholera_deaths ~ offset(log(popn)) + water +
+#                   log(elevation+3) + poly(poor_rate,2) +I(elevation==350),
+#                   data=Cholera, family=quasipoisson)
+#  Cholera[["water"]] <- factor(Cholera[["water"]], labels=c("Battersea",
+#                               "NewRiver","Kew"))
+#  termplot(fitP2.glm, partial=T, se=TRUE, pch =1,
+#  ylabs=rep("Partial residual",3), terms='water', fg="gray")
+#  axis(1, at=2, labels="NewRiver", lwd=0, line=0.75)
+#  termplot(fitP2.glm, partial=T, se=TRUE, pch =1,
+#           ylabs=rep("Partial residual",3), terms='log(elevation + 3)', fg="gray")
+#  termplot(fitP2.glm, partial=T, se=TRUE, pch =1,
+#           ylabs=rep("Partial residual",3), terms='poly(poor_rate, 2)', fg="gray")
+#  par(opar)
+
+## ----E2_4c, echo=FALSE--------------------------------------------------------------------------
+#  tab <- cbind("#houses"=c(40046,26107,256423), "#Deaths"=c(1263,98,1422),
+#    "Rate per 10,000"=c(315,37,59))
+#  row.names(tab) <- c("Southwark & Vauxhall","Lambeth","Rest of London")
+#  tab
+
+## ----E3a----------------------------------------------------------------------------------------
+#  ## Create data frame from multi-way table UCBAdmissions (datasets)
+#  ## dimnames(UCBAdmissions)  # Check levels of table margins
+#  UCB <- as.data.frame.table(UCBAdmissions["Admitted", , ], responseName="admit")
+#  UCB$reject <- as.data.frame.table(UCBAdmissions["Rejected", , ])$Freq
+#  UCB$Gender <- relevel(UCB$Gender, ref="Male")
+#  ## Add further columns total and p (proportion admitted)
+#  UCB$total <- UCB$admit + UCB$reject
+#  UCB$pAdmit <- UCB$admit/UCB$total
+
+## ----E3c----------------------------------------------------------------------------------------
+#  UCB.glm <- glm(pAdmit ~ Dept*Gender, family=binomial, data=UCB, weights=total)
+#  ## Abbreviated `anova()` output:
+#  anova(UCB.glm, test="Chisq") |>
+#   capture.output() |> tail(8) |> (\(x)x[-c(2,3)])() |> cat(sep='\n')
+
+## ----E3d----------------------------------------------------------------------------------------
+#  round(signif(coef(summary(UCB.glm)),4), 3)
+
+## ----5_10, w=2.65, h=2.5, left=-1, ps=9, tcl=-0.35, echo=FALSE, out.width="40%"-----------------
+#  par(pty="s")
+#  plot(count ~ endtime, data=DAAG::ACF1, pch=16, fg="gray")
+
+## ----5_10, eval=F-------------------------------------------------------------------------------
+#  par(pty="s")
+#  plot(count ~ endtime, data=DAAG::ACF1, pch=16, fg="gray")
+
+## ----E4_1c--------------------------------------------------------------------------------------
+#  ACF.glm <- glm(formula = count ~ endtime + I(endtime^2),
+#                 family = poisson(link="identity"), data = DAAG::ACF1)
+#  DAAG::sumry(ACF.glm, digits=2)
+
+## ----E4_1d--------------------------------------------------------------------------------------
+#  unique(round(predict(ACF.glm),2))
+
+## ----E4_1e--------------------------------------------------------------------------------------
+#  sum(resid(ACF.glm, type="pearson")^2)/19
+
+## ----E4_1f--------------------------------------------------------------------------------------
+#  ACFq.glm <- glm(formula = count ~ endtime + I(endtime^2),
+#  family = quasipoisson, data = DAAG::ACF1)
+#  print(coef(summary(ACFq.glm)), digits=2)
+
+## ----E4_1g--------------------------------------------------------------------------------------
+#  sapply(split(residuals(ACFq.glm), DAAG::ACF1$endtime), var)
+
+## ----E4_1h--------------------------------------------------------------------------------------
+#  fligner.test(resid(ACFq.glm) ~ factor(DAAG::ACF1$endtime))
+
+## ----E4_2a--------------------------------------------------------------------------------------
+#  ## Number of moths by habitat: data frame DAAG::moths
+#  moths <- DAAG::moths
+#  tab <- rbind(Number=table(moths[, 4]),
+#               sapply(split(moths[, -4], moths$habitat), apply, 2, sum))
+
+## ----E4_2b--------------------------------------------------------------------------------------
+#  ## Number of zero counts, by habitats
+#  with(droplevels(subset(moths, A==0)), table(habitat))
+
+## ----5_11, echo=FALSE, fig.width=6.5, fig.height=2.5, las=0, out.width="100%"-------------------
+#  library(lattice)
+#  gph <- dotplot(habitat ~ A+P, data=DAAG::moths, xlab="Number of moths", outer=TRUE,
+#                 strip=strip.custom(factor.levels=paste("Number of species",c("A","B"))),
+#                 panel=function(x, y, ...){
+#  panel.dotplot(x,y, pch=1, ...)
+#  av <- sapply(split(x,y),mean)
+#  ypos <- factor(names(av), levels=names(av))
+#  lpoints(ypos~av, pch=3, col="gray45", cex=1.25)
+#  },
+#  key=list(text=list(c("Individual transects", "Mean")),
+#  points=list(pch=c(1,3), cex=c(1,1.25), col=c("black","gray45")),
+#  columns=2), scales=list(tck=0.5, alternating=1))
+#  bw9 <- list(fontsize=list(text=9, points=5))
+#  update(gph, par.settings=bw9)
+
+## ----5_11, eval=F-------------------------------------------------------------------------------
+#  library(lattice)
+#  gph <- dotplot(habitat ~ A+P, data=DAAG::moths, xlab="Number of moths", outer=TRUE,
+#                 strip=strip.custom(factor.levels=paste("Number of species",c("A","B"))),
+#                 panel=function(x, y, ...){
+#  panel.dotplot(x,y, pch=1, ...)
+#  av <- sapply(split(x,y),mean)
+#  ypos <- factor(names(av), levels=names(av))
+#  lpoints(ypos~av, pch=3, col="gray45", cex=1.25)
+#  },
+#  key=list(text=list(c("Individual transects", "Mean")),
+#  points=list(pch=c(1,3), cex=c(1,1.25), col=c("black","gray45")),
+#  columns=2), scales=list(tck=0.5, alternating=1))
+#  bw9 <- list(fontsize=list(text=9, points=5))
+#  update(gph, par.settings=bw9)
+
+## ----E4_2d--------------------------------------------------------------------------------------
+#  Astats <- with(DAAG::moths, sapply(split(A, habitat),
+#  function(x)c(Amean=mean(x),Avar=var(x))))
+#  avlength <- with(DAAG::moths, sapply(split(meters, habitat), mean))
+#  round(rbind(Astats, avlen=avlength),1)
+
+## ----E4_2e--------------------------------------------------------------------------------------
+#  A.glm <- glm(A ~ habitat + log(meters), family=quasipoisson,
+#  data=DAAG::moths)
+#  DAAG::sumry(A.glm, digits=1)
+
+## ----E4_2f--------------------------------------------------------------------------------------
+#  subset(DAAG::moths, habitat=="Bank")
+
+## ----E4_2g, eval=FALSE, size='normalsize', results='asis', echo=TRUE----------------------------
+#  ## Analysis with tighter convergence criterion
+#  A.glm <- update(A.glm, epsilon=1e-10)
+#  print(coef(summary(A.glm)), digits=2)
+
+## ----E4_2h--------------------------------------------------------------------------------------
+#  AfitSE <- predict(A.glm, se=TRUE)$se.fit
+#  cfSE <- with(DAAG::moths, c(AfitSE[habitat=="Bank"],
+#  range(AfitSE[habitat!="Bank"])))
+#  round(setNames(cfSE, c("SEbank", "SEotherMIN", "SEotherMAX")), digits=2)
+
+## ----E4_2i--------------------------------------------------------------------------------------
+#  moths <- DAAG::moths
+#  moths$habitat <- relevel(moths$habitat, ref="Lowerside")
+#  Alower.glm <- glm(A ~ habitat + log(meters),
+#                    family = quasipoisson, data = moths)
+#  print(coef(summary(Alower.glm)), digits=1)
+
+## ----5_12, echo=FALSE, fig.width=6.5, fig.height=2.5, las=0, out.width="100%"-------------------
+#  dframe <- data.frame(sigma1A =(Astats[2,]-Astats[1,])/Astats[1,]^2,
+#  sigma2A =(Astats[2,]-Astats[1,])/Astats[1,]^1,
+#  mu = Astats[1,], habitat=colnames(Astats))
+#  bw9 <- list(fontsize=list(text=9, points=5), pch=1:7)
+#  xyplot(sigma1A+sigma2A ~ mu, groups=habitat, outer=TRUE,
+#  data=subset(dframe,habitat!="Bank"),
+#  par.settings=bw9, auto.key=list(columns=4),
+#  strip=strip.custom(factor.levels=paste("Model",c("NBI","NBII"))),
+#  xlab="Mean number of species A moths",
+#  ylab=expression("Estimate of "*sigma))
+
+## ----5_12, eval=F-------------------------------------------------------------------------------
+#  dframe <- data.frame(sigma1A =(Astats[2,]-Astats[1,])/Astats[1,]^2,
+#  sigma2A =(Astats[2,]-Astats[1,])/Astats[1,]^1,
+#  mu = Astats[1,], habitat=colnames(Astats))
+#  bw9 <- list(fontsize=list(text=9, points=5), pch=1:7)
+#  xyplot(sigma1A+sigma2A ~ mu, groups=habitat, outer=TRUE,
+#  data=subset(dframe,habitat!="Bank"),
+#  par.settings=bw9, auto.key=list(columns=4),
+#  strip=strip.custom(factor.levels=paste("Model",c("NBI","NBII"))),
+#  xlab="Mean number of species A moths",
+#  ylab=expression("Estimate of "*sigma))
+
+## ----E4_3b, message=FALSE-----------------------------------------------------------------------
+#  library(gamlss, quietly=TRUE)
+#  noBank <- subset(moths, habitat!='Bank')
+#  mothsCon.lss <- gamlss(A ~ log(meters)+habitat, family=NBI(), data=noBank,
+#                         trace=F)
+#  mothsVary.lss <- gamlss(A ~ log(meters)+habitat, family=NBI(),
+#                          sigma.formula=~habitat, trace=FALSE, data=noBank)
+
+## ----E4_3c--------------------------------------------------------------------------------------
+#  LR.test(mothsCon.lss, mothsVary.lss)
+
+## ----E4_3d, echo=1:2----------------------------------------------------------------------------
+#  ## mothsCon.lss <- gamlss(A ~ log(meters)+habitat,family=NBI(),data=noBank)
+#  ## summary(mothsCon.lss, type="qr")   ## Main part of output
+#  out <- capture.output(summary(mothsCon.lss, type="qr", digits=1))
+#  cat(out[-(3:10)], sep="\n")
+
+## ----5_13, echo=FALSE, fig.width=7.25, fig.height=5.5, left=-0.5, mgp=c(1.85,0.5,0), top=1, ps=9, echo=FALSE, out.width="72%", tidy=TRUE----
+#  plot(mothsCon.lss, panel=panel.smooth)
+
+## ----5_13, eval=F-------------------------------------------------------------------------------
+#  plot(mothsCon.lss, panel=panel.smooth)
+
+## ----E4_3f--------------------------------------------------------------------------------------
+#  Asqrt.lss <- gamlss(A ~ habitat + sqrt(meters), trace=FALSE,
+#                      family = NBI(mu.link='sqrt'), data = moths)
+
+## ----E4_3g, warning=FALSE-----------------------------------------------------------------------
+#  ## Asqrt.lss <- gamlss(A ~ habitat + sqrt(meters),
+#  ##                     family = NBI(mu.link='sqrt'), data = moths)
+#  ## summary(Asqrt.lss, type="qr")   ## Main part of output
+#  out <- capture.output(summary(Asqrt.lss, digits=1))[-(3:10)]
+#  cat(out, sep="\n")
+
+## ----5_14, echo=FALSE, fig.width=3.5, fig.height=3.35, left=-1.0, ps=12, mgp=c(1.85,0.5,0), top=1,  echo=FALSE, out.width="24%"----
+#  ordx <- with(DAAG::hurricNamed, order(BaseDam2014))
+#  hurric <- DAAG::hurricNamed[ordx,]
+#  # Ordering a/c values of BaseDam2014 simplifies later code
+#  hurr.glm <- glm(deaths ~ log(BaseDam2014), family=quasipoisson, data=hurric)
+#  plot(hurr.glm, col=adjustcolor('black', alpha=0.4),
+#       cex.caption=0.95, sub.caption=rep("",4), fg="gray")
+
+## ----5_14, eval=F-------------------------------------------------------------------------------
+#  ordx <- with(DAAG::hurricNamed, order(BaseDam2014))
+#  hurric <- DAAG::hurricNamed[ordx,]
+#  # Ordering a/c values of BaseDam2014 simplifies later code
+#  hurr.glm <- glm(deaths ~ log(BaseDam2014), family=quasipoisson, data=hurric)
+#  plot(hurr.glm, col=adjustcolor('black', alpha=0.4),
+#       cex.caption=0.95, sub.caption=rep("",4), fg="gray")
+
+## ----E4_4b, warning=FALSE, message=FALSE, results="hide"----------------------------------------
+#  library(gamlss)
+#  hurrNB.gamlss <- gamlss::gamlss(deaths ~ log(BaseDam2014), family=NBI(),
+#                                  data=hurric[-56,])
+#  mures <- resid(hurrNB.gamlss, what="mu")
+#  zres <- resid(hurrNB.gamlss, what="z-scores")  ## equivalent normal quantiles
+
+## ----E4_4c--------------------------------------------------------------------------------------
+#  table(sign(mures))
+
+## ----E4_4d--------------------------------------------------------------------------------------
+#  hurr.lm <- lm(car::yjPower(deaths,-0.2) ~ log(BaseDam2014), data=hurric[-56,])
+#  ## Use the following function to transform from power scale to log scale
+#  powerTOlog <- function(z, lambda)log(lambda*z+1)/lambda
+#  ## Calculate fitted values, and transform to log(deaths+1) scale
+#  hatPower <- powerTOlog(predict(hurr.lm), lambda=-0.2)
+#  resPower <- log(hurric[-56,"deaths"]+1) - hatPower
+
+## ----E4_4e--------------------------------------------------------------------------------------
+#  table(sign(resPower))
+
+## ----E4_4f, warning=FALSE, message=FALSE--------------------------------------------------------
+#  library(qgam, quietly=TRUE)
+#  hat68.8 <- predict(qgam(log(deaths+1) ~ s(log(BaseDam2014)), qu=.648,
+#                          data=hurric[-56,]))
+#  hat40.9 <- predict(qgam(log(deaths+1) ~ s(log(BaseDam2014)), qu=.409,
+#                          data=hurric[-56,]))
+
+## ----5_15, echo=FALSE, fig.width=5, fig.height=4.5, left=-1.5,top=1,right=2, ps=10, fig.show='hold',warning=FALSE, message=FALSE, out.width="48.5%"----
+#  xvar <- log(hurric$BaseDam2014)[-56]
+#  plot(log(deaths+1) ~ log(BaseDam2014), data=hurric, xaxt="n", yaxt="n",
+#    cex=4, pch=".", fg="gray", col=adjustcolor("black",alpha.f=0.65),
+#    xlab="Damage, millions of US$ in 2014", ylab="Deaths")
+#  axis(1, at=log(c(1,10,1000, 100000)),
+#    labels=paste(c(1,10,1000, 100000)), lwd=0, lwd.ticks=1)
+#  axis(2, at=log(c(0,10,100,1000)+1),
+#    labels=paste(c(0,10,100,1000)), lwd=0, lwd.ticks=1)
+#  ## Negative binomial regression fitted values
+#  hatNB <- fitted(hurrNB.gamlss)
+#  lines(xvar, log(hatNB+1), col="blue", lty=2)
+#  with(hurric, text(log(BaseDam2014)[56], log(deaths+1)[56], "Audrey", pos=3),
+#       cex=0.72)
+#  ## Show fit from power transform model
+#  lines(xvar, hatPower, col="blue", lty=1)
+#  ## Show 68.8\% and 40.1\% fits from regression smooths
+#  lines(hat68.8 ~ xvar, lty=2, col='red')
+#  lines(hat40.9 ~ xvar, lty=1, col='red')
+#  legend("topleft", col=rep(c('blue','red'),c(2,2)), lty=rep(2:1,2), cex=0.8,
+#         y.intersp=0.75, legend=c("Negative binomial fit","Power transform fit",
+#                                  "68.8% quantile", "40.9% quantile"), bty="n")
+#  mtext(side=3, "A: Deaths vs damage", line=0.5, cex=1.15, adj=0)
+#  ## Quantile-quantile plot -- negative binomial model
+#  qqnorm(zres, main="", fg="gray", cex=0.5,
+#    col=adjustcolor("black",alpha.f=0.65)); qqline(zres, col=2)
+#  mtext(side=3, "B: Q-Q plot", line=0.5, cex=1.15, adj=0)
+
+## ----5_15, eval=F-------------------------------------------------------------------------------
+#  xvar <- log(hurric$BaseDam2014)[-56]
+#  plot(log(deaths+1) ~ log(BaseDam2014), data=hurric, xaxt="n", yaxt="n",
+#    cex=4, pch=".", fg="gray", col=adjustcolor("black",alpha.f=0.65),
+#    xlab="Damage, millions of US$ in 2014", ylab="Deaths")
+#  axis(1, at=log(c(1,10,1000, 100000)),
+#    labels=paste(c(1,10,1000, 100000)), lwd=0, lwd.ticks=1)
+#  axis(2, at=log(c(0,10,100,1000)+1),
+#    labels=paste(c(0,10,100,1000)), lwd=0, lwd.ticks=1)
+#  ## Negative binomial regression fitted values
+#  hatNB <- fitted(hurrNB.gamlss)
+#  lines(xvar, log(hatNB+1), col="blue", lty=2)
+#  with(hurric, text(log(BaseDam2014)[56], log(deaths+1)[56], "Audrey", pos=3),
+#       cex=0.72)
+#  ## Show fit from power transform model
+#  lines(xvar, hatPower, col="blue", lty=1)
+#  ## Show 68.8\% and 40.1\% fits from regression smooths
+#  lines(hat68.8 ~ xvar, lty=2, col='red')
+#  lines(hat40.9 ~ xvar, lty=1, col='red')
+#  legend("topleft", col=rep(c('blue','red'),c(2,2)), lty=rep(2:1,2), cex=0.8,
+#         y.intersp=0.75, legend=c("Negative binomial fit","Power transform fit",
+#                                  "68.8% quantile", "40.9% quantile"), bty="n")
+#  mtext(side=3, "A: Deaths vs damage", line=0.5, cex=1.15, adj=0)
+#  ## Quantile-quantile plot -- negative binomial model
+#  qqnorm(zres, main="", fg="gray", cex=0.5,
+#    col=adjustcolor("black",alpha.f=0.65)); qqline(zres, col=2)
+#  mtext(side=3, "B: Q-Q plot", line=0.5, cex=1.15, adj=0)
+
+## ----E4_4h--------------------------------------------------------------------------------------
+#  ## a) Fitted and empirical centiles from hurrNB.gamlss
+#  pc <- t(centiles.split(hurrNB.gamlss, xvar=log(hurric$BaseDam2014)[-56],
+#     cent=c(5,10,25,50,75,90,95), xcut.points=log(c(150, 1500)),
+#     plot=FALSE))
+#  rownames(pc) <- c("up to 150M", "150M to 1500M", "above 1500M")
+#  round(pc,2)
+
+## ----E4_4i, results="hide"----------------------------------------------------------------------
+#  hurrP.gamlss <- gamlss(car::yjPower(deaths, -0.2) ~ log(BaseDam2014), data=hurric)
+
+## ----E4_4j, message=FALSE,warning=FALSE---------------------------------------------------------
+#  ## Fitted and empirical centiles from hurrP.gamlss
+#  pc <- t(centiles.split(hurrP.gamlss, xvar=log(hurric$BaseDam2014),
+#  cent=c(5,10,25,50,75,90,95),
+#  xcut.points=log(c(150, 1500)), plot=FALSE))
+#  rownames(pc) <- c("up to 150M", "150M to 1500M", "above 1500M")
+#  round(pc,2)
+
+## ----E4_4k, echo=FALSE--------------------------------------------------------------------------
+#  detach(package:gamlss)
+
+## ----table-left-rt------------------------------------------------------------------------------
+#  tab <- with(DAAG::cricketer, table(left,dead))
+#  colnames(tab) <- c('live','dead')
+#  tab <- cbind(addmargins(tab, margin=2), prop.table(tab, margin=1))
+#  tab
+
+## ----5_16, echo=FALSE, fig.width=4.5, fig.height=3.5, top=2.5, warning=FALSE, mgp=c(2.5,0.5,0), fig.show="hold", wo='48.5%'----
+#  library(mgcv)
+#  library(latticeExtra)
+#  DAAG::cricketer |> dplyr::count(year, left, name="Freq") -> handYear
+#  names(handYear)[2] <- "hand"
+#  byYear <- tidyr::pivot_wider(handYear, names_from='hand', values_from="Freq")
+#  hand.gam <- gam(cbind(left,right) ~ s(year), data=byYear, family=binomial)
+#  const <- attr(predict(hand.gam, type='terms'), "constant")
+#    ## `const` is the mean on the scale of the linear predictor
+#  plot(hand.gam, shift=const, trans=function(x)exp(x)/(1+exp(x)), ylim=c(.05,.4),
+#       xlab="", ylab="Proportion lefhanded", rug=FALSE, fg="gray",
+#       main=list("Proportion lefthanded, with 2SE limits",font=1,cex=1.2))
+#    ## Add `const`, then apply inverse link function.
+#    ## Plots estimated proportions (i.e., on the scale of the response)
+#  with(byYear, points(year, I(left/(left+right)), cex=0.8, col="gray50"))
+#  leftrt.gam <- gam(Freq ~ hand + s(year, by=factor(hand)), data=handYear,
+#                    family=poisson)
+#  leftrt.pred <- predict(leftrt.gam, se=T, type='response')
+#  handYear <- cbind(handYear, as.data.frame(leftrt.pred))
+#  col2 <- DAAG::DAAGtheme(color=T)$superpose.symbol$col[c(2,2,1)]
+#  gph.key <- list(space="top", columns=3, lines=list(lty=c(1,2,1), lwd=2, col=col2),
+#                  text=list(c("left",expression(4.4%*%"left"),"right")), cex=1.2)
+#  gph <- xyplot(leftrt.pred$fit ~ year, groups=hand, ylab=list("Number born", cex=1.2),
+#                type="l", xlab="", data=handYear, key=gph.key, col=col2[c(3,1)], lwd=2)
+#  gph1 <- xyplot(Freq~year, groups=hand, data=handYear, col=col2[c(3,1)])
+#  gph2 <- xyplot(I(4.4*fit) ~ year, data=subset(handYear, hand=="left"),
+#                 type="l", lty=2, lwd=2, col=col2[2])
+#  update(gph+as.layer(gph1)+as.layer(gph2), par.settings=DAAG::DAAGtheme(color=TRUE),
+#         scales=list(cex=1.2))
+
+## ----5_16, eval=F-------------------------------------------------------------------------------
+#  library(mgcv)
+#  library(latticeExtra)
+#  DAAG::cricketer |> dplyr::count(year, left, name="Freq") -> handYear
+#  names(handYear)[2] <- "hand"
+#  byYear <- tidyr::pivot_wider(handYear, names_from='hand', values_from="Freq")
+#  hand.gam <- gam(cbind(left,right) ~ s(year), data=byYear, family=binomial)
+#  const <- attr(predict(hand.gam, type='terms'), "constant")
+#    ## `const` is the mean on the scale of the linear predictor
+#  plot(hand.gam, shift=const, trans=function(x)exp(x)/(1+exp(x)), ylim=c(.05,.4),
+#       xlab="", ylab="Proportion lefhanded", rug=FALSE, fg="gray",
+#       main=list("Proportion lefthanded, with 2SE limits",font=1,cex=1.2))
+#    ## Add `const`, then apply inverse link function.
+#    ## Plots estimated proportions (i.e., on the scale of the response)
+#  with(byYear, points(year, I(left/(left+right)), cex=0.8, col="gray50"))
+#  leftrt.gam <- gam(Freq ~ hand + s(year, by=factor(hand)), data=handYear,
+#                    family=poisson)
+#  leftrt.pred <- predict(leftrt.gam, se=T, type='response')
+#  handYear <- cbind(handYear, as.data.frame(leftrt.pred))
+#  col2 <- DAAG::DAAGtheme(color=T)$superpose.symbol$col[c(2,2,1)]
+#  gph.key <- list(space="top", columns=3, lines=list(lty=c(1,2,1), lwd=2, col=col2),
+#                  text=list(c("left",expression(4.4%*%"left"),"right")), cex=1.2)
+#  gph <- xyplot(leftrt.pred$fit ~ year, groups=hand, ylab=list("Number born", cex=1.2),
+#                type="l", xlab="", data=handYear, key=gph.key, col=col2[c(3,1)], lwd=2)
+#  gph1 <- xyplot(Freq~year, groups=hand, data=handYear, col=col2[c(3,1)])
+#  gph2 <- xyplot(I(4.4*fit) ~ year, data=subset(handYear, hand=="left"),
+#                 type="l", lty=2, lwd=2, col=col2[2])
+#  update(gph+as.layer(gph1)+as.layer(gph2), par.settings=DAAG::DAAGtheme(color=TRUE),
+#         scales=list(cex=1.2))
+
+## ----E6_2a--------------------------------------------------------------------------------------
+#  fac <- factor(LETTERS[1:4])
+#  p <- c(73, 30, 11, 2)/500
+#  n <- rep(500,4)
+#  round(signif(coef(summary(glm(p ~ fac, family=binomial, weights=n))), 6), 6)
+
+## ----5_17, fig.width=4.5, fig.height=4.0, left=-1, top=2, ps=9, tcl=-0.35, echo=FALSE, out.width="50%", warning=FALSE----
+#  p <- c(0.001,0.002,(1:99)/100,0.998,0.999)
+#  for(i in 1:3){
+#  link <- c("logit", "probit", "cloglog")[i]
+#  fun <- make.link(link)$linkfun
+#  x <- fun(p)
+#  u <- glm(p ~ x, family=binomial(link=link), weights=rep(1000,103))
+#  if  (i==1)
+#  plot(x, hatvalues(u), type="l", ylab="Leverage", xaxt="n", fg='gray',
+#  yaxt="n",
+#  ylim=c(0, 0.0425), yaxs="i", xlab="Fitted proportion") else {
+#  phat <- predict(u, type="response")
+#  lines(log(phat/(1-phat)), hatvalues(u), type="l",
+#  col=c("black","black","gray")[i], lwd=0.75,
+#  lty=c(1,2,1)[i])
+#  }
+#  }
+#  pos=c(0.001,0.002, 0.005, 0.01,0.02,0.05,0.1,0.25,0.5,0.75,0.9,0.95,0.98,0.99, 0.995, 0.998, 0.999)
+#  sub1 <- seq(from=1,to=17, by=2)
+#  sub3 <- seq(from=2,to=16, by=2)
+#  axis(1, at=log(pos/(1-pos))[sub1], labels=paste(pos)[sub1],
+#  cex.axis=0.7, lwd=0, lwd.ticks=1)
+#  axis(3, at=log(pos/(1-pos))[sub3], labels=paste(pos)[sub3],
+#  cex.axis=0.7, lwd=0, lwd.ticks=1)
+#  axis(2, at=c(0,.01,.02,.03), cex.axis=.7, lwd=0, lwd.ticks=1)
+#  legend("topleft", lty=c(1,2,1),
+#  legend=c("logit link", "probit link", "cloglog link"),
+#  col=c("black","black","gray"), bty="n", cex=0.8)
+
+## ----5_17, eval=F-------------------------------------------------------------------------------
+#  p <- c(0.001,0.002,(1:99)/100,0.998,0.999)
+#  for(i in 1:3){
+#  link <- c("logit", "probit", "cloglog")[i]
+#  fun <- make.link(link)$linkfun
+#  x <- fun(p)
+#  u <- glm(p ~ x, family=binomial(link=link), weights=rep(1000,103))
+#  if  (i==1)
+#  plot(x, hatvalues(u), type="l", ylab="Leverage", xaxt="n", fg='gray',
+#  yaxt="n",
+#  ylim=c(0, 0.0425), yaxs="i", xlab="Fitted proportion") else {
+#  phat <- predict(u, type="response")
+#  lines(log(phat/(1-phat)), hatvalues(u), type="l",
+#  col=c("black","black","gray")[i], lwd=0.75,
+#  lty=c(1,2,1)[i])
+#  }
+#  }
+#  pos=c(0.001,0.002, 0.005, 0.01,0.02,0.05,0.1,0.25,0.5,0.75,0.9,0.95,0.98,0.99, 0.995, 0.998, 0.999)
+#  sub1 <- seq(from=1,to=17, by=2)
+#  sub3 <- seq(from=2,to=16, by=2)
+#  axis(1, at=log(pos/(1-pos))[sub1], labels=paste(pos)[sub1],
+#  cex.axis=0.7, lwd=0, lwd.ticks=1)
+#  axis(3, at=log(pos/(1-pos))[sub3], labels=paste(pos)[sub3],
+#  cex.axis=0.7, lwd=0, lwd.ticks=1)
+#  axis(2, at=c(0,.01,.02,.03), cex.axis=.7, lwd=0, lwd.ticks=1)
+#  legend("topleft", lty=c(1,2,1),
+#  legend=c("logit link", "probit link", "cloglog link"),
+#  col=c("black","black","gray"), bty="n", cex=0.8)
+
+## ----E7_1a, results="hide", message=FALSE-------------------------------------------------------
+#  library(VGAM)
+#  inhaler <-  data.frame(freq=c(99,76,41,55,2,13),
+#    choice=rep(c("inh1","inh2"), 3),
+#    ease=ordered(rep(c("easy","re-read","unclear"), rep(2,3))))
+#  inhaler1.vglm <-  vglm(ease ~ 1, weights=freq, data=inhaler,
+#    cumulative(link="logitlink"), subset=inhaler$choice=="inh1")
+#  inhaler2.vglm <-  vglm(ease ~ 1, weights=freq, data=inhaler,
+#    cumulative(link="logitlink"), subset=inhaler$choice=="inh2")
+
+## ----E7_1b--------------------------------------------------------------------------------------
+#  ## Inhaler 1
+#  round(coef(summary(inhaler1.vglm)),3)
+#  ## Inhaler 2
+#  round(coef(summary(inhaler2.vglm)),3)
+
+## ----E7_1c--------------------------------------------------------------------------------------
+#  inhaler.vglm <-  vglm(ease ~ choice, weights=freq, data=inhaler,
+#  cumulative(link="logitlink", parallel=FALSE))
+#  round(coef(summary(inhaler.vglm)),3)
+
+## ----E7_1d--------------------------------------------------------------------------------------
+#  inhalerP.vglm <-  vglm(ease ~ choice, weights=freq, data=inhaler,
+#  cumulative(link="logitlink", parallel=TRUE))
+#  round(coef(summary(inhalerP.vglm)),3)
+
+## ----E7_1e--------------------------------------------------------------------------------------
+#  pred <- predict(inhalerP.vglm, se.fit=TRUE, newdata=inhaler[1:2,])
+#  colnames(pred$se.fit) <- paste("SE", colnames(pred$se.fit))
+#  fitvals <- with(pred, cbind(fitted.values, se.fit))
+#  colnames(fitvals) <- gsub('link', '', colnames(fitvals))
+#  round(fitvals, 2)
+
+## ----E7_1f--------------------------------------------------------------------------------------
+#  d <- deviance(inhalerP.vglm) - deviance(inhaler.vglm)
+#  ## Refer to chi-squared distribution with 1 degree of freedom
+#  c(Difference=d, "p-Value"=pchisq(3.416, df=1, lower.tail=FALSE))
+
+## ----E8a----------------------------------------------------------------------------------------
+#  suppressMessages(library(survival))
+
+## ----5_18, fig.width=6, fig.height=5, bot=1, top=3.5, ps=8, echo=FALSE, lwd=0.75, out.width="50%"----
+#  df <- data.frame(x0 = c(1, 5, 1, 2, 14, 10, 12, 19)*30,
+#  x1 = c(46, 58, 85, 67, 17, 85, 18, 42)*30,
+#  fail = c(1, 0, 0, 1, 1, 0, 0, 1))
+#  plot(c(0, 2610), c(0.65, 8.15), type = "n",
+#  xlab = "Days from beginning of study",
+#  ylab = "Subject number", axes = F)
+#  ##  mtext(side = 1, line = 2.5, "Days from beginning of study", adj = 0.5)
+#  m <- dim(df)[1]
+#  par(las=2)
+#  axis(2, at = (1:m), labels = paste((m:1)), lwd=0, lwd.ticks=1)
+#  par(las=1)
+#  abline(v = 600, lty = 4, col="gray40")
+#  abline(v = 2550)
+#  mtext(side = 3, line = 0.5, at = c(600, 2550),
+#  text = c("\nEnd of recruitment",
+#  "\nEnd of study"), cex = 0.9)
+#  lines(rep((0:8) * 300, rep(3, 9)), rep(c(-0.4, -0.2, NA), 9),
+#  xpd = T)
+#  mtext(side = 1, line = 1.0, at = (0:8) * 300,
+#  text = paste((0:8) * 300), adj = 0.5)
+#  chw <- par()$cxy[1]
+#  xx <- as.vector(t(cbind(df[, 1], df[, 2] - 0.25 * chw,
+#  rep(NA, m))))
+#  yy <- as.vector(t(cbind(matrix(rep(m:1, 2), ncol = 2),
+#  rep(NA, m))))
+#  lines(as.numeric(xx), as.numeric(yy))
+#  points(df[, 1], m:1, pch = 16)
+#  text(df[, 1]-0.25*chw, m:1, paste(df[,1]), pos=1, cex=0.75)
+#  fail <- as.logical(df$fail)
+#  points(df[fail, 2], (m:1)[fail], pch = 15)
+#  points(df[!fail, 2], (m:1)[!fail], pch = 0)
+#  text(df[, 2]+0.25*chw, m:1, paste(df[,2]), pos=1, cex=0.75)
+#  par(xpd=TRUE)
+#  legend(0, 11.5, pch = 16, legend = "Entry", y.intersp=0.15)
+#  legend(1230, 11.5, pch = c(15, 0),
+#  legend = c("Dead", "Censored"), ncol=2, y.intersp=0.15)
+
+## ----5_18, eval=F-------------------------------------------------------------------------------
+#  df <- data.frame(x0 = c(1, 5, 1, 2, 14, 10, 12, 19)*30,
+#  x1 = c(46, 58, 85, 67, 17, 85, 18, 42)*30,
+#  fail = c(1, 0, 0, 1, 1, 0, 0, 1))
+#  plot(c(0, 2610), c(0.65, 8.15), type = "n",
+#  xlab = "Days from beginning of study",
+#  ylab = "Subject number", axes = F)
+#  ##  mtext(side = 1, line = 2.5, "Days from beginning of study", adj = 0.5)
+#  m <- dim(df)[1]
+#  par(las=2)
+#  axis(2, at = (1:m), labels = paste((m:1)), lwd=0, lwd.ticks=1)
+#  par(las=1)
+#  abline(v = 600, lty = 4, col="gray40")
+#  abline(v = 2550)
+#  mtext(side = 3, line = 0.5, at = c(600, 2550),
+#  text = c("\nEnd of recruitment",
+#  "\nEnd of study"), cex = 0.9)
+#  lines(rep((0:8) * 300, rep(3, 9)), rep(c(-0.4, -0.2, NA), 9),
+#  xpd = T)
+#  mtext(side = 1, line = 1.0, at = (0:8) * 300,
+#  text = paste((0:8) * 300), adj = 0.5)
+#  chw <- par()$cxy[1]
+#  xx <- as.vector(t(cbind(df[, 1], df[, 2] - 0.25 * chw,
+#  rep(NA, m))))
+#  yy <- as.vector(t(cbind(matrix(rep(m:1, 2), ncol = 2),
+#  rep(NA, m))))
+#  lines(as.numeric(xx), as.numeric(yy))
+#  points(df[, 1], m:1, pch = 16)
+#  text(df[, 1]-0.25*chw, m:1, paste(df[,1]), pos=1, cex=0.75)
+#  fail <- as.logical(df$fail)
+#  points(df[fail, 2], (m:1)[fail], pch = 15)
+#  points(df[!fail, 2], (m:1)[!fail], pch = 0)
+#  text(df[, 2]+0.25*chw, m:1, paste(df[,2]), pos=1, cex=0.75)
+#  par(xpd=TRUE)
+#  legend(0, 11.5, pch = 16, legend = "Entry", y.intersp=0.15)
+#  legend(1230, 11.5, pch = c(15, 0),
+#  legend = c("Dead", "Censored"), ncol=2, y.intersp=0.15)
+
+## ----E8_1a, echo=TRUE---------------------------------------------------------------------------
+#  str(MASS::Aids2, vec.len=2)
+
+## ----E8_1b--------------------------------------------------------------------------------------
+#  bloodAids <- subset(MASS::Aids2, T.categ=="blood")
+#  bloodAids$days <- bloodAids$death-bloodAids$diag
+#  bloodAids$dead <- as.integer(bloodAids$status=="D")
+
+## ----5_19, w=3.5, h=2.75, left=-1, ps=10, tcl=-0.35, echo=FALSE, out.width="45%"----------------
+#  bloodAids <- subset(MASS::Aids2, T.categ=="blood")
+#  bloodAids$days <- bloodAids$death-bloodAids$diag
+#  bloodAids$dead <- as.integer(bloodAids$status=="D")
+#  plot(survfit(Surv(days, dead) ~ sex, data=bloodAids),
+#       col=c(2,4), conf.int=TRUE, lty=1, fg="gray",
+#       xlab="Days from diagnosis", ylab="Survival probability")
+#  legend("top", legend=levels(bloodAids$sex), lty=c(1,1),
+#         col=c(2,4), horiz=TRUE, bty="n")
+
+## ----5_19, eval=F-------------------------------------------------------------------------------
+#  bloodAids <- subset(MASS::Aids2, T.categ=="blood")
+#  bloodAids$days <- bloodAids$death-bloodAids$diag
+#  bloodAids$dead <- as.integer(bloodAids$status=="D")
+#  plot(survfit(Surv(days, dead) ~ sex, data=bloodAids),
+#       col=c(2,4), conf.int=TRUE, lty=1, fg="gray",
+#       xlab="Days from diagnosis", ylab="Survival probability")
+#  legend("top", legend=levels(bloodAids$sex), lty=c(1,1),
+#         col=c(2,4), horiz=TRUE, bty="n")
+
+## ----E8_2a--------------------------------------------------------------------------------------
+#  ## Pattern of censoring for male homosexuals
+#  hsaids <- subset(MASS::Aids2, sex=="M" & T.categ=="hs")
+#  hsaids$days <- hsaids$death-hsaids$diag
+#  hsaids$dead <- as.integer(hsaids$status=="D")
+#  table(hsaids$status,hsaids$death==11504)
+
+## ----5_20, w=3.5, h=3, left=-1, ps=10, tcl=-0.35, echo=FALSE, out.width="42%"-------------------
+#  hsaids <- subset(MASS::Aids2, sex=="M" & T.categ=="hs")
+#  hsaids$days <- hsaids$death-hsaids$diag
+#  hsaids$dead <- as.integer(hsaids$status=="D")
+#  hsaids.surv <- survfit(Surv(days, dead) ~ 1, data=hsaids)
+#  plot(hsaids.surv, col="gray", conf.int=F, tcl=-0.4, fg="gray")
+#  par(new=TRUE)
+#  plot(hsaids.surv,col=1, conf.int=F,mark.time=F, fg="gray",
+#  xlab="Days from diagnosis", ylab="Estimated survival probabality")
+#  chw <- par()$cxy[1]
+#  chh <- par()$cxy[2]
+#  surv <- hsaids.surv$surv
+#  xval <- c(200,700,1400,1900)
+#  hat <- approx(hsaids.surv$time, surv, xout=xval)$y
+#  for(i in 1:2) arrows(xval[i], hat[i], 0, hat[i],
+#  length=0.05, col="gray")
+#  lines(rep(xval[1],2), hat[1:2], col="gray")
+#  ##    lines(rep(xval[3],2), hat[3:4], col="gray")
+#  ## Offset triangle 1
+#  chw <- par()$cxy[1]
+#  lines(xval[c(1,2,1,1)]+650, hat[c(2,2,1,2)]+0.2,col="gray40")
+#  xy1 <- c(mean(xval[c(1,1,2)]), mean(hat[c(1,2,2)]))
+#  arrows(xy1[1], xy1[2], xy1[1]+650, xy1[2]+0.2, col="gray40", length=0.1)
+#  text(xval[1]-0.1*chw+650, hat[1]+0.2,
+#  paste(round(hat[1],2)), col="gray20",cex=0.75, adj=1)
+#  text(xval[1]+650-0.1*chw, hat[2]+0.2,
+#  paste(round(hat[2],2)), col="gray20",cex=0.75, adj=1)
+#  text(mean(xval[1:2])+650, hat[2]+0.2-0.5*chh,
+#  paste(round(diff(xval[1:2]))), col="gray20", cex=0.75)
+#  text(xval[1]+650-0.5*chw, mean(hat[1:2]+0.2), paste(round(hat[1]-hat[2],3)),
+#  srt=90, adj=0.5, col="gray20", cex=0.75)
+
+## ----5_20, eval=F-------------------------------------------------------------------------------
+#  hsaids <- subset(MASS::Aids2, sex=="M" & T.categ=="hs")
+#  hsaids$days <- hsaids$death-hsaids$diag
+#  hsaids$dead <- as.integer(hsaids$status=="D")
+#  hsaids.surv <- survfit(Surv(days, dead) ~ 1, data=hsaids)
+#  plot(hsaids.surv, col="gray", conf.int=F, tcl=-0.4, fg="gray")
+#  par(new=TRUE)
+#  plot(hsaids.surv,col=1, conf.int=F,mark.time=F, fg="gray",
+#  xlab="Days from diagnosis", ylab="Estimated survival probabality")
+#  chw <- par()$cxy[1]
+#  chh <- par()$cxy[2]
+#  surv <- hsaids.surv$surv
+#  xval <- c(200,700,1400,1900)
+#  hat <- approx(hsaids.surv$time, surv, xout=xval)$y
+#  for(i in 1:2) arrows(xval[i], hat[i], 0, hat[i],
+#  length=0.05, col="gray")
+#  lines(rep(xval[1],2), hat[1:2], col="gray")
+#  ##    lines(rep(xval[3],2), hat[3:4], col="gray")
+#  ## Offset triangle 1
+#  chw <- par()$cxy[1]
+#  lines(xval[c(1,2,1,1)]+650, hat[c(2,2,1,2)]+0.2,col="gray40")
+#  xy1 <- c(mean(xval[c(1,1,2)]), mean(hat[c(1,2,2)]))
+#  arrows(xy1[1], xy1[2], xy1[1]+650, xy1[2]+0.2, col="gray40", length=0.1)
+#  text(xval[1]-0.1*chw+650, hat[1]+0.2,
+#  paste(round(hat[1],2)), col="gray20",cex=0.75, adj=1)
+#  text(xval[1]+650-0.1*chw, hat[2]+0.2,
+#  paste(round(hat[2],2)), col="gray20",cex=0.75, adj=1)
+#  text(mean(xval[1:2])+650, hat[2]+0.2-0.5*chh,
+#  paste(round(diff(xval[1:2]))), col="gray20", cex=0.75)
+#  text(xval[1]+650-0.5*chw, mean(hat[1:2]+0.2), paste(round(hat[1]-hat[2],3)),
+#  srt=90, adj=0.5, col="gray20", cex=0.75)
+
+## ----E8_5a--------------------------------------------------------------------------------------
+#  bloodAids.coxph <- coxph(Surv(days, dead) ~ sex, data=bloodAids)
+#  print(summary(bloodAids.coxph), digits=6)
+
+## ----E8_5b, eval=FALSE, echo=TRUE---------------------------------------------------------------
+#  ## Add `age` as explanatory variable
+#  bloodAids.coxph1 <- coxph(Surv(days, dead) ~ sex+age, data=bloodAids)
+
+## ----5_21, fig.width=5, fig.height=4.5, left=-1, ps=10, tcl=-0.35, echo=FALSE, out.width="50%"----
+#  bloodAids <- subset(MASS::Aids2,T.categ=="blood")
+#  bloodAids <- within(bloodAids, {days <- death-diag
+#  dead <- as.integer(status=="D")})
+#  bloodAids.coxph <- coxph(Surv(days, dead) ~ sex, data = bloodAids)
+#  plot(cox.zph(bloodAids.coxph), cex=0.75, bty="n")
+#  box(col="gray")
+
+## ----5_21, eval=F-------------------------------------------------------------------------------
+#  bloodAids <- subset(MASS::Aids2,T.categ=="blood")
+#  bloodAids <- within(bloodAids, {days <- death-diag
+#  dead <- as.integer(status=="D")})
+#  bloodAids.coxph <- coxph(Surv(days, dead) ~ sex, data = bloodAids)
+#  plot(cox.zph(bloodAids.coxph), cex=0.75, bty="n")
+#  box(col="gray")
+
+## ----E8_5d--------------------------------------------------------------------------------------
+#  cox.zph(bloodAids.coxph)
+
+## ----E8_6a--------------------------------------------------------------------------------------
+#  cricketer <- DAAG::cricketer
+#  kia4.coxph <- coxph(Surv(life, kia) ~ left/poly(year,4),
+#                      data = cricketer, model=T)
+#  kia6.coxph <- update(kia4.coxph, . ~ left/poly(year,6),
+#                       data = cricketer, model=T)
+#  # Type `plot(cox.zph(kia6.coxph)` to plot the two graphs
+#  # Perhaps check also `AIC(kia4.coxph, kia6.coxph)`
+#  cox.zph(kia6.coxph)
+
+## ----5_22, w=3.85, h=2.4, left=-1, ps=10, tcl=-0.35, echo=FALSE, out.width="48%"----------------
+#  plot(cox.zph(kia6.coxph), cex=0.75, bty="n")
+#  box(col="gray")
+
+## ----5_22, eval=F-------------------------------------------------------------------------------
+#  plot(cox.zph(kia6.coxph), cex=0.75, bty="n")
+#  box(col="gray")
+
+## ----E11a---------------------------------------------------------------------------------------
+#  inhibition <- rbind(
+#  conc =c(0.1,0.5, 1,10,20,30,50,70,80,100,150),
+#  no  = c(7,  1, 10, 9, 2, 9, 13, 1, 1,  4,  3),
+#  yes = c(0,  0, 3, 4, 0, 6, 7, 0, 0,  1,  7)
+#  )
+#  colnames(inhibition) <- rep("", ncol(inhibition))
+#  inhibition
+

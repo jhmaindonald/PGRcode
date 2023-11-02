@@ -1,7 +1,7 @@
 Package: PGRcode
 Type: Package
 Title: Code from "A Practical Guide to Data Analysis Using R"
-Version: 0.1.3
+Version: 0.1.4
 Author: John H Maindonald <john@statsresearch.co.nz>, W John Braun
   <braun@stats.uwo.ca>, and Jeffrey L Andrews <jeff.andrews@ubc.ca>.
 Maintainer: The package maintainer <jhmaindonald@gmail.com>

@@ -1,0 +1,1380 @@
+## ----CodeControl, echo=FALSE--------------------------------------------------------------------
+options(rmarkdown.html_vignette.check_title = FALSE)
+## xtras=TRUE
+xtras=FALSE
+library(knitr)
+## opts_chunk[['set']](results="asis")
+opts_chunk[['set']](eval=F)
+## opts_chunk[['set']](eval=T)
+
+## ----setup, cache=FALSE-------------------------------------------------------------------------
+#  Hmisc::knitrSet(basename="mva", lang='markdown', fig.path="figs/g", w=7, h=7)
+#  oldopt <- options(digits=4, formatR.arrow=FALSE, width=70, scipen=999)
+#  library(knitr)
+#  opts_chunk[['set']](cache.path='cache-', out.width="80%", fig.align="center",
+#                      fig.show='hold', ps=10, strip.white = TRUE,
+#                      comment=NA, width=70, tidy.opts = list(replace.assign=FALSE))
+
+## ----latticePlus, echo=FALSE--------------------------------------------------------------------
+#  suppressPackageStartupMessages(library(latticeExtra))
+
+## ----I1a----------------------------------------------------------------------------------------
+#  ## Make the lattice package and the possum dataset available
+#  library(latticeExtra)
+#  possum <- DAAG::possum
+
+## ----9_1, w=6.8, h=4.25, lwd=0.5, echo=FALSE, out.width="100%"----------------------------------
+#  ## Colors distinguish sexes; symbols distinguish sites
+#  sitenames <- row.names(DAAG::possumsites)[c(1,2,4:6,3,7)]
+#  key <- list(points = list(pch=0:6), text=list(sitenames),
+#              columns=4, between=1, between.columns=2)
+#  colr <- c("red","blue")
+#  vnames <- c("tail\nlength","foot\nlength", "conch\nlength")
+#  gphA <- with(possum, splom(~ possum[, 9:11], pch=(0:6)[site], col=colr[sex],
+#              xlab="",  varnames=vnames, key=key, axis.line.tck=0.6))
+#  gphB <- with(possum, cloud(earconch~taill+footlgth, data=possum,
+#    col=colr[sex], key=key, pch = (0:6)[site],
+#    zlab=list("earconch", rot=90), zoom=0.925))
+#  update(c("A: Scatterplot matrix"=gphA, "B: Cloud plot"=gphB),
+#         between=list(x=1))
+
+## ----9_1, eval=FALSE----------------------------------------------------------------------------
+#  ## Colors distinguish sexes; symbols distinguish sites
+#  sitenames <- row.names(DAAG::possumsites)[c(1,2,4:6,3,7)]
+#  key <- list(points = list(pch=0:6), text=list(sitenames),
+#              columns=4, between=1, between.columns=2)
+#  colr <- c("red","blue")
+#  vnames <- c("tail\nlength","foot\nlength", "conch\nlength")
+#  gphA <- with(possum, splom(~ possum[, 9:11], pch=(0:6)[site], col=colr[sex],
+#              xlab="",  varnames=vnames, key=key, axis.line.tck=0.6))
+#  gphB <- with(possum, cloud(earconch~taill+footlgth, data=possum,
+#    col=colr[sex], key=key, pch = (0:6)[site],
+#    zlab=list("earconch", rot=90), zoom=0.925))
+#  update(c("A: Scatterplot matrix"=gphA, "B: Cloud plot"=gphB),
+#         between=list(x=1))
+
+## ----I1_2a--------------------------------------------------------------------------------------
+#  ## Ratios of largest to smallest values: possum[, 6:14] (DAAG)
+#  possum <- DAAG::possum
+#  sapply(na.omit(possum[, 6:14]), function(x)round(max(x)/min(x),2))
+
+## ----I1_2b--------------------------------------------------------------------------------------
+#  ## Principal components calculations: possum[, 6:14] (DAAG)
+#  here <- complete.cases(possum[, 6:14])
+#  possum.prc <- prcomp(log(possum[here, 6:14]))
+#  scores <- cbind(predict(possum.prc), possum[here, c('sex', 'site')])
+
+## ----9_2, w=4.8,h=2.9, cex.lab=1.15, echo=FALSE, out.width="75%"--------------------------------
+#  ## For parset, key and colr; see code for Fig 9.1
+#  pchr <- c(3,4,0,8,2,10,1)
+#  parset <- list(fontsize=list(text=10, points=6), cex=0.75, pch=pchr, alpha=0.8)
+#  key <- modifyList(key, list(columns=1, space="right"))
+#  gph <- with(scores, xyplot(PC2 ~ PC1, aspect="iso", key = key,
+#              col = colr[sex], pch = (0:6)[site]))
+#  update(gph, scales=list(tck=0.5), par.settings=parset,
+#         xlab="1st Principal Component", ylab="2nd Principal Component")
+
+## ----9_2, eval=FALSE----------------------------------------------------------------------------
+#  ## For parset, key and colr; see code for Fig 9.1
+#  pchr <- c(3,4,0,8,2,10,1)
+#  parset <- list(fontsize=list(text=10, points=6), cex=0.75, pch=pchr, alpha=0.8)
+#  key <- modifyList(key, list(columns=1, space="right"))
+#  gph <- with(scores, xyplot(PC2 ~ PC1, aspect="iso", key = key,
+#              col = colr[sex], pch = (0:6)[site]))
+#  update(gph, scales=list(tck=0.5), par.settings=parset,
+#         xlab="1st Principal Component", ylab="2nd Principal Component")
+
+## ----I1_2d--------------------------------------------------------------------------------------
+#  print(summary(possum.prc),digits=2)
+#  cat("\nRotations (otherwise called Loadings)\n")
+#  print(possum.prc$rotation, digits=2)
+#  ## By default, blanks are shown for loadings < 0.1 in magnitude
+
+## ----9_3, w=5.5, h=2.4, cache=FALSE, warning=FALSE, echo=FALSE, out.width="100%"----------------
+#  suppressPackageStartupMessages(library(ggplot2))
+#  theme_set(theme_gray(base_size=8))
+#  ## Bootstrap principal components calculations: possum (DAAG)
+#  ## Sample from rows where there are no missing values
+#  rowsfrom <- (1:nrow(possum))[complete.cases(possum[, 6:14])]
+#  logpossum6to14 <- log(possum[rowsfrom, 6:14])
+#  sexPop <- possum[rowsfrom, c("sex","Pop")]
+#  n <- length(rowsfrom); ntimes <- 3
+#  bootscores <- data.frame(scores1=numeric(ntimes*n), scores2=numeric(ntimes*n))
+#  for (i in 1:ntimes){
+#    samprows <- sample(1:n, n, replace=TRUE)
+#    bootscores[n*(i-1)+(1:n), 1:2] <-
+#    prcomp(logpossum6to14[samprows, ])$x[, 1:2]
+#  }
+#  bootscores[, c("sex","Pop")] <- sexPop[samprows, ]
+#  bootscores$sampleID <- factor(rep(1:ntimes, rep(n,ntimes)))
+#  gph <- quickplot(x=scores1, y=scores2, colour=sex, size=I(1.0),
+#    asp=1, shape=Pop, facets=.~sampleID, data=bootscores) +
+#    scale_shape_discrete(solid=F)
+#  gph + scale_colour_manual(values=c("m"="blue","f"="red"))  +
+#    xlab("First Principal Component") + ylab("Second Principal Component")
+
+## ----9_3, eval=FALSE----------------------------------------------------------------------------
+#  suppressPackageStartupMessages(library(ggplot2))
+#  theme_set(theme_gray(base_size=8))
+#  ## Bootstrap principal components calculations: possum (DAAG)
+#  ## Sample from rows where there are no missing values
+#  rowsfrom <- (1:nrow(possum))[complete.cases(possum[, 6:14])]
+#  logpossum6to14 <- log(possum[rowsfrom, 6:14])
+#  sexPop <- possum[rowsfrom, c("sex","Pop")]
+#  n <- length(rowsfrom); ntimes <- 3
+#  bootscores <- data.frame(scores1=numeric(ntimes*n), scores2=numeric(ntimes*n))
+#  for (i in 1:ntimes){
+#    samprows <- sample(1:n, n, replace=TRUE)
+#    bootscores[n*(i-1)+(1:n), 1:2] <-
+#    prcomp(logpossum6to14[samprows, ])$x[, 1:2]
+#  }
+#  bootscores[, c("sex","Pop")] <- sexPop[samprows, ]
+#  bootscores$sampleID <- factor(rep(1:ntimes, rep(n,ntimes)))
+#  gph <- quickplot(x=scores1, y=scores2, colour=sex, size=I(1.0),
+#    asp=1, shape=Pop, facets=.~sampleID, data=bootscores) +
+#    scale_shape_discrete(solid=F)
+#  gph + scale_colour_manual(values=c("m"="blue","f"="red"))  +
+#    xlab("First Principal Component") + ylab("Second Principal Component")
+
+## ----9_4, w=7.25, h=3.6, echo=FALSE, out.width="100%"-------------------------------------------
+#  ## Code that will display individual graphs
+#  d.possum <- dist(possum[,6:14])  # Euclidean distance matrix
+#  MASS::sammon(d.possum, k=2, trace=FALSE)$points |> as.data.frame() |>
+#    setNames(paste0("ord",1:2)) |> cbind(Pop=DAAG::possum$Pop) -> sammon.possum
+#  MASS::isoMDS(d.possum, k=2, trace=FALSE) |> as.data.frame() |>
+#    setNames(paste0("ord",1:2)) |> cbind(Pop=DAAG::possum$Pop) -> mds.possum
+#  gph1 <- xyplot(ord2~ord1, groups=Pop, aspect="iso", data=sammon.possum)
+#  gph2 <- xyplot(ord2~ord1, groups=Pop, aspect="iso", data=mds.possum)
+#  update(c(gph1, gph2, layout=c(2,1)),
+#         par.settings=simpleTheme(pch=c(1,3)),
+#         between=list(x=0.5), auto.key=list(columns=2),
+#         strip=strip.custom(factor.levels=c("A: Sammon","B: ISOmds")))
+
+## ----9_4, eval=FALSE----------------------------------------------------------------------------
+#  ## Code that will display individual graphs
+#  d.possum <- dist(possum[,6:14])  # Euclidean distance matrix
+#  MASS::sammon(d.possum, k=2, trace=FALSE)$points |> as.data.frame() |>
+#    setNames(paste0("ord",1:2)) |> cbind(Pop=DAAG::possum$Pop) -> sammon.possum
+#  MASS::isoMDS(d.possum, k=2, trace=FALSE) |> as.data.frame() |>
+#    setNames(paste0("ord",1:2)) |> cbind(Pop=DAAG::possum$Pop) -> mds.possum
+#  gph1 <- xyplot(ord2~ord1, groups=Pop, aspect="iso", data=sammon.possum)
+#  gph2 <- xyplot(ord2~ord1, groups=Pop, aspect="iso", data=mds.possum)
+#  update(c(gph1, gph2, layout=c(2,1)),
+#         par.settings=simpleTheme(pch=c(1,3)),
+#         between=list(x=0.5), auto.key=list(columns=2),
+#         strip=strip.custom(factor.levels=c("A: Sammon","B: ISOmds")))
+
+## ----I2a----------------------------------------------------------------------------------------
+#  ## Principal components: data frame socsupport (DAAG)
+#  socsupport <- DAAG::socsupport
+#  ss.pr1 <- prcomp(as.matrix(na.omit(socsupport[, 9:19])), retx=TRUE, scale=TRUE)
+
+## ----9_5, echo=FALSE, w=4.5, h=4.5, out.width="55%"---------------------------------------------
+#  oldpar <- par(fg='gray40',col.axis='gray20',lwd=0.5,col.lab='gray20')
+#  pairs(ss.pr1$x[, 1:3], col='gray40', gap=0.2)
+#  par(oldpar)
+
+## ----9_5, eval=F--------------------------------------------------------------------------------
+#  oldpar <- par(fg='gray40',col.axis='gray20',lwd=0.5,col.lab='gray20')
+#  pairs(ss.pr1$x[, 1:3], col='gray40', gap=0.2)
+#  par(oldpar)
+
+## ----I2c----------------------------------------------------------------------------------------
+#  summary(sort(ss.pr1$rotation[,1]))
+#  ## Note the very large maximum value
+#  which.max(ss.pr1$x[,1])
+#  ## Try also boxplot(ss.pr1$x[,1])
+#  ## ss.pr1$x["36",1]  ## Check that this returns 42
+
+## ----I2d----------------------------------------------------------------------------------------
+#  use <- complete.cases(socsupport[, 9:19])
+#  use[36] <- FALSE
+#  ss.pr <- prcomp(as.matrix(socsupport[use, 9:19]))
+
+## ----I2e----------------------------------------------------------------------------------------
+#  ## Output from summary()
+#  print(summary(ss.pr), digits=1)  # Compare contributions
+
+## ----I2f----------------------------------------------------------------------------------------
+#  comp <- as.data.frame(ss.pr$x[,1:6])
+#  ss.lm <- lm(socsupport[use, "BDI"] ~ ., data=comp)
+#  signif(round(coef(summary(ss.lm)),5), digits=3)
+
+## ----I2g----------------------------------------------------------------------------------------
+#  print(ss.pr$rotation[, 1], digits=2)
+
+## ----9_6, w=4, h=4.2, echo=FALSE,  out.width="42%"----------------------------------------------
+#  ## Plot BDI against first principal component score
+#  gph <- xyplot(BDI ~ ss.pr$x[ ,1], groups=gender, data=socsupport[use,],
+#  par.settings=simpleTheme(pch=1:2), auto.key=list(columns=2))
+#  bw9 <- list(pch=c(1,3), list(text=9, points=5))
+#  update(gph, scales=list(tck=0.5), par.settings=bw9,
+#  xlab ="1st principal component")
+
+## ----9_6, eval=F--------------------------------------------------------------------------------
+#  ## Plot BDI against first principal component score
+#  gph <- xyplot(BDI ~ ss.pr$x[ ,1], groups=gender, data=socsupport[use,],
+#  par.settings=simpleTheme(pch=1:2), auto.key=list(columns=2))
+#  bw9 <- list(pch=c(1,3), list(text=9, points=5))
+#  update(gph, scales=list(tck=0.5), par.settings=bw9,
+#  xlab ="1st principal component")
+
+## ----I3_1a--------------------------------------------------------------------------------------
+#  library(mvtnorm)
+#  makeClust <- function(n=6, d1=4, d2=4, sigs=c(1, 1, 1, 1), seed=NULL){
+#    if(!is.null(seed))set.seed(seed)
+#    g1 <- rmvnorm(n, mean = c(-d1,d2), sigma=sigs[1]*diag(2))
+#    g2 <- rmvnorm(n, mean = c(d1,d2), sigma=sigs[2]*diag(2))
+#    g3 <- rmvnorm(n, mean = c(-d1,-d2), sigma=sigs[3]*diag(2))
+#    g4 <- rmvnorm(n, mean = c(d1,-d2), sigma=sigs[4]*diag(2))
+#    rbind(g1,g2,g3,g4)
+#  }
+
+## ----9_7, echo=FALSE, w=6, h=1.9, mfrow=c(1,3), top=1.5-----------------------------------------
+#  ## Code for the plots
+#  datA <- makeClust(seed=35151)
+#  datB <- makeClust(d2=16, seed=35151)
+#  datC <- makeClust(d1=2,d2=2, seed=35151)
+#  plot(datA, xlab="X1", ylab="X2", fg="gray")
+#  title(main="A: 4blobsA", adj=0, line=0.5, font.main=1)
+#  ## Repeat previous two lines for datB and datC
+#  plot(datB, xlab="X1", ylab="X2", fg="gray")
+#  title(main="B: 4blobsB", adj=0, line=0.5, font.main=1)
+#  plot(datC, xlab="X1", ylab="X2", fg="gray")
+#  title(main="C: 4blobsC", adj=0, line=0.5, font.main=1)
+
+## ----9_7, eval=F--------------------------------------------------------------------------------
+#  ## Code for the plots
+#  datA <- makeClust(seed=35151)
+#  datB <- makeClust(d2=16, seed=35151)
+#  datC <- makeClust(d1=2,d2=2, seed=35151)
+#  plot(datA, xlab="X1", ylab="X2", fg="gray")
+#  title(main="A: 4blobsA", adj=0, line=0.5, font.main=1)
+#  ## Repeat previous two lines for datB and datC
+#  plot(datB, xlab="X1", ylab="X2", fg="gray")
+#  title(main="B: 4blobsB", adj=0, line=0.5, font.main=1)
+#  plot(datC, xlab="X1", ylab="X2", fg="gray")
+#  title(main="C: 4blobsC", adj=0, line=0.5, font.main=1)
+
+## ----eval=xtras---------------------------------------------------------------------------------
+#  ## Possible alternative
+#  config <- c('Equidistant blobs', 'Pulled vertically', 'Closer centers')
+#  dat123 <- cbind(as.data.frame(rbind(datA, datB, datC)),
+#                                gp=factor(rep(1:3, rep(6*4,3)), labels=config))
+#  xyplot(V2 ~ V1 | gp, data=dat123, scales=list(relation='free'),
+#         strip=strip.custom(factor.levels=config), between=list(x=0.5),
+#         par.settings=DAAG::DAAGtheme(color=F))
+
+## ----9_8, w=9, h=2.4, lwd=1, top=2, bot=-0.5, echo=FALSE, out.width='100%', message=FALSE, echo=FALSE----
+#  ## Code for single linkage plots: `?plot.hclust` gives help for the plot method
+#  clusres_sing <- hclust(dist(datA), method="single")
+#  par(fig=c(0,0.75,0,1))
+#  plot(clusres_sing, sub="", xlab="", ylab="Distance joined", adj=0.5,
+#       main="", fg="gray")
+#  mtext('A: Single linkage cluster dendrogram, for 4blobsA layout', side=3, adj=0,
+#        font=1, line=1, cex=1.15)
+#  par(fig=c(0.72,1,0,1), new=TRUE)
+#  membs <- cutree(clusres_sing, 4)
+#  col4= RColorBrewer::brewer.pal(4,'Set1')
+#  plot(datA, xlab="X1", ylab="X2", col=col4[membs], fg='gray', pch=membs+1)
+#  mtext('B: 4blobsA, by color', side=3, adj=1.0, font=1, cex=1.15, line=1)
+#  ## To see plots from 'average' and 'complete' linkage methods,do:
+#  # plot(hclust(dist(datB), method="average"))
+#  # plot(hclust(dist(datC), method="complete"))
+
+## ----9_8, eval=F--------------------------------------------------------------------------------
+#  ## Code for single linkage plots: `?plot.hclust` gives help for the plot method
+#  clusres_sing <- hclust(dist(datA), method="single")
+#  par(fig=c(0,0.75,0,1))
+#  plot(clusres_sing, sub="", xlab="", ylab="Distance joined", adj=0.5,
+#       main="", fg="gray")
+#  mtext('A: Single linkage cluster dendrogram, for 4blobsA layout', side=3, adj=0,
+#        font=1, line=1, cex=1.15)
+#  par(fig=c(0.72,1,0,1), new=TRUE)
+#  membs <- cutree(clusres_sing, 4)
+#  col4= RColorBrewer::brewer.pal(4,'Set1')
+#  plot(datA, xlab="X1", ylab="X2", col=col4[membs], fg='gray', pch=membs+1)
+#  mtext('B: 4blobsA, by color', side=3, adj=1.0, font=1, cex=1.15, line=1)
+#  ## To see plots from 'average' and 'complete' linkage methods,do:
+#  # plot(hclust(dist(datB), method="average"))
+#  # plot(hclust(dist(datC), method="complete"))
+
+## ----9_9, w=8, h=4.5, mgp=c(2.75,.75,0), mfrow=c(2,1), left=1, top=2, lwd=1, out.width='90%', message=FALSE, echo=FALSE----
+#  ## Dendrograms from data where blobs were pulled vertically
+#  ## Follow each use of `hclust()` with a `plot()` command
+#  sclusres_sing <- hclust(dist(datB), method="single")
+#  plot(sclusres_sing, sub="", xlab="", ylab="Distance Joined", main="")
+#  title(main='A: Single linkage, blobs pulled vertically (4blobsB)',
+#        adj=0, font.main=1)
+#  sclusres_sing_s <- hclust(dist(scale(datA)), method="single")
+#  plot(sclusres_sing_s, sub="", xlab="", ylab="Distance Joined", main="")
+#  title(main='B: Single linkage, (4blobsB, rescaled to variance 1)',
+#        adj=0, font.main=1)
+#  # sclusres_avg_s <- hclust(dist(scale(datB)), method="average")
+#  # #plot(sclusres_avg_s, sub="", xlab="", ylab="")
+#  # sclusres_comp_s <- hclust(dist(scale(datB)), method="complete")
+#  # #plot(sclusres_comp_s, sub="", xlab="", ylab="")
+
+## ----9_9, eval=F--------------------------------------------------------------------------------
+#  ## Dendrograms from data where blobs were pulled vertically
+#  ## Follow each use of `hclust()` with a `plot()` command
+#  sclusres_sing <- hclust(dist(datB), method="single")
+#  plot(sclusres_sing, sub="", xlab="", ylab="Distance Joined", main="")
+#  title(main='A: Single linkage, blobs pulled vertically (4blobsB)',
+#        adj=0, font.main=1)
+#  sclusres_sing_s <- hclust(dist(scale(datA)), method="single")
+#  plot(sclusres_sing_s, sub="", xlab="", ylab="Distance Joined", main="")
+#  title(main='B: Single linkage, (4blobsB, rescaled to variance 1)',
+#        adj=0, font.main=1)
+#  # sclusres_avg_s <- hclust(dist(scale(datB)), method="average")
+#  # #plot(sclusres_avg_s, sub="", xlab="", ylab="")
+#  # sclusres_comp_s <- hclust(dist(scale(datB)), method="complete")
+#  # #plot(sclusres_comp_s, sub="", xlab="", ylab="")
+
+## ----9_10, w=8, h=6.5, left=1, top=2, bot=-1, lwd=1, mfrow=c(3,1), out.width='90%', message=FALSE, echo=FALSE----
+#  ## Code. Follow each use of `hclust()` with a `plot()` command
+#  clusres_sing2 <- hclust(dist(datC), method="single")
+#  plot(clusres_sing2, sub="", xlab="", ylab="", cex=1.25, cex.main=1.65,
+#       main="A: Single linkage, closer clusters (4blobsC)", adj=0, font.main=1)
+#  clusres_avg2 <- hclust(dist(datC), method="average")
+#  plot(clusres_avg2, sub="", xlab="", ylab="", cex=1.25, cex.main=1.65,
+#       main="B: Average linkage, closer clusters (4blobsC)", adj=0, font.main=1)
+#  clusres_comp2 <- hclust(dist(datC), method="complete")
+#  plot(clusres_comp2, sub="", xlab="", ylab="", cex=1.25, cex.main=1.65,
+#       main="C: Complete linkage, closer clusters (4blobsC)", adj=0, font.main=1)
+
+## ----9_10, eval=F-------------------------------------------------------------------------------
+#  ## Code. Follow each use of `hclust()` with a `plot()` command
+#  clusres_sing2 <- hclust(dist(datC), method="single")
+#  plot(clusres_sing2, sub="", xlab="", ylab="", cex=1.25, cex.main=1.65,
+#       main="A: Single linkage, closer clusters (4blobsC)", adj=0, font.main=1)
+#  clusres_avg2 <- hclust(dist(datC), method="average")
+#  plot(clusres_avg2, sub="", xlab="", ylab="", cex=1.25, cex.main=1.65,
+#       main="B: Average linkage, closer clusters (4blobsC)", adj=0, font.main=1)
+#  clusres_comp2 <- hclust(dist(datC), method="complete")
+#  plot(clusres_comp2, sub="", xlab="", ylab="", cex=1.25, cex.main=1.65,
+#       main="C: Complete linkage, closer clusters (4blobsC)", adj=0, font.main=1)
+
+## ----9_11, echo=FALSE, w=6, h=2.7, mfrow=c(1,2), out.width="95%"--------------------------------
+#  set.seed(35151)
+#  kdat <- makeClust(n=100, d1=5, d2=5, sigs=c(.5, .5, 6, 6))
+#  plot(kdat, xlab="X1", ylab="X2", fg="gray")
+#  kmres <- kmeans(kdat, 4, nstart=30)
+#  plot(kdat, col=rainbow(4)[kmres$cluster], pch=kmres$cluster+1,
+#       xlab="X1", ylab="X2", fg="gray")
+
+## ----9_11, eval=FALSE---------------------------------------------------------------------------
+#  set.seed(35151)
+#  kdat <- makeClust(n=100, d1=5, d2=5, sigs=c(.5, .5, 6, 6))
+#  plot(kdat, xlab="X1", ylab="X2", fg="gray")
+#  kmres <- kmeans(kdat, 4, nstart=30)
+#  plot(kdat, col=rainbow(4)[kmres$cluster], pch=kmres$cluster+1,
+#       xlab="X1", ylab="X2", fg="gray")
+
+## ----9_12, w=7, h=2.1, echo=F, top=1.5, mfrow=c(1,3), mgp=c(2.8,0.5,0), out.width='100%'--------
+#  ## Code
+#  plotMix2 <- function(taus=c(.5, .5), means=c(10,15), sds=c(3,1), xlims=c(0,20)){
+#    curve(taus[1]*dnorm(x, mean=means[1], sd=sds[1]) +
+#            taus[2]*dnorm(x, mean=means[2], sd=sds[2]),
+#          from=xlims[1], to=xlims[2], ylab="Density", fg="gray")
+#    curve(taus[1]*dnorm(x, mean=means[1], sd=sds[1]),
+#          from=xlims[1], to=xlims[2], col="red", lty=2, add=TRUE, fg="gray")
+#    curve(taus[2]*dnorm(x, mean=means[2], sd=sds[2]),
+#          from=xlims[1], to=xlims[2], col="blue", lty=3, add=TRUE, fg="gray")
+#  }
+#  plotMix2(taus=c(.2, .8))
+#  plotMix2(taus=c(.5, .5))
+#  plotMix2(taus=c(.9, .1))
+
+## ----9_12, eval=F-------------------------------------------------------------------------------
+#  ## Code
+#  plotMix2 <- function(taus=c(.5, .5), means=c(10,15), sds=c(3,1), xlims=c(0,20)){
+#    curve(taus[1]*dnorm(x, mean=means[1], sd=sds[1]) +
+#            taus[2]*dnorm(x, mean=means[2], sd=sds[2]),
+#          from=xlims[1], to=xlims[2], ylab="Density", fg="gray")
+#    curve(taus[1]*dnorm(x, mean=means[1], sd=sds[1]),
+#          from=xlims[1], to=xlims[2], col="red", lty=2, add=TRUE, fg="gray")
+#    curve(taus[2]*dnorm(x, mean=means[2], sd=sds[2]),
+#          from=xlims[1], to=xlims[2], col="blue", lty=3, add=TRUE, fg="gray")
+#  }
+#  plotMix2(taus=c(.2, .8))
+#  plotMix2(taus=c(.5, .5))
+#  plotMix2(taus=c(.9, .1))
+
+## ----I3_3c--------------------------------------------------------------------------------------
+#  library(teigen)
+#  possml <- na.omit(DAAG::possum[,c(3,9:11)])
+#  set.seed(513451)
+#  gaus_fit <- teigen(possml[,2:4], models="UUUU", gauss=TRUE, verbose=FALSE,
+#                      scale=FALSE)
+
+## ----9_13, w=5, h=2.0, top=1, left=2, echo=FALSE, out.width='60%'-------------------------------
+#  ## BIC values are plotted against number of groups
+#  gaus_fit$allbic
+#  plot(gaus_fit$allbic, type="b", ylab="", xlab="Number of Groups", fg="gray")
+#  mtext(side=2, line=3.5, "BIC", las=0)
+#  axis(1, at=1:9, fg="gray")
+
+## ----9_13, eval=FALSE---------------------------------------------------------------------------
+#  ## BIC values are plotted against number of groups
+#  gaus_fit$allbic
+#  plot(gaus_fit$allbic, type="b", ylab="", xlab="Number of Groups", fg="gray")
+#  mtext(side=2, line=3.5, "BIC", las=0)
+#  axis(1, at=1:9, fg="gray")
+
+## ----I3_3d--------------------------------------------------------------------------------------
+#  table(possml$Pop, gaus_fit$classification)
+
+## ----9_14, top=1.5, eval=FALSE, echo=FALSE------------------------------------------------------
+#  par(fig=c(0, 0.5, 0.5, 1))
+#  plot(gaus_fit, what="contour", xmarg=1, ymarg=2, draw.legend=FALSE, fg="gray")
+#  ## See ?teigen::plot.teigen for details of the plot command used here.
+#  par(fig=c(0, 0.5, 0, 0.5), new=TRUE)
+#  plot(gaus_fit, what="contour", xmarg=1, ymarg=3, draw.legend=FALSE, fg="gray")
+#  par(fig=c(0.5, 1, 0, 0.5), new=TRUE)
+#  plot(gaus_fit, what="contour", xmarg=2, ymarg=3, draw.legend=FALSE, fg="gray")
+#  par(fig=c(0,1,0,1))
+
+## ----9_14, w=7.2, h=6.24, top=1.5, bot=0.75, mgp=c(2.25, 0.5, 0), echo=F, mfrow=c(2,2), out.width='80%'----
+#  par(fig=c(0, 0.5, 0.5, 1))
+#  plot(gaus_fit, what="contour", xmarg=1, ymarg=2, draw.legend=FALSE, fg="gray")
+#  ## See ?teigen::plot.teigen for details of the plot command used here.
+#  par(fig=c(0, 0.5, 0, 0.5), new=TRUE)
+#  plot(gaus_fit, what="contour", xmarg=1, ymarg=3, draw.legend=FALSE, fg="gray")
+#  par(fig=c(0.5, 1, 0, 0.5), new=TRUE)
+#  plot(gaus_fit, what="contour", xmarg=2, ymarg=3, draw.legend=FALSE, fg="gray")
+#  par(fig=c(0,1,0,1))
+
+## ----9_14, eval=FALSE---------------------------------------------------------------------------
+#  par(fig=c(0, 0.5, 0.5, 1))
+#  plot(gaus_fit, what="contour", xmarg=1, ymarg=2, draw.legend=FALSE, fg="gray")
+#  ## See ?teigen::plot.teigen for details of the plot command used here.
+#  par(fig=c(0, 0.5, 0, 0.5), new=TRUE)
+#  plot(gaus_fit, what="contour", xmarg=1, ymarg=3, draw.legend=FALSE, fg="gray")
+#  par(fig=c(0.5, 1, 0, 0.5), new=TRUE)
+#  plot(gaus_fit, what="contour", xmarg=2, ymarg=3, draw.legend=FALSE, fg="gray")
+#  par(fig=c(0,1,0,1))
+
+## ----9_15, echo=FALSE, w=7.2, h=3.5, left=-0.5, top=2, rt=3, las=0, mgp=c(1.8,0.5,0), tcl=-0.3, cex.lab=0.9, echo=FALSE, ps=10, mfrow=c(1,2), out.width="90%"----
+#  xaxlab <- "Leaf width (mm)"
+#  yaxlab <- "Leaf length (mm)"
+#  blk <- adjustcolor("black", alpha.f=0.6)
+#  leafshape17 <- DAAG::leafshape17
+#  plot(bladelen ~ bladewid, data=leafshape17, pch=c(1,3)[arch+1],
+#  cex=0.75, col=blk, xlab = xaxlab, ylab = yaxlab, fg="gray")
+#  mtext(side=3,line=1.8,"A", adj=-0.2)
+#  plot(bladelen ~ bladewid, data=leafshape17, log="xy", asp=1, col=blk,
+#       pch=c(1,3)[arch+1], cex=0.75, xlab = paste0(xaxlab,", log scale"),
+#       ylab=paste0(yaxlab,", log scale"), fg="gray", xaxt="n")
+#  xpos <- c(2.5,5,10,20)
+#  ypos <- c(10,20,40)
+#  lxpos<-log10(xpos)
+#  lypos<-log10(ypos)
+#  axis(4, at = ypos, label = paste(round(lypos,1)), lwd=0, lwd.ticks=1)
+#  axis(1, at = xpos, lwd=0, lwd.ticks=1)
+#  axis(3, at = xpos, label = paste(round(lxpos,1)), lwd=0, lwd.ticks=1)
+#  mtext(side=3,line=1.8,"B", adj=-0.2)
+#  mtext(side = 4, line = 1.8, "log10(Leaf length)")
+#  mtext(side = 3, line = 1.8, "log10(Leaf width)")
+
+## ----I4_1b, eval=xtras, w=5, h=5, out.width="40%"-----------------------------------------------
+#  leafshape17 <- DAAG::leafshape17
+#  plot(bladelen ~ bladewid, data=leafshape17, pch=c(1,3)[arch+1])
+#  ## For panel B, specify log="xy" in the call to plot()
+
+## ----I4_2a--------------------------------------------------------------------------------------
+#  ## Fit logistic regression model
+#  leafshape17 <- DAAG::leafshape17
+#  leaf17.glm <- glm(arch ~ logwid + loglen, family=binomial(link=logit),
+#  data=leafshape17)
+#  print(DAAG::sumry(leaf17.glm)$coef, digits=2)
+
+## ----I4_2b--------------------------------------------------------------------------------------
+#  set.seed(29)
+#  leaf17.cv <- DAAG::CVbinary(leaf17.glm)
+#  tCV <- table(DAAG::leafshape17[["arch"]], round(leaf17.cv$cvhat))
+#  rownames(tCV) <- colnames(tCV) <- c("0=Plagiotropic","1=Orthotropic")
+#  cbind(tCV, "Proportion correct"=c(tCV[1,1], tCV[2,2])/(tCV[,1]+tCV[,2]))
+
+## ----I4_2c--------------------------------------------------------------------------------------
+#  round(unlist(leaf17.cv[c("acc.training","acc.cv")]),3)
+
+## ----I4_3a--------------------------------------------------------------------------------------
+#  suppressPackageStartupMessages(library(MASS))
+#  ## Discriminant analysis; data frame leafshape17 (DAAG)
+#  leaf17.lda <- lda(arch ~ logwid+loglen, data=DAAG::leafshape17)
+#  print(leaf17.lda)
+
+## ----I4_3b--------------------------------------------------------------------------------------
+#  set.seed(29)
+#  leaf17cv.lda <- lda(arch ~ logwid+loglen, data=leafshape17, CV=TRUE)
+#  ## the list element 'class' gives the predicted class
+#  ## The list element 'posterior' holds posterior probabilities
+#  tab <- table(leafshape17$arch, leaf17cv.lda$class)
+#  rownames(tab) <- colnames(tab) <- c("0=Plagiotropic","1=Orthotropic")
+#  cbind(tab, "Proportion correct"=c(tCV[1,1], tCV[2,2])/(tCV[,1]+tCV[,2]))
+#  cbind(tab, c(tab[1,1], class.acc=tab[2,2])/(tab[,1]+tab[,2]))
+#  cat("Overall proportion correct =", sum(tab[row(tab)==col(tab)])/sum(tab), "\n")
+
+## ----I4_4a--------------------------------------------------------------------------------------
+#  ## Linear discriminant calculations for possum data
+#  possum <- DAAG::possum
+#  possum.lda <- lda(site ~ hdlngth + skullw + totlngth + taill + footlgth +
+#                    earconch + eye + chest + belly, data=na.omit(possum))
+#  # na.omit() omits any rows that have one or more missing values
+
+## ----9_16, echo=FALSE, w=5.5, h=5.5, left=-1, top=2, las=0, mgp=c(1.8,0.5,0), tcl=-0.3, cex.lab=0.9, echo=FALSE, mfrow=c(1,2), out.width="68%"----
+#  PGtheme <- DAAG::DAAGtheme(color=TRUE, cex=0.6, pch=c(3,4,0,8,2,10,1), alpha=0.8)
+#  possum <- DAAG::possum[!is.na(DAAG::possum$footlgth), ]
+#  sitenames <- row.names(DAAG::possumsites)[c(1,2,4:6,3,7)]
+#  possum.lda <- lda(site~hdlngth+skullw+totlngth+taill+
+#                    footlgth+earconch+eye+chest+belly, data=possum)
+#  scores <- predict(possum.lda)$x[,1:3]
+#  possum.splom <-
+#    splom(~ scores, groups = possum$site, varnames=c("LD1","LD2","LD3"),
+#          par.settings=PGtheme, xlab=NULL)
+#  update(possum.splom, auto.key=list(text=sitenames,
+#                                    columns=4, between=1, between.columns=2))
+
+## ----I4_4c, eval=FALSE--------------------------------------------------------------------------
+#  plot(possum.lda, dimen=3, col=1:9)
+#  # Scatterplot matrix - scores on 1st 3 canonical variates
+#  # See `?plot.lda` for details of the generic lda plot function
+
+## ----I4_4d--------------------------------------------------------------------------------------
+#  ## Linear discriminant calculations for possum data
+#  print(possum.lda, digits=3)
+
+## ----I5_1a, eval=FALSE--------------------------------------------------------------------------
+#  ## For latest details, see: https://www.bioconductor.org/install/
+#  if (!require("BiocManager", quietly = TRUE))
+#      install.packages("BiocManager")
+#  BiocManager::install()
+#  BiocManager::install('limma','multtest')
+
+## ----I5_1b--------------------------------------------------------------------------------------
+#  counts <- DAAGbio::plantStressCounts
+#  colSums(counts)
+
+## ----I5_1c--------------------------------------------------------------------------------------
+#  ## Require at least 3 counts per million that are > 1
+#  keep <- rowSums(counts)>=3
+#  counts <- counts[keep,]
+
+## ----I5_1d--------------------------------------------------------------------------------------
+#  treatment <- factor(rep(c("CTL", "L", "D"), rep(3,3)))
+#  design <- model.matrix(~0+treatment)
+#  colnames(design) <- levels(treatment)
+
+## ----I5_1e, eval=FALSE--------------------------------------------------------------------------
+#  library(limma)
+#  v <- voom(counts, design, plot=TRUE)
+
+## ----9_17, w=7.2, h=3.5, left=0.5, top=1, bot=0.5, ps=9, mgp=c(2.25,0.5,0), mfrow=c(1,2), echo=FALSE, out.width="90%"----
+#  par(oma=c(0,0,1,0))
+#  library(limma)
+#  v <- voom(counts, design, plot=TRUE)
+#  firstchar <- substring(colnames(counts),1,1)
+#  plotMDS(counts, labels=paste0(firstchar, rep(1:3,3)), cex=0.8)
+#  box(col="gray")
+#  mtext(side=3, line=0.4, adj=0, "MDS summary plot")
+#  mtext(side=3, line=-0.25, adj=0.105, "A", outer=TRUE)
+#  mtext(side=3, line=-0.25, adj=0.605, "B", outer=TRUE)
+
+## ----9_17, eval=FALSE---------------------------------------------------------------------------
+#  par(oma=c(0,0,1,0))
+#  library(limma)
+#  v <- voom(counts, design, plot=TRUE)
+#  firstchar <- substring(colnames(counts),1,1)
+#  plotMDS(counts, labels=paste0(firstchar, rep(1:3,3)), cex=0.8)
+#  box(col="gray")
+#  mtext(side=3, line=0.4, adj=0, "MDS summary plot")
+#  mtext(side=3, line=-0.25, adj=0.105, "A", outer=TRUE)
+#  mtext(side=3, line=-0.25, adj=0.605, "B", outer=TRUE)
+
+## ----I5_1f--------------------------------------------------------------------------------------
+#  fit <- lmFit(v, design)
+
+## ----I5_1g--------------------------------------------------------------------------------------
+#  contrs <- c("D-CTL", "L-CTL", "L-D")
+#  contr.matrix <- makeContrasts(contrasts=contrs,
+#  levels=levels(treatment))
+#  fit2 <- contrasts.fit(fit, contr.matrix)
+#  efit2 <- eBayes(fit2)
+
+## ----I5_2a--------------------------------------------------------------------------------------
+#  ## First contrast only; Drought-CTL
+#  print(round(topTable(efit2, coef=1, number=4),15), digits=3)
+
+## ----I5_2b, eval=xtras--------------------------------------------------------------------------
+#  round(sort(p.adjust(p=efit2$p.value[,1], method="BH"))[1:4], 15) # Not run
+
+## ----I5_2c--------------------------------------------------------------------------------------
+#  round(topTable(efit2, number=4), 15)
+
+## ----I5_2d--------------------------------------------------------------------------------------
+#  head(decideTests(fit2),5)
+
+## ----I5_2e--------------------------------------------------------------------------------------
+#  summary(decideTests(fit2))
+#  ## Try also
+#  ## summary(decideTests(fit2, p.value=0.001))
+
+## ----I6_1a--------------------------------------------------------------------------------------
+#  library(hddplot)
+#  data(golubInfo)
+#  with(golubInfo, table(cancer, tissue.mf))
+
+## ----I6_1b, eval=xtras--------------------------------------------------------------------------
+#  ## Identify allB samples that are BM:f or BM:m or PB:m
+#  subsetB <- with(golubInfo,
+#  cancer=="allB" & tissue.mf%in%c("BM:f","BM:m","PB:m"))
+#  ## Separate off the relevant columns of the matrix Golub
+#  ## NB: variables (rows) by cases (columns)
+#  GolubB <- with(golubInfo, Golub[, subsetB])
+#  ## Form vector that identifies these as BM:f or BM:m or PB:m
+#  tissue.mfB <- with(golubInfo, tissue.mf[subsetB, drop=TRUE])
+#  ## Change the level names to leave out the colons
+#  levels(tissue.mfB) <- list("b_f"="BM:f", "b_m"="BM:m", "PBm"="PB:m")
+
+## ----I6_2a, eval=xtras, w=7.5, h=3.5, mfrow=c(1,2), out.width="100%"----------------------------
+#  ## Display distributions for the first 20 observations
+#  boxplot(data.frame(GolubB[, 1:20]))  # First 20 columns (observations)
+#  ## Random selection of 20 rows (features)
+#  boxplot(data.frame(GolubB[sample(1:7129, 20), ]))
+
+## ----9_18, echo=FALSE, w=7.2, h=3.75, left=-1.5, top=2, cex.lab=0.9, ps=10, mfrow=c(1,2), cache=FALSE, results='hide', out.width="80%"----
+#  colr <- c("red","blue","gray40", "magenta")
+#  tissue.mf <- golubInfo[, "tissue.mf"]
+#  cancer <- golubInfo[, "cancer"]
+#  G.PBf <- Golub[, tissue.mf=="PB:f" & cancer=="allB", drop=FALSE]
+#  set.seed(41)
+#  rGolubB <- matrix(rnorm(prod(dim(GolubB))), nrow=dim(GolubB)[1])
+#  rownames(rGolubB) <- rownames(Golub)
+#  rG.PBf <- matrix(rnorm(prod(dim(G.PBf))), nrow=dim(G.PBf)[1])
+#  plot2 <- function(x = GolubB, cl=tissue.mfB, x.omit=Golub.PBf, cl.omit="PBf",
+#                    ncol = length(cl), nfeatures=12, device = "", seed = 37,
+#                    pretext="", colr=1:3, levnames = NULL,
+#                    ylab="2nd discriminant function"){
+#    cl <- factor(cl)
+#    if(!is.null(levnames))levels(cl) <- levnames
+#    ord15 <- orderFeatures(x, cl=cl)[1:nfeatures]
+#    dfB <- t(x[ord15, ])
+#    dfB.lda <-  lda(dfB, grouping=cl)
+#    scores <- predict(dfB.lda, dimen=2)$x
+#    df.PBf <- data.frame(t(x.omit[ord15, drop=FALSE]))
+#    colnames(df.PBf) <- colnames(dfB)
+#    scores.other <- predict(dfB.lda, newdata=df.PBf)$x
+#    scoreplot(list(scores=scores, cl=cl, other=scores.other, cl.other=cl.omit,                       nfeatures=nfeatures), prefix.title=pretext, adj.title=0,
+#                   fg="gray", params=list(other=list(pch=4, cex=1.5)),
+#              xlab="1st discriminant function", ylab=ylab)
+#  }
+#  plot2(x = GolubB, cl = tissue.mfB, x.omit=G.PBf, cl.omit="PBf",
+#        nfeatures=15, device = "", seed = 37, ylab="2nd discriminant function",
+#        colr=colr, pretext="A: ALL B-cell:")
+#  plot2(x = rGolubB, cl = tissue.mfB, x.omit=rG.PBf, cl.omit="Gp 4",
+#       device = "", seed = 37, colr=colr, levnames = c("Gp 1", "Gp 2", "Gp 3"),
+#       pretext="B: Random data:", ylab="")
+
+## ----9_18, eval=F-------------------------------------------------------------------------------
+#  colr <- c("red","blue","gray40", "magenta")
+#  tissue.mf <- golubInfo[, "tissue.mf"]
+#  cancer <- golubInfo[, "cancer"]
+#  G.PBf <- Golub[, tissue.mf=="PB:f" & cancer=="allB", drop=FALSE]
+#  set.seed(41)
+#  rGolubB <- matrix(rnorm(prod(dim(GolubB))), nrow=dim(GolubB)[1])
+#  rownames(rGolubB) <- rownames(Golub)
+#  rG.PBf <- matrix(rnorm(prod(dim(G.PBf))), nrow=dim(G.PBf)[1])
+#  plot2 <- function(x = GolubB, cl=tissue.mfB, x.omit=Golub.PBf, cl.omit="PBf",
+#                    ncol = length(cl), nfeatures=12, device = "", seed = 37,
+#                    pretext="", colr=1:3, levnames = NULL,
+#                    ylab="2nd discriminant function"){
+#    cl <- factor(cl)
+#    if(!is.null(levnames))levels(cl) <- levnames
+#    ord15 <- orderFeatures(x, cl=cl)[1:nfeatures]
+#    dfB <- t(x[ord15, ])
+#    dfB.lda <-  lda(dfB, grouping=cl)
+#    scores <- predict(dfB.lda, dimen=2)$x
+#    df.PBf <- data.frame(t(x.omit[ord15, drop=FALSE]))
+#    colnames(df.PBf) <- colnames(dfB)
+#    scores.other <- predict(dfB.lda, newdata=df.PBf)$x
+#    scoreplot(list(scores=scores, cl=cl, other=scores.other, cl.other=cl.omit,                       nfeatures=nfeatures), prefix.title=pretext, adj.title=0,
+#                   fg="gray", params=list(other=list(pch=4, cex=1.5)),
+#              xlab="1st discriminant function", ylab=ylab)
+#  }
+#  plot2(x = GolubB, cl = tissue.mfB, x.omit=G.PBf, cl.omit="PBf",
+#        nfeatures=15, device = "", seed = 37, ylab="2nd discriminant function",
+#        colr=colr, pretext="A: ALL B-cell:")
+#  plot2(x = rGolubB, cl = tissue.mfB, x.omit=rG.PBf, cl.omit="Gp 4",
+#       device = "", seed = 37, colr=colr, levnames = c("Gp 1", "Gp 2", "Gp 3"),
+#       pretext="B: Random data:", ylab="")
+
+## ----I6_2c, eval=FALSE, size='normalsize'-------------------------------------------------------
+#  ## Uses orderFeatures() (hddplot); see below
+#  ord15 <- orderFeatures(GolubB, cl=tissue.mfB)[1:15]
+
+## ----I6_2d, eval=FALSE, size='normalsize'-------------------------------------------------------
+#  ## Panel A: Take 1st 15 features & transpose to observations by features
+#  dfB15 <- data.frame(t(GolubB[ord15, ]))
+#  dfB15.lda <-  MASS::lda(dfB15, grouping=tissue.mfB)
+#  scores <- predict(dfB15.lda, dimen=2)$x
+#  ## Scores for the single PB:f observation
+#  chooseCols <- with(golubInfo, tissue.mf=="PB:f"& cancer=="allB")
+#  df.PBf <- data.frame(t(Golub[ord15, chooseCols, drop=FALSE]))
+#  scores.PBf <- predict(dfB15.lda, newdata=df.PBf, dimen=2)$x
+#  ## Warning! The plot that now follows may be misleading!
+#  ## Use hddplot::scoreplot()
+#  scoreplot(list(scores=scores, cl=tissue.mfB, other=scores.PBf, cl.other="PB:f"),
+#            fg="gray")
+
+## ----I6_2e, eval=FALSE, size='normalsize'-------------------------------------------------------
+#  ## Panel B: Repeat plot, now with random normal data
+#  simscores <- simulateScores(nrow=7129, cl=rep(1:3, c(19,10,2)),
+#  cl.other=4, nfeatures=15, seed=41)
+#  # Returns list elements: scores, cl, scores.other & cl.other
+#  scoreplot(simscores)
+
+## ----9_19, w=7.2, h=3.5, left=0.5, top=1, bot=0.5, ps=9, mgp=c(2.25,0.5,0), mfrow=c(1,2), echo=FALSE, out.width="90%"----
+#  par(oma=c(0,0,1,0))
+#  designG <- model.matrix(~0+tissue.mfB)
+#  colnames(designG) <- levels(tissue.mfB)
+#  vG <- vooma(GolubB, designG, plot=TRUE)         # Panel A
+#  plotMDS(vG, pch=unclass(tissue.mfB), cex=0.8)   # Panel B
+#  leglabs <- c("BM:female","BM:male","PB:female")
+#  legend(x="bottomright", bty="n", legend=leglabs, pch=1:3)
+#  mtext(side=3, line=0.4, adj=0, "MDS summary plot")
+#  mtext(side=3, line=-0.275, adj=0.085, "A", outer=TRUE)
+#  mtext(side=3, line=-0.275, adj=0.585, "B", outer=TRUE)
+
+## ----9_19, eval=FALSE---------------------------------------------------------------------------
+#  par(oma=c(0,0,1,0))
+#  designG <- model.matrix(~0+tissue.mfB)
+#  colnames(designG) <- levels(tissue.mfB)
+#  vG <- vooma(GolubB, designG, plot=TRUE)         # Panel A
+#  plotMDS(vG, pch=unclass(tissue.mfB), cex=0.8)   # Panel B
+#  leglabs <- c("BM:female","BM:male","PB:female")
+#  legend(x="bottomright", bty="n", legend=leglabs, pch=1:3)
+#  mtext(side=3, line=0.4, adj=0, "MDS summary plot")
+#  mtext(side=3, line=-0.275, adj=0.085, "A", outer=TRUE)
+#  mtext(side=3, line=-0.275, adj=0.585, "B", outer=TRUE)
+
+## ----I6_3b, cache=FALSE-------------------------------------------------------------------------
+#  ##  Cross-validation to determine the optimum number of features
+#  ## 10-fold (x4). Warning messages are omitted.
+#  ## Accuracy measure will be: tissue.mfB.cv$acc.cv
+#  tissue.mfB.cv <- cvdisc(GolubB, cl=tissue.mfB, nfeatures=1:23,
+#  nfold=c(10,4), print.progress=FALSE)
+#  ## Defective measures will be in acc.resub (resubstitution)
+#  ## and acc.sel1 (select features prior to cross-validation)
+#  tissue.mfB.badcv <- defectiveCVdisc(GolubB, cl=tissue.mfB,
+#  foldids=tissue.mfB.cv$folds, nfeatures=1:23)
+#  ##
+#  ## Calculations for random normal data:
+#  set.seed(43)
+#  rGolubB <- matrix(rnorm(prod(dim(GolubB))), nrow=nrow(GolubB))
+#  rtissue.mfB.cv <- cvdisc(rGolubB, cl=tissue.mfB, nfeatures=1:23,
+#  nfold=c(10,4), print.progress=FALSE)
+#  rtissue.mfB.badcv <- defectiveCVdisc(rGolubB, cl=tissue.mfB,
+#  nfeatures=1:23,
+#  foldids=rtissue.mfB.cv$folds)
+
+## ----9_20, echo=FALSE, w=7.2, h=3.5, left=-1.5, top=1, cex.lab=0.9, echo=FALSE, ps=9, mfrow=c(1,2), out.width="100%"----
+#  cv1 <- tissue.mfB.cv
+#  badcv1 <- tissue.mfB.badcv
+#  cv2 <- rtissue.mfB.cv
+#  badcv2 <- rtissue.mfB.badcv
+#  plot.acc <- function(cv=cv1, badcv=badcv1, nseq=NULL, badnseq=NULL, AB="",
+#                      ylab="Predictive accuracy", add.legend=TRUE, fg='gray'){
+#  maxg <- min(c(length(badcv$acc.resub), length(cv$acc.cv)))
+#  if(is.null(nseq))nseq <- 1:maxg
+#  plot(nseq, badcv$acc.resub[1:maxg], ylim=c(0,1), type="n", fg=fg,
+#  yaxs="i", xlab="Number of features selected", ylab=ylab)
+#  par(xpd=T)
+#  points(nseq, badcv$acc.resub[1:maxg], col=2, type="b", lty=2, pch=0, cex=0.8)
+#  par(xpd=FALSE)
+#  points(nseq, badcv$acc.sel1[1:maxg], col="gray40", pch=3, cex=0.8)
+#  lines(lowess(nseq, badcv$acc.sel1[1:maxg], f=.325, iter=0),
+#  col="gray40", lty=2)
+#  points(nseq, cv$acc.cv[1:maxg], col="blue", pch=1, cex=0.8)
+#  lines(lowess(nseq, cv$acc.cv[1:maxg], f=.325, iter=0),
+#  col="blue",lwd=2)
+#  xy <- par()$usr[c(1,3)]
+#  if(add.legend)
+#  legend(xy[1], xy[2], xjust=0, yjust=0,
+#  legend=c("Resubstitution accuracy",
+#  "Defective cross-validation",
+#  "Cross-validation - select at each fold"),
+#  lty=c(1,2,1), lwd=c(1,1,2), pch=c(0,3,1),
+#  col=c("red","gray40","blue"), cex=0.8)
+#  mtext(side=3,line=0.35, AB, adj=0)
+#  }
+#  cv1 <- tissue.mfB.cv
+#  badcv1 <- rtissue.mfB.badcv
+#  plot.acc(cv1, badcv1, AB="A: Golub data (as for Figure 9.97A)")
+#  plot.acc(cv2, badcv2, ylab="", AB="B: Random data", add.legend=FALSE)
+
+## ----I6_3d--------------------------------------------------------------------------------------
+#  genelist <- matrix(tissue.mfB.cv$genelist[1:3, ,], nrow=3)
+#  tab <- table(genelist, row(genelist))
+#  ord <- order(tab[,1], tab[,2], tab[,3], decreasing=TRUE)
+#  tab[ord,]
+
+## ----9_21, echo=FALSE, w=3.5, h=3.6, left=-1, top=2, ps=10, tcl=-0.25, lwd=0.75, echo=FALSE, results="hide", out.width="40%"----
+#  ## Uses tissue.mfB.acc from above
+#  tissue.mfB.scores <-
+#  cvscores(cvlist = tissue.mfB.cv, nfeatures = 3, cl.other = NULL)
+#  scoreplot(scorelist = tissue.mfB.scores, cl.circle=NULL,
+#  prefix="B-cell subset -", fg='gray')
+
+## ----9_21, eval=FALSE---------------------------------------------------------------------------
+#  ## Uses tissue.mfB.acc from above
+#  tissue.mfB.scores <-
+#  cvscores(cvlist = tissue.mfB.cv, nfeatures = 3, cl.other = NULL)
+#  scoreplot(scorelist = tissue.mfB.scores, cl.circle=NULL,
+#  prefix="B-cell subset -", fg='gray')
+
+## ----I6_5a--------------------------------------------------------------------------------------
+#  fitG <- lmFit(vG, designG)
+#  contrs <- c("b_f-b_m", "b_f-PBm", "b_m-PBm")
+#  contr.matrix <- makeContrasts(contrasts=contrs,
+#  levels=levels(tissue.mfB))
+#  fit2 <- contrasts.fit(fitG, contr.matrix)
+#  fit2 <- eBayes(fit2)
+
+## ----I6_5b--------------------------------------------------------------------------------------
+#  print(topTable(fit2, number=5), digits=2)
+
+## ----I6_5c--------------------------------------------------------------------------------------
+#  summary(decideTests(fit2))
+#  ## Try also
+#  ## summary(decideTests(fit2, p.value=0.001))
+
+## ----I7_1a--------------------------------------------------------------------------------------
+#  library(DAAG)
+#  ## Columns 4:7 are factors; columns 9:10 (re75 & re78) are continuous
+#  propmat <- matrix(0, ncol=6, nrow=8)
+#  dimnames(propmat) <- list(c("psid1", "psid2", "psid3", "cps1", "cps2", "cps3",
+#  "nsw-ctl", "nsw-trt"), names(nswdemo)[c(4:7, 9:10)])
+#  for(k in 1:8){
+#    dframe <- switch(k, psid1, psid2, psid3, cps1, cps2, cps3,
+#    subset(nswdemo, trt==0), subset(nswdemo, trt==1))
+#    propmat[k,] <- c(sapply(dframe[,4:7], function(x){
+#                     z <- table(x); z[2]/sum(z)}),
+#                     sapply(dframe[,9:10], function(x)sum(x>0)/sum(!is.na(x))))
+#  }
+
+## ----9_22, w=7.2, h=5.0, left=-1, rt=-0.5, bot=1, ps=9, echo=FALSE, message=FALSE, warning=FALSE, out.width="100%"----
+#  PGtheme <- DAAG::DAAGtheme(color=TRUE)
+#  library(DAAG)
+#  if(!require(grid))return("Package 'grid' is not installed -- cannot proceed")
+#  dsetnames <- c("nsw-ctl", "nsw-trt", "psid1", "psid2", "psid3",
+#                 "cps1", "cps2", "cps3")
+#  colrs <- c("gray","black", PGtheme$superpose.line$col[1:3])
+#  lty <- c(1,2,1,1,1)
+#  lwd <- c(1,0.75,0.75,0.75,0.75)
+#  denplot <-
+#    function(sel=c(1:2,6:8), yvar="re75", offset=30, ylim=c(0,1.75),
+#      from=NULL, at=c(.5,1,1.5), labels=paste(at), bw="nrd0",
+#      ylab="Density", takelog=TRUE, col.axis="black"){
+#        nzre <- unlist(lapply(list(subset(nswdemo, trt==0),
+#                                   subset(nswdemo, trt==1),
+#                                   psid1, psid2, psid3, cps1, cps2, cps3)[sel],
+#                              function(x){z <- x[,yvar]; z[z>0]}))
+#  num <- unlist(lapply(list(subset(nswdemo, trt==0), subset(nswdemo, trt==1),
+#                            psid1, psid2, psid3, cps1, cps2, cps3),
+#                       function(x){z <- x[,yvar]; sum(z>0)}))
+#  xy <- data.frame(nzre=nzre, fac = factor(rep(dsetnames[sel], num[sel]),
+#                   levels=dsetnames[sel]))
+#  if(takelog) {
+#  y <- log(xy$nzre+offset)
+#  xlab <- paste("log(", yvar, "+", offset, ")", sep="")} else
+#    {
+#    y <- xy$nzre
+#    xlab <- yvar
+#  }
+#  densityplot(~ y, groups=fac, data=xy, bw=bw, from=from,
+#    scales=list(y=list(at=at, labels=labels, col=col.axis), tck=0.25),
+#    plot.points=FALSE, col=colrs[1:5], lwd=lwd, lty=lty,
+#    key=list(x=0.01, y=0.99, text=list(dsetnames[sel[3:5]]), col=colrs[3:5],
+#             cex=0.75, lines=list(lwd=rep(1.5,3)), between=1),
+#    par.settings=list(col=colrs, lty=lty, cex=0.75, lwd=lwd,
+#                      fontsize=list(text=9, points=5)),
+#    fg="gray", ylim=ylim, ylab=ylab, xlab=xlab)
+#  }
+#  ## Plot base graph; overlay with lattice graphs on same page
+#  par(fig=c(0,1,0,1), mar=c(0,0,0,0))
+#  plot(0:1,0:1, axes=FALSE, type="n", bty="n", xlab="", ylab="")
+#  legend(x="top",legend=dsetnames[1:2], lty=1:2, lwd=c(1,0.75),
+#         col=colrs[1:2], bty="n", ncol=2, yjust=0.75)
+#  print(denplot(), position=c(0, 0, 0.32, 0.505), newpage=FALSE)
+#  print(denplot(1:5, ylab=" ", col.axis="white"),
+#        position=c(0.21, 0, .53, 0.505), newpage=FALSE)
+#  print(denplot(ylab=" ", yvar="re78", col.axis="white"),
+#        position=c(0.47, 0, 0.79, 0.505), newpage=FALSE)
+#  print(denplot(1:5, ylab=" ", yvar="re78", col.axis="white"),
+#        position=c(0.68, 0, 1, 0.505), newpage=FALSE)
+#  ## Age
+#  print(denplot(yvar="age", takelog=FALSE, ylim=c(0,0.1), from=16,
+#        at=c(.02,.04,.06,.08), labels=c(".02",".04",".06",".08")),
+#        position=c(0, 0.475, 0.32, .98), newpage=FALSE)
+#  print(denplot(1:5, yvar="age", takelog=FALSE, ylim=c(0,0.1), from=16,
+#        at=c(.02,.04,.06,.08), labels=c(".02",".04",".06",".08"),
+#        ylab=" ", col.axis="white"),
+#        position=c(0.21, 0.475, .53, .98), newpage=FALSE)
+#  ## educ
+#  print(denplot(1:5, yvar="educ", takelog=FALSE, ylim=c(0,0.5), bw=0.5,
+#        at=c(.1,.2,.3,.4), ylab=" "),
+#        position=c(0.47, 0.475, .79, .98), newpage=FALSE)
+#  print(denplot(yvar="educ", takelog=FALSE, ylim=c(0,0.75), bw=0.5,
+#        at=c(.1,.2,.3,.4), ylab=" ", col.axis="white"),
+#        position=c(0.68, 0.475, 1, .98), newpage=FALSE)
+
+## ----9_22, eval=F-------------------------------------------------------------------------------
+#  PGtheme <- DAAG::DAAGtheme(color=TRUE)
+#  library(DAAG)
+#  if(!require(grid))return("Package 'grid' is not installed -- cannot proceed")
+#  dsetnames <- c("nsw-ctl", "nsw-trt", "psid1", "psid2", "psid3",
+#                 "cps1", "cps2", "cps3")
+#  colrs <- c("gray","black", PGtheme$superpose.line$col[1:3])
+#  lty <- c(1,2,1,1,1)
+#  lwd <- c(1,0.75,0.75,0.75,0.75)
+#  denplot <-
+#    function(sel=c(1:2,6:8), yvar="re75", offset=30, ylim=c(0,1.75),
+#      from=NULL, at=c(.5,1,1.5), labels=paste(at), bw="nrd0",
+#      ylab="Density", takelog=TRUE, col.axis="black"){
+#        nzre <- unlist(lapply(list(subset(nswdemo, trt==0),
+#                                   subset(nswdemo, trt==1),
+#                                   psid1, psid2, psid3, cps1, cps2, cps3)[sel],
+#                              function(x){z <- x[,yvar]; z[z>0]}))
+#  num <- unlist(lapply(list(subset(nswdemo, trt==0), subset(nswdemo, trt==1),
+#                            psid1, psid2, psid3, cps1, cps2, cps3),
+#                       function(x){z <- x[,yvar]; sum(z>0)}))
+#  xy <- data.frame(nzre=nzre, fac = factor(rep(dsetnames[sel], num[sel]),
+#                   levels=dsetnames[sel]))
+#  if(takelog) {
+#  y <- log(xy$nzre+offset)
+#  xlab <- paste("log(", yvar, "+", offset, ")", sep="")} else
+#    {
+#    y <- xy$nzre
+#    xlab <- yvar
+#  }
+#  densityplot(~ y, groups=fac, data=xy, bw=bw, from=from,
+#    scales=list(y=list(at=at, labels=labels, col=col.axis), tck=0.25),
+#    plot.points=FALSE, col=colrs[1:5], lwd=lwd, lty=lty,
+#    key=list(x=0.01, y=0.99, text=list(dsetnames[sel[3:5]]), col=colrs[3:5],
+#             cex=0.75, lines=list(lwd=rep(1.5,3)), between=1),
+#    par.settings=list(col=colrs, lty=lty, cex=0.75, lwd=lwd,
+#                      fontsize=list(text=9, points=5)),
+#    fg="gray", ylim=ylim, ylab=ylab, xlab=xlab)
+#  }
+#  ## Plot base graph; overlay with lattice graphs on same page
+#  par(fig=c(0,1,0,1), mar=c(0,0,0,0))
+#  plot(0:1,0:1, axes=FALSE, type="n", bty="n", xlab="", ylab="")
+#  legend(x="top",legend=dsetnames[1:2], lty=1:2, lwd=c(1,0.75),
+#         col=colrs[1:2], bty="n", ncol=2, yjust=0.75)
+#  print(denplot(), position=c(0, 0, 0.32, 0.505), newpage=FALSE)
+#  print(denplot(1:5, ylab=" ", col.axis="white"),
+#        position=c(0.21, 0, .53, 0.505), newpage=FALSE)
+#  print(denplot(ylab=" ", yvar="re78", col.axis="white"),
+#        position=c(0.47, 0, 0.79, 0.505), newpage=FALSE)
+#  print(denplot(1:5, ylab=" ", yvar="re78", col.axis="white"),
+#        position=c(0.68, 0, 1, 0.505), newpage=FALSE)
+#  ## Age
+#  print(denplot(yvar="age", takelog=FALSE, ylim=c(0,0.1), from=16,
+#        at=c(.02,.04,.06,.08), labels=c(".02",".04",".06",".08")),
+#        position=c(0, 0.475, 0.32, .98), newpage=FALSE)
+#  print(denplot(1:5, yvar="age", takelog=FALSE, ylim=c(0,0.1), from=16,
+#        at=c(.02,.04,.06,.08), labels=c(".02",".04",".06",".08"),
+#        ylab=" ", col.axis="white"),
+#        position=c(0.21, 0.475, .53, .98), newpage=FALSE)
+#  ## educ
+#  print(denplot(1:5, yvar="educ", takelog=FALSE, ylim=c(0,0.5), bw=0.5,
+#        at=c(.1,.2,.3,.4), ylab=" "),
+#        position=c(0.47, 0.475, .79, .98), newpage=FALSE)
+#  print(denplot(yvar="educ", takelog=FALSE, ylim=c(0,0.75), bw=0.5,
+#        at=c(.1,.2,.3,.4), ylab=" ", col.axis="white"),
+#        position=c(0.68, 0.475, 1, .98), newpage=FALSE)
+
+## ----I7_1c--------------------------------------------------------------------------------------
+#  addControl <-
+#  function(control, offset=30){
+#    nam <- deparse(substitute(control))
+#    if(nam=="nswdemo")nsw0 <- nswdemo else
+#      nsw0 <- rbind(control, subset(DAAG::nswdemo, trt==1))
+#    nsw0$z75 <- factor(nsw0$re75==0, labels=c("0",">0"))
+#    nsw0$ethnicid <- factor(with(nsw0, ifelse(black==1, "black",
+#      ifelse(hisp==1, "hisp", "other"))), levels=c("other","black","hisp"))
+#  nsw0 <- nsw0[, -match(c("black","hisp"), names(nsw0))]
+#  nsw0
+#  }
+
+## ----I7_1d--------------------------------------------------------------------------------------
+#  ## Create dataset that will be used for later analyses
+#  nsw <- addControl(psid1)
+#  nsw <- within(nsw, {re75log <- log(re75+30);
+#                      re78log <- log(re78+30);
+#                      trt <- factor(trt, labels=c("Control","Treat"))})
+#  ## A treated values only dataset will be required below
+#  trtdat <- subset(nsw, trt=="Treat")
+#  trtdat$pres74 <- factor(!is.na(trtdat$re74), labels=c("<NA>","pres"))
+#  table(trtdat$pres74)
+
+## ----9_23, echo=FALSE, w=7.2, h=3.2, warning=FALSE, message=FALSE, out.width="90%"--------------
+#  suppressPackageStartupMessages(library(mgcv))
+#  missing.gam <- gam(pres74 ~ s(age) + s(educ) + ethnicid + marr + nodeg +
+#    z75 + s(re75log), data=trtdat, family='binomial')
+#  bwplot(pres74~predict(missing.gam), data=trtdat, xlab="Propensity score",
+#    panel=function(x,y,...)
+#      {panel.bwplot(x,y); panel.points(x,as.numeric(y)-0.5,pch="|")})
+
+## ----I7_1f--------------------------------------------------------------------------------------
+#  with(trtdat, table(pres74,z75))
+
+## ----I7_2a, echo=FALSE--------------------------------------------------------------------------
+#  library(DAAG)
+#  dimnam <- list(c("psid1","psid2","psid3","cps1","cps2","cps3","nswdemo"),
+#                 c("Est.","exp(Est.)","CIlower","CIupper"))
+#  tab <- matrix(nrow=7, ncol=4, dimnames=dimnam)
+#  for (i in 1:7){
+#    joindata <- addControl(control=eval(as.name(dimnam[[1]][i])))
+#    nsw.gam <- gam(log(re78+30)~ trt + ethnicid + z75 + nodeg + s(age) +
+#                   s(educ) + log(re75+30), data=joindata)
+#    trtvec <- summary(nsw.gam)$p.table["trt", 1:2]
+#    tab[i,] <- c(trtvec[1], exp(trtvec[1]), exp(c(trtvec[1]+trtvec[2]*c(-1.96,1.96   ))))
+#  }
+#  tab
+
+## ----I7_2b--------------------------------------------------------------------------------------
+#  nsw.gam <- gam(log(re78+30)~ trt + ethnicid + z75 + nodeg + s(age) +
+#                 s(educ) + log(re75+30), data=nsw)
+
+## ----I7_4a--------------------------------------------------------------------------------------
+#  suppressPackageStartupMessages(library(randomForest))
+#  form <- trt ~ age + educ + ethnicid + marr + nodeg + z75 + re75log
+#  nsw.rf <- randomForest(form, data=nsw, sampsize=c(297,297))
+#  p.rf <- predict(nsw.rf,type="prob")[,2]
+#  sc.rf <- log((p.rf+0.001)/(1-p.rf+0.001))
+
+## ----9_24, echo=FALSE, w=5, h=2.5, warning=FALSE, message=FALSE, out.width="90%"----------------
+#  ## Add to p.rf approx half of difference of max(p.rf) from 1
+#  library(MatchIt)
+#  form <- trt ~ age + educ + ethnicid + marr + nodeg + z75 + re75log
+#  match.rf <- matchit(form, ratio=2, data=nsw, distance=sc.rf)
+#  ## ratio=2 matches 2 control units to each treatment unit
+#  dat2RF <- match.data(match.rf, distance="PropScore")  ## Reduced size dataset
+#  nsw2.rf <- randomForest(form, sampsize=c(297,297), data=dat2RF, proximity=T)
+#  dmat2 <- 1 - nsw2.rf$proximity+0.004
+#  pts <- cmdscale(dmat2)
+#  rf2.mds <- MASS::isoMDS(dmat2, pts, trace=FALSE)
+#  isoScores <- rf2.mds$points
+#  p2.rf <- predict(nsw2.rf,type="prob")[,2]
+#  cutpts <- c(0, round(quantile(p2.rf, c(1/3, 2/3)), 2), 1)
+#  cutvals <- cut(p2.rf, breaks = cutpts, include.lowest = TRUE)
+#  gph1 <- xyplot(isoScores[, 2] ~ isoScores[, 1] | cutvals,
+#                groups = dat2RF$trt, aspect = 1,
+#                scale = list(tck = 0.6), xlab = "Co-ordinate 1",
+#                ylab = "Co-ordinate 2", auto.key = list(columns = 2))
+#  col8 <- DAAG::DAAGtheme(color=TRUE, fontsize=list(text=8, points=5),
+#                          pch = 3:4, alpha=0.75)
+#  print(update(gph1, par.settings=col8, layout = c(3, 1)))
+
+## ----I7_4c--------------------------------------------------------------------------------------
+#  omitn <- match(c("PropScore","weights","subclass"), names(dat2RF), nomatch=0)
+#  matchISO.rf <-matchit(trt ~ age + educ + ethnicid + marr + nodeg + z75 +
+#                        re75log, ratio=1, data=dat2RF[,-omitn], distance=isoScores[,1])
+#  ## summary(match.rf,un=F,improvement=F)
+#  ## summary(match.rf, un=F, interactions=T, improvement=F)$sum.matched[,1:4]
+#  ## In the first place, look only at the first 4 columns
+
+## ----I7_4d--------------------------------------------------------------------------------------
+#  dat1RF <- match.data(matchISO.rf, distance="PropScore")
+#  dat1RF.lm <- lm(re78log ~ trt, data = dat1RF, weights = weights)
+#  library(sandwich)   # Allows use of `vcovCL()` from the `sandwich` package
+#  lmtest::coeftest(dat1RF.lm, vcov. = vcovCL, cluster = ~subclass)
+#  ## Check for increase in number with non-zero earnings
+#  dat1RF.glm <- glm(I(re78>0) ~ trt, data = dat1RF, weights = weights,
+#                    family=binomial)
+#  lmtest::coeftest(dat1RF.glm, vcov. = vcovCL, cluster = ~subclass)
+
+## ----I7_4e--------------------------------------------------------------------------------------
+#  library(mgcv)
+#  formG <- trt ~ ethnicid + marr+ z75 + s(age) + s(educ) + s(re75log)
+#  nsw.gam <- gam(formG, family=binomial(link="logit"), data=nsw)
+#  pred <- predict(nsw.gam, type='response')
+#  table(nsw$trt, round(pred))
+#  ## Alternative
+#  library(splines)  ## Fit normal cubic splines using splines::ns()
+#  formNS <- trt ~ ethnicid + marr+ z75 + ns(age,2) +
+#  ns(educ) + ns(re75log,3)
+#  nsw.glm <- glm(formNS, family=binomial(link="logit"), data=nsw)
+#  pred <- predict(nsw.glm, type='response')
+#  table(nsw$trt, round(pred))
+#  cbind(AIC(nsw.glm,nsw.gam), BIC(nsw.glm, nsw.gam))
+
+## ----I7_4f, eval=FALSE--------------------------------------------------------------------------
+#  ## Include factor by factor and variable interactions with ethnicid
+#  ## and marr (Result not shown)
+#  formGx <- trt ~ (ethnicid+marr+z75)^2 + s(age, by=ethnicid)+
+#                  s(educ, by=ethnicid) + s(re75log,by=ethnicid)+
+#                  s(age, by=marr)+ s(educ, by=marr) + s(re75log,by=marr)
+#  nswx.gam <- gam(formula = formGx, data = nsw, family=binomial(link = "logit"))
+#  predx <- predict(nswx.gam, type='response')
+#  table(nsw$trt, round(predx))
+#  AIC(nsw.glm,nsw.gam,nswx.gam)
+
+## ----I7_4g--------------------------------------------------------------------------------------
+#  library(MatchIt)
+#  ## Use data frame that omits re74. Otherwise matchit() will generate NAs
+#  ## where they occur in re74, even though re74 is not in the model formula.
+#  nswG <- nsw[, c("trt","age","educ","ethnicid", "marr","nodeg","z75",
+#                  "re75log","re78log","re78")]
+#  formG <- trt ~ ethnicid + marr+ z75 + s(age) + s(educ) + s(re75log)
+#  match.gam <- matchit(formula = formG, data = nswG, method = "nearest",
+#                       distance = "gam", link = "logit", reestimate=TRUE)
+#  datG <- match.data(match.gam, distance="PropScore")
+#  ## Summary information
+#  match.gam
+#  ## summary(match.gam,un=F,improvement=F)
+#  ## summary(match.gam, un=F, interactions=T, improvement=F)$sum.matched[,1:4]
+#  ## In the first place, look only at the first 4 columns
+
+## ----9_25, w=4.5, h=2.1, left=-1, rt=-0.5, top=1.5, ps=9, echo=FALSE, message=FALSE, warning=FALSE, out.width="80%"----
+#  opar <- par(cex=0.75, bty="n")
+#  plot(match.gam, type='jitter', interactive=F,
+#       col=adjustcolor('blue',.4), pch=3)
+#  box(fg="gray")
+#  par(opar)
+
+## ----9_26, echo=FALSE, w=6.5, h=2.7, message=FALSE, warning=FALSE, fig.show="hold", results="hide", out.width="100%"----
+#  suppressPackageStartupMessages(library(gridExtra))
+#  suppressPackageStartupMessages(library(ggplot2))
+#  suppressPackageStartupMessages(library(cobalt))
+#  gg1<- cobalt::love.plot(match.gam, position="bottom", grid=TRUE,
+#                          star.char="",stars='raw') +
+#    ggtitle("A: Differences from balance") +
+#    theme(plot.title = element_text(hjust=0, vjust=0.5, size=11),
+#          plot.margin=unit(c(9,15,0,9), 'pt'))
+#  sub <- match(with(subset(datG, trt=="Control"),subclass),
+#               with(subset(datG, trt=="Treat"),subclass))
+#  datGpaired <- cbind(subset(datG, trt=="Treat"),
+#                      with(subset(datG, trt=="Control")[sub,],
+#                      cbind("Cre78log"=re78log,"CPropScore"=PropScore)))
+#  gg2 <- ggplot(datGpaired)+
+#    geom_point(aes(PropScore,I(re78log-Cre78log)), size=1)+
+#    geom_smooth(aes(PropScore,I(re78log-Cre78log)), method = "gam",
+#                formula = y ~ s(x, bs = "cs")) +
+#    xlab("Propensity score for treated")+
+#    ylab("Treatment vs control differences") +
+#    ggtitle("B: Treatment vs control differences") +
+#    theme(plot.title = element_text(hjust=0, vjust=0.5, size=11),
+#          plot.margin=unit(c(9,9,0,15), 'pt'))
+#  grid.arrange(gg1, gg2, ncol=2)
+
+## ----9_26, eval=FALSE---------------------------------------------------------------------------
+#  suppressPackageStartupMessages(library(gridExtra))
+#  suppressPackageStartupMessages(library(ggplot2))
+#  suppressPackageStartupMessages(library(cobalt))
+#  gg1<- cobalt::love.plot(match.gam, position="bottom", grid=TRUE,
+#                          star.char="",stars='raw') +
+#    ggtitle("A: Differences from balance") +
+#    theme(plot.title = element_text(hjust=0, vjust=0.5, size=11),
+#          plot.margin=unit(c(9,15,0,9), 'pt'))
+#  sub <- match(with(subset(datG, trt=="Control"),subclass),
+#               with(subset(datG, trt=="Treat"),subclass))
+#  datGpaired <- cbind(subset(datG, trt=="Treat"),
+#                      with(subset(datG, trt=="Control")[sub,],
+#                      cbind("Cre78log"=re78log,"CPropScore"=PropScore)))
+#  gg2 <- ggplot(datGpaired)+
+#    geom_point(aes(PropScore,I(re78log-Cre78log)), size=1)+
+#    geom_smooth(aes(PropScore,I(re78log-Cre78log)), method = "gam",
+#                formula = y ~ s(x, bs = "cs")) +
+#    xlab("Propensity score for treated")+
+#    ylab("Treatment vs control differences") +
+#    ggtitle("B: Treatment vs control differences") +
+#    theme(plot.title = element_text(hjust=0, vjust=0.5, size=11),
+#          plot.margin=unit(c(9,9,0,15), 'pt'))
+#  grid.arrange(gg1, gg2, ncol=2)
+
+## ----I7_4k--------------------------------------------------------------------------------------
+#  library(sandwich)
+#  datG.lm <- lm(re78log ~ trt, data = datG, weights = weights)
+#  ## With 1:1 matching, the weights argument is not really needed
+#  ## Print first two coefficients only.
+#  lmtest::coeftest(datG.lm, vcov. = vcovCL, cluster = ~subclass)[1:2,]
+#  ## Check number whose income was greater than 0
+#  datG.glm <- glm(I(re78>0) ~ trt, data = datG, weights = weights, family=binomial)
+#  lmtest::coeftest(datG.glm, vcov. = vcovCL, cluster = ~subclass)[1:2,]
+
+## ----I7_5a--------------------------------------------------------------------------------------
+#  form <- trt ~ age + educ + ethnicid + marr + nodeg + z75 + re75log
+#  match5.cem <- matchit(formula=form, data=nswG, method="cem", cutpoints=5)
+#  datcem5 <- match.data(match5.cem)
+#  match6.cem <- matchit(formula=form, data=nswG, method="cem", cutpoints=6)
+#  datcem6 <- match.data(match6.cem)
+#  ## Show the effect of adding another cutpoint
+#  match5.cem
+#  match6.cem
+
+## ----9_27, echo=FALSE, w=6.5, h=2.7, warning=FALSE, quietly=FALSE, fig.show="hold", results="hide", out.width="100%"----
+#  plt1 <- cobalt::love.plot(match5.cem, position="none", star.char="†",
+#            stars='raw', grid=T, title="A: CEM with five cutpoints") +
+#            theme(plot.title = element_text(hjust=0, vjust=0.5, size=11),
+#            plot.margin=unit(c(9,9,0,9), 'pt'))
+#  plt2 <- cobalt::love.plot(match6.cem, position="none", star.char="†",
+#            stars='raw', grid=T, title="B: CEM with six cutpoints") +
+#            theme(plot.title = element_text(hjust=0, vjust=0.5, size=11),
+#            plot.margin=unit(c(9,9,0,9), 'pt'))
+#  grid.arrange(plt1, plt2, ncol=2) + theme(plot.title = element_text(size=11))
+
+## ----I7_5c, warning=FALSE-----------------------------------------------------------------------
+#  library(sandwich)
+#  datcem5.lm <- lm(re78log ~ trt, data = datcem5, weights = weights)
+#  ## The function vcovHC() provides cluster robust standard errors
+#  lmtest::coeftest(datcem5.lm, vcov. = vcovHC)
+#  ## Estimate treatment effect on number with some earnings:
+#  datcem6.glm <- glm(I(re78>0) ~ trt, data = datcem6, weights = weights,
+#  family=binomial)
+#  lmtest::coeftest(datcem6.glm, vcov. = vcovHC)
+
+## ----I9a----------------------------------------------------------------------------------------
+#  suppressPackageStartupMessages(library(mice))
+#  Boys <- with(subset(mice::boys, age>=9),
+#               data.frame(age=age, loghgt=log(hgt), logbmi=log(bmi), loghc=log(hc)))
+#  (Pattern <- md.pattern(Boys, plot=F))
+
+## ----I9b----------------------------------------------------------------------------------------
+#  set.seed(31)       # Set to reproduce result shown
+#  PatternB <- rbind(Pattern[-c(1,nrow(Pattern)), -ncol(Pattern)],
+#               c(0,1,1,1), c(0,1,0,0), c(0,0,1,0))
+#  boys <- rbind(ic(Boys),
+#                ampute(cc(Boys), pattern=PatternB, freq=c(.3,.15,.15,.2,.1,.1),
+#                       prop=0.75)$amp)
+#  md.pattern(boys, plot=FALSE)
+
+## ----I8c----------------------------------------------------------------------------------------
+#  set.seed(17)       # Set to reproduce result shown
+#  out <- capture.output(        # Evaluate; send screen output to text string
+#    boys.mids <- mice(boys, method='pmm', m=8)  )
+#  impDFs <- complete(boys.mids, action='all')   # Returns a list of m=8 dataframes
+#  ## Average over imputed dataframes (use for exploratory purposes only)
+#  impArray <- sapply(impDFs, function(x)as.matrix(x), simplify='array')
+#  boysAv <- as.data.frame(apply(impArray, 1:2, mean))
+
+## ----9_28, echo=FALSE, w=6.5, h=3.15, mfrow=c(1,2), out.width="90%"-----------------------------
+#  ## Check that straight line terms in `age` and `loghgt` are enough
+#  suppressPackageStartupMessages(library(mgcv))
+#  boys.gam <- gam(logbmi~s(age) + s(loghgt), data=boysAv)
+#  plot(boys.gam, resid=TRUE, cex=1.5, shift=mean(predict(boys.gam)), fg='gray')
+
+## ----I8d----------------------------------------------------------------------------------------
+#  fits <- with(boys.mids, lm(logbmi~age+loghgt))
+#  pool.coef <- summary(pool(fits))  # Include in table below
+
+## ----I9d----------------------------------------------------------------------------------------
+#  ## 2) Regression that leaves out rows with NAs
+#  omitNArows.coef <- coef(summary(lm(logbmi~age+loghgt, data=boys)))
+#  ## 3) Regression fit to average over data frames after imputation
+#  boysAv.coef <- coef(summary(lm(logbmi~age+loghgt, data=boysAv)))
+#  ## 4) Fit to original data, with 36 rows had missing data
+#  Orig.coef <- coef(summary(lm(logbmi ~ age+loghgt, data=Boys)))
+
+## ----I9e----------------------------------------------------------------------------------------
+#  ctab <- cbind(summary(pool(fits))[,2:3], omitNArows.coef[,1:2], boysAv.coef[,1:2],
+#        Orig.coef[,1:2])
+#  tab <- setNames(cbind(ctab[,c(1,3,5,7)], ctab[,c(2,4,6,8)]),
+#                  paste0(rep(c('Est','SE'), c(4,4)), rep(1:4, 2)))
+#  round(tab,3)
+
+## ----I9f----------------------------------------------------------------------------------------
+#  airquality <- datasets::airquality
+#  airq <- cbind(airquality[, 1:4], day=1:nrow(airquality))
+#    # 'day' (starting May 1) replaces columns 'Month' & 'Day')
+#  ## Replace `Ozone` with `rt4ozone`:
+#  airq <- cbind(rt4ozone=airq$Ozone^0.25, airq[,-1])
+
+## ----I9g, eval=FALSE----------------------------------------------------------------------------
+#  ## Generate the scatterplot matrix, now with `rt4ozone` replacing `Ozone`
+#  smoothPars <- list(col.smooth='red', lty.smooth=2, spread=0)
+#  car::spm(airq, cex.labels=1.2, regLine=FALSE, col='blue',
+#           oma=c(1.95,3,4, 3), gap=.25, smooth=smoothPars)
+
+## ----I9h, echo=T, results='hide'----------------------------------------------------------------
+#  airq.imp <- mice(airq, m=20, print=FALSE)
+#    ## 20 imputations shows up issues of concern very clearly
+
+## ----9_29, w=9, h=5.25, mar=c(2.1,3.1, 0.6,0.6), echo=FALSE, results="hide", warning=F, out.width='100%'----
+#  ## Code for figure
+#  out <- micemd::overimpute(airq.imp)
+
+## ----9_29, eval=F-------------------------------------------------------------------------------
+#  ## Code for figure
+#  out <- micemd::overimpute(airq.imp)
+
+## ----I7a, eval=xtras----------------------------------------------------------------------------
+#  library(DAAG)
+#  oz::oz(sections=c(3:5, 11:16))
+#  names(possumsites)[1:2] <- c("long", "lat")
+#  with(possumsites, {
+#  points(long, lat);
+#  text(long, lat, row.names(possumsites), pos=c(2,4,2,2,4,2,2))
+#  })
+
+## ----I7b----------------------------------------------------------------------------------------
+#  data(wine, package='gclus')
+#  mat <- with(wine,
+#    round(1-cor(cbind(Alcohol, Malic, Magnesium, Phenols, Flavanoids)),2))
+#  colnames(mat) <- rownames(mat) <- 1:5
+#  print(mat)
+
+## ----I7c, eval=xtras----------------------------------------------------------------------------
+#  `confusion` <-
+#  function(actual, predicted, digits=4){
+#    tab <- table(actual, predicted)
+#    confuse <- apply(tab, 1, function(x)x/sum(x))
+#    print(round(confuse, digits))
+#    acc <- sum(tab[row(tab)==col(tab)])/sum(tab)
+#    invisible(print(c("Overall accuracy" = round(acc,digits))))
+#  }
+#  data(Vehicle, package="mlbench")
+#  lhat <- MASS::lda(Class ~ ., data=Vehicle, CV=TRUE)$class
+#  qhat <- MASS::qda(Class ~ ., data=Vehicle, CV=TRUE)$class
+#  DAAG::confusion(Vehicle$Class, lhat)
+#  DAAG::confusion(Vehicle$Class, qhat)
+#  randomForest::randomForest(Class ~ ., data=Vehicle, CV=TRUE)
+
+## ----I7d, eval=xtras----------------------------------------------------------------------------
+#  Vehicle.lda <- MASS::lda(Class ~ ., data=Vehicle)
+#  twoD <- predict(Vehicle.lda)$x
+#  ggplot2::quickplot(twoD[,1], twoD[,2], color=Vehicle$Class,
+#                     geom=c("point","density2d"))
+
+## ----I7e, eval=xtras----------------------------------------------------------------------------
+#  library(ape); library(MASS)
+#  webpage <-
+#  "http://evolution.genetics.washington.edu/book/primates.dna"
+#  primates.dna <- read.dna(webpage)
+#  # Alternatively, work with primateDNA from the DAAGbio package
+#  library(DAAGbio)
+#  primates.dna <- as.DNAbin(primateDNA)
+#  primates.dist <- dist.dna(primates.dna, model="K80")
+#  primates.cmd <- cmdscale(primates.dist)
+#  eqscplot(primates.cmd)
+#  rtleft <- c(4,2,4,2)[unclass(cut(primates.cmd[,1], breaks=4))]
+#  text(primates.cmd, labels=row.names(primates.cmd), pos=rtleft)
+
+## ----I7f, eval=xtras----------------------------------------------------------------------------
+#  d <- dist(primates.cmd)
+#  sum((d-primates.dist)^2)/sum(primates.dist^2)
+
+## ----I7g, eval=xtras----------------------------------------------------------------------------
+#  library(DAAG)
+#  pacific.dist <- dist(x = as.matrix(rockArt[-c(47,54,60,63,92),28:641]),
+#                       method = "binary")
+#  sum(pacific.dist==1)/length(pacific.dist)
+#  plot(density(pacific.dist, to = 1))
+#  ## Check that all columns have at least one distance < 1
+#  symmat <- as.matrix(pacific.dist)
+#  table(apply(symmat, 2, function(x) sum(x<1)))
+#  pacific.cmd <- cmdscale(pacific.dist)
+#  pacific.sam <- sammon(pacific.dist)
+

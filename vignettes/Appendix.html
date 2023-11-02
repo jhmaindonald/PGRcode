@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Appendix A: The R System – A Brief Overview</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Appendix A: The R System – A Brief
+Overview</h1>
+
+
+
+<p>On options for working with the code see the vignettes <a href="PGRcode/Ch1-Learning.html">Ch1-Learning</a> and <a href="PGRcode/UsingCode.html">UsingCode</a>.</p>
+<div id="packages-required-plus-any-dependencies" class="section level5">
+<h5>Packages required (plus any dependencies)</h5>
+<p>DAAG dplyr tidyr tibble MASS gplots plotrix latticeExtra
+RColorBrewer</p>
+<p>Additionally, knitr and Hmisc are required in order to process the
+Rmd source file.</p>
+</div>
+<div id="the-r-system-a-brief-overview" class="section level2">
+<h2>The R System – A Brief Overview</h2>
+<div id="section-10.1-getting-started-with-r" class="section level3">
+<h3>Section 10.1: Getting started with R</h3>
+<div id="subsection-19.1.1-learn-by-typing-code-at-the-command-line" class="section level4">
+<h4>Subsection 19.1.1: Learn by typing code at the command line</h4>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="sc">&gt;</span> <span class="do">## Arithmetic calculations.  See the help page `?Arithmetic`</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="er">&gt;</span> <span class="dv">2</span><span class="sc">*</span><span class="dv">3</span><span class="sc">+</span><span class="dv">10</span>            <span class="co"># The symbol `*` denotes &#39;multiply&#39;</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="sc">&gt;</span> <span class="do">## Use the `c()` function to join results into a numeric vector</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="er">&gt;</span> <span class="fu">c</span>(<span class="fu">sqrt</span>(<span class="dv">10</span>), <span class="dv">2</span><span class="sc">*</span><span class="dv">3</span><span class="sc">+</span><span class="dv">10</span>, <span class="fu">sqrt</span>(<span class="dv">10</span>), <span class="dv">2</span><span class="sc">^</span><span class="dv">3</span>)  <span class="co"># 2^3 is 2 to the power of 3</span></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="sc">&gt;</span> <span class="do">## R knows about pi</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="er">&gt;</span> <span class="dv">2</span><span class="sc">*</span>pi<span class="sc">*</span><span class="dv">6378</span>         <span class="co"># Approximate circumference of earth at equator (km)</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>?help              <span class="co"># Get information on the use of `help()`</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>?sqrt              <span class="co"># Or, type help(sqrt)</span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>?Arithmetic        <span class="co"># See, in similar vein ?Syntax</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>?<span class="st">&#39;&lt;&#39;</span>               <span class="co"># `?Comparison` finds the same help page</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="do">## Two commands on one line; Use &#39;;&#39; as separator</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="dv">2</span><span class="sc">*</span><span class="dv">3</span><span class="sc">*</span><span class="dv">4</span><span class="sc">+</span><span class="dv">10</span>; <span class="fu">sqrt</span>(<span class="dv">10</span>)        <span class="do">## Try also `cat(2*3*4+10, sqrt(10), sep=&#39;n&#39;)</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="do">## Convert CO2 carbon emissions from tonnes of carbon to tonnes of CO2 </span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="fl">3.664</span><span class="sc">*</span><span class="fu">c</span>(.<span class="dv">53</span>, <span class="fl">2.56</span>, <span class="fl">9.62</span>)  <span class="do">## Data are for 1900, 1960 &amp; 2020</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="do">## Use `cat()` to print several items, with control of formatting</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="fu">cat</span>(<span class="dv">2</span><span class="sc">*</span><span class="dv">3</span><span class="sc">*</span><span class="dv">4</span><span class="sc">+</span><span class="dv">10</span>, <span class="fu">sqrt</span>(<span class="dv">10</span>), <span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span>)</span></code></pre></div>
+<div id="assignment" class="section level5">
+<h5>Assignment</h5>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="do">## Convert from amounts of carbon to amounts of CO2 (billions of tonnes)</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="do">## and assign result to a named object</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>fossilCO2vals <span class="ot">&lt;-</span> <span class="fu">c</span>(.<span class="dv">53</span>, <span class="fl">2.56</span>, <span class="fl">9.62</span>)<span class="sc">*</span><span class="fl">3.664</span>  <span class="co"># Amounts in 1900, 1960, and 2020</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>  <span class="co"># Equivalently `fossilCO2vals &lt;- c(.53, 2.56, 9.62)*rep(3.664,3)`</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="do">## To assign and print, enclose in round brackets</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>(fossilCO2vals <span class="ot">&lt;-</span> <span class="fu">c</span>(.<span class="dv">53</span>, <span class="fl">2.56</span>, <span class="fl">9.62</span>)<span class="sc">*</span><span class="fl">3.664</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fl">3.664</span><span class="sc">*</span><span class="fu">c</span>(.<span class="dv">53</span>,<span class="fl">2.56</span>, <span class="fl">9.62</span>) <span class="ot">-&gt;</span> fossilCO2vals</span></code></pre></div>
+</div>
+<div id="entry-of-data-at-the-command-line-a-graphics-formula-and-a-graph" class="section level5">
+<h5>Entry of data at the command line, a graphics formula, and a
+graph</h5>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>Year <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1900</span>, <span class="dv">1920</span>, <span class="dv">1940</span>, <span class="dv">1960</span>, <span class="dv">1980</span>, <span class="dv">2000</span>, <span class="dv">2020</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>CO2 <span class="ot">&lt;-</span> <span class="fu">c</span>(.<span class="dv">53</span>,.<span class="dv">96</span>,<span class="fl">1.32</span>,<span class="fl">2.56</span>,<span class="fl">5.32</span>,<span class="fl">6.95</span>,<span class="fl">9.62</span>)<span class="sc">*</span><span class="fl">3.664</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="do">## Now plot Carbon Dioxide emissions as a function of Year</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="fu">plot</span>(CO2 <span class="sc">~</span> Year, <span class="at">pch=</span><span class="dv">16</span>, <span class="at">fg=</span><span class="st">&quot;gray&quot;</span>)</span></code></pre></div>
+</div>
+<div id="grouping-vectors-togeher-into-data-frames" class="section level5">
+<h5>Grouping vectors togeher into data frames</h5>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>CO2byYear <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">year=</span>Year, <span class="at">co2gas=</span>CO2)</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>CO2byYear         <span class="co"># Display the contents of the data frame.</span></span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="fu">rm</span>(Year, CO2)     <span class="co"># Optionally, remove `Year` and `Carbon` from the workspace</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="fu">plot</span>(co2gas <span class="sc">~</span> year, <span class="at">data=</span>CO2byYear, <span class="at">pch=</span><span class="dv">16</span>)  </span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">sqrt</span>(<span class="dv">10</span>)           <span class="co"># Number of digits is determined by current seting</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="fu">options</span>(<span class="at">digits=</span><span class="dv">2</span>)  <span class="co"># Change until further notice,</span></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="fu">sqrt</span>(<span class="dv">10</span>)</span></code></pre></div>
+</div>
+<div id="wide-ranging-information-access-and-searches" class="section level5">
+<h5>Wide-ranging information access and searches</h5>
+</div>
+</div>
+</div>
+<div id="section-10.2-r-data-structures" class="section level3">
+<h3>Section 10.2: R data structures</h3>
+<div id="subsection-10.2.1-vectors-dates-and-arrays" class="section level4">
+<h4>Subsection 10.2.1: Vectors, dates, and arrays</h4>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>vehicles <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Compact&quot;</span>, <span class="st">&quot;Large&quot;</span>, <span class="st">&quot;Midsize&quot;</span>, <span class="st">&quot;Small&quot;</span>, <span class="st">&quot;Sporty&quot;</span>, <span class="st">&quot;Van&quot;</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="fu">c</span>(T, F, F, F, T, T, F)   <span class="co"># A logical vector, assuming F=FALSE and T=TRUE</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="do">## Character vector</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>mammals <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Rat&quot;</span>, <span class="st">&quot;Pig&quot;</span>, <span class="st">&quot;Rat&quot;</span>, <span class="st">&quot;Mouse&quot;</span>, <span class="st">&quot;Pig&quot;</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="do">## Logical vector</span></span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>rodent <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;TRUE&quot;</span>, <span class="st">&quot;FALSE&quot;</span>, <span class="st">&quot;TRUE&quot;</span>, <span class="st">&quot;FALSE&quot;</span>, <span class="st">&quot;TRUE&quot;</span>, <span class="st">&quot;FALSE&quot;</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a><span class="do">## From character vector `mammals`, create factor</span></span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>mfac <span class="ot">&lt;-</span> <span class="fu">factor</span>(mammals)</span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a><span class="fu">levels</span>(mfac)  </span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a><span class="fu">table</span>(mfac)</span></code></pre></div>
+<div id="dates" class="section level5">
+<h5>Dates</h5>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>day1 <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(<span class="fu">c</span>(<span class="st">&quot;2022-01-01&quot;</span>, <span class="st">&quot;2022-02-01&quot;</span>, <span class="st">&quot;2022-03-01&quot;</span>))</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="fu">as.numeric</span>(day1)   <span class="co"># Days since 1 January 1970</span></span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>day1[<span class="dv">3</span>] <span class="sc">-</span> day1[<span class="dv">2</span>]</span></code></pre></div>
+</div>
+<div id="the-use-of-square-brackets-to-extract-subsets-of-vectors" class="section level5">
+<h5>The use of square brackets to extract subsets of vectors</h5>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="do">## Specify the indices of the elements that are to be extracted</span></span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">11</span>, <span class="dv">8</span>, <span class="dv">15</span>, <span class="dv">12</span>,<span class="dv">18</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>x[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">4</span><span class="sc">:</span><span class="dv">6</span>)]        <span class="co"># Elements in positions 1, 4, 5, and 6</span></span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a><span class="do">## Use negative indices to identify elements for omission</span></span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>x[<span class="sc">-</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>)]         <span class="co"># Positive and negative indices cannot be mixed</span></span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a><span class="do">## Specify a vector of logical values. </span></span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a>x <span class="sc">&gt;</span> <span class="dv">10</span>             <span class="co"># This generates a vector of logical values</span></span>
+<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a>x[x <span class="sc">&gt;</span> <span class="dv">10</span>]</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>bodywt <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">Cow=</span><span class="dv">465</span>, <span class="at">Goat=</span><span class="dv">28</span>, <span class="at">Donkey=</span><span class="dv">187</span>, <span class="at">Pig=</span><span class="dv">192</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>bodywt[<span class="fu">c</span>(<span class="st">&quot;Goat&quot;</span>, <span class="st">&quot;Pig&quot;</span>)]</span></code></pre></div>
+</div>
+<div id="matrices-and-arrays" class="section level5">
+<h5>Matrices and arrays</h5>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>arr123 <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">24</span>, <span class="at">dim=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">3</span>))</span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a><span class="do">## This prints as three 2 by 4 matrices.  Print just the first of the three.</span></span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>arr123[, <span class="dv">2</span>, <span class="dv">1</span>]     <span class="co"># Column 2 and index 1 of 3rd dimension</span></span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a><span class="fu">attributes</span>(arr123)</span></code></pre></div>
+</div>
+</div>
+<div id="subsection-10.2.2-factors" class="section level4">
+<h4>Subsection 10.2.2: Factors</h4>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>gender <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">&quot;male&quot;</span>,<span class="dv">691</span>), <span class="fu">rep</span>(<span class="st">&quot;female&quot;</span>,<span class="dv">692</span>))</span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>gender <span class="ot">&lt;-</span> <span class="fu">factor</span>(gender)  <span class="co"># From character vector, create factor</span></span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a><span class="fu">levels</span>(gender)            <span class="co"># Notice that `female` comes first</span></span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a>Gender <span class="ot">&lt;-</span> <span class="fu">factor</span>(gender, <span class="at">levels=</span><span class="fu">c</span>(<span class="st">&quot;male&quot;</span>, <span class="st">&quot;female&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>mf1 <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">&#39;male&#39;</span>,<span class="st">&#39;female&#39;</span>),<span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>)), <span class="at">labels=</span><span class="fu">c</span>(<span class="st">&quot;f&quot;</span>, <span class="st">&quot;m&quot;</span>))</span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a><span class="do">## The following has the same result</span></span>
+<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a>mf2 <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">&#39;male&#39;</span>,<span class="st">&#39;female&#39;</span>), <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>)))</span>
+<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a><span class="fu">levels</span>(mf2) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;f&quot;</span>,<span class="st">&quot;m&quot;</span>)   <span class="co"># Assign new levels</span></span>
+<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">all</span>(mf1<span class="sc">==</span>mf2))<span class="fu">print</span>(mf1)</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a><span class="fu">sum</span>(gender<span class="sc">==</span><span class="st">&quot;male&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="fu">table</span>(chickwts<span class="sc">$</span>feed)  <span class="co"># feed is a factor</span></span>
+<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a>source <span class="ot">&lt;-</span> chickwts<span class="sc">$</span>feed  </span>
+<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a><span class="fu">levels</span>(source) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;milk&quot;</span>,<span class="st">&quot;plant&quot;</span>,<span class="st">&quot;plant&quot;</span>,<span class="st">&quot;meat&quot;</span>,<span class="st">&quot;plant&quot;</span>,<span class="st">&quot;plant&quot;</span>)</span>
+<span id="cb21-4"><a href="#cb21-4" tabindex="-1"></a><span class="fu">table</span>(source)</span></code></pre></div>
+<div id="ordered-factors" class="section level5">
+<h5>Ordered factors</h5>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a>stress <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">&quot;low&quot;</span>,<span class="st">&quot;medium&quot;</span>,<span class="st">&quot;high&quot;</span>), <span class="dv">2</span>)</span>
+<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a>ord.stress <span class="ot">&lt;-</span> <span class="fu">ordered</span>(stress, <span class="at">levels=</span><span class="fu">c</span>(<span class="st">&quot;low&quot;</span>, <span class="st">&quot;medium&quot;</span>, <span class="st">&quot;high&quot;</span>))</span>
+<span id="cb22-3"><a href="#cb22-3" tabindex="-1"></a>ord.stress</span>
+<span id="cb22-4"><a href="#cb22-4" tabindex="-1"></a>ord.stress <span class="sc">&gt;=</span> <span class="st">&quot;medium&quot;</span></span></code></pre></div>
+</div>
+<div id="missing-values-in-values-of-factors" class="section level5">
+<h5>Missing values in values of factors</h5>
+</div>
+</div>
+<div id="subsection-10.2.3-operations-with-data-frames" class="section level4">
+<h4>Subsection 10.2.3: Operations with data frames</h4>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a>Cars93sum <span class="ot">&lt;-</span> DAAG<span class="sc">::</span>Cars93.summary  <span class="co"># Create copy in workspace</span></span>
+<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a>Cars93sum</span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a>Cars93sum[<span class="dv">4</span><span class="sc">:</span><span class="dv">6</span>, <span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>]   <span class="co"># Extract rows 4 to 6 and columns 2 and 3</span></span>
+<span id="cb24-2"><a href="#cb24-2" tabindex="-1"></a>Cars93sum[<span class="dv">6</span><span class="sc">:</span><span class="dv">4</span>, ]      <span class="co"># Extract rows in the order 6, 5, 4</span></span>
+<span id="cb24-3"><a href="#cb24-3" tabindex="-1"></a>Cars93sum[, <span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>]      <span class="co"># Extract columns 2 and 3</span></span>
+<span id="cb24-4"><a href="#cb24-4" tabindex="-1"></a><span class="do">## Or, use negative integers to specify rows and/or columns to be omitted</span></span>
+<span id="cb24-5"><a href="#cb24-5" tabindex="-1"></a>Cars93sum[<span class="sc">-</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>), <span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">4</span>)]  <span class="co"># In each case, numbers must be all +ve or all -ve</span></span>
+<span id="cb24-6"><a href="#cb24-6" tabindex="-1"></a><span class="do">## Specify row and/or column names</span></span>
+<span id="cb24-7"><a href="#cb24-7" tabindex="-1"></a>Cars93sum[<span class="fu">c</span>(<span class="st">&quot;Small&quot;</span>,<span class="st">&quot;Sporty&quot;</span>,<span class="st">&quot;Van&quot;</span>), <span class="fu">c</span>(<span class="st">&quot;Max.passengers&quot;</span>,<span class="st">&quot;No.of.cars&quot;</span>)]</span></code></pre></div>
+<div id="data-frames-vs-matrices" class="section level5">
+<h5>Data frames vs matrices</h5>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a><span class="fu">names</span>(Cars93sum)[<span class="dv">3</span>] <span class="ot">&lt;-</span> <span class="st">&quot;numCars&quot;</span></span>
+<span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a><span class="fu">names</span>(Cars9sum) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;minPass&quot;</span>,<span class="st">&quot;maxPass&quot;</span>,<span class="st">&quot;numCars&quot;</span>,<span class="st">&quot;code&quot;</span>)</span></code></pre></div>
+</div>
+<div id="using-a-data-frame-as-a-database-with-and-within" class="section level5">
+<h5>Using a data frame as a database – with() and within()</h5>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a><span class="do">## trees (datasets) has data on Black Cherry Trees</span></span>
+<span id="cb26-2"><a href="#cb26-2" tabindex="-1"></a><span class="fu">with</span>(trees, <span class="fu">round</span>(<span class="fu">c</span>(<span class="fu">mean</span>(Girth), <span class="fu">median</span>(Girth), <span class="fu">sd</span>(Girth)),<span class="dv">1</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a><span class="fu">with</span>(DAAG<span class="sc">::</span>pair65,       <span class="co"># stretch of rubber bands</span></span>
+<span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a>  {lenchange <span class="ot">=</span> heated<span class="sc">-</span>ambient</span>
+<span id="cb27-3"><a href="#cb27-3" tabindex="-1"></a>   <span class="fu">c</span>(<span class="fu">mean</span>(lenchange), <span class="fu">median</span>(lenchange))</span>
+<span id="cb27-4"><a href="#cb27-4" tabindex="-1"></a>})</span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a><span class="do">## Add variables `mph` and `gradient` to `DAAG::nihills`</span></span>
+<span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a>nihr <span class="ot">&lt;-</span> <span class="fu">within</span>(DAAG<span class="sc">::</span>nihills, {mph <span class="ot">&lt;-</span> dist<span class="sc">/</span>time; gradient <span class="ot">&lt;-</span> climb<span class="sc">/</span>dist})</span></code></pre></div>
+</div>
+<div id="extracting-rows-from-data-frames" class="section level5">
+<h5>Extracting rows from data frames</h5>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" tabindex="-1"></a><span class="fu">unlist</span>(Cars93sum[<span class="dv">1</span>, ])</span></code></pre></div>
+</div>
+</div>
+<div id="subsection-10.2.4-data-manipulation-functions-used-in-earlier-chapters" class="section level4">
+<h4>Subsection 10.2.4: Data manipulation functions used in earlier
+chapters</h4>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a><span class="do">## For columns of `DAAG::jobs`, show the range of values</span></span>
+<span id="cb30-2"><a href="#cb30-2" tabindex="-1"></a><span class="fu">sapply</span>(DAAG<span class="sc">::</span>jobs, range)</span>
+<span id="cb30-3"><a href="#cb30-3" tabindex="-1"></a><span class="do">## Split egg lengths by species, calculate mean, sd, and number for each</span></span>
+<span id="cb30-4"><a href="#cb30-4" tabindex="-1"></a><span class="fu">with</span>(DAAG<span class="sc">::</span>cuckoos, <span class="fu">sapply</span>(<span class="fu">split</span>(length,species), </span>
+<span id="cb30-5"><a href="#cb30-5" tabindex="-1"></a>                           <span class="cf">function</span>(x)<span class="fu">c</span>(<span class="at">av=</span><span class="fu">mean</span>(x), <span class="at">sd=</span><span class="fu">sd</span>(x), <span class="at">nobs=</span><span class="fu">length</span>(x))))</span></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" tabindex="-1"></a><span class="fu">apply</span>(UCBAdmissions, <span class="dv">3</span>, <span class="cf">function</span>(x)(x[<span class="dv">1</span>,<span class="dv">2</span>]<span class="sc">/</span>(x[<span class="dv">1</span>,<span class="dv">2</span>]<span class="sc">+</span>x[<span class="dv">2</span>,<span class="dv">2</span>]))<span class="sc">*</span><span class="dv">100</span>) <span class="co"># Females</span></span>
+<span id="cb31-2"><a href="#cb31-2" tabindex="-1"></a><span class="fu">apply</span>(UCBAdmissions, <span class="dv">3</span>, <span class="cf">function</span>(x)(x[<span class="dv">1</span>,<span class="dv">1</span>]<span class="sc">/</span>(x[<span class="dv">1</span>,<span class="dv">1</span>]<span class="sc">+</span>x[<span class="dv">2</span>,<span class="dv">1</span>]))<span class="sc">*</span><span class="dv">100</span>) <span class="co"># Males</span></span></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" tabindex="-1"></a>UCBAdmissions[, , <span class="dv">1</span>]</span></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" tabindex="-1"></a>DAAG<span class="sc">::</span>cricketer <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">count</span>(year, left, <span class="at">name=</span><span class="st">&quot;Freq&quot;</span>) <span class="ot">-&gt;</span> handYear</span>
+<span id="cb33-2"><a href="#cb33-2" tabindex="-1"></a><span class="fu">names</span>(handYear)[<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="st">&quot;hand&quot;</span></span>
+<span id="cb33-3"><a href="#cb33-3" tabindex="-1"></a>byYear <span class="ot">&lt;-</span> tidyr<span class="sc">::</span><span class="fu">pivot_wider</span>(handYear, <span class="at">names_from=</span><span class="st">&#39;hand&#39;</span>, <span class="at">values_from=</span><span class="st">&quot;Freq&quot;</span>)</span></code></pre></div>
+</div>
+<div id="subsection-10.2.5-writing-data-to-a-file-and-reading-data-from-a-file" class="section level4">
+<h4>Subsection 10.2.5: Writing data to a file, and reading data from a
+file</h4>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" tabindex="-1"></a>CO2byYear <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">year =</span> <span class="fu">seq</span>(<span class="at">from=</span><span class="dv">1900</span>, <span class="at">to=</span><span class="dv">2020</span>, <span class="at">by=</span><span class="dv">20</span>),</span>
+<span id="cb34-2"><a href="#cb34-2" tabindex="-1"></a>                        <span class="at">co2gas =</span> <span class="fu">c</span>(<span class="fl">1.94</span>, <span class="fl">3.52</span>, <span class="fl">4.84</span>, <span class="fl">9.38</span>, <span class="fl">19.49</span>, <span class="fl">25.46</span>, <span class="fl">35.25</span>))</span>
+<span id="cb34-3"><a href="#cb34-3" tabindex="-1"></a><span class="fu">write.table</span>(CO2byYear, <span class="at">file=</span><span class="st">&#39;gas.txt&#39;</span>)    <span class="co"># Write data frame to file</span></span>
+<span id="cb34-4"><a href="#cb34-4" tabindex="-1"></a>CO2byYear <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="at">file=</span><span class="st">&quot;gas.txt&quot;</span>)   <span class="co"># Read data back in</span></span>
+<span id="cb34-5"><a href="#cb34-5" tabindex="-1"></a><span class="fu">write.csv</span>(CO2byYear, <span class="at">file=</span><span class="st">&#39;gas.csv&#39;</span>)                  <span class="co"># Write data frame</span></span>
+<span id="cb34-6"><a href="#cb34-6" tabindex="-1"></a>CO2byYear <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="at">file=</span><span class="st">&quot;gas.csv&quot;</span>, <span class="at">row.names=</span><span class="dv">1</span>)    <span class="co"># Read data back in</span></span></code></pre></div>
+<div id="data-input-from-the-rstudio-menu-data-frames-vs-tibbles" class="section level5">
+<h5>Data input from the RStudio menu — data frames vs tibbles</h5>
+</div>
+</div>
+<div id="subsection-10.2.6-issues-for-working-with-data-frames-and-tibbles" class="section level4">
+<h4>Subsection 10.2.6: Issues for working with data frames and
+tibbles</h4>
+<div id="extraction-of-columns-from-data-frames-and-tibbles" class="section level5">
+<h5>Extraction of columns from data frames and tibbles</h5>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" tabindex="-1"></a>sites <span class="ot">&lt;-</span> DAAG<span class="sc">::</span>possumsites    <span class="co"># sites is then a data frame</span></span>
+<span id="cb35-2"><a href="#cb35-2" tabindex="-1"></a>sites[,<span class="dv">3</span>]                     <span class="co"># returns a vector</span></span>
+<span id="cb35-3"><a href="#cb35-3" tabindex="-1"></a>sites[,<span class="dv">3</span>, drop<span class="ot">=</span><span class="cn">FALSE</span>]         <span class="co"># returns a 1-column data frame</span></span></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">as_tibble</span>(sites)[,<span class="dv">3</span>]   <span class="co"># returns a 1-column tibble</span></span>
+<span id="cb36-2"><a href="#cb36-2" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">as_tibble</span>(sites)[[<span class="dv">3</span>]]  <span class="co"># returns a vector</span></span>
+<span id="cb36-3"><a href="#cb36-3" tabindex="-1"></a>sites[[<span class="dv">3</span>]]                    <span class="co"># returns a vector</span></span></code></pre></div>
+</div>
+<div id="conversion-between-data-frames-and-tibbles" class="section level5">
+<h5>Conversion between data frames and tibbles</h5>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" tabindex="-1"></a><span class="fu">attributes</span>(DAAG<span class="sc">::</span>possumsites)[[<span class="st">&#39;row.names&#39;</span>]]</span></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" tabindex="-1"></a>possumSites <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">as_tibble</span>(DAAG<span class="sc">::</span>possumsites, <span class="at">rownames=</span><span class="st">&quot;Site&quot;</span>)</span>
+<span id="cb38-2"><a href="#cb38-2" tabindex="-1"></a>possumSites</span></code></pre></div>
+</div>
+</div>
+<div id="subsection-10.2.7-lists" class="section level4">
+<h4>Subsection 10.2.7: Lists</h4>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" tabindex="-1"></a><span class="do">## Summary statistics for 31 felled black cherry tree</span></span>
+<span id="cb39-2"><a href="#cb39-2" tabindex="-1"></a><span class="do">## Median (middle value), range, number, units</span></span>
+<span id="cb39-3"><a href="#cb39-3" tabindex="-1"></a>htstats <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">med=</span><span class="dv">76</span>, <span class="at">range=</span><span class="fu">c</span>(<span class="at">low=</span><span class="dv">63</span>,<span class="at">high=</span><span class="dv">87</span>), <span class="at">n=</span><span class="dv">31</span>, <span class="at">units=</span><span class="st">&quot;ft&quot;</span>)</span>
+<span id="cb39-4"><a href="#cb39-4" tabindex="-1"></a>htstats[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]       <span class="co"># Show first two list elements only</span></span></code></pre></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" tabindex="-1"></a><span class="do">## The following are alternative ways to extract the second list element</span></span>
+<span id="cb40-2"><a href="#cb40-2" tabindex="-1"></a>htstats[<span class="dv">2</span>]          <span class="co"># First list element (Can replace `2` by &#39;range&#39;)</span></span>
+<span id="cb40-3"><a href="#cb40-3" tabindex="-1"></a>htstats[<span class="dv">2</span>][<span class="dv">1</span>]       <span class="co"># A subset of a list is a list </span></span></code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" tabindex="-1"></a>htstats[[<span class="dv">2</span>]]; htstats<span class="sc">$</span>range; htstats[[<span class="st">&quot;range&quot;</span>]]</span></code></pre></div>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" tabindex="-1"></a><span class="fu">unlist</span>(htstats[<span class="dv">2</span>])  <span class="co"># Contents of second list element, with composite names</span></span>
+<span id="cb42-2"><a href="#cb42-2" tabindex="-1"></a><span class="fu">unlist</span>(htstats[<span class="dv">2</span>], <span class="at">use.names=</span>F)   <span class="co"># Elements have no names</span></span></code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" tabindex="-1"></a>tstats <span class="ot">&lt;-</span> <span class="fu">with</span>(MASS<span class="sc">::</span>shoes, <span class="fu">t.test</span>(B, A, <span class="at">paired=</span><span class="cn">TRUE</span>))</span>
+<span id="cb43-2"><a href="#cb43-2" tabindex="-1"></a><span class="fu">names</span>(tstats)        <span class="do">## Names of list elements. See `?t.test` for details.</span></span>
+<span id="cb43-3"><a href="#cb43-3" tabindex="-1"></a>tstats[<span class="dv">1</span>]            <span class="do">## Type tstats[1] to see the first list element</span></span>
+<span id="cb43-4"><a href="#cb43-4" tabindex="-1"></a><span class="do">## Compact listing of contents list elements 1 to 5, which are all numeric</span></span>
+<span id="cb43-5"><a href="#cb43-5" tabindex="-1"></a><span class="fu">unlist</span>(tstats[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>])  <span class="do">## With `unlist(tstats)` all elements become character </span></span></code></pre></div>
+</div>
+</div>
+<div id="section-10.3-functions-and-operators" class="section level3">
+<h3>Section 10.3: Functions and operators</h3>
+<div id="subsection-10.3.1-common-useful-built-in-functions" class="section level4">
+<h4>Subsection 10.3.1: Common useful built-in functions</h4>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" tabindex="-1"></a><span class="do">## Data indices</span></span>
+<span id="cb44-2"><a href="#cb44-2" tabindex="-1"></a><span class="fu">length</span>()       <span class="co"># number of elements in a vector or a list</span></span>
+<span id="cb44-3"><a href="#cb44-3" tabindex="-1"></a><span class="fu">order</span>()        <span class="co"># x[order(x)] sorts x (by default, NAs are last)</span></span>
+<span id="cb44-4"><a href="#cb44-4" tabindex="-1"></a><span class="fu">which</span>()        <span class="co"># which indices of a logical vector are `TRUE`</span></span>
+<span id="cb44-5"><a href="#cb44-5" tabindex="-1"></a><span class="fu">which.max</span>()    <span class="co"># locates (first) maximum (NB, also: `which.min()`)</span></span></code></pre></div>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" tabindex="-1"></a><span class="do">## Data manipulation</span></span>
+<span id="cb45-2"><a href="#cb45-2" tabindex="-1"></a><span class="fu">c</span>()            <span class="co"># join together (`concatenate`) elements or vectors or lists</span></span>
+<span id="cb45-3"><a href="#cb45-3" tabindex="-1"></a><span class="fu">diff</span>()         <span class="co"># vector of first differences</span></span>
+<span id="cb45-4"><a href="#cb45-4" tabindex="-1"></a><span class="fu">sort</span>()         <span class="co"># sort elements into order, by default omitting NAs</span></span>
+<span id="cb45-5"><a href="#cb45-5" tabindex="-1"></a><span class="fu">rev</span>()          <span class="co"># reverse the order of vector elements</span></span>
+<span id="cb45-6"><a href="#cb45-6" tabindex="-1"></a><span class="fu">t</span>()            <span class="co"># transpose matrix or data frame </span></span>
+<span id="cb45-7"><a href="#cb45-7" tabindex="-1"></a>               <span class="co"># (a data frame is first coerced to a matrixwith() </span></span>
+<span id="cb45-8"><a href="#cb45-8" tabindex="-1"></a><span class="fu">with</span>()         <span class="co"># do computation using columns of specified data frame</span></span></code></pre></div>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" tabindex="-1"></a><span class="do">## Data summary</span></span>
+<span id="cb46-2"><a href="#cb46-2" tabindex="-1"></a><span class="fu">mean</span>()         <span class="co"># mean of the elements of a vector</span></span>
+<span id="cb46-3"><a href="#cb46-3" tabindex="-1"></a><span class="fu">median</span>()       <span class="co"># median of the elements of a vector</span></span>
+<span id="cb46-4"><a href="#cb46-4" tabindex="-1"></a><span class="fu">range</span>()        <span class="co"># minimum and maximum value elements of vector</span></span>
+<span id="cb46-5"><a href="#cb46-5" tabindex="-1"></a><span class="fu">unique</span>()       <span class="co"># form the vector of distinct values</span></span>
+<span id="cb46-6"><a href="#cb46-6" tabindex="-1"></a><span class="do">## List function arguments</span></span>
+<span id="cb46-7"><a href="#cb46-7" tabindex="-1"></a><span class="fu">args</span>()         <span class="co"># information on the arguments to a function</span></span></code></pre></div>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" tabindex="-1"></a><span class="do">## Obtain details</span></span>
+<span id="cb47-2"><a href="#cb47-2" tabindex="-1"></a><span class="fu">head</span>()         <span class="co"># display first few rows (by default 6) of object</span></span>
+<span id="cb47-3"><a href="#cb47-3" tabindex="-1"></a><span class="fu">ls</span>()           <span class="co"># list names of objects in the workspace</span></span></code></pre></div>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" tabindex="-1"></a><span class="do">## Print multiple objects</span></span>
+<span id="cb48-2"><a href="#cb48-2" tabindex="-1"></a><span class="fu">cat</span>()          <span class="co"># prints multiple objects, one after the other</span></span></code></pre></div>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" tabindex="-1"></a><span class="do">## Functions that return TRUE or FALSE?</span></span>
+<span id="cb49-2"><a href="#cb49-2" tabindex="-1"></a><span class="fu">all</span>()          <span class="co"># returns TRUE if all values are TRUE</span></span>
+<span id="cb49-3"><a href="#cb49-3" tabindex="-1"></a><span class="fu">any</span>()          <span class="co"># returns TRUE if any values are TRUE</span></span>
+<span id="cb49-4"><a href="#cb49-4" tabindex="-1"></a><span class="fu">is.factor</span>()    <span class="co"># returns TRUE if the argument is a factor</span></span>
+<span id="cb49-5"><a href="#cb49-5" tabindex="-1"></a><span class="fu">is.na</span>()        <span class="co"># returns TRUE if the argument is an NA</span></span>
+<span id="cb49-6"><a href="#cb49-6" tabindex="-1"></a>               <span class="co"># NB also is.logical(), etc.</span></span></code></pre></div>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" tabindex="-1"></a><span class="fu">seq</span>(<span class="at">from =</span><span class="dv">1</span>, <span class="at">by=</span><span class="dv">2</span>, <span class="at">length.out=</span><span class="dv">3</span>)  <span class="co"># Unabbeviated arguments</span></span>
+<span id="cb50-2"><a href="#cb50-2" tabindex="-1"></a><span class="fu">seq</span>(<span class="at">from =</span><span class="dv">1</span>, <span class="at">by=</span><span class="dv">2</span>, <span class="at">length=</span><span class="dv">3</span>)      <span class="co"># Abbreviate `length.out` to `length`</span></span></code></pre></div>
+</div>
+<div id="subsection-10.3.2-user-written-functions" class="section level4">
+<h4>Subsection 10.3.2: User-written functions</h4>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" tabindex="-1"></a>distance <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">148</span>,<span class="dv">182</span>,<span class="dv">173</span>,<span class="dv">166</span>,<span class="dv">109</span>,<span class="dv">141</span>,<span class="dv">166</span>)</span>
+<span id="cb51-2"><a href="#cb51-2" tabindex="-1"></a><span class="fu">mean.and.sd</span>(distance)</span></code></pre></div>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" tabindex="-1"></a><span class="do">## Execute the function with the  default argument:</span></span>
+<span id="cb52-2"><a href="#cb52-2" tabindex="-1"></a><span class="fu">mean.and.sd</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" tabindex="-1"></a><span class="do">## Thus, to return the mean, SD and name of the input vector</span></span>
+<span id="cb53-2"><a href="#cb53-2" tabindex="-1"></a><span class="do">## replace c(mean=av, SD=sdev) by</span></span>
+<span id="cb53-3"><a href="#cb53-3" tabindex="-1"></a><span class="fu">list</span>(<span class="at">mean=</span>av, <span class="at">SD=</span>sdev, <span class="at">dataset =</span> <span class="fu">deparse</span>(<span class="fu">substitute</span>(x)))</span></code></pre></div>
+</div>
+<div id="subsection-10.3.3-generic-functions-and-the-class-of-an-object" class="section level4">
+<h4>Subsection 10.3.3: Generic functions, and the class of an
+object</h4>
+</div>
+<div id="subsection-10.3.4-pipes-a-do-this-then-this-.-.-.-syntax" class="section level4">
+<h4>Subsection 10.3.4: Pipes — a “Do this, then this, . . .” syntax</h4>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" tabindex="-1"></a><span class="fu">mean</span>(<span class="fu">rnorm</span>(<span class="dv">20</span>, <span class="at">sd=</span><span class="dv">2</span>))</span>
+<span id="cb54-2"><a href="#cb54-2" tabindex="-1"></a><span class="dv">20</span> <span class="sc">|&gt;</span> <span class="fu">rnorm</span>(<span class="at">sd=</span><span class="dv">2</span>) <span class="sc">|&gt;</span> <span class="fu">mean</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" tabindex="-1"></a>logmammals <span class="ot">&lt;-</span> MASS<span class="sc">::</span>mammals <span class="sc">|&gt;</span> <span class="fu">log</span>() <span class="sc">|&gt;</span> <span class="fu">setNames</span>(<span class="fu">c</span>(<span class="st">&quot;logbody&quot;</span>,<span class="st">&quot;logbrain&quot;</span>))</span>
+<span id="cb55-2"><a href="#cb55-2" tabindex="-1"></a><span class="do">## Alternatively, use the ability to reverse the assignment operator.</span></span>
+<span id="cb55-3"><a href="#cb55-3" tabindex="-1"></a>MASS<span class="sc">::</span>mammals <span class="sc">|&gt;</span> <span class="fu">log</span>() <span class="sc">|&gt;</span> <span class="fu">setNames</span>(<span class="fu">c</span>(<span class="st">&quot;logbody&quot;</span>,<span class="st">&quot;logbrain&quot;</span>)) <span class="ot">-&gt;</span> logmammals </span>
+<span id="cb55-4"><a href="#cb55-4" tabindex="-1"></a>  <span class="do">## This last is more in the spirit of pipes.</span></span></code></pre></div>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" tabindex="-1"></a>MASS<span class="sc">::</span>mammals <span class="sc">|&gt;</span></span>
+<span id="cb56-2"><a href="#cb56-2" tabindex="-1"></a>  <span class="fu">log</span>() <span class="sc">|&gt;</span></span>
+<span id="cb56-3"><a href="#cb56-3" tabindex="-1"></a>  <span class="fu">setNames</span>(<span class="fu">c</span>(<span class="st">&quot;logbody&quot;</span>,<span class="st">&quot;logbrain&quot;</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb56-4"><a href="#cb56-4" tabindex="-1"></a>  (\(d)<span class="fu">lm</span>(logbrain <span class="sc">~</span> logbody, <span class="at">data=</span>d))() <span class="sc">|&gt;</span></span>
+<span id="cb56-5"><a href="#cb56-5" tabindex="-1"></a>  <span class="fu">coef</span>()</span></code></pre></div>
+</div>
+<div id="subsection-10.3.5-operators" class="section level4">
+<h4>Subsection 10.3.5: Operators</h4>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" tabindex="-1"></a><span class="do">## Multiple of divisor that leaves smallest non-negative remainder</span></span>
+<span id="cb57-2"><a href="#cb57-2" tabindex="-1"></a><span class="fu">c</span>(<span class="st">&quot;Multiple of divisor&quot;</span> <span class="ot">=</span> <span class="dv">24</span> <span class="sc">%/%</span> <span class="dv">9</span>, <span class="st">&quot;Remainder after division&quot;</span> <span class="ot">=</span> <span class="dv">6</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="section-10.4-calculations-with-matrices-arrays-lists-and-data-frames" class="section level3">
+<h3>Section 10.4: Calculations with matrices, arrays, lists, and data
+frames</h3>
+<div id="calculations-in-parallel-across-all-elements-of-a-vector" class="section level5">
+<h5>Calculations in parallel across all elements of a vector</h5>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">6</span></span>
+<span id="cb58-2"><a href="#cb58-2" tabindex="-1"></a><span class="fu">log</span>(x)                 <span class="co"># Natural logarithm of 1, 2, ... 6</span></span>
+<span id="cb58-3"><a href="#cb58-3" tabindex="-1"></a><span class="fu">log</span>(x, <span class="at">base=</span><span class="dv">10</span>)        <span class="co"># Common logarithm (base 10)</span></span>
+<span id="cb58-4"><a href="#cb58-4" tabindex="-1"></a><span class="fu">log</span>(<span class="dv">64</span>, <span class="at">base=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">10</span>))  <span class="co"># Apply different bases to one number</span></span>
+<span id="cb58-5"><a href="#cb58-5" tabindex="-1"></a><span class="fu">log</span>(<span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>, <span class="at">nrow=</span><span class="dv">2</span>), <span class="at">base=</span><span class="dv">2</span>)  <span class="co"># Take logarithms of all matrix elements</span></span></code></pre></div>
+</div>
+<div id="patterned-data" class="section level5">
+<h5>Patterned data</h5>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" tabindex="-1"></a><span class="fu">seq</span>(<span class="at">from=</span><span class="dv">5</span>, <span class="at">to=</span><span class="dv">22</span>, <span class="at">by=</span><span class="dv">3</span>)  <span class="co"># The first value is 5.</span></span>
+<span id="cb59-2"><a href="#cb59-2" tabindex="-1"></a><span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">5</span>), <span class="dv">4</span>)          <span class="co">#  Repeat the sequence (2, 3, 5) four times over</span></span>
+<span id="cb59-3"><a href="#cb59-3" tabindex="-1"></a><span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">&quot;female&quot;</span>, <span class="st">&quot;male&quot;</span>), <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>))    <span class="co"># Use syntax with a character vector</span></span></code></pre></div>
+</div>
+<div id="subsection-10.4.1-missing-values" class="section level4">
+<h4>Subsection 10.4.1: Missing values</h4>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" tabindex="-1"></a>nbranch <span class="ot">&lt;-</span> <span class="fu">subset</span>(DAAG<span class="sc">::</span>rainforest, species<span class="sc">==</span><span class="st">&quot;Acacia mabellae&quot;</span>)<span class="sc">$</span>branch</span>
+<span id="cb60-2"><a href="#cb60-2" tabindex="-1"></a>nbranch            <span class="co"># Number of small branches (2cm or less)</span></span></code></pre></div>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" tabindex="-1"></a><span class="fu">mean</span>(nbranch, <span class="at">na.rm=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" tabindex="-1"></a>nbranch <span class="sc">==</span> <span class="cn">NA</span>      <span class="co"># This always equals `NA`</span></span></code></pre></div>
+<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" tabindex="-1"></a><span class="fu">is.na</span>(nbranch)    <span class="co"># Use to check for NAs</span></span></code></pre></div>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" tabindex="-1"></a>nbranch[<span class="fu">is.na</span>(nbranch)] <span class="ot">&lt;-</span> <span class="sc">-</span><span class="dv">999</span></span>
+<span id="cb64-2"><a href="#cb64-2" tabindex="-1"></a>  <span class="co"># `mean(nbranch)` will then be a nonsense value</span></span></code></pre></div>
+<div id="nas-in-modeling-functions" class="section level5">
+<h5>NAs in modeling functions</h5>
+<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" tabindex="-1"></a><span class="fu">options</span>()<span class="sc">$</span>na.action <span class="co"># Version 3.2.2, following startup</span></span></code></pre></div>
+</div>
+<div id="counting-and-identifying-nas-the-use-of-table" class="section level5">
+<h5>Counting and identifying NAs – the use of table()</h5>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" tabindex="-1"></a><span class="fu">with</span>(DAAG<span class="sc">::</span>nswdemo, <span class="fu">table</span>(trt, re74<span class="sc">&gt;</span><span class="dv">0</span>, <span class="at">useNA=</span><span class="st">&quot;ifany&quot;</span>))</span></code></pre></div>
+</div>
+<div id="infinities-and-nans" class="section level5">
+<h5>Infinities and NaNs</h5>
+<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" tabindex="-1"></a><span class="fu">summary</span>(DAAG<span class="sc">::</span>primates)</span></code></pre></div>
+<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" tabindex="-1"></a>primates <span class="ot">&lt;-</span> DAAG<span class="sc">::</span>primates</span></code></pre></div>
+<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" tabindex="-1"></a>gplots<span class="sc">::</span><span class="fu">plotCI</span>()    <span class="co"># `plotCI() function in package `gplots`</span></span>
+<span id="cb69-2"><a href="#cb69-2" tabindex="-1"></a>plotrix<span class="sc">::</span><span class="fu">plotCI</span>()   <span class="co"># `plotCI() function in package `plotrix`</span></span></code></pre></div>
+<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()[[<span class="st">&#39;basePkgs&#39;</span>]]</span></code></pre></div>
+<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" tabindex="-1"></a><span class="do">## List just the workspace and the first eight packages on the search list:</span></span>
+<span id="cb71-2"><a href="#cb71-2" tabindex="-1"></a><span class="fu">search</span>()[<span class="dv">1</span><span class="sc">:</span><span class="dv">9</span>]</span></code></pre></div>
+<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" tabindex="-1"></a><span class="fu">data</span>(<span class="at">package=</span><span class="st">&quot;datasets&quot;</span>) </span></code></pre></div>
+</div>
+</div>
+</div>
+<div id="section-10.5-brief-notes-on-r-graphics-packages-and-functions" class="section level3">
+<h3>Section 10.5: Brief notes on R graphics packages and functions</h3>
+<div id="subsection-10.5.1-lattice-graphics-a-step-beyond-base-graphics" class="section level4">
+<h4>Subsection 10.5.1: Lattice graphics — a step beyond base
+graphics</h4>
+<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" tabindex="-1"></a>grog <span class="ot">&lt;-</span> DAAG<span class="sc">::</span>grog</span>
+<span id="cb73-2"><a href="#cb73-2" tabindex="-1"></a>chr <span class="ot">&lt;-</span> <span class="fu">with</span>(grog, <span class="fu">match</span>(Country, <span class="fu">c</span>(<span class="st">&#39;Australia&#39;</span>, <span class="st">&#39;NewZealand&#39;</span>)))  </span>
+<span id="cb73-3"><a href="#cb73-3" tabindex="-1"></a>  <span class="co"># Australia: 1; matches 1st element of c(&#39;Australia&#39;, &#39;NewZealand&#39;)</span></span>
+<span id="cb73-4"><a href="#cb73-4" tabindex="-1"></a>  <span class="co"># NewZealand: 2; matches 2nd element</span></span>
+<span id="cb73-5"><a href="#cb73-5" tabindex="-1"></a><span class="fu">plot</span>(Beer <span class="sc">~</span> Year, <span class="at">data=</span>grog, <span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">0</span>, <span class="fu">max</span>(Beer)<span class="sc">*</span><span class="fl">1.1</span>), <span class="at">pch =</span> chr)</span>
+<span id="cb73-6"><a href="#cb73-6" tabindex="-1"></a><span class="fu">with</span>(grog, <span class="fu">points</span>(Wine <span class="sc">~</span> Year, <span class="at">pch=</span>chr, <span class="at">col=</span><span class="st">&#39;red&#39;</span>))</span>
+<span id="cb73-7"><a href="#cb73-7" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">&quot;bottomright&quot;</span>, <span class="at">legend=</span><span class="fu">c</span>(<span class="st">&quot;Australia&quot;</span>, <span class="st">&quot;New Zealand&quot;</span>), <span class="at">pch=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>)</span>
+<span id="cb73-8"><a href="#cb73-8" tabindex="-1"></a><span class="fu">title</span>(<span class="at">main=</span><span class="st">&quot;Beer consumption (l, pure alcohol)&quot;</span>, <span class="at">line=</span><span class="dv">1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" tabindex="-1"></a><span class="fu">library</span>(latticeExtra)    <span class="do">## Loads both lattice and the add-on latticeExtra</span></span>
+<span id="cb74-2"><a href="#cb74-2" tabindex="-1"></a>gph <span class="ot">&lt;-</span> <span class="fu">xyplot</span>(Beer<span class="sc">+</span>Wine <span class="sc">~</span> Year, <span class="at">groups=</span>Country, <span class="at">data=</span>grog)</span>
+<span id="cb74-3"><a href="#cb74-3" tabindex="-1"></a><span class="fu">update</span>(gph, <span class="at">par.settings=</span><span class="fu">simpleTheme</span>(<span class="at">pch=</span><span class="dv">19</span>), <span class="at">auto.key=</span><span class="fu">list</span>(<span class="at">columns=</span><span class="dv">2</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" tabindex="-1"></a><span class="do">## Or, condition on `Country`</span></span>
+<span id="cb75-2"><a href="#cb75-2" tabindex="-1"></a><span class="fu">xyplot</span>(Beer<span class="sc">+</span>Wine<span class="sc">+</span>Spirit <span class="sc">~</span> Year <span class="sc">|</span> Country, <span class="at">data=</span>grog,</span>
+<span id="cb75-3"><a href="#cb75-3" tabindex="-1"></a>       <span class="at">par.settings=</span><span class="fu">simpleTheme</span>(<span class="at">pch=</span><span class="dv">19</span>), <span class="at">auto.key=</span><span class="fu">list</span>(<span class="at">columns=</span><span class="dv">3</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" tabindex="-1"></a>tinting <span class="ot">&lt;-</span> DAAG<span class="sc">::</span>tinting</span>
+<span id="cb76-2"><a href="#cb76-2" tabindex="-1"></a><span class="fu">xyplot</span>(csoa<span class="sc">~</span>it <span class="sc">|</span> tint<span class="sc">*</span>target, <span class="at">groups=</span>agegp, <span class="at">data=</span>tinting, <span class="at">auto.key=</span><span class="fu">list</span>(<span class="at">columns=</span><span class="dv">2</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" tabindex="-1"></a>cuckoos <span class="ot">&lt;-</span> DAAG<span class="sc">::</span>cuckoos</span>
+<span id="cb77-2"><a href="#cb77-2" tabindex="-1"></a>av <span class="ot">&lt;-</span> <span class="fu">with</span>(cuckoos, <span class="fu">aggregate</span>(length, <span class="fu">list</span>(<span class="at">species=</span>species), <span class="at">FUN=</span>mean))</span>
+<span id="cb77-3"><a href="#cb77-3" tabindex="-1"></a>gph <span class="ot">&lt;-</span> <span class="fu">dotplot</span>(species <span class="sc">~</span> length, <span class="at">data=</span>cuckoos, <span class="at">alpha=</span><span class="fl">0.4</span>) <span class="sc">+</span></span>
+<span id="cb77-4"><a href="#cb77-4" tabindex="-1"></a>  <span class="fu">as.layer</span>(<span class="fu">dotplot</span>(species <span class="sc">~</span> x, <span class="at">pch=</span><span class="dv">3</span>, <span class="at">cex=</span><span class="fl">1.4</span>, <span class="at">col=</span><span class="st">&quot;black&quot;</span>, <span class="at">data=</span>av))</span>
+<span id="cb77-5"><a href="#cb77-5" tabindex="-1"></a><span class="fu">update</span>(gph, <span class="at">xlab=</span><span class="st">&quot;Length of egg (mm)&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" tabindex="-1"></a><span class="do">## Alternatives, using `layer()` or `as.layer()`</span></span>
+<span id="cb78-2"><a href="#cb78-2" tabindex="-1"></a>avg <span class="ot">&lt;-</span> <span class="fu">with</span>(cuckoos, <span class="fu">data.frame</span>(<span class="at">nspec=</span><span class="dv">1</span><span class="sc">:</span><span class="fu">nlevels</span>(species), </span>
+<span id="cb78-3"><a href="#cb78-3" tabindex="-1"></a>                             <span class="at">av=</span><span class="fu">sapply</span>(<span class="fu">split</span>(length,species),mean)))</span>
+<span id="cb78-4"><a href="#cb78-4" tabindex="-1"></a><span class="fu">dotplot</span>(species <span class="sc">~</span> length, <span class="at">data=</span>cuckoos) <span class="sc">+</span> </span>
+<span id="cb78-5"><a href="#cb78-5" tabindex="-1"></a>  <span class="fu">layer</span>(<span class="fu">lpoints</span>(nspec<span class="sc">~</span>av, <span class="at">pch=</span><span class="dv">3</span>, <span class="at">cex=</span><span class="fl">1.25</span>, <span class="at">col=</span><span class="st">&quot;black&quot;</span>), <span class="at">data=</span>avg)</span></code></pre></div>
+<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" tabindex="-1"></a><span class="fu">dotplot</span>(species <span class="sc">~</span> length, <span class="at">data=</span>cuckoos) <span class="sc">+</span> </span>
+<span id="cb79-2"><a href="#cb79-2" tabindex="-1"></a>  <span class="fu">as.layer</span>(<span class="fu">dotplot</span>(nspec<span class="sc">~</span>av, <span class="at">data=</span>avg, <span class="at">pch=</span><span class="dv">3</span>, <span class="at">cex=</span><span class="fl">1.25</span>, <span class="at">col=</span><span class="st">&quot;black&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" tabindex="-1"></a><span class="do">## Specify panel function</span></span>
+<span id="cb80-2"><a href="#cb80-2" tabindex="-1"></a><span class="fu">dotplot</span>(species <span class="sc">~</span> length, <span class="at">data=</span>cuckoos, </span>
+<span id="cb80-3"><a href="#cb80-3" tabindex="-1"></a>  <span class="at">panel=</span><span class="cf">function</span>(x,y,...){<span class="fu">panel.dotplot</span>(x, y, <span class="at">pch=</span><span class="dv">1</span>, <span class="at">col=</span><span class="st">&quot;gray40&quot;</span>)</span>
+<span id="cb80-4"><a href="#cb80-4" tabindex="-1"></a>    avg <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">nspec=</span><span class="dv">1</span><span class="sc">:</span><span class="fu">nlevels</span>(y), <span class="at">av=</span><span class="fu">sapply</span>(<span class="fu">split</span>(x,y),mean))</span>
+<span id="cb80-5"><a href="#cb80-5" tabindex="-1"></a>    <span class="fu">with</span>(avg, <span class="fu">lpoints</span>(nspec<span class="sc">~</span>av, <span class="at">pch=</span><span class="dv">3</span>, <span class="at">cex=</span><span class="fl">1.25</span>, <span class="at">col=</span><span class="st">&quot;black&quot;</span>)) })</span></code></pre></div>
+<div id="combining-separately-created-graphics-objects" class="section level5">
+<h5>Combining separately created graphics objects</h5>
+<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" tabindex="-1"></a>cuckoos <span class="ot">&lt;-</span> DAAG<span class="sc">::</span>cuckoos</span>
+<span id="cb81-2"><a href="#cb81-2" tabindex="-1"></a><span class="do">## Panel A: Dotplot without species means added</span></span>
+<span id="cb81-3"><a href="#cb81-3" tabindex="-1"></a>gphA <span class="ot">&lt;-</span> <span class="fu">dotplot</span>(species <span class="sc">~</span> length, <span class="at">data=</span>cuckoos) </span>
+<span id="cb81-4"><a href="#cb81-4" tabindex="-1"></a><span class="do">## Panel B: Box and whisker plot</span></span>
+<span id="cb81-5"><a href="#cb81-5" tabindex="-1"></a>gphB <span class="ot">&lt;-</span> <span class="fu">bwplot</span>(species <span class="sc">~</span> length, <span class="at">data=</span>cuckoos)</span>
+<span id="cb81-6"><a href="#cb81-6" tabindex="-1"></a><span class="fu">update</span>(<span class="fu">c</span>(<span class="st">&quot;A: Dotplot&quot;</span><span class="ot">=</span>gphA, <span class="st">&quot;B: Boxplot&quot;</span><span class="ot">=</span>gphB), <span class="at">between=</span><span class="fu">list</span>(<span class="at">x=</span><span class="fl">0.4</span>),</span>
+<span id="cb81-7"><a href="#cb81-7" tabindex="-1"></a>       <span class="at">xlab=</span><span class="st">&quot;Length of egg (mm)&quot;</span>, <span class="at">layout=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">1</span>))</span>
+<span id="cb81-8"><a href="#cb81-8" tabindex="-1"></a>  <span class="do">## `latticeExtra::c()` joins compatible plots together. </span></span>
+<span id="cb81-9"><a href="#cb81-9" tabindex="-1"></a>  <span class="do">## `layout=c(2,1)` : join horizontally; `layout=c(1,2)` : join vertically</span></span></code></pre></div>
+</div>
+</div>
+<div id="subsection-10.5.2-dynamic-graphics-the-rgl-package" class="section level4">
+<h4>Subsection 10.5.2: Dynamic graphics – the rgl package</h4>
+<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" tabindex="-1"></a><span class="fu">vignette</span>(<span class="st">&#39;plot3D&#39;</span>, <span class="at">package=</span><span class="st">&#39;plot3D&#39;</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="section-10.6-plotting-characters-symbols-line-types-and-colors" class="section level3">
+<h3>Section 10.6: Plotting characters, symbols, line types and
+colors</h3>
+<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" tabindex="-1"></a>ycol <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fl">2.1</span> <span class="sc">-</span> (<span class="dv">0</span><span class="sc">:</span><span class="dv">9</span>) <span class="sc">*</span> <span class="fl">2.1</span></span>
+<span id="cb83-2"><a href="#cb83-2" tabindex="-1"></a>ftype <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;plain&quot;</span>, <span class="st">&quot;bold&quot;</span>, <span class="st">&quot;italic&quot;</span>, <span class="st">&quot;bold italic&quot;</span>, <span class="st">&quot;symbol&quot;</span>)</span>
+<span id="cb83-3"><a href="#cb83-3" tabindex="-1"></a>yline <span class="ot">&lt;-</span> <span class="fl">4.2</span></span>
+<span id="cb83-4"><a href="#cb83-4" tabindex="-1"></a>ypmax <span class="ot">&lt;-</span> <span class="dv">20</span></span>
+<span id="cb83-5"><a href="#cb83-5" tabindex="-1"></a>farleft <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fl">7.8</span></span>
+<span id="cb83-6"><a href="#cb83-6" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="dv">4</span>, <span class="dv">31</span>), <span class="fu">c</span>(<span class="fl">4.25</span>, ypmax), <span class="at">type =</span> <span class="st">&quot;n&quot;</span>, <span class="at">xlab =</span> <span class="st">&quot;&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;&quot;</span>,</span>
+<span id="cb83-7"><a href="#cb83-7" tabindex="-1"></a><span class="at">axes =</span> F)</span>
+<span id="cb83-8"><a href="#cb83-8" tabindex="-1"></a>chh <span class="ot">&lt;-</span> <span class="fu">par</span>()<span class="sc">$</span>cxy[<span class="dv">2</span>]</span>
+<span id="cb83-9"><a href="#cb83-9" tabindex="-1"></a><span class="fu">text</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">25</span>, <span class="fu">rep</span>(ypmax <span class="sc">+</span> <span class="fl">0.8</span> <span class="sc">*</span> chh, <span class="dv">26</span>), <span class="fu">paste</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">25</span>), <span class="at">srt =</span> <span class="dv">90</span>,</span>
+<span id="cb83-10"><a href="#cb83-10" tabindex="-1"></a><span class="at">cex =</span> <span class="fl">0.75</span>, <span class="at">xpd =</span> T)</span>
+<span id="cb83-11"><a href="#cb83-11" tabindex="-1"></a><span class="fu">text</span>(<span class="sc">-</span><span class="fl">1.5</span>, ypmax <span class="sc">+</span> <span class="fl">0.8</span> <span class="sc">*</span> chh, <span class="st">&quot;pch = &quot;</span>, <span class="at">cex =</span> <span class="fl">0.75</span>, <span class="at">xpd =</span> T)</span>
+<span id="cb83-12"><a href="#cb83-12" tabindex="-1"></a><span class="fu">points</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">25</span>, <span class="fu">rep</span>(ypmax, <span class="dv">26</span>), <span class="at">pch =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">25</span>, <span class="at">lwd=</span><span class="fl">0.8</span>)</span>
+<span id="cb83-13"><a href="#cb83-13" tabindex="-1"></a>letterfont <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">ypos =</span> ypmax, <span class="at">font =</span> <span class="dv">2</span>) {</span>
+<span id="cb83-14"><a href="#cb83-14" tabindex="-1"></a><span class="fu">par</span>(<span class="at">font =</span> font)</span>
+<span id="cb83-15"><a href="#cb83-15" tabindex="-1"></a><span class="fu">text</span>(<span class="sc">-</span><span class="fl">1.35</span>, ypos, <span class="st">&quot;64-76&quot;</span>, <span class="at">cex =</span> <span class="fl">0.75</span>, <span class="at">adj =</span> <span class="dv">1</span>, <span class="at">xpd =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb83-16"><a href="#cb83-16" tabindex="-1"></a><span class="fu">text</span>(<span class="dv">19</span> <span class="sc">-</span> <span class="fl">1.35</span>, ypos, <span class="st">&quot;96-108&quot;</span>, <span class="at">cex =</span> <span class="fl">0.75</span>, <span class="at">adj =</span> <span class="dv">1</span>)</span>
+<span id="cb83-17"><a href="#cb83-17" tabindex="-1"></a><span class="fu">points</span>(<span class="fu">c</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">12</span>), <span class="fu">rep</span>(ypos, <span class="dv">13</span>), <span class="at">pch =</span> <span class="dv">64</span><span class="sc">:</span><span class="dv">76</span>)</span>
+<span id="cb83-18"><a href="#cb83-18" tabindex="-1"></a><span class="fu">points</span>(<span class="dv">19</span><span class="sc">:</span><span class="dv">31</span>, <span class="fu">rep</span>(ypos, <span class="dv">13</span>), <span class="at">pch =</span> <span class="dv">96</span><span class="sc">:</span><span class="dv">108</span>)</span>
+<span id="cb83-19"><a href="#cb83-19" tabindex="-1"></a><span class="fu">text</span>(farleft, ypos, <span class="fu">paste</span>(font), <span class="at">xpd =</span> T)</span>
+<span id="cb83-20"><a href="#cb83-20" tabindex="-1"></a><span class="fu">text</span>(farleft, ypos <span class="sc">-</span> <span class="fl">0.5</span>, ftype[font], <span class="at">cex =</span> <span class="fl">0.75</span>)</span>
+<span id="cb83-21"><a href="#cb83-21" tabindex="-1"></a>}</span>
+<span id="cb83-22"><a href="#cb83-22" tabindex="-1"></a>plotfont <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">xpos =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">31</span>, <span class="at">ypos =</span> ypmax, <span class="at">font =</span> <span class="dv">1</span>,</span>
+<span id="cb83-23"><a href="#cb83-23" tabindex="-1"></a><span class="at">sel32 =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>, <span class="at">showfont =</span> <span class="cn">TRUE</span>) {</span>
+<span id="cb83-24"><a href="#cb83-24" tabindex="-1"></a><span class="fu">par</span>(<span class="at">font =</span> font)</span>
+<span id="cb83-25"><a href="#cb83-25" tabindex="-1"></a>i <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb83-26"><a href="#cb83-26" tabindex="-1"></a><span class="cf">for</span> (j <span class="cf">in</span> sel32) {</span>
+<span id="cb83-27"><a href="#cb83-27" tabindex="-1"></a>i <span class="ot">&lt;-</span> i <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb83-28"><a href="#cb83-28" tabindex="-1"></a>maxval <span class="ot">&lt;-</span> j <span class="sc">*</span> <span class="dv">32</span> <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb83-29"><a href="#cb83-29" tabindex="-1"></a><span class="cf">if</span>(j<span class="sc">==</span><span class="dv">4</span>)maxval <span class="ot">&lt;-</span> maxval<span class="dv">-1</span></span>
+<span id="cb83-30"><a href="#cb83-30" tabindex="-1"></a><span class="fu">text</span>(<span class="sc">-</span><span class="fl">1.35</span>, ypos <span class="sc">-</span> i <span class="sc">+</span> <span class="dv">1</span>, <span class="fu">paste</span>((j <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="dv">32</span>, <span class="st">&quot;-&quot;</span>,</span>
+<span id="cb83-31"><a href="#cb83-31" tabindex="-1"></a>maxval, <span class="at">sep =</span> <span class="st">&quot;&quot;</span>), <span class="at">cex =</span> <span class="fl">0.75</span>, <span class="at">adj =</span> <span class="dv">1</span>, <span class="at">xpd =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb83-32"><a href="#cb83-32" tabindex="-1"></a><span class="cf">if</span>(j<span class="sc">!=</span><span class="dv">4</span>)</span>
+<span id="cb83-33"><a href="#cb83-33" tabindex="-1"></a><span class="fu">points</span>(xpos, <span class="fu">rep</span>(ypos <span class="sc">-</span> i <span class="sc">+</span> <span class="dv">1</span>, <span class="dv">32</span>), <span class="at">pch =</span> (j <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span></span>
+<span id="cb83-34"><a href="#cb83-34" tabindex="-1"></a><span class="dv">32</span> <span class="sc">+</span> (<span class="dv">0</span><span class="sc">:</span><span class="dv">31</span>))</span>
+<span id="cb83-35"><a href="#cb83-35" tabindex="-1"></a><span class="cf">else</span></span>
+<span id="cb83-36"><a href="#cb83-36" tabindex="-1"></a><span class="fu">points</span>(xpos[<span class="sc">-</span><span class="dv">32</span>], <span class="fu">rep</span>(ypos <span class="sc">-</span> i <span class="sc">+</span> <span class="dv">1</span>, <span class="dv">31</span>), <span class="at">pch =</span> (j <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span></span>
+<span id="cb83-37"><a href="#cb83-37" tabindex="-1"></a><span class="dv">32</span> <span class="sc">+</span> (<span class="dv">0</span><span class="sc">:</span><span class="dv">30</span>))</span>
+<span id="cb83-38"><a href="#cb83-38" tabindex="-1"></a>}</span>
+<span id="cb83-39"><a href="#cb83-39" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">rep</span>(<span class="sc">-</span><span class="fl">1.05</span>, <span class="dv">2</span>), <span class="fu">c</span>(ypos <span class="sc">-</span> <span class="fu">length</span>(sel32) <span class="sc">+</span> <span class="dv">1</span>, ypos) <span class="sc">+</span></span>
+<span id="cb83-40"><a href="#cb83-40" tabindex="-1"></a><span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.4</span>, <span class="fl">0.4</span>), <span class="at">xpd =</span> T, <span class="at">col =</span> <span class="st">&quot;grey40&quot;</span>)</span>
+<span id="cb83-41"><a href="#cb83-41" tabindex="-1"></a><span class="cf">if</span> (showfont) {</span>
+<span id="cb83-42"><a href="#cb83-42" tabindex="-1"></a><span class="fu">text</span>(farleft, ypos, <span class="fu">paste</span>(<span class="st">&quot;font =&quot;</span>, font, <span class="st">&quot; &quot;</span>), <span class="at">xpd =</span> T)</span>
+<span id="cb83-43"><a href="#cb83-43" tabindex="-1"></a><span class="fu">text</span>(farleft, ypos <span class="sc">-</span> <span class="fl">0.5</span>, ftype[font], <span class="at">cex =</span> <span class="fl">0.75</span>,</span>
+<span id="cb83-44"><a href="#cb83-44" tabindex="-1"></a><span class="at">xpd =</span> T)</span>
+<span id="cb83-45"><a href="#cb83-45" tabindex="-1"></a>}</span>
+<span id="cb83-46"><a href="#cb83-46" tabindex="-1"></a>}</span>
+<span id="cb83-47"><a href="#cb83-47" tabindex="-1"></a><span class="fu">plotfont</span>(<span class="at">ypos =</span> ypmax <span class="sc">-</span> <span class="fl">1.5</span>, <span class="at">font =</span> <span class="dv">1</span>, <span class="at">sel32 =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>)</span>
+<span id="cb83-48"><a href="#cb83-48" tabindex="-1"></a><span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>) <span class="fu">letterfont</span>(<span class="at">ypos =</span> ypmax <span class="sc">-</span> <span class="fl">2.1</span> <span class="sc">-</span> <span class="fl">1.4</span> <span class="sc">*</span> j, <span class="at">font =</span> j)</span>
+<span id="cb83-49"><a href="#cb83-49" tabindex="-1"></a><span class="fu">plotfont</span>(<span class="at">ypos =</span> ypmax <span class="sc">-</span> <span class="fl">9.1</span>, <span class="at">font =</span> <span class="dv">5</span>, <span class="at">sel32 =</span> <span class="dv">3</span>)</span>
+<span id="cb83-50"><a href="#cb83-50" tabindex="-1"></a><span class="fu">plotfont</span>(<span class="at">xpos =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">31</span>), <span class="at">ypos =</span> ypmax <span class="sc">-</span> <span class="fl">10.1</span>, <span class="at">font =</span> <span class="dv">5</span>,</span>
+<span id="cb83-51"><a href="#cb83-51" tabindex="-1"></a><span class="at">sel32 =</span> <span class="dv">4</span>, <span class="at">showfont =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb83-52"><a href="#cb83-52" tabindex="-1"></a><span class="fu">par</span>(<span class="at">font =</span> <span class="dv">1</span>)</span>
+<span id="cb83-53"><a href="#cb83-53" tabindex="-1"></a>ltypes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;blank&quot;</span>, <span class="st">&quot;solid&quot;</span>, <span class="st">&quot;dashed&quot;</span>, <span class="st">&quot;dotted&quot;</span>, <span class="st">&quot;dotdash&quot;</span>,</span>
+<span id="cb83-54"><a href="#cb83-54" tabindex="-1"></a><span class="st">&quot;longdash&quot;</span>, <span class="st">&quot;twodash&quot;</span>)</span>
+<span id="cb83-55"><a href="#cb83-55" tabindex="-1"></a>lcode <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;&quot;</span>, <span class="st">&quot;&quot;</span>, <span class="st">&quot;44&quot;</span>, <span class="st">&quot;13&quot;</span>, <span class="st">&quot;1343&quot;</span>, <span class="st">&quot;73&quot;</span>, <span class="st">&quot;2262&quot;</span>)</span>
+<span id="cb83-56"><a href="#cb83-56" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">6</span>) {</span>
+<span id="cb83-57"><a href="#cb83-57" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">31</span>), <span class="fu">c</span>(yline <span class="sc">+</span> <span class="fl">4.5</span> <span class="sc">-</span> <span class="fl">0.8</span> <span class="sc">*</span> i, yline <span class="sc">+</span> <span class="fl">4.5</span> <span class="sc">-</span></span>
+<span id="cb83-58"><a href="#cb83-58" tabindex="-1"></a><span class="fl">0.8</span> <span class="sc">*</span> i), <span class="at">lty =</span> i, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">xpd =</span> T)</span>
+<span id="cb83-59"><a href="#cb83-59" tabindex="-1"></a><span class="cf">if</span> (i <span class="sc">==</span> <span class="dv">0</span>)</span>
+<span id="cb83-60"><a href="#cb83-60" tabindex="-1"></a>numchar <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="st">&quot;lty =&quot;</span>, i, <span class="st">&quot; &quot;</span>)</span>
+<span id="cb83-61"><a href="#cb83-61" tabindex="-1"></a><span class="cf">else</span> numchar <span class="ot">&lt;-</span> i</span>
+<span id="cb83-62"><a href="#cb83-62" tabindex="-1"></a><span class="fu">text</span>(farleft, yline <span class="sc">+</span> <span class="fl">4.5</span> <span class="sc">-</span> <span class="fl">0.8</span> <span class="sc">*</span> i, numchar, <span class="at">xpd =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb83-63"><a href="#cb83-63" tabindex="-1"></a><span class="fu">text</span>(farleft <span class="sc">+</span> <span class="fl">3.5</span>, yline <span class="sc">+</span> <span class="fl">4.5</span> <span class="sc">-</span> <span class="fl">0.8</span> <span class="sc">*</span> i, ltypes[i <span class="sc">+</span></span>
+<span id="cb83-64"><a href="#cb83-64" tabindex="-1"></a><span class="dv">1</span>], <span class="at">cex =</span> <span class="fl">0.85</span>, <span class="at">xpd =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb83-65"><a href="#cb83-65" tabindex="-1"></a><span class="fu">text</span>(farleft <span class="sc">+</span> <span class="fl">7.5</span>, yline <span class="sc">+</span> <span class="fl">4.5</span> <span class="sc">-</span> <span class="fl">0.8</span> <span class="sc">*</span> i, lcode[i <span class="sc">+</span></span>
+<span id="cb83-66"><a href="#cb83-66" tabindex="-1"></a><span class="dv">1</span>], <span class="at">cex =</span> <span class="fl">0.85</span>, <span class="at">xpd =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb83-67"><a href="#cb83-67" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" tabindex="-1"></a>ycol <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fl">2.1</span> <span class="sc">-</span> (<span class="dv">0</span><span class="sc">:</span><span class="dv">9</span>) <span class="sc">*</span> <span class="fl">2.1</span></span>
+<span id="cb84-2"><a href="#cb84-2" tabindex="-1"></a>ftype <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;plain&quot;</span>, <span class="st">&quot;bold&quot;</span>, <span class="st">&quot;italic&quot;</span>, <span class="st">&quot;bold italic&quot;</span>, <span class="st">&quot;symbol&quot;</span>)</span>
+<span id="cb84-3"><a href="#cb84-3" tabindex="-1"></a>yline <span class="ot">&lt;-</span> <span class="fl">4.2</span></span>
+<span id="cb84-4"><a href="#cb84-4" tabindex="-1"></a>ypmax <span class="ot">&lt;-</span> <span class="dv">20</span></span>
+<span id="cb84-5"><a href="#cb84-5" tabindex="-1"></a>farleft <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fl">7.8</span></span>
+<span id="cb84-6"><a href="#cb84-6" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="dv">4</span>, <span class="dv">31</span>), <span class="fu">c</span>(<span class="fl">4.25</span>, ypmax), <span class="at">type =</span> <span class="st">&quot;n&quot;</span>, <span class="at">xlab =</span> <span class="st">&quot;&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;&quot;</span>,</span>
+<span id="cb84-7"><a href="#cb84-7" tabindex="-1"></a><span class="at">axes =</span> F)</span>
+<span id="cb84-8"><a href="#cb84-8" tabindex="-1"></a>chh <span class="ot">&lt;-</span> <span class="fu">par</span>()<span class="sc">$</span>cxy[<span class="dv">2</span>]</span>
+<span id="cb84-9"><a href="#cb84-9" tabindex="-1"></a><span class="fu">text</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">25</span>, <span class="fu">rep</span>(ypmax <span class="sc">+</span> <span class="fl">0.8</span> <span class="sc">*</span> chh, <span class="dv">26</span>), <span class="fu">paste</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">25</span>), <span class="at">srt =</span> <span class="dv">90</span>,</span>
+<span id="cb84-10"><a href="#cb84-10" tabindex="-1"></a><span class="at">cex =</span> <span class="fl">0.75</span>, <span class="at">xpd =</span> T)</span>
+<span id="cb84-11"><a href="#cb84-11" tabindex="-1"></a><span class="fu">text</span>(<span class="sc">-</span><span class="fl">1.5</span>, ypmax <span class="sc">+</span> <span class="fl">0.8</span> <span class="sc">*</span> chh, <span class="st">&quot;pch = &quot;</span>, <span class="at">cex =</span> <span class="fl">0.75</span>, <span class="at">xpd =</span> T)</span>
+<span id="cb84-12"><a href="#cb84-12" tabindex="-1"></a><span class="fu">points</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">25</span>, <span class="fu">rep</span>(ypmax, <span class="dv">26</span>), <span class="at">pch =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">25</span>, <span class="at">lwd=</span><span class="fl">0.8</span>)</span>
+<span id="cb84-13"><a href="#cb84-13" tabindex="-1"></a>letterfont <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">ypos =</span> ypmax, <span class="at">font =</span> <span class="dv">2</span>) {</span>
+<span id="cb84-14"><a href="#cb84-14" tabindex="-1"></a><span class="fu">par</span>(<span class="at">font =</span> font)</span>
+<span id="cb84-15"><a href="#cb84-15" tabindex="-1"></a><span class="fu">text</span>(<span class="sc">-</span><span class="fl">1.35</span>, ypos, <span class="st">&quot;64-76&quot;</span>, <span class="at">cex =</span> <span class="fl">0.75</span>, <span class="at">adj =</span> <span class="dv">1</span>, <span class="at">xpd =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb84-16"><a href="#cb84-16" tabindex="-1"></a><span class="fu">text</span>(<span class="dv">19</span> <span class="sc">-</span> <span class="fl">1.35</span>, ypos, <span class="st">&quot;96-108&quot;</span>, <span class="at">cex =</span> <span class="fl">0.75</span>, <span class="at">adj =</span> <span class="dv">1</span>)</span>
+<span id="cb84-17"><a href="#cb84-17" tabindex="-1"></a><span class="fu">points</span>(<span class="fu">c</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">12</span>), <span class="fu">rep</span>(ypos, <span class="dv">13</span>), <span class="at">pch =</span> <span class="dv">64</span><span class="sc">:</span><span class="dv">76</span>)</span>
+<span id="cb84-18"><a href="#cb84-18" tabindex="-1"></a><span class="fu">points</span>(<span class="dv">19</span><span class="sc">:</span><span class="dv">31</span>, <span class="fu">rep</span>(ypos, <span class="dv">13</span>), <span class="at">pch =</span> <span class="dv">96</span><span class="sc">:</span><span class="dv">108</span>)</span>
+<span id="cb84-19"><a href="#cb84-19" tabindex="-1"></a><span class="fu">text</span>(farleft, ypos, <span class="fu">paste</span>(font), <span class="at">xpd =</span> T)</span>
+<span id="cb84-20"><a href="#cb84-20" tabindex="-1"></a><span class="fu">text</span>(farleft, ypos <span class="sc">-</span> <span class="fl">0.5</span>, ftype[font], <span class="at">cex =</span> <span class="fl">0.75</span>)</span>
+<span id="cb84-21"><a href="#cb84-21" tabindex="-1"></a>}</span>
+<span id="cb84-22"><a href="#cb84-22" tabindex="-1"></a>plotfont <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">xpos =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">31</span>, <span class="at">ypos =</span> ypmax, <span class="at">font =</span> <span class="dv">1</span>,</span>
+<span id="cb84-23"><a href="#cb84-23" tabindex="-1"></a><span class="at">sel32 =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>, <span class="at">showfont =</span> <span class="cn">TRUE</span>) {</span>
+<span id="cb84-24"><a href="#cb84-24" tabindex="-1"></a><span class="fu">par</span>(<span class="at">font =</span> font)</span>
+<span id="cb84-25"><a href="#cb84-25" tabindex="-1"></a>i <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb84-26"><a href="#cb84-26" tabindex="-1"></a><span class="cf">for</span> (j <span class="cf">in</span> sel32) {</span>
+<span id="cb84-27"><a href="#cb84-27" tabindex="-1"></a>i <span class="ot">&lt;-</span> i <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb84-28"><a href="#cb84-28" tabindex="-1"></a>maxval <span class="ot">&lt;-</span> j <span class="sc">*</span> <span class="dv">32</span> <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb84-29"><a href="#cb84-29" tabindex="-1"></a><span class="cf">if</span>(j<span class="sc">==</span><span class="dv">4</span>)maxval <span class="ot">&lt;-</span> maxval<span class="dv">-1</span></span>
+<span id="cb84-30"><a href="#cb84-30" tabindex="-1"></a><span class="fu">text</span>(<span class="sc">-</span><span class="fl">1.35</span>, ypos <span class="sc">-</span> i <span class="sc">+</span> <span class="dv">1</span>, <span class="fu">paste</span>((j <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="dv">32</span>, <span class="st">&quot;-&quot;</span>,</span>
+<span id="cb84-31"><a href="#cb84-31" tabindex="-1"></a>maxval, <span class="at">sep =</span> <span class="st">&quot;&quot;</span>), <span class="at">cex =</span> <span class="fl">0.75</span>, <span class="at">adj =</span> <span class="dv">1</span>, <span class="at">xpd =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb84-32"><a href="#cb84-32" tabindex="-1"></a><span class="cf">if</span>(j<span class="sc">!=</span><span class="dv">4</span>)</span>
+<span id="cb84-33"><a href="#cb84-33" tabindex="-1"></a><span class="fu">points</span>(xpos, <span class="fu">rep</span>(ypos <span class="sc">-</span> i <span class="sc">+</span> <span class="dv">1</span>, <span class="dv">32</span>), <span class="at">pch =</span> (j <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span></span>
+<span id="cb84-34"><a href="#cb84-34" tabindex="-1"></a><span class="dv">32</span> <span class="sc">+</span> (<span class="dv">0</span><span class="sc">:</span><span class="dv">31</span>))</span>
+<span id="cb84-35"><a href="#cb84-35" tabindex="-1"></a><span class="cf">else</span></span>
+<span id="cb84-36"><a href="#cb84-36" tabindex="-1"></a><span class="fu">points</span>(xpos[<span class="sc">-</span><span class="dv">32</span>], <span class="fu">rep</span>(ypos <span class="sc">-</span> i <span class="sc">+</span> <span class="dv">1</span>, <span class="dv">31</span>), <span class="at">pch =</span> (j <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span></span>
+<span id="cb84-37"><a href="#cb84-37" tabindex="-1"></a><span class="dv">32</span> <span class="sc">+</span> (<span class="dv">0</span><span class="sc">:</span><span class="dv">30</span>))</span>
+<span id="cb84-38"><a href="#cb84-38" tabindex="-1"></a>}</span>
+<span id="cb84-39"><a href="#cb84-39" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">rep</span>(<span class="sc">-</span><span class="fl">1.05</span>, <span class="dv">2</span>), <span class="fu">c</span>(ypos <span class="sc">-</span> <span class="fu">length</span>(sel32) <span class="sc">+</span> <span class="dv">1</span>, ypos) <span class="sc">+</span></span>
+<span id="cb84-40"><a href="#cb84-40" tabindex="-1"></a><span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.4</span>, <span class="fl">0.4</span>), <span class="at">xpd =</span> T, <span class="at">col =</span> <span class="st">&quot;grey40&quot;</span>)</span>
+<span id="cb84-41"><a href="#cb84-41" tabindex="-1"></a><span class="cf">if</span> (showfont) {</span>
+<span id="cb84-42"><a href="#cb84-42" tabindex="-1"></a><span class="fu">text</span>(farleft, ypos, <span class="fu">paste</span>(<span class="st">&quot;font =&quot;</span>, font, <span class="st">&quot; &quot;</span>), <span class="at">xpd =</span> T)</span>
+<span id="cb84-43"><a href="#cb84-43" tabindex="-1"></a><span class="fu">text</span>(farleft, ypos <span class="sc">-</span> <span class="fl">0.5</span>, ftype[font], <span class="at">cex =</span> <span class="fl">0.75</span>,</span>
+<span id="cb84-44"><a href="#cb84-44" tabindex="-1"></a><span class="at">xpd =</span> T)</span>
+<span id="cb84-45"><a href="#cb84-45" tabindex="-1"></a>}</span>
+<span id="cb84-46"><a href="#cb84-46" tabindex="-1"></a>}</span>
+<span id="cb84-47"><a href="#cb84-47" tabindex="-1"></a><span class="fu">plotfont</span>(<span class="at">ypos =</span> ypmax <span class="sc">-</span> <span class="fl">1.5</span>, <span class="at">font =</span> <span class="dv">1</span>, <span class="at">sel32 =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>)</span>
+<span id="cb84-48"><a href="#cb84-48" tabindex="-1"></a><span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>) <span class="fu">letterfont</span>(<span class="at">ypos =</span> ypmax <span class="sc">-</span> <span class="fl">2.1</span> <span class="sc">-</span> <span class="fl">1.4</span> <span class="sc">*</span> j, <span class="at">font =</span> j)</span>
+<span id="cb84-49"><a href="#cb84-49" tabindex="-1"></a><span class="fu">plotfont</span>(<span class="at">ypos =</span> ypmax <span class="sc">-</span> <span class="fl">9.1</span>, <span class="at">font =</span> <span class="dv">5</span>, <span class="at">sel32 =</span> <span class="dv">3</span>)</span>
+<span id="cb84-50"><a href="#cb84-50" tabindex="-1"></a><span class="fu">plotfont</span>(<span class="at">xpos =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">31</span>), <span class="at">ypos =</span> ypmax <span class="sc">-</span> <span class="fl">10.1</span>, <span class="at">font =</span> <span class="dv">5</span>,</span>
+<span id="cb84-51"><a href="#cb84-51" tabindex="-1"></a><span class="at">sel32 =</span> <span class="dv">4</span>, <span class="at">showfont =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb84-52"><a href="#cb84-52" tabindex="-1"></a><span class="fu">par</span>(<span class="at">font =</span> <span class="dv">1</span>)</span>
+<span id="cb84-53"><a href="#cb84-53" tabindex="-1"></a>ltypes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;blank&quot;</span>, <span class="st">&quot;solid&quot;</span>, <span class="st">&quot;dashed&quot;</span>, <span class="st">&quot;dotted&quot;</span>, <span class="st">&quot;dotdash&quot;</span>,</span>
+<span id="cb84-54"><a href="#cb84-54" tabindex="-1"></a><span class="st">&quot;longdash&quot;</span>, <span class="st">&quot;twodash&quot;</span>)</span>
+<span id="cb84-55"><a href="#cb84-55" tabindex="-1"></a>lcode <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;&quot;</span>, <span class="st">&quot;&quot;</span>, <span class="st">&quot;44&quot;</span>, <span class="st">&quot;13&quot;</span>, <span class="st">&quot;1343&quot;</span>, <span class="st">&quot;73&quot;</span>, <span class="st">&quot;2262&quot;</span>)</span>
+<span id="cb84-56"><a href="#cb84-56" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">6</span>) {</span>
+<span id="cb84-57"><a href="#cb84-57" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">31</span>), <span class="fu">c</span>(yline <span class="sc">+</span> <span class="fl">4.5</span> <span class="sc">-</span> <span class="fl">0.8</span> <span class="sc">*</span> i, yline <span class="sc">+</span> <span class="fl">4.5</span> <span class="sc">-</span></span>
+<span id="cb84-58"><a href="#cb84-58" tabindex="-1"></a><span class="fl">0.8</span> <span class="sc">*</span> i), <span class="at">lty =</span> i, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">xpd =</span> T)</span>
+<span id="cb84-59"><a href="#cb84-59" tabindex="-1"></a><span class="cf">if</span> (i <span class="sc">==</span> <span class="dv">0</span>)</span>
+<span id="cb84-60"><a href="#cb84-60" tabindex="-1"></a>numchar <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="st">&quot;lty =&quot;</span>, i, <span class="st">&quot; &quot;</span>)</span>
+<span id="cb84-61"><a href="#cb84-61" tabindex="-1"></a><span class="cf">else</span> numchar <span class="ot">&lt;-</span> i</span>
+<span id="cb84-62"><a href="#cb84-62" tabindex="-1"></a><span class="fu">text</span>(farleft, yline <span class="sc">+</span> <span class="fl">4.5</span> <span class="sc">-</span> <span class="fl">0.8</span> <span class="sc">*</span> i, numchar, <span class="at">xpd =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb84-63"><a href="#cb84-63" tabindex="-1"></a><span class="fu">text</span>(farleft <span class="sc">+</span> <span class="fl">3.5</span>, yline <span class="sc">+</span> <span class="fl">4.5</span> <span class="sc">-</span> <span class="fl">0.8</span> <span class="sc">*</span> i, ltypes[i <span class="sc">+</span></span>
+<span id="cb84-64"><a href="#cb84-64" tabindex="-1"></a><span class="dv">1</span>], <span class="at">cex =</span> <span class="fl">0.85</span>, <span class="at">xpd =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb84-65"><a href="#cb84-65" tabindex="-1"></a><span class="fu">text</span>(farleft <span class="sc">+</span> <span class="fl">7.5</span>, yline <span class="sc">+</span> <span class="fl">4.5</span> <span class="sc">-</span> <span class="fl">0.8</span> <span class="sc">*</span> i, lcode[i <span class="sc">+</span></span>
+<span id="cb84-66"><a href="#cb84-66" tabindex="-1"></a><span class="dv">1</span>], <span class="at">cex =</span> <span class="fl">0.85</span>, <span class="at">xpd =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb84-67"><a href="#cb84-67" tabindex="-1"></a>}</span></code></pre></div>
+<div id="font-families" class="section level5">
+<h5>Font families</h5>
+</div>
+<div id="colors" class="section level5">
+<h5>Colors</h5>
+<div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" tabindex="-1"></a><span class="fu">library</span>(RColorBrewer)</span>
+<span id="cb85-2"><a href="#cb85-2" tabindex="-1"></a><span class="fu">palette</span>(<span class="fu">brewer.pal</span>(<span class="dv">12</span>, <span class="st">&quot;Set3&quot;</span>))</span></code></pre></div>
+</div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

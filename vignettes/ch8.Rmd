@@ -2,7 +2,7 @@
 title: "Chapter 8: Tree-based Classification and Regression"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Ch8-TreeBased}
+  %\VignetteIndexEntry{Ch8: TreeBased Classification and . . .}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

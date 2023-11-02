@@ -2,7 +2,7 @@
 title: "Chapter 2: Generalizing from models"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Ch2-Generalizing}
+  %\VignetteIndexEntry{Ch2: Generalizing . . .}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

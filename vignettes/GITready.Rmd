@@ -1,10 +1,10 @@
 ---
-title: "Set up vignettes for download from GitHub"
+title: "Create statis html files for download from GitHub"
 author: "John Maindonald"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{GITready}
+  %\VignetteIndexEntry{Create static html files}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

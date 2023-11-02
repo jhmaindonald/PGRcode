@@ -2,7 +2,7 @@
 title: "Chapter 6: Time series models"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Ch6-TimeSeries}
+  %\VignetteIndexEntry{Ch6: Time Series}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

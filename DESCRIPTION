@@ -1,12 +1,12 @@
 Package: PGRcode
 Type: Package
 Title: Code from "A Practical Guide to Data Analysis Using R"
-Version: 0.1.4
+Version: 0.1.5-1
 Author: John H Maindonald <john@statsresearch.co.nz>, W John Braun
   <braun@stats.uwo.ca>, and Jeffrey L Andrews <jeff.andrews@ubc.ca>.
-Maintainer: The package maintainer <jhmaindonald@gmail.com>
+Maintainer: John H Maindonald <jhmaindonald@gmail.com>
 Description: Vignettes included with this package give access to the
-  code used in the text.
+  code used in the text, and extend and/or comment on the text comment.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
@@ -22,3 +22,4 @@ Suggests: afex, AICcmodavg, BayesFactor, BHH2, BiocManager, boot, car, cobalt,
 VignetteBuilder: knitr
 Repository: CRAN
 NeedsCompilation: no
+URL: https://jhmaindonald.github.io/PGRcode/

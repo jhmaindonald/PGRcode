@@ -2,7 +2,7 @@
 title: "Chapter 9: Multivariate data exploration and discrimination"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Ch9-Multivariate}
+  %\VignetteIndexEntry{Ch9: Multivariate data exploration . . .}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

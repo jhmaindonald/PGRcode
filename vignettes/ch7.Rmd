@@ -2,7 +2,7 @@
 title: "Chapter 7: Multilevel models, and repeated measures"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Ch7-Multilevel}
+  %\VignetteIndexEntry{Ch7: Multilevel models . . .}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

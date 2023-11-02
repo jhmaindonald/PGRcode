@@ -3,7 +3,7 @@ title: "Chapter 5: Generalized linear models and survival analysis"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Ch5-GLMs}
+  %\VignetteIndexEntry{Ch5: GLMs and Survival Analysis}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

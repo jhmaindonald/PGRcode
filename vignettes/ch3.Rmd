@@ -3,7 +3,7 @@ title: "Chapter 3: Multiple linear regression"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Ch3-MultLinReg}
+  %\VignetteIndexEntry{Ch3: Multiple Linear Regression}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

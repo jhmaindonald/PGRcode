@@ -2,7 +2,7 @@
 title: "Appendix A: The R System – A Brief Overview"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{RsystemOverview}
+  %\VignetteIndexEntry{R system Overview}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

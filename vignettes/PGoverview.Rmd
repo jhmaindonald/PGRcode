@@ -2,7 +2,7 @@
 title: "'A Practical Guide . . .' -- Style and Content"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{StyleAndContent}
+  %\VignetteIndexEntry{Practical Guide Style And Content}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

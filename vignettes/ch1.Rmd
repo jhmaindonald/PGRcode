@@ -1,8 +1,8 @@
 ---
-title: "Chapter 1: Learning from data, and tools for the task"
+title: "Chapter 1: Learning from data . . ."
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Ch1-Learning}
+  %\VignetteIndexEntry{Ch1: Learning from Data}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

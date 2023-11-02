@@ -7,6 +7,10 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r echo=F}
+options(rmarkdown.html_vignette.check_title = FALSE)
+```
+
 This document is primarily designed, whether in its source form as an 
 R Markdown document, or processed ('knitted') to provide a Markdown 
 or html document, to give access to the code.  Additionally, settings 

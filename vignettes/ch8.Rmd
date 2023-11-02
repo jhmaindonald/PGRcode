@@ -7,6 +7,10 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r echo=F}
+options(rmarkdown.html_vignette.check_title = FALSE)
+```
+
 ```{r CodeControl, echo=FALSE}
 options(rmarkdown.html_vignette.check_title = FALSE)
 xtras <- F

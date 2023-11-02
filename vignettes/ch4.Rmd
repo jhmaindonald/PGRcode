@@ -8,6 +8,10 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r echo=F}
+options(rmarkdown.html_vignette.check_title = FALSE)
+```
+
 On options for working with the code see the vignettes
 [Ch1-Learning](PGRcode/Ch1-Learning.html) and
 [UsingCode](PGRcode/UsingCode.html).

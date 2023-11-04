@@ -28,7 +28,7 @@
     
     <a class="navbar-brand me-2" href="index.html">PGRcode</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5-2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5-3</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -75,13 +75,16 @@
 <div class="page-header"><h1 id="pgrcode">PGRcode<a class="anchor" aria-label="anchor" href="#pgrcode"></a>
 </h1></div>
 <p>R package holding code for “A Practical Guide to Data Analysis Using R”</p>
+<!-- badges: start -->
+
 <p>To install the package, do</p>
 <pre><code><span><span class="co">## If necessary, first install the 'remotes' package</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://remotes.r-lib.org" class="external-link">"remotes"</a></span><span class="op">)</span><span class="op">)</span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">'jhmaindonald/PGRcode'</span><span class="op">)</span></span></code></pre>
 <p>R files that have the code, html browser files, and Rmd files from which these have been generated, should then be available under “User guides, package vignettes and other documentation”.</p>
 <p>Individual code files or other vignette files can be downloaded thus:</p>
 <pre><code><span><span class="va">vigdir</span> <span class="op">&lt;-</span> <span class="st">"https://github.com/jhmaindonald/PGRcode/raw/main/vignettes/"</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.exists</a></span><span class="op">(</span><span class="st">'~/tmp2'</span><span class="op">)</span><span class="op">)</span><span class="fu"><a href="https://rdrr.io/r/base/system.html" class="external-link">system</a></span><span class="op">(</span><span class="st">'mkdir ~/tmp'</span><span class="op">)</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.exists</a></span><span class="op">(</span><span class="st">'~/tmp'</span><span class="op">)</span><span class="op">)</span><span class="fu"><a href="https://rdrr.io/r/base/system.html" class="external-link">system</a></span><span class="op">(</span><span class="st">'mkdir ~/tmp'</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html" class="external-link">download.file</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">vigdir</span>, <span class="st">'ch1.Rmd'</span><span class="op">)</span>, <span class="st">'~/tmp/ch1.Rmd'</span><span class="op">)</span></span>
 <span>  <span class="co">## Replace 'ch1' by other names as required.</span></span></code></pre>
 <p>Or, go to <a href="https://github.com/jhmaindonald/PGRcode/blob/main/vignettes/" class="external-link uri">https://github.com/jhmaindonald/PGRcode/blob/main/vignettes/</a>, click on file name on the far left, then on the far right of the row that is immediately above the first line of the file, click on the download symbol that is the second symbol across from <strong>Raw</strong>.</p>
@@ -108,7 +111,12 @@
 </ul>
 </div>
 
-
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/jhmaindonald/PGRcode/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/jhmaindonald/PGRcode/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
+</ul>
+</div>
 
   </aside>
 </div>

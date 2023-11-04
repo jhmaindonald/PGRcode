@@ -28,7 +28,6 @@ Details of using pkgdown to set up the web page can be found at
 https://pkgdown.r-lib.org/articles/pkgdown.html#configuration
 
 ```{r setupCode, eval=F}
-## For updating to a new release, use the first and the last of the following:
 usethis::use_pkgdown()
 pkgdown::build_site()
 usethis::use_pkgdown_github_pages()

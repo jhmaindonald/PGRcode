@@ -1,5 +1,13 @@
-# PGRcode
-R package holding code for "A Practical Guide to Data Analysis Using R"
+# PGRcode -- Code and Complements for "A Practical Guide . . ."
+
+Vignettes included in this package make available code and other supplementary content 
+that relates to the new text  
+
+"A Practical Guide to Data Analysis Using R -- An Example-Based Approach",  
+by John H Maindonald, W John Braun, and Jeffrey L Andrews.   
+
+The draft of this new text is currently making its way through the Cambridge University Press copy-editing process, and is due for publication in May 2024. It is a derivative of
+"Data Analysis and Graphics Using R" (Maindonald and Braun, CUP, 3rd edn, 2010.)
 
 <!-- badges: start -->
   [![R-CMD-check](https://github.com/jhmaindonald/PGRcode/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/jhmaindonald/PGRcode/actions/workflows/R-CMD-check.yaml)

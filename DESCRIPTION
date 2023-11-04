@@ -1,24 +1,27 @@
 Package: PGRcode
 Type: Package
 Title: Code from "A Practical Guide to Data Analysis Using R"
-Version: 0.1.5-4
-Author: John H Maindonald <jhmaindonald@gmail.com>, W John Braun
-  <braun@stats.uwo.ca>, and Jeffrey L Andrews <jeff.andrews@ubc.ca>.
-Maintainer: John H Maindonald <jhmaindonald@gmail.com>
+Version: 0.1.5-5
+Authors@R: 
+    c(person(c("John","H"), "Maindonald", , email="jhmaindonald@gmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-0106-9224")),
+    person(given=c("W","John"), "Braun", , email= "john.braun@ubc.ca", role="ctb"),   
+    person(given=c("Jeffrey","L"), "Andrews", email="jeff.andrews@ubc.ca", role="ctb")
+           )
 Description: Vignettes included with this package give access to the
   code used in the text, and extend and/or comment on the text comment.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Depends: R (>= 3.5.0), knitr, rmarkdown
-Suggests: afex, AICcmodavg, BayesFactor, BHH2, BiocManager, boot, car, cobalt,
-  colorspace, DAAG, DAAGbio, datasets, devtools, DHARMa, dplyr, effects,
-  forecast, gamlss, ggplot2, ggsci, glmmTMB, gplots, gridExtra, hddplot,
-  HistData, investr, kableExtra, latticeExtra, leaps, limma, lme4, lmtest,
-  MASS, MatchIt, MCMCpack, MEMSS, mgcv, mice, micemd, mlbench, MPV,
-  mvtnorm, nlme, oz, plotrix, qgam, qra, randomForest, RColorBrewer,
-  rpart, rpart.plot, sandwich, scam, splines, statsr, teigen, tibble,
-  tidyr, tseries, utils, WDI, xtable, zoo
+Suggests: afex, AICcmodavg, BayesFactor, BHH2, BiocManager, Biobase, boot, 
+  car, cobalt, colorspace, DAAG, DAAGbio, datasets, devtools, DHARMa, 
+  dplyr, effects, forecast, gamlss, ggplot2, ggsci, glmmTMB, gplots, 
+  gridExtra, hddplot, HistData, investr, kableExtra, latticeExtra, leaps, 
+  limma, lme4, lmtest, MASS, MatchIt, MCMCpack, MEMSS, mgcv, mice, micemd, 
+  mlbench, MPV, mvtnorm, nlme, oz, plotrix, qgam, qra, randomForest, 
+  RColorBrewer, rpart, rpart.plot, sandwich, scam, splines, statsr, teigen, 
+  tibble, tidyr, tseries, utils, WDI, xtable, zoo
 VignetteBuilder: knitr
 Repository: CRAN
 NeedsCompilation: no

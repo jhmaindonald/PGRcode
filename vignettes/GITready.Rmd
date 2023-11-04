@@ -24,17 +24,11 @@ This "vignette" records steps that can be followed when a vignette
 is changed or added, prior to committing changes that include static
 html files to GitHub.
 
-```{r exampleCode, eval=F}
-tools::buildVignettes(dir = ".", tangle=TRUE)
-if(!dir.exists('inst'))dir.create("~/pkgs/PGRcode/inst")   
-if(!dir.exists('inst/doc'))dir.create("~/pkgs/PGRcode/inst/doc") 
-## On installation, files in 'inst/doc/' are copied to 'doc/'
-file.copy(dir("vignettes", full.names=TRUE), "~/pkgs/PGRcode/inst/doc", overwrite=TRUE)
-```
 Details of using pkgdown to set up the web page can be found at
 https://pkgdown.r-lib.org/articles/pkgdown.html#configuration
 
 ```{r setupCode, eval=F}
+## For updating to a new release, use the first and the last of the following:
 usethis::use_pkgdown()
 pkgdown::build_site()
 usethis::use_pkgdown_github_pages()
@@ -42,4 +36,15 @@ usethis::use_github_action("render-rmarkdown")
 usethis::use_github_action("check-release")
 ```
 
+## An alternative that might in principle be used
 
+The following, placed here as a matter of record, is an alternative 
+that avoids use of the _pkgdown_ package:
+
+```{r exampleCode, eval=F}
+tools::buildVignettes(dir = ".", tangle=TRUE)
+if(!dir.exists('inst'))dir.create("~/pkgs/PGRcode/inst")   
+if(!dir.exists('inst/doc'))dir.create("~/pkgs/PGRcode/inst/doc") 
+## On installation, files in 'inst/doc/' are copied to 'doc/'
+file.copy(dir("vignettes", full.names=TRUE), "~/pkgs/PGRcode/inst/doc", overwrite=TRUE)
+```

@@ -1,9 +1,14 @@
 # PGRcode
 R package holding code for "A Practical Guide to Data Analysis Using R"
 
+<!-- badges: start -->
+  [![R-CMD-check](https://github.com/jhmaindonald/PGRcode/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/jhmaindonald/PGRcode/actions/workflows/R-CMD-check.yaml)
+  <!-- badges: end -->
+
 To install the package, do 
 ```
 ## If necessary, first install the 'remotes' package
+if(!require("remotes"))install.packages("remotes")
 remotes::install_github('jhmaindonald/PGRcode')
 ```
 R files that have the code, html browser files, and Rmd files from
@@ -13,7 +18,7 @@ which these have been generated, should then be available under
 Individual code files or other vignette files can be downloaded thus:
 ```
 vigdir <- "https://github.com/jhmaindonald/PGRcode/raw/main/vignettes/"
-if(!file.exists('~/tmp2'))system('mkdir ~/tmp')
+if(!file.exists('~/tmp'))system('mkdir ~/tmp')
 download.file(paste0(vigdir, 'ch1.Rmd'), '~/tmp/ch1.Rmd')
   ## Replace 'ch1' by other names as required.
 ```

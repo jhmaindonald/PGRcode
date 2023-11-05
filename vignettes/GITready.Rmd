@@ -20,9 +20,10 @@ knitr::opts_chunk$set(
 )
 ```
 
-Here are recorded steps that can be followed when a vignette 
-is changed or added, prior to committing to GitHub changes that 
-include adding or updating static html files.
+This vignette is primarily intended as a reminder for the maintainer,
+of steps that may be needed when changes are made, in particular
+when a vignette is changed or added.  A commit and push to GitHub 
+will be needed for changes to take effect. 
 
 Details of using pkgdown to set up the web page can be found at
 https://pkgdown.r-lib.org/articles/pkgdown.html#configuration
@@ -32,6 +33,8 @@ usethis::use_pkgdown()
 pkgdown::build_site()
 usethis::use_pkgdown_github_pages()
 ```
+
+Rebuild just the home page and the CSS by running `build_home_index(); init_site()`. 
 
 ## Setup so that download from GitHub makes vignettes available
 

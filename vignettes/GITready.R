@@ -18,4 +18,6 @@ knitr::opts_chunk$set(
 #  if(!dir.exists('inst/doc'))dir.create("~/pkgs/PGRcode/inst/doc")
 #  ## On installation, files in 'inst/doc/' are copied to 'doc/'
 #  file.copy(dir("vignettes", full.names=TRUE), "~/pkgs/PGRcode/inst/doc", overwrite=TRUE)
+#  ## For an individual file, go e.g., for GITready.Rmd
+#  tools::buildVignette('~/pkgs/PGRcode/vignettes/GITready.Rmd', dir = "inst/doc", tangle=TRUE)
 

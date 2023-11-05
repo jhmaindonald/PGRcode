@@ -345,22 +345,22 @@ GitHub</h1>
 
 
 
-<p>This “vignette” records steps that can be followed when a vignette is
-changed or added, prior to committing changes that include static html
-files to GitHub.</p>
+<p>Here are recorded steps that can be followed when a vignette is
+changed or added, prior to committing to GitHub changes that include
+adding or updating static html files.</p>
 <p>Details of using pkgdown to set up the web page can be found at <a href="https://pkgdown.r-lib.org/articles/pkgdown.html#configuration" class="uri">https://pkgdown.r-lib.org/articles/pkgdown.html#configuration</a></p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_pkgdown</span>()</span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>pkgdown<span class="sc">::</span><span class="fu">build_site</span>()</span>
 <span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_pkgdown_github_pages</span>()</span></code></pre></div>
-<div id="an-alternative-that-might-in-principle-be-used" class="section level2">
-<h2>An alternative that might in principle be used</h2>
-<p>The following, placed here as a matter of record, is an alternative
-that avoids use of the <em>pkgdown</em> package:</p>
+<div id="setup-so-that-download-from-github-makes-vignettes-available" class="section level2">
+<h2>Setup so that download from GitHub makes vignettes available</h2>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>tools<span class="sc">::</span><span class="fu">buildVignettes</span>(<span class="at">dir =</span> <span class="st">&quot;.&quot;</span>, <span class="at">tangle=</span><span class="cn">TRUE</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">dir.exists</span>(<span class="st">&#39;inst&#39;</span>))<span class="fu">dir.create</span>(<span class="st">&quot;~/pkgs/PGRcode/inst&quot;</span>)   </span>
 <span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">dir.exists</span>(<span class="st">&#39;inst/doc&#39;</span>))<span class="fu">dir.create</span>(<span class="st">&quot;~/pkgs/PGRcode/inst/doc&quot;</span>) </span>
 <span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="do">## On installation, files in &#39;inst/doc/&#39; are copied to &#39;doc/&#39;</span></span>
-<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="fu">file.copy</span>(<span class="fu">dir</span>(<span class="st">&quot;vignettes&quot;</span>, <span class="at">full.names=</span><span class="cn">TRUE</span>), <span class="st">&quot;~/pkgs/PGRcode/inst/doc&quot;</span>, <span class="at">overwrite=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="fu">file.copy</span>(<span class="fu">dir</span>(<span class="st">&quot;vignettes&quot;</span>, <span class="at">full.names=</span><span class="cn">TRUE</span>), <span class="st">&quot;~/pkgs/PGRcode/inst/doc&quot;</span>, <span class="at">overwrite=</span><span class="cn">TRUE</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="do">## For an individual file, go e.g., for GITready.Rmd</span></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>tools<span class="sc">::</span><span class="fu">buildVignette</span>(<span class="st">&#39;~/pkgs/PGRcode/vignettes/GITready.Rmd&#39;</span>, <span class="at">dir =</span> <span class="st">&quot;inst/doc&quot;</span>, <span class="at">tangle=</span><span class="cn">TRUE</span>)</span></code></pre></div>
 </div>
 
 

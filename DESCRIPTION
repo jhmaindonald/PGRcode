@@ -1,12 +1,12 @@
 Package: PGRcode
 Type: Package
 Title: Code from "A Practical Guide to Data Analysis Using R"
-Version: 0.1.5-5
+Version: 0.1.5-6
 Authors@R: 
     c(person(c("John","H"), "Maindonald", , email="jhmaindonald@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-0106-9224")),
-    person(given=c("W","John"), "Braun", , email= "john.braun@ubc.ca", role="ctb"),   
-    person(given=c("Jeffrey","L"), "Andrews", email="jeff.andrews@ubc.ca", role="ctb")
+    person(given=c("W","John"), "Braun", , email= "john.braun@ubc.ca", role=c("ctb","aut")),   
+    person(given=c("Jeffrey","L"), "Andrews", email="jeff.andrews@ubc.ca", role=c("ctb","aut"))
            )
 Description: Vignettes included with this package give access to the
   code used in the text, and extend and/or comment on the text comment.

@@ -1,5 +1,6 @@
 citHeader("To cite PGRcode in publications use:")
 
+meta <- packageDescription("PGRcode")
 year  <- sub("-.*", "", meta$Date)
 note  <- sprintf("R package version %s", meta$Version)
 authors <- eval(parse(text = meta$`Authors@R`))

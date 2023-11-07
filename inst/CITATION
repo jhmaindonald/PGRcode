@@ -8,6 +8,11 @@ text_authors <- authors |>
   format(include= c("family", "given"),
          collapse = list(family = ", ")) |>
   paste(collapse = ", ")
+textVersion = sprintf(
+    "%s, (%s). %s: %s. %s, %s",
+    text_authors, year, meta$Package, meta$Title, note, meta$URL
+)
+textVersion
 
 bibentry(
   bibtype  = "Manual",

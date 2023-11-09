@@ -72,12 +72,12 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header"><h1 id="pgrcode--code-and-complements-for-a-practical-guide---">PGRcode – Code and Complements for “A Practical Guide . . .”<a class="anchor" aria-label="anchor" href="#pgrcode--code-and-complements-for-a-practical-guide---"></a>
+<div class="page-header"><h1 id="code-and-other-resources-for-a-practical-guide-to-data-analysis-using-r">Code and Other Resources for “A Practical Guide to Data Analysis Using R”<a class="anchor" aria-label="anchor" href="#code-and-other-resources-for-a-practical-guide-to-data-analysis-using-r"></a>
 </h1></div>
-<p>Vignettes included in this package make available code and other supplementary content that relates to the new text</p>
+<p>This website makes available code and other supplementary content that relates to the new Cambridge University Press text</p>
 <p>“A Practical Guide to Data Analysis Using R – An Example-Based Approach”,<br>
 by John H Maindonald, W John Braun, and Jeffrey L Andrews.</p>
-<p>The draft of this new text is currently making its way through the Cambridge University Press copy-editing process, and is due for publication in May 2024. It is a derivative of “Data Analysis and Graphics Using R” (Maindonald and Braun, CUP, 3rd edn, 2010.)</p>
+<p>Copy-editing is currently in progress, with publication due in May 2024. The new text builds on “Data Analysis and Graphics Using R” (Maindonald and Braun, CUP, 3rd edn, 2010.)</p>
 <!-- badges: start -->
 
 <p>To install the package, do</p>
@@ -85,12 +85,12 @@ by John H Maindonald, W John Braun, and Jeffrey L Andrews.</p>
 <span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://remotes.r-lib.org" class="external-link">"remotes"</a></span><span class="op">)</span><span class="op">)</span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">'jhmaindonald/PGRcode'</span><span class="op">)</span></span></code></pre>
 <p>R files that have the code, html browser files, and Rmd files from which these have been generated, should then be available under “User guides, package vignettes and other documentation”.</p>
-<p>Individual code files or other vignette files can be downloaded thus:</p>
+<p>Individual code files or other vignette files can be accessed by going to <a href="https://github.com/jhmaindonald/PGRcode/tree/main/inst/doc/" class="external-link uri">https://github.com/jhmaindonald/PGRcode/tree/main/inst/doc/</a>, then clicking on the file name of interest. Click on first icons to the right of <strong>Raw</strong> to copy the file, or on the second icon to download it.</p>
+<p>Or, from the R command line, type:</p>
 <pre><code><span><span class="va">vigdir</span> <span class="op">&lt;-</span> <span class="st">"https://github.com/jhmaindonald/PGRcode/raw/main/vignettes/"</span></span>
 <span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.exists</a></span><span class="op">(</span><span class="st">'~/tmp'</span><span class="op">)</span><span class="op">)</span><span class="fu"><a href="https://rdrr.io/r/base/system.html" class="external-link">system</a></span><span class="op">(</span><span class="st">'mkdir ~/tmp'</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html" class="external-link">download.file</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">vigdir</span>, <span class="st">'ch1.Rmd'</span><span class="op">)</span>, <span class="st">'~/tmp/ch1.Rmd'</span><span class="op">)</span></span>
 <span>  <span class="co">## Replace 'ch1' by other names as required.</span></span></code></pre>
-<p>Or, go to <a href="https://github.com/jhmaindonald/PGRcode/blob/main/vignettes/" class="external-link uri">https://github.com/jhmaindonald/PGRcode/blob/main/vignettes/</a>, click on file name on the far left, then on the far right of the row that is immediately above the first line of the file, click on the download symbol that is the second symbol across from <strong>Raw</strong>.</p>
 </div>
   </main><aside class="col-md-3"><div class="license">
 <h2 data-toc-skip>License</h2>

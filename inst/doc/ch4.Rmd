@@ -828,4 +828,8 @@ df.gam <- gam(y ~ s(x), data=xy)
 plot(df.gam, residuals=TRUE)
 ```
 
-
+```{r eval=T}
+code <- knitr::knit_code$get()
+txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n'))
+writeLines(txt, con="../inst/doc/ch4.R")
+```

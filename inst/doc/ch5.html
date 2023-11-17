@@ -11,7 +11,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 
-<meta name="date" content="2023-11-05" />
+<meta name="date" content="2023-11-17" />
 
 <title>Chapter 5: Generalized linear models and survival analysis</title>
 
@@ -339,7 +339,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Chapter 5: Generalized linear models and
 survival analysis</h1>
-<h4 class="date">2023-11-05</h4>
+<h4 class="date">2023-11-17</h4>
 
 
 
@@ -1020,6 +1020,9 @@ response</h3>
 <span id="cb81-5"><a href="#cb81-5" tabindex="-1"></a>)</span>
 <span id="cb81-6"><a href="#cb81-6" tabindex="-1"></a><span class="fu">colnames</span>(inhibition) <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="st">&quot;&quot;</span>, <span class="fu">ncol</span>(inhibition))</span>
 <span id="cb81-7"><a href="#cb81-7" tabindex="-1"></a>inhibition</span></code></pre></div>
+<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" tabindex="-1"></a>code <span class="ot">&lt;-</span> knitr<span class="sc">::</span>knit_code<span class="sc">$</span><span class="fu">get</span>()</span>
+<span id="cb82-2"><a href="#cb82-2" tabindex="-1"></a>txt <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">## &quot;</span>, <span class="fu">names</span>(code),<span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="fu">sapply</span>(code, paste, <span class="at">collapse=</span><span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span>))</span>
+<span id="cb82-3"><a href="#cb82-3" tabindex="-1"></a><span class="fu">writeLines</span>(txt, <span class="at">con=</span><span class="st">&quot;../inst/doc/ch5.R&quot;</span>)</span></code></pre></div>
 </div>
 
 

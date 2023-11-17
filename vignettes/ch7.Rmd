@@ -994,3 +994,9 @@ cultdose.lmer <- lmer(ct ~ Cultivar/Dose + factor(year) +
                            (-1 + Dose | gp), data = DAAG::sorption, REML=TRUE)
 ```
 
+
+<!-- ```{r eval=T} -->
+<!-- code <- knitr::knit_code$get() -->
+<!-- txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n')) -->
+<!-- writeLines(txt, con="../inst/doc/ch7.R") -->
+<!-- ``` -->

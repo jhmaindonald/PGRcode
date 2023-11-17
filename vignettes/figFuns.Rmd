@@ -149,3 +149,10 @@ bfDF[ij,'bfIntervalw'] <- t2BF(t, n, mu=c(-0.1,0.1),rscale="wide")
 bfDF
 }
 ```
+
+
+<!-- ```{r eval=T} -->
+<!-- code <- knitr::knit_code$get() -->
+<!-- txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n')) -->
+<!-- writeLines(txt, con="../inst/doc/figFuns.R") -->
+<!-- ``` -->

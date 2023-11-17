@@ -473,3 +473,8 @@ sort(importance(diamond5K.rf)[,1], decreasing=T) |>
                    xtest=diamonds[-samp5K,-7], ytest=Y[-samp5K]))
 ```
 
+```{r eval=T}
+code <- knitr::knit_code$get()
+txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n'))
+writeLines(txt, con="../inst/doc/ch8.R")
+```

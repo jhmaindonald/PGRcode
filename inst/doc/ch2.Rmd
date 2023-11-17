@@ -961,3 +961,9 @@ plotmarkov <-
           scales=list(x=list(relation="free"))))
 }
 ```
+
+```{r eval=T}
+code <- knitr::knit_code$get()
+txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n'))
+writeLines(txt, con="../inst/doc/ch2.R")
+```

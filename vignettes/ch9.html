@@ -1246,6 +1246,9 @@ proximities</h4>
 <span id="cb98-8"><a href="#cb98-8" tabindex="-1"></a><span class="fu">table</span>(<span class="fu">apply</span>(symmat, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="fu">sum</span>(x<span class="sc">&lt;</span><span class="dv">1</span>)))</span>
 <span id="cb98-9"><a href="#cb98-9" tabindex="-1"></a>pacific.cmd <span class="ot">&lt;-</span> <span class="fu">cmdscale</span>(pacific.dist)</span>
 <span id="cb98-10"><a href="#cb98-10" tabindex="-1"></a>pacific.sam <span class="ot">&lt;-</span> <span class="fu">sammon</span>(pacific.dist)</span></code></pre></div>
+<div class="sourceCode" id="cb99"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb99-1"><a href="#cb99-1" tabindex="-1"></a>code <span class="ot">&lt;-</span> knitr<span class="sc">::</span>knit_code<span class="sc">$</span><span class="fu">get</span>()</span>
+<span id="cb99-2"><a href="#cb99-2" tabindex="-1"></a>txt <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">## &quot;</span>, <span class="fu">names</span>(code),<span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="fu">sapply</span>(code, paste, <span class="at">collapse=</span><span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span>))</span>
+<span id="cb99-3"><a href="#cb99-3" tabindex="-1"></a><span class="fu">writeLines</span>(txt, <span class="at">con=</span><span class="st">&quot;../inst/doc/ch9.R&quot;</span>)</span></code></pre></div>
 </div>
 
 

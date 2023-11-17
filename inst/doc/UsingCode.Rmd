@@ -130,3 +130,8 @@ plot(z, dnorm(z), type="l", ylab="Normal density")
 plot(z, dt(z, df=5), type="l", ylab="t-statistic density, 5 df")
 ```
 
+```{r eval=T}
+code <- knitr::knit_code$get()
+txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n'))
+writeLines(txt, con="../inst/doc/UsingCode.R")
+```

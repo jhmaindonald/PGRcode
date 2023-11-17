@@ -588,3 +588,9 @@ plot(I(1:nrow(airq)), simSeries)
 plot(I(1:nrow(airq)), airq$Temp)
 ```
 
+
+<!-- ```{r eval=T} -->
+<!-- code <- knitr::knit_code$get() -->
+<!-- txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n')) -->
+<!-- writeLines(txt, con="../inst/doc/ch6.R") -->
+<!-- ``` -->

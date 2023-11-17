@@ -7,10 +7,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r echo=F}
-options(rmarkdown.html_vignette.check_title = FALSE)
-```
-
 This document is primarily designed, whether in its source form as an 
 R Markdown document, or processed ('knitted') to provide a Markdown 
 or html document, to give access to the code.  Additionally, settings 
@@ -21,6 +17,21 @@ as code.  With the R markdown markup (replacing the LaTeX markup used
 in the text) as it stands, graphs will not always have the same layout 
 and theme as in the text.
 
+```{r comment}
+library(knitr)
+opts_chunk[['set']](fig.width=6, fig.height=6, comment=" ",
+                    out.width="80%", fig.align="center", fig.show='hold',
+                    size="small", ps=10, strip.white = TRUE, 
+                    tidy.opts = list(replace.assign=FALSE))
+```
+
+```{r setup, cache=FALSE, echo=FALSE}
+## The following extends available code chunk options, and simplifies 
+## figure width and height arguments to `w` and `h`.
+Hmisc::knitrSet(basename="intro", fig.path="figs/g", lang="markdown")
+oldopt <- options(digits=4, formatR.arrow=FALSE, width=70, scipen=999)
+``` 
+
 ```{r CodeControl, echo=TRUE}
 options(rmarkdown.html_vignette.check_title = FALSE)
 ## xtras=TRUE    ## Set to TRUE to execute code 'extras'
@@ -30,17 +41,6 @@ library(knitr)
 ## opts_chunk[['set']](eval=FALSE)   ## Set to TRUE to execute main part of code
 opts_chunk[['set']](eval=FALSE) 
 ```
-
-```{r setup, cache=FALSE, echo=FALSE}
-## The following extends available code chunk options, and simplifies 
-## figure width and height arguments to `w` and `h`.
-Hmisc::knitrSet(basename="intro", fig.path="figs/g", lang="markdown")
-oldopt <- options(digits=4, formatR.arrow=FALSE, width=70, scipen=999)
-opts_chunk[['set']](cache.path='cache-', out.width="80%", fig.align="center", 
-                    fig.show='hold', size="small", ps=10, strip.white = TRUE,
-                    fig.width=6, fig.height=6, 
-                    comment=NA, width=70, tidy.opts = list(replace.assign=FALSE))
-``` 
 
 ##### Packages required (plus any dependencies)
 latticeExtra (lattice is a dependency); DAAG; car; MASS; AICcmodavg; BayesFactor; boot; MPV; ggplot2; tidyr
@@ -101,7 +101,7 @@ update(c("A: Dotplot"=gphA, "B: Boxplot"=gphB), between=list(x=0.4),
 ##   See `?latticeExtra::c`
 ```
 
-```{r 1_1strip, eval=F}
+```{r 1_1strip, eval=F, comment=NA}
 library(latticeExtra)   # Lattice package will be loaded and attached also
 cuckoos <- DAAG::cuckoos
 ## Panel A: Dotplot without species means added
@@ -1646,9 +1646,16 @@ BayesFactor::ttestBF(df$d, rscale=1/sqrt(2))   # Or, `rscale="medium"`
   # `rscale="medium"` is the default
 bayes_inference(d, type='ht', data=df, statistic='mean', method='t', rscale=1/sqrt(2),
                 alternative='twosided', null=0, prior_family = "JZS")
-  # Set `rscale=1/sqrt(2)` (default is 1.0) as for BayesFactor; gives same BF
-  # `prior_family = "JZS"` is the default
-# Compare with `prior_family = "JUI"`, with (if not supplied) default settings
+  # Set `rscale=1/sqrt(2)` (default is 1.0) 
+  # as for BayesFactor; gives same BF
+# Compare with `prior_family = "JUI"` (`"JZS"` is the default), 
+# with (if not supplied) default settings
 bayes_inference(d, type='ht', data=df, statistic='mean', method='t',
                 alternative='twosided', null=0, prior_family = "JUI")
 ```
+
+<!-- ```{r eval=T} -->
+<!-- code <- knitr::knit_code$get() -->
+<!-- txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n')) -->
+<!-- writeLines(txt, con="../inst/doc/ch1.R") -->
+<!-- ``` -->

@@ -1,31 +1,12 @@
----
-title: "Chapter 1: Learning from data . . ."
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Ch1: Learning from Data}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
----
 
-This document is primarily designed, whether in its source form as an 
-R Markdown document, or processed ('knitted') to provide a Markdown 
-or html document, to give access to the code.  Additionally, settings 
-can be changed in the immediately following code chunk in the R 
-Markdown (`Rmd`) source so that, providing needed R packages are 
-available, it should 'knit' to give text and graphics output as well 
-as code.  With the R markdown markup (replacing the LaTeX markup used 
-in the text) as it stands, graphs will not always have the same layout 
-and theme as in the text.
-
-```{r comment}
+## comment
 library(knitr)
 opts_chunk[['set']](fig.width=6, fig.height=6, comment=" ",
                     out.width="80%", fig.align="center", fig.show='hold',
                     size="small", ps=10, strip.white = TRUE, 
                     tidy.opts = list(replace.assign=FALSE))
-```
 
-```{r CodeControl, echo=TRUE}
+## CodeControl
 options(rmarkdown.html_vignette.check_title = FALSE)
 ## xtras=TRUE    ## Set to TRUE to execute code 'extras'
 xtras <- FALSE
@@ -33,53 +14,32 @@ library(knitr)
 ## opts_chunk[['set']](results="asis")
 ## opts_chunk[['set']](eval=FALSE)   ## Set to TRUE to execute main part of code
 opts_chunk[['set']](eval=FALSE) 
-```
 
-```{r setup, cache=FALSE, echo=FALSE}
+## setup
 ## The following extends available code chunk options, and simplifies 
 ## figure width and height arguments to `w` and `h`.
 Hmisc::knitrSet(basename="intro", fig.path="figs/g", lang="markdown")
 oldopt <- options(digits=4, formatR.arrow=FALSE, width=70, scipen=999)
-``` 
 
-
-##### Packages required (plus any dependencies)
-latticeExtra (lattice is a dependency); DAAG; car; MASS; AICcmodavg; BayesFactor; boot; MPV; ggplot2; tidyr
-
-Additionally, knitr and Hmisc are required in order to process the Rmd source file.  The prettydoc package is by default used to format the html output.
-
-#####                          Chapter summary
-#####      A note on terminology --- variables, factors, and more!
-
-### Section 1.1: Questions, and data that may point to answers
-#### Subsection 1.1.1: A sample is a window into the wider population
-```{r A1_1a}
+## A1_1a
 ## For the sequence below, precede with set.seed(3676)
 set.seed(3696)
 sample(1:9384, 12, replace=FALSE)  # NB: `replace=FALSE` is the default
-```
 
-```{r A1_1b}
+## A1_1b
 chosen1200 <- sample(1:19384, 1200, replace=FALSE)  
-```
 
-```{r A1_1c}
+## A1_1c
 ## For the sequence below, precede with set.seed(366)
 set.seed(366)
 split(sample(seq(1:10)), rep(c("Control","Treatment"), 5))
 # sample(1:10) gives a random re-arrangement (permutation) of 1, 2, ..., 10
-```
 
-#####                          Cluster sampling
-#####            *A note on with-replacement samples
-```{r A1_1d}
+## A1_1d
 sample(1:10, replace=TRUE)
 ## sample(1:10, replace=FALSE) returns a random permutation of 1,2,...10
-```
 
-#### Subsection 1.1.2: Formulating the scientific question
-#####               Example: a question about cuckoo eggs
-```{r 1_1, fig.width=6, fig.height=3.5, echo=F, out.width='90%'}
+## 1_1
 ## Code
 suppressPackageStartupMessages(library(latticeExtra, quietly=TRUE))
 cuckoos <- DAAG::cuckoos
@@ -100,9 +60,8 @@ update(c("A: Dotplot"=gphA, "B: Boxplot"=gphB), between=list(x=0.4),
        xlab="Length of egg (mm)") 
 ## latticeExtra::c() joins compatible plots together. 
 ##   See `?latticeExtra::c`
-```
 
-```{r 1_1strip, eval=F, comment=NA}
+## 1_1strip
 library(latticeExtra)   # Lattice package will be loaded and attached also
 cuckoos <- DAAG::cuckoos
 ## Panel A: Dotplot without species means added
@@ -116,40 +75,17 @@ dotplot(species ~ length, data=cuckoos, alpha=0.4, xlab="Length of egg (mm)") +
   # Use `+` to indicate that more (another 'layer') is to be added.
   # With `alpha=0.4`, 40% is the point color with 60% background color
   # `pch=3`: Plot character 3 is '+'; `cex=1.4`: Default char size X 1.4
-```
 
-```{r 1_1, eval=F}
-```
-
-#### Subsection 1.1.3: Planning for a statistical analysis
-#####                        Understand the data
-#####                          Causal inference
-#####           What was measured? Is it the relevant measure?
-#####       Use relevant prior information in the planning stages
-#####                Subject area knowledge and judgments
-#####               The importance of clear communication
-#####                Data-based selection of comparisons
-#####             Models must be fit for their intended use
-#### Subsection 1.1.4: Results that withstand thorough and informed challenge
-#### Subsection 1.1.5: Using graphs to make sense of data
-#####                       Graphical comparisons
-#### Subsection 1.1.6: Formal model-based comparison
-```{r A1_3b}
+## A1_3b
 options(width=70)
 cuckoos <- DAAG::cuckoos
 av <- with(cuckoos, aggregate(length, list(species=species), FUN=mean))
 setNames(round(av[["x"]],2), abbreviate(av[["species"]],10))
-```
 
-```{r A1_3c} 
+## A1_3c
 with(cuckoos, scale(length[species=="wren"], scale=FALSE))[,1] 
-```
 
-
-### Section 1.2: Graphical tools for data exploration
-#### Subsection 1.2.1: Displays of a single variable
-
-```{r 1_2, fig.width=6, fig.height=4,  left=1.5, right=1, echo=FALSE, out.width="100%", warning=FALSE, message=FALSE}
+## 1_2
 library(latticeExtra, quietly=TRUE)
 fossum <- subset(DAAG::possum, sex=="f")
 femlen <- DAAG::bounce(fossum[["totlngth"]], d=0.1)
@@ -181,19 +117,13 @@ update(c("B: Density curve, with histogram overlaid"=gphB,
          "A: Boxplot, with annotation added"=gphA, layout=c(1,2), y.same=F), 
        as.table=TRUE, between=list(y=1.4), 
        xlab="Total length of female possums (cm)")
-```
 
-```{r 1_2, eval=F}
-```
-
-```{r A2_la, eval=FALSE}
+## A2_la
 fossum <- subset(DAAG::possum, sex=="f")
 densityplot(~totlngth, plot.points=TRUE, pch="|", data=fossum) +
   layer_(panel.histogram(x, type="density", breaks=c(75,80,85,90,95,100)))
-```       
 
-#####         Comparing univariate displays across factor levels
-```{r 1_3, echo=FALSE, fig.width=6, fig.height=3.5, }
+## 1_3
 ## Code
 possum <- DAAG::possum
 gph <- bwplot(Pop~totlngth|sex, data=possum) +
@@ -201,21 +131,14 @@ gph <- bwplot(Pop~totlngth|sex, data=possum) +
 parset <- list(fontsize=list(text=10.0, points=5), pch=16,cex=1)
 update(gph, par.settings=parset, xlab="Total length (cm)",
        between=list(x=0.4), scales=list(tck=c(0.5,0.5)))
-```
 
-```{r 1_2, eval=F}
-```
-
-```{r A2_1b}
+## A2_1b
 ## Create boxplot graph object --- Simplified code
 gph <- bwplot(Pop~totlngth | sex, data=possum) 
 ## plot graph, with dotplot distribution of points below boxplots
 gph + latticeExtra::layer(panel.dotplot(x, unclass(y)-0.4)) 
-```
 
-#### Subsection 1.2.2: Patterns in univariate time series
-
-```{r 1_4, fig.width=8, fig.height=5, ps=9, left=-2, bot=-1, top=1, rt=0.5, lwd=0.5, las=1, echo=FALSE, out.width="100%"}
+## 1_4
 layout(matrix(c(1,2)), heights=c(2.6,1.75))
 measles <- DAAG::measles
 ## Panel A:
@@ -243,15 +166,8 @@ plot(window(measles, start=1840, end=1882), xlab="",
 ylab="Deaths    Pop (1000s)", ylim=c(0, 4200), fg="gray")
 points(window(londonpop, start=1840, end=1882), pch=16, cex=0.5)
 mtext(side=3, line=0.5, "B (1841-1881)", adj=0, cex=1.15)
-```
 
-```{r 1_4, eval=F}
-```
-
-
-#### Subsection 1.2.3: Visualizing relationships between pairs of variables
-
-```{r 1_5, fig.width=8, fig.height=4, echo=FALSE, out.width="100%"}
+## 1_5
 ## Untransformed vs log transformed scales
 Animals <- MASS::Animals
 asp <- with(Animals, sapply(list(log(brain/100), log(body/100)), 
@@ -268,27 +184,18 @@ plot(update(gphA, strip = strip.custom(factor.levels='A: Linear scales')),
      position=c(0,0,.55,1), more=TRUE)
 plot(update(gphB, strip = strip.custom(factor.levels='B: Logarithmic scales')), 
      position=c(0.45,0,1,1))
-```
 
-#### Subsection 1.2.4: Response lines (and/or curves)
-
-```{r 1_6, fig.width=5, fig.height=5, ps=11, tcl=-0.25, echo=FALSE, out.width="35%"}
+## 1_6
 par(pty="s")
 plot(distance.traveled ~ starting.point, data=DAAG::modelcars, fg="gray",
 xlim=c(0,12.5), xaxs="i", xlab = "Distance up ramp (cm)",
 ylab="Distance traveled (cm)")
-```
 
-```{r 1_6, eval=F}
-```
-
-#### Subsection 1.2.5: Multiple variables and times
-```{r A2_4a}
+## A2_4a
 ## Apply function range to columns of data frame jobs (DAAG)
 sapply(DAAG::jobs, range)  ## NB: `BC` = British Columbia
-```
 
-```{r 1_7, echo=FALSE, fig.width=6, fig.height=4}
+## 1_7
 ## Panel A: Basic plot; all series in a single panel; use log y-scale
 formRegions <- Ontario+Quebec+BC+Alberta+Prairies+Atlantic ~ Date
 basicGphA <-
@@ -328,12 +235,8 @@ print(update(gphA, par.settings=jobstheme, axis=axis.grid,
 print(update(gphB, par.settings=jobstheme, axis=axis.grid,
       main=list("B: Sliced vertical log scale",y=0)),
       position=c(0,0,1,0.625), newpage=FALSE)
-```
 
-```{r 1_7, eval=F}
-```
-
-```{r 1_8, fig.width=6, fig.height=2,  top=1, ps=12, out.width="100%", echo=FALSE}
+## 1_8
 plot(c(1230,1860), c(0, 10.5), axes=FALSE, bty="n",
      xlab="", ylab="", type="n", log="x")
 xpoints <- c(1366, 1436, 1752, 1840)
@@ -360,21 +263,14 @@ axis(1, at=1220, labels='log="e"', line=-5, hadj=0, lwd=0)
 axis(1, at=1220, labels="log=10", line=-6.5, hadj=0, lwd=0)  
 wid2 <- strwidth("log=2")
 par(family="sans")
-```
 
-```{r 1_8, eval=F}
-```
-
-#### Subsection 1.2.6: *Labeling technicalities
-#### Subsection 1.2.7: Graphical displays for categorical data
-```{r A2_5a}
+## A2_5a
 stones <- array(c(81,6,234,36,192,71,55,25), dim=c(2,2,2),
                 dimnames=list(Success=c("yes","no"),
                 Method=c("open","ultrasound"), Size=c("<2cm", ">=2cm")))
 margin12 <- margin.table(stones, margin=1:2)
-```
 
-```{r 1_9, fig.width=6, fig.height=4,  bot=1, left=-2.5, top=2, rt=0.5, ps=8, mgp=c(1.5,0.25,0), fig.show='hold', out.width="72%", echo=FALSE}
+## 1_9
 byMethod <- 100*prop.table(margin12, margin=2)
 pcGood <- 100*prop.table(stones, margin=2:3)["yes", , ]
 dimnam <- dimnames(stones)
@@ -412,76 +308,48 @@ abline(v=10*(5:9),col="lightgray",lwd=0.5)
 legend("topleft", col=c('blue','red'),lty=c(1,1), lwd=1, cex=0.9,
        y.intersp=0.75, legend=c("Open","Ultrasound"),bty="n",
        inset=c(-0.01,-0.01))
-```
 
-```{r 1_9, eval=F}
-```
-
-#### Subsection 1.2.8: What to look for in plots
-
-##### Outliers
-##### Asymmetry of the distribution
-##### Changes in variability
-##### Clustering
-##### Nonlinearity
-##### Time trends in the data
-
-### Section 1.3: Data Summary
-#### Subsection 1.3.1: Counts
-```{r A3_1a}
+## A3_1a
 ## Table of counts example: data frame nswpsid1 (DAAG)
 ## Specify `useNA="ifany"` to ensure that any NAs are tabulated
 tab <- with(DAAG::nswpsid1, table(trt, nodeg, useNA="ifany"))
 dimnames(tab) <- list(trt=c("none", "training"), educ = c("completed", "dropout"))
 tab
-```
 
-#####  Tabulation that accounts for frequencies or weights -- the `xtabs()` function
-```{r A3_1b, echo=FALSE}
+## A3_1b
 nassCDS <- DAAG::nassCDS
 NIFrange <- range(nassCDS$weight, na.rm=T)
-```
 
-```{r 1_10, fig.width=6, fig.asp=0.25, out.width="80%", echo=FALSE}
+## 1_10
 gph <- lattice::bwplot(log(nassCDS$weight+1), xlab="Inverse sampling weights",
   scales=list(x=list(at=c(0,log(c(10^(0:5)+1))), labels=c(0,10^(0:5)))))
 update(gph, par.settings=DAAG::DAAGtheme(color=F, col.points='gray50'))
-```
 
-```{r 1_10, eval=F}
-```
-
-```{r A3_1d}
+## A3_1d
 sampNum <- table(nassCDS$dead)
 popNum <- as.vector(xtabs(weight ~ dead, data=nassCDS))
 rbind(Sample=sampNum, "Total number"=round(popNum,1))
-```
 
-```{r A3_1e}
+## A3_1e
 nassCDS <- DAAG::nassCDS
 Atab <- xtabs(weight ~ airbag + dead, data=nassCDS)/1000
 ## Define a function that calculates Deaths per 1000
 DeadPer1000 <- function(x)1000*x[2]/sum(x)
 Atabm <- ftable(addmargins(Atab, margin=2, FUN=DeadPer1000))
 print(Atabm, digits=2, method="compact", big.mark=",")
-```
 
-```{r A3_1f}
+## A3_1f
 SAtab <- xtabs(weight ~ seatbelt + airbag + dead, data=nassCDS)
 ## SAtab <- addmargins(SAtab, margin=3, FUN=list(Total=sum))  ## Gdet Totals
 SAtabf <- ftable(addmargins(SAtab, margin=3, FUN=DeadPer1000), col.vars=3)
 print(SAtabf, digits=2, method="compact", big.mark=",")
-```
 
-```{r A3_1g}
+## A3_1g
 FSAtab <- xtabs(weight ~ dvcat + seatbelt + airbag + dead, data=nassCDS)
 FSAtabf <- ftable(addmargins(FSAtab, margin=4, FUN=DeadPer1000), col.vars=3:4)
 print(FSAtabf, digits=1)
-```
 
-#### Subsection 1.3.2: Summaries of information from data frames
-
-```{r 1_11, w=7.5, h=3.0, ps=10, echo=FALSE, out.width="85%"}
+## 1_11
 ## Individual vine yields, with means by block and treatment overlaid
 kiwishade <- DAAG::kiwishade
 kiwishade$block <- factor(kiwishade$block, levels=c("west","north","east"))
@@ -495,52 +363,28 @@ dotplot(shade~yield | block, data=kiwishade, col="gray40", aspect=0.65,
         panel=panelfun, key=keyset, layout=c(3,1))
 ## Note that parameter settings were given both in the calls
 ## to the panel functions and in the list supplied to key.
-```
 
-```{r 1_11, eval=F}
-```
-
-```{r A3_2b}
+## A3_2b
 ## mean yield by block by shade: data frame kiwishade (DAAG)
 kiwimeans <- with(DAAG::kiwishade, 
                   aggregate(yield, by=list(block, shade), mean))
 names(kiwimeans) <- c("block","shade","meanyield")
 head(kiwimeans, 4)  # First 4 rows
-```
 
-#####       The benefits of data summary -- dengue status example
-#### Subsection 1.3.3: Measures of variation
-#####                        Cuckoo eggs example
-```{r A3_3a}
+## A3_3a
 options(width=72)
 ## SD of length, by species: data frame cuckoos (DAAG)
 z <- with(cuckoos, sapply(split(length,species), function(x)c(sd(x),length(x))))
 print(setNames(paste0(round(z[1,],2)," (",z[2,],")"),
                abbreviate(colnames(z),11)), quote=FALSE)
-```
 
-#####                         Degrees of freedom
-#### Subsection 1.3.4: Inter-quartile range (IQR) and median absolute deviation (MAD)
-#### Subsection 1.3.5: A pooled standard deviation estimate
-#####                       Elastic bands example
-
-<<A3_5a>>=
-sapply(DAAG::two65, function(x) c(Mean=mean(x), sd=sd(x))) |> round(2)
-@
-
-#### Subsection 1.3.6: Effect size
-```{r A3_6a}
+## A3_6a
 setNames(diff(c(ambient=244.1, heated=253.5))/c(sd=10.91), "Effect size")
-```
-Data are available in the data frame `DAAG::two65`.
 
-```{r A3_6b, eval=FALSE}
+## A3_6b
 vignette('effectsize', package='effectsize')
-```
 
-#### Subsection 1.3.7: Correlation
-
-```{r 1_12, w=8, h=2.75, lwd=0.5, echo=FALSE, out.width="100%"}
+## 1_12
 set.seed(17)
 x1 <- x2 <- x3 <- (11:30)/5
 y1 <- x1 + rnorm(20, sd=0.5)
@@ -563,61 +407,42 @@ xyplot(y ~ x | gp, data=xy, layout=c(4,1), xlab="", ylab="",
   strip=strip.custom(factor.levels=striplabs), aspect=1,
   scales=list(relation='free', draw=FALSE), between=list(x=0.5,y=0)
 )
-```
 
-```{r 1_12, eval=F}
-```
-
-### Section 1.4: Distributions: quantifying uncertainty
-#### Subsection 1.4.1: Discrete distributions
-
-```{r A4_2a}
+## A4_2a
 ## dbinom(0:10, size=10, prob=0.15)
 setNames(round(dbinom(0:10, size=10, prob=0.15), 3), 0:10)
-```
 
-```{r A4_2b}
+## A4_2b
 pbinom(q=4, size=10, prob=0.15)
-```
 
-```{r A4_2c}
+## A4_2c
 qbinom(p = 0.70, size = 10, prob = 0.15)
 ## Check that this lies between the two cumulative probabilities:
 ## pbinom(q = 1:2, size=10, prob=0.15)
-```
 
-```{r A4_2d}
+## A4_2d
 rbinom(15, size=4, p=0.5)
-```
 
-```{r A4_2e, collapse=TRUE}
+## A4_2e
 ## dpois(x = 0:8, lambda = 3)
 setNames(round(dpois(x = 0:8, lambda = 3),4), 0:8)
 ## Probability of > 8 raisins
 ## 1-ppois(q = 8, lambda = 3)     ## Or, ppois(q=8, lambda=3, lower.tail=FALSE)
-```
 
-```{r A4_2f, eval=FALSE}
+## A4_2f
 1 - ppois(q = 8, lambda = 3)
 ppois(q=8, lambda=3, lower.tail=FALSE)  ## Alternative
 1-sum(dpois(x = 0:8, lambda = 3))       ## Another alternative
-```
 
-```{r A4_2g}
+## A4_2g
 raisins <- rpois(20, 3)
 raisins
-```
 
-#####              Initializing the random number generator
-```{r A4_2h}
+## A4_2h
 set.seed(23286)  # Use to reproduce the sample below
 rbinom(15, size=1, p=0.5)
-```
 
-#####                        Means and variances
-#### Subsection 1.4.2: Continuous distributions
-
-```{r 1_13, w=4, h=3.6, ps=12, left=-2, mgp=c(2.0,0.5,0), tcl=-0.3, echo=FALSE}
+## 1_13
 z <- seq(-3,3,length=101)
 plot(z, dnorm(z), type="l", ylab="Normal density",
      yaxs="i", bty="L",  tcl=-0.3, fg="gray",
@@ -627,47 +452,36 @@ chh <- par()$cxy[2]
 arrows(-1.8, 0.32, -0.25, 0.2, length=0.07, xpd=T)
 cump <- round(pnorm(1), 3)
 text(-1.8, 0.32+0.75*chh, paste("pnorm(1)\n", "=", cump), xpd=T, cex=0.8)
-```
 
-```{r 1_13, eval=F}
-```
-
-```{r A4_3b}
+## A4_3b
 pnormExs <- c('pnorm(0)', 'pnorm(1)', 'pnorm(-1.96)', 'pnorm(1.96)',
 'pnorm(1.96, mean=2)', 'pnorm(1.96, sd=2)')
 Prob <- sapply(pnormExs, function(x)eval(parse(text=x)))
 df <- as.data.frame(Prob)
 df$Prob <- round(df$Prob,3)
 print(df)
-```
 
-```{r A4_3c, eval=xtras}
+## A4_3c
 ## Plot the normal density, in the range -3 to 3
 z <- pretty(c(-3,3), 30)   # Find ~30 equally spaced points
 ht <- dnorm(z)             # Equivalent to dnorm(z, mean=0, sd=1)
 plot(z, ht, type="l", xlab="Normal variate", ylab="Density", yaxs="i")
 # yaxs="i" locates the axes at the limits of the data
-```
 
-```{r A4_3e}
+## A4_3e
 qnorm(.9)          # 90th percentile; mean=0 and SD=1
-```
 
-```{r A4_3f, eval=xtras}
+## A4_3f
 ## Additional examples:
 setNames(qnorm(c(.5,.841,.975)), nm=c(.5,.841,.975))
 qnorm(c(.1,.2,.3))   # -1.282 -0.842 -0.524  (10th, 20th and 30th percentiles)
 qnorm(.1, mean=100, sd=10)  # 87.2 (10th percentile, mean=100, SD=10)
-```
 
-#####             Different ways to represent distributions
-#####  Generating simulated samples from the normal and other continuous distributions
-```{r A4_3g}
+## A4_3g
 options(digits=2)  # Suggest number of digits to display
 rnorm(10)          # 10 random values from the normal distribution
-```
 
-```{r 1_14, w=7.2, h=1.1, left=-0.5, echo=FALSE, lwd=0.5, out.width="100%"}
+## 1_14
 mu <- 10
 sigma <- 1
 n <- 1
@@ -721,43 +535,28 @@ panel.mean <- function(data, mu = 10, sigma = 1, n2 = 1,
 }
 DAAG::panelplot(xy,panel=panel.mean,totrows=totrows,totcols=totcols,
   oma=c(1.5, 0, rep(0.5,2)), fg='gray')
-```
 
-```{r 1_14, eval=F}
-```
-
-```{r A4_3h, eval=xtras}
+## A4_3h
 ## The following gives a conventional histogram representations:
 set.seed (21)        # Use to reproduce the data in the figure
 df <- data.frame(x=rnorm(250), gp=rep(1:5, rep(50,5)))
 lattice::histogram(~x|gp, data=df, layout=c(5,1))
-```
 
-```{r A4_3i}
+## A4_3i
 runif(n = 20, min=0, max=1) # 20 numbers, uniform distn on (0, 1)
 rexp(n=10, rate=3)          # 10 numbers, exponential, mean 1/3.
-```
 
-#### Subsection 1.4.3: Graphical checks for normality
-```{r A4_4a}
+## A4_4a
 tab <- t(as.matrix(DAAG::pair65))
 rbind(tab,"heated-ambient"=tab[1,]-tab[2,])
-```
 
-```{r 1_15, echo=FALSE, w=7.5, h=4.2, out.width="100%"}
+## 1_15
 ## Normal quantile-quantile plot for heated-ambient differences,
 ## compared with plots for random normal samples of the same size
 plt <- with(DAAG::pair65, DAAG::qreference(heated-ambient, nrep=10, nrows=2))
 update(plt, scales=list(tck=0.4), xlab="")
-```
 
-```{r 1_15, eval=F}
-```
-
-#### Subsection 1.4.4: Population parameters and sample statistics
-#####               The sampling distribution of the mean
-
-```{r 1_16, echo=FALSE, w=8, h=6.75, left=1, top=1, out.width="85%"}
+## 1_16
 library(lattice)
 ## Generate n sample values; skew population
 sampfun = function(n) exp(rnorm(n, mean = 0.5, sd = 0.3))
@@ -774,16 +573,8 @@ print(update(gph, scales=list(tck=0.4), layout = c(3,1),
              par.settings=samptheme, 
              main=list("B: Normal quantile-quantile plots", cex=1.25)),
       position=c(0,0,1,0.5))
-```
 
-```{r 1_16, eval=F}
-```
-                                 
-#####                  The standard error of the median
-#####                Simulation in learning and research
-#### Subsection 1.4.5: The $t$-distribution
-
-```{r 1_17, echo=FALSE, w=8, h=6.5, bot=2.5, top=1.5, las=0, xpd=TRUE, tcl=-0.3, cex.lab=0.9, echo=FALSE, ps=10, mfrow=c(2,2), out.width="90%"}
+## 1_17
 x <- seq(from=-4.2, to = 4.2, length.out = 50)
 ylim <- c(0, dnorm(0))
 ylim[2] <- ylim[2]+0.1*diff(ylim)
@@ -852,28 +643,16 @@ plotfun(cump=cump, dfun=function(x)dt(x, 8),
         qfun=function(x)qt(x, 8),
         ytxt="", txt1="qt", txt2=", 8", cex.lab=1.05)
 mtext(side=3, line=1.25, "D: t distribution (8 df)", adj=-0.2)
-```
 
-```{r 1_17, eval=F}
-```
-
-```{r A4_5a}
+## A4_5a
 qnorm(c(0.975,0.995), mean=0)    # normal distribution
 qt(c(0.975, 0.995), df=8)        # t-distribution with 8 d.f.
-```
 
-#### Subsection 1.4.6: The likelihood, and maximum likelihood estimation
-
-### Section 1.5: Simple forms of regression model
-#### Subsection 1.5.1: Line or curve?
-```{r A5_1a}
+## A5_1a
 roller <- DAAG::roller
 t(cbind(roller, "depression/weight ratio"=round(roller[,2]/roller[,1],2)))
-```
 
-#####                      Using models to predict
-
-```{r 1_18, echo=FALSE, w=8, h=3.7, top=1.5, tcl=-0.3, cex.lab=0.9, echo=FALSE, ps=9, mfrow=c(1,2), out.width="90%"}
+## 1_18
 y <- DAAG::roller$depression
 x <- DAAG::roller$weight
 pretext <- c(reg = "A", lo = "B")
@@ -921,34 +700,24 @@ ns <- (1:n)[y - yhat == min(y - yhat)][1]
 ypos <- 0.5 * (y[ns] + yhat[ns])
 text(x[ns] + 0.4*chw, ypos, "-ve residual", adj = 0,cex=0.75,col="gray30")
 }
-```
 
-```{r 1_18, eval=F}
-```
-
-#####               Which model is best --- line or curve?
-#### Subsection 1.5.2: Fitting models -- the model formula
-```{r A5_2a, eval=xtras}
+## A5_2a
 ## Fit line - by default, this fits intercept & slope.
 roller.lm <- lm(depression ~ weight, data=DAAG::roller)
 ## Compare with the code used to plot the data
 plot(depression ~ weight, data=DAAG::roller)
 ## Add the fitted line to the plot
 abline(roller.lm)
-```
 
-```{r A5_2b}
+## A5_2b
 ## For a model that omits the intercept term, specify
 lm(depression ~ 0 + weight, data=roller)  # Or, if preferred, replace `0` by `-1`
-```
 
-#####                           Model objects
-```{r A5_2c}
+## A5_2c
 roller.lm <- lm(depression ~ weight, data=DAAG::roller)
 names(roller.lm)     # Get names of list elements
-```
 
-```{r A5_2d}
+## A5_2d
 coef(roller.lm)           # Extract coefficients
 summary(roller.lm)        # Extract model summary information
 coef(summary(roller.lm))  # Extract coefficients and SEs
@@ -956,53 +725,34 @@ fitted(roller.lm)         # Extract fitted values
 predict(roller.lm)        # Predictions for existing or new data, with SE
                           # or confidence interval information if required.
 resid(roller.lm)          # Extract residuals
-```
 
-```{r A5_2e}
+## A5_2e
 roller.lm$coef            # An alternative is roller.lm[["coef"]]
-```
 
-```{r A5_2f}
+## A5_2f
 print(summary(roller.lm), digits=3)
-```
 
-#####                           Residual plots
-
-```{r 1_19, echo=FALSE, w=7.2, h=4.8, ps=10, out.width="80%"}
+## 1_19
 ## Normal quantile-quantile plot, plus 7 reference plots
 DAAG::qreference(residuals(roller.lm), nrep=8, nrows=2, xlab="")
-```
 
-```{r 1_19, eval=F}
-```
-
-#####                   Simulation of regression data
-```{r A5_2i}
+## A5_2i
 roller.lm <- lm(depression ~ weight, data=DAAG::roller)
 roller.sim <- simulate(roller.lm, nsim=20)  # 20 simulations
-```
 
-```{r A5_2j}
+## A5_2j
 with(DAAG::roller, matplot(weight, roller.sim, pch=1, ylim=range(depression)))
 points(DAAG::roller, pch=16)
-```
 
-#### Subsection 1.5.3: The model matrix in regression
-```{r A5_3a}
+## A5_3a
 model.matrix(roller.lm)
 ## Specify coef(roller.lm) to obtain the column multipliers.
-```
 
-#####        From straight line regression to multiple regression
-```{r A5_3b}
+## A5_3b
 mouse.lm <- lm(brainwt ~ lsize+bodywt, data=DAAG::litters)
 coef(summary(mouse.lm))
-```
 
-
-### Section 1.6: Data-based judgments -- frequentist, in a Bayesian world
-#### Subsection 1.6.1: Inference with known prior probabilities
-```{r A6_1a}
+## A6_1a
 ## `before` is the `prevalence` or `prior`. 
 after <- function(prevalence, sens, spec){
   prPos <- sens*prevalence + (1-spec)*(1-prevalence)
@@ -1010,37 +760,27 @@ after <- function(prevalence, sens, spec){
 ## Compare posterior for a prior of 0.002 with those for 0.02 and 0.2
 setNames(round(after(prevalence=c(0.002, 0.02, 0.2), sens=.8, spec=.95), 3),
          c("Prevalence=0.002", "Prevalence=0.02", "Prevalence=0.2"))
-```
 
-#####   Relating 'incriminating' evidence to the probability of guilt
-#### Subsection 1.6.2: Treatment differences that are on a continuous scale
-```{r A6_2a}
+## A6_2a
 ## Use pipe syntax, introduced in R 4.1.0
 sleep <- with(datasets::sleep, extra[group==2] - extra[group==1])
 sleep |> (function(x)c(mean = mean(x), SD = sd(x), n=length(x)))() |> 
      (function(x)c(x, SEM=x['SD']/sqrt(x['n'])))() |>
      setNames(c("mean","SD","n","SEM")) -> stats
      print(stats, digits=3)
-```
 
-```{r A6_2b}
+## A6_2b
 ## Sum of tail probabilities
 2*pt(1.580/0.389, 9, lower.tail=FALSE)  
-```
 
-```{r A6_2c}
+## A6_2c
 ## 95% CI for mean of heated-ambient: data frame DAAG::pair65
 t.test(sleep, conf.level=0.95)
-```
 
-#####                         An hypothesis test
-```{r A6_2d}
+## A6_2d
 pt(4.06, 9, lower.tail=F)
-```
 
-#####      The $p$-value probability relates to a decision process
-#### Subsection 1.6.3: Use of simulation with $p$-values
-```{r A6_2e}
+## A6_2e
 eff2stat <- function(eff=c(.2,.4,.8,1.2), n=c(10,40), numreps=100,
                      FUN=function(x,N)pt(sqrt(N)*mean(x)/sd(x), df=N-1, 
                                          lower.tail=FALSE)){
@@ -1055,9 +795,8 @@ eff2stat <- function(eff=c(.2,.4,.8,1.2), n=c(10,40), numreps=100,
   data.frame(effsize=rep(rep(eff, each=numreps), length(n)),
              N=rep(n, each=numreps*length(eff)), stat=as.vector(mat))
 }
-```
 
-```{r 1_20, w=7.0, h=3.0, echo=FALSE, out.width="100%"}
+## 1_20
 set.seed(31)
 df200 <- eff2stat(eff=c(.2,.4,.8,1.2), n=c(10, 40), numreps=200)
 labx <- c(0.001,0.01,0.05,0.2,0.4,0.8)
@@ -1067,18 +806,12 @@ gph <- bwplot(factor(effsize) ~ I(stat^0.25) | factor(N), data=df200,
 update(gph+latticeExtra::layer(panel.abline(v=labx[1:3]^0.25, col='lightgray')),
        strip=strip.custom(factor.levels=paste0("n=",c(10,40))),
        par.settings=DAAG::DAAGtheme(color=F, col.points="gray50"))
-```
 
-```{r 1_20, eval=F}
-```
-
-```{r A6_2f}
+## A6_2f
 eff10 <- with(subset(df200, N==10&effsize==0.2), c(gt5pc=sum(stat>0.05), lohi=fivenum(stat)[c(2,4)]))
 eff40 <- with(subset(df200, N==40&effsize==0.2), c(gt5pc=sum(stat>0.05), lohi=fivenum(stat)[c(2,4)]))
-```
 
-#### Subsection 1.6.4: Power --- minimizing the chance of false positives
-```{r A6_3a}
+## A6_3a
 tf1 <- rbind('R=0.2'=c(0.8*50, 0.05*250),
 'R=1'=c(0.8*150, 0.05*150),
 'R=5'=c(0.8*200, 0.05*50))
@@ -1089,18 +822,15 @@ tf <- cbind("True positives"=paste(tf2[,2],tf1[,2],sep="="),
 "False positives"=paste(tf2[,1],tf1[,1],sep="="))
 rownames(tf) <- rownames(tf1)
 print(tf, quote=FALSE)
-```
 
-#####                   Power calculations -- examples
-```{r A6_3b}
+## A6_3b
 power.t.test(d=0.5, sig.level=0.05, type="one.sample", power=0.8)
 pwr1 <- power.t.test(d=0.5, sig.level=0.005, type="one.sample", power=0.8)
 pwr2 <- power.t.test(d=0.5, sig.level=0.005, type="two.sample", power=0.8)
 ## d=0.5, sig.level=0.005, One- and two-sample numbers 
 c("One sample"=pwr1$n, "Two sample"=pwr2$n)
-```
 
-```{r A6_3c}
+## A6_3c
 effsize <- c(.05,.2,.4,.8,1.2); npairs <- c(10,20,40)
 pwr0.05 <- matrix(nrow=length(effsize), ncol=length(npairs),
                dimnames=list(paste0('ES=',effsize), paste0('n=',npairs)))
@@ -1115,22 +845,14 @@ tab <- cbind(round(pwr0.05,4), round(pwr0.005,4))
 tab[1:3,] <- round(tab[1:3,],3)
 tab[5,3] <- '~1.0000'
 tab[5,6] <- '~1.0000'
-```
 
-```{r A6_3d}
+## A6_3d
 print(tab[,1:3], quote=F)
-```
 
-```{r A6_3e}
+## A6_3e
 print(tab[,4:6], quote=F)
-```
 
-```{r A6_3c}
-```
-
-#####          Positive Predictive Values
-
-```{r 1_21, w=6, h=4.8, mgp=c(1.85,.5,0), echo=FALSE, out.width="60%"}
+## 1_21
 R <- pretty(0:3, 40)
 postOdds <- outer(R/0.05,c(.8,.3,.08))
 PPV <- as.data.frame(cbind(R,postOdds/(1+postOdds)))
@@ -1140,19 +862,8 @@ key <- list(text = list(text=c("80% power","30% power", "8% power"), cex = 1.0),
 gph <- lattice::xyplot(p80+p30+p8~R, data=PPV, lwd=2, type=c("l","g"), 
   xlab="Pre-study odds R", ylab="Post-study probability (PPV)")
 update(gph, scales=list(tck=0.5), key=key) 
-```
 
-```{r 1_21, eval=F}
-```
-
-#### Subsection 1.6.5: The future for $p$-values
-#####                  How small a $p$-value is needed?
-#### Subsection 1.6.6: Reporting results
-#####            Is there an alternative that is more likely?
-
-### Section 1.7: Information statistics and Bayesian methods with Bayes Factors
-#### Subsection 1.7.1: Information statistics -- using likelihoods for model choice
-```{r A7_3a}
+## A7_3a
 ## Calculations using mouse brain weight data
 mouse.lm <- lm(brainwt ~ lsize+bodywt, data=DAAG::litters)
 n <- nrow(DAAG::litters)
@@ -1161,11 +872,8 @@ p <- length(coef(mouse.lm))+1  # NB: p=4 (3 coefficients + 1 scale parameter)
 k <- 2*n/(n-p-1)
 c("AICc" = AICcmodavg::AICc(mouse.lm), fromlogL=k*p-2*logLik(mouse.lm)[1], 
   fromFit=k*p + RSSlogLik) |> print(digits=4)
-```
 
-#####    The sampling properties of the difference in AIC statistics
-
-```{r 1_22, w=6.5, h=3.2, echo= FALSE, out.width="100%"}
+## 1_22
 sim0vs1 <- function(mu=0, n=15, ntimes=200){
 a0 <- a1 <- numeric(ntimes)
 for(i in 1:ntimes){
@@ -1184,31 +892,22 @@ xyplot(diff01 ~ a0 | mu, data=simboth, xlab="AIC(m0)", ylab="AIC(m0) - AIC(m1)")
   latticeExtra::layer({panel.abline(h=0, col='red'); 
          panel.abline(h=cdiff, lwd=1.5, lty=3, col='red', alpha=0.5);
          panel.abline(h=-2, lty=2, col='red')})
-```
 
-```{r 1_22, eval=F}
-```
-
-```{r A7_3b}
+## A7_3b
 tab <- rbind(c(with(sim0, sum(diff01>0))/200, with(sim0.5, sum(diff01>0))/200),
   c(with(sim0,sum(diff01>-cdiff))/200, with(sim0.5, sum(diff01>-cdiff))/200))
 dimnames(tab) <- list(c("AIC: Proportion choosing m1",
                         "AICc: Proportion choosing m1"),
                       c("True model is m0", "True model is m1"))
 tab
-```
 
-#### Subsection 1.7.2: Bayesian methods with Bayes Factors
-```{r A7_4a}
+## A7_4a
 ## Setting `scale=1/sqrt(2)` gives a mildly narrower distribution
 print(c("pcauchy(1, scale=1)"=pcauchy(1, scale=1), 
         "   pcauchy(1, scale=1/sqrt(2))"=pcauchy(1, scale=1/sqrt(2))),
       quote=FALSE)
-```
 
-#####     The Cauchy prior with different choices of scale parameter
-
-```{r 1_23, echo=FALSE, w=8.0, h=3.5, bot=0.5, top=2, tcl=-0.3, cex.lab=0.9,  fig.show="hold", mfrow=c(1,2)}
+## 1_23
 x <- seq(from=-4.5, to=4.5, by=0.1)
 densMed <- dcauchy(x,scale=sqrt(2)/2)
 densUltra <- dcauchy(x, scale=sqrt(2))
@@ -1236,12 +935,8 @@ plot(density(simpost[,'mu']), main="", xlab="", col="red",
 mtext(side=1, line=2, expression(mu), cex=1.1)
 abline(v=mean(pairedDiffs), col="gray")
 mtext(side=3, line=0.5, expression("B: Posterior density for "*mu), adj=0, cex=1.15)
-```
 
-```{r 1_23, eval=F}
-```
-
-```{r A7_4b, eval=xtras}
+## A7_4b
 ## Calculate and plot density for default prior - Selected lines of code
 x <- seq(from=-4.5, to=4.5, by=0.1)
 densMed <- dcauchy(x, scale=sqrt(2)/2)
@@ -1252,16 +947,13 @@ ttBF0 <- BayesFactor::ttestBF(pairedDiffs)
 ## Sample from posterior, and show density plot for mu
 simpost <- BayesFactor::posterior(ttBF0, iterations=10000)
 plot(density(simpost[,'mu']))
-```
 
-#####                        A thought experiment
-```{r A7_4c}
+## A7_4c
 tval <- setNames(qt(1-c(.05,.01,.005)/2, df=19), paste(c(.05,.01,.005)))
 bf01 <- setNames(numeric(3), paste(c(.05,.01,.005)))
 for(i in 1:3)bf01[i] <- BayesFactor::ttest.tstat(tval[i],n1=20, simple=T)
-```
 
-```{r A7_4d}
+## A7_4d
 pairedDiffs <- with(datasets::sleep, extra[group==2] - extra[group==1])
 ttBF0 <- BayesFactor::ttestBF(pairedDiffs)
 ttBFwide <- BayesFactor::ttestBF(pairedDiffs, rscale=1)
@@ -1270,27 +962,20 @@ rscales <- c("medium"=sqrt(2)/2, "wide"=1, ultrawide=sqrt(2))
 BF3 <- c(as.data.frame(ttBF0)[['bf']], as.data.frame(ttBFwide)[['bf']],
          as.data.frame(ttBFultra)[['bf']])
 setNames(round(BF3,2), c("medium", "wide", "ultrawide"))
-```
 
-```{r A7_4e}
+## A7_4e
 pval <- t.test(pairedDiffs)[['p.value']]
 1/(-exp(1)*pval*log(pval))
-```
 
-#####               A null interval may make better sense
-```{r A7_4f}
+## A7_4f
 min45 <- round(0.75/sd(pairedDiffs),2)   ## Use standardized units
 ttBFint <- BayesFactor::ttestBF(pairedDiffs, nullInterval=c(-min45,min45))
 round(as.data.frame(ttBFint)['bf'],3)
-```
 
-```{r A7_4g}
+## A7_4g
 bf01 <- as.data.frame(ttBFint)[['bf']]
-```
 
-#####                 The effect of changing sample size
-
-```{r 1_24a}
+## 1_24a
 t2bfInterval <- function(t, n=10, rscale="medium", mu=c(-.1,.1)){
      null0 <- BayesFactor::ttest.tstat(t=t, n1=n, nullInterval=mu,
                                        rscale=rscale,simple=TRUE)
@@ -1312,9 +997,8 @@ other <- apply(bfDF,1,function(x)
   ))
 bfDF <- setNames(cbind(bfDF, t(other)),
     c('p','n','t','bf','bfInterval'))
-```
 
-```{r 1_24, echo=FALSE, fig.width=6.5, fig.asp=0.425, fig.pos='ht', message=F, warning=F, out.width='100%'}
+## 1_24
 plabpos <- with(subset(bfDF, n==max(bfDF$n)), log((bf+bfInterval)/2))
 gphA1 <- lattice::xyplot(log(bf)~log(n), groups=factor(p), data=bfDF,
                         panel=function(x,y,...){
@@ -1350,41 +1034,27 @@ gphB <- xyplot(log(eff)~log(n), groups=log(p), data=bfDF, pch=1:3, lty=1:3,
   latticeExtra::layer(panel.grid(h=-1,v=-1))
 plot(gphA2+latticeExtra::as.layer(gphA1), position=c(0, 0, 0.525, 1), more=T)
 plot(gphB, position=c(0.52, 0, 1, 1), par.settings=DAAG::DAAGtheme(color=T))
-```
 
-```{r 1_24, eval=F}
-```
-
-#####          Different statistics give different perspectives
-```{r A7_h}
+## A7_h
 n1 <- BayesFactor::ttest.tstat(qt(0.00001, df=40), n1=40, simple=T)
 n2 <- BayesFactor::ttest.tstat(qt(0.000001, df=40), n1=40, simple=T)
-```
 
-```{r A7_i}
+## A7_i
 bf1 <- BayesFactor::ttest.tstat(qt(0.00001, df=40), n1=40, simple=T)
 bf2 <- BayesFactor::ttest.tstat(qt(0.000001, df=40), n1=40, simple=T)
 rbind("Bayes Factors"=setNames(c(bf1,bf2), c("p=0.00001","p=0.000001")),
   "t-statistics"=c(qt(0.00001, df=40), qt(0.000001, df=40))) 
-```
 
-```{r A7_j}
+## A7_j
 knitr::kable(matrix(c("A bare mention","Positive","Strong","Very strong"), nrow=1),
        col.names=c("1 -- 3", "3 -- 20", "20 -- 150", ">150"), align='c',
       midrule='', vline="")
-```
 
-#####  *Technical details of the family of priors used in  the BayesFactor package
-
-### Section 1.8: Resampling methods for SEs, tests and confidence intervals
-#### Subsection 1.8.1: The one-sample permutation test
-```{r A8_1a}
+## A8_1a
 tab <- t(as.matrix(DAAG::pair65))
 rbind(tab,"heated-ambient"=tab[1,]-tab[2,])
-```
 
-#### Subsection 1.8.2: The two-sample permutation test
-```{r 1_25, echo=F, fig.width=5.5, fig.height=5, out.width="50%"}
+## 1_25
 ## First of 3 curves; permutation distribution of difference in means
 two65 <- DAAG::two65
 set.seed(47)        # Repeat curves shown here
@@ -1419,13 +1089,8 @@ box(col="gray")
 leg3 <- paste(c(pval1,pval2,pval3))
 legend(x=20, y=0.078, title="P-values are", cex=1, xpd=TRUE,
   bty="n", lty=c(1,2,3), lwd=c(1,1,1,1.25), legend=leg3, y.intersp=0.8)
-```
 
-```{r 1_25, eval=F}
-```
-
-#### Subsection 1.8.3: Estimating the standard error of the median: bootstrapping
-```{r A8_3a, message=FALSE}
+## A8_3a
 ## Bootstrap estimate of median of wren length: data frame cuckoos
 wren <- subset(DAAG::cuckoos, species=="wren")[, "length"]
 library(boot)
@@ -1436,54 +1101,23 @@ median.fun <- function(data, indices){median(data[indices])}
 ## Call boot(), with statistic=median.fun, R = # of resamples
 set.seed(23)
 (wren.boot <- boot(data = wren, statistic = median.fun, R = 4999))
-```
 
-#### Subsection 1.8.4: Bootstrap estimates of confidence intervals
-#####         Bootstrap 95\% confidence intervals for the median
-```{r A8_4a}
+## A8_4a
 ## Call the function boot.ci() , with boot.out=wren.boot
 boot.ci(boot.out=wren.boot, type=c("perc","bca"))
-```
 
-#####                    The correlation coefficient
-```{r A8_4b}
+## A8_4b
 ## Bootstrap estimate of 95% CI for `cor(chest, belly)`: `DAAG::possum`
 corr.fun <- function(data, indices) 
   with(data, cor(belly[indices], chest[indices]))
 set.seed(29)
 corr.boot <- boot(DAAG::possum, corr.fun, R=9999)
-```
 
-```{r A8_4c, cache=FALSE}
+## A8_4c
 library(boot)
 boot.ci(boot.out = corr.boot, type = c("perc", "bca"))
-```
 
-#####                 The bootstrap -- parting comments
-
-### Section 1.9: Organizing and managing work, and tools that can assist
-#####           The RStudio Integrated Development Environment
-#### Subsection 1.9.1: Reproducible reporting --- the knitr package
-
-### Section 1.10: The changing environment for data analysis
-#### Subsection 1.10.1: Models and machine learning
-#####           The limits of current machine learning systems
-#####                     Traps in big data analysis
-#####       Of mice and machine learning --- missing data   values
-#####            Humans are not good intuitive statisticians
-#### Subsection 1.10.2: Replicability is the definitive check
-#####  To what extent is published work replicable? What is the evidence?
-#####                   Some major replication studies
-#####           Replicability in pre-clinical cancer research
-#####        Studies where there may be strong social influences
-#####            The scientific study of scientific processes
-#####            Would lowering the $p$-value threshold help?
-#####              Peer review at the study planning stage
-
-### Section 1.11: Further, or supplementary, reading
-
-### Exercises (1_12)
-```{r A10_4}
+## A10_4
 Animals <- MASS::Animals
 manyMals <- rbind(Animals, sqrt(Animals), Animals^0.1, log(Animals))
 manyMals$transgp <- rep(c("Untransformed", "Square root transform",
@@ -1492,15 +1126,13 @@ rep(nrow(Animals),4))
 manyMals$transgp <- with(manyMals, factor(transgp, levels=unique(transgp)))
 lattice::xyplot(brain~body|transgp, data=manyMals,
   scales=list(relation='free'), layout=c(2,2))
-```
 
-```{r A10_5}
+## A10_5
 with(Animals, c(cor(brain,body), cor(brain,body, method="spearman")))
 with(Animals, c(cor(log(brain),log(body)),
   cor(log(brain),log(body), method="spearman")))
-```
 
-```{r A10_9}
+## A10_9
 usableDF <- DAAG::cuckoohosts[c(1:6,8),]
 nr <- nrow(usableDF)
 with(usableDF, {
@@ -1508,56 +1140,48 @@ with(usableDF, {
   for(i in 1:nr)lines(c(clength[i], hlength[i]), c(cbreadth[i], hbreadth[i]))
   text(hlength, hbreadth, abbreviate(rownames(usableDF),8), pos=c(2,4,2,1,2,4,2))
 })
-```
 
-```{r A10_10}
+## A10_10
 ## Take a random sample of 100 values from the normal distribution
 x <- rnorm(100, mean=3, sd=5)
 (xbar <- mean(x))
 ## Plot, against `xbar`, the sum of squared deviations from `xbar`
 lsfun <- function(xbar) apply(outer(x, xbar, "-")^2, 2, sum)
 curve(lsfun, from=xbar-0.01, to=xbar+0.01)
-```
 
-```{r A10_11, eval=F}
+## A10_11
 boxplot(avs, meds, horizontal=T)
-```
 
-```{r A10_15}
+## A10_15
 x <- rpois(7, 78.3)
 mean(x); var(x)
-```
 
-```{r A10_16}
+## A10_16
 nvals100 <- rnorm(100)
 heavytail <- rt(100, df = 4)
 veryheavytail <- rt(100, df = 2)
 boxplot(nvals100, heavytail, veryheavytail, horizontal=TRUE)
-```
 
-```{r A10_19}
+## A10_19
 boxdists <- function(n=1000, times=10){
   df <- data.frame(normal=rnorm(n*times), t=rt(n*times, 7),
   sampnum <- rep(1:times, rep(n,times)))
   lattice::bwplot(sampnum ~ normal+t, data=df, outer=TRUE, xlab="", 
                   horizontal=T)
 }
-```
 
-```{r A10_20}
+## A10_20
 a <- 1
 form <- ~rchisq(1000,1)^a+rchisq(1000,25)^a+rchisq(1000,500)^a
 lattice::qqmath(form, scales=list(relation="free"), outer=TRUE)
-```
 
-```{r A10_21}
+## A10_21
 y <- rnorm(51)
 ydep <- y1[-1] + y1[-51]
 acf(y)      # acf plots `autocorrelation function'(see Chapter 6)
 acf(ydep)
-```
 
-```{r A10_24}
+## A10_24
 ptFun <- function(x,N)pt(sqrt(N)*mean(x)/sd(x), df=N-1, lower.tail=FALSE)
 simStat <- function(eff=.4, N=10, nrep=200, FUN)
     array(rnorm(n=N*nrep*length(eff), mean=eff), dim=c(length(eff),nrep,N)) |>
@@ -1568,15 +1192,13 @@ car::powerTransform(pval)   # See Subsection 2.5.6
 labx <- c(0.0001, 0.001, 0.005, 0.01, 0.05, 0.1, 0.25)
 bwplot(~I(pval^0.2), scales=list(x=list(at=labx^0.2, labels=paste(labx))),
        xlab=expression("P-value (scale is "*p^{0.2}*")") )
-```
 
-```{r A10_24a}
+## A10_24a
 pvalDF <- subset(df200, effsize==0.4 & N==10)$stat
 plot(sort(pval^0.2), sort(pvalDF^0.2))
 abline(0,1)
-```
 
-```{r A10_24c}
+## A10_24c
 ## Estimated effect sizes: Set `FUN=effFun` in the call to `eff2stat()`
 effFun <- function(x,N)mean(x)/sd(x)   
   # Try: `labx <- ((-1):6)/2`; `at = log(labx)`; `v = log(labx)  
@@ -1584,35 +1206,29 @@ effFun <- function(x,N)mean(x)/sd(x)
 BFfun <- function(x,N)BayesFactor::ttest.tstat(sqrt(N)*mean(x)/sd(x), n1=N, 
                                                simple=T)
   # A few very large Bayes Factors are likely to dominate the plots
-```
 
-```{r A10_27}
+## A10_27
 (degC <- setNames(c(21,30,38,46),paste('rep',1:4)) ) 
-```
 
-```{r A10_27a}
+## A10_27a
 radonC <- tidyr::pivot_longer(MPV::radon, names_to='key', 
                               cols=names(degC), values_to='percent')
 radonC$temp <- degC[radonC$key]
 lattice::xyplot(percent ~ temp|factor(diameter), data = radonC)
-```
 
-```{r A10_27c}
+## A10_27c
 matplot(scale(t(MPV::radon[,-1])), type="l", ylab="scaled residuals")  
-```
 
-```{r A10_27d}
+## A10_27d
 radon.res <- aggregate(percent ~ diameter, data = radonC, FUN = scale, 
     scale = FALSE)
-```
 
-```{r A10_30}
+## A10_30
 diamonds <- ggplot2::diamonds
 with(diamonds, plot(carat, price, pch=16, cex=0.25))
 with(diamonds, smoothScatter(carat, price))
-```
 
-```{r A10_31a, eval=xtras}
+## A10_31a
 t2bfInterval <- function(t, n=10, rscale="medium", mu=c(-.1,.1)){
      null0 <- BayesFactor::ttest.tstat(t=t, n1=n, nullInterval=mu,
                                        rscale=rscale,simple=TRUE)
@@ -1620,9 +1236,8 @@ alt0 <- BayesFactor::ttest.tstat(t=t, n1=n, nullInterval=mu, rscale=rscale,
                                  complement=TRUE, simple=TRUE)
 alt0/null0
 }
-```
 
-```{r A10_31b, eval=xtras}
+## A10_31b
 pval <- c(0.05,0.01,0.001); nval <- c(10,40,160)
 bfDF <- expand.grid(p=pval, n=nval)
 pcol <- 1; ncol <- 2; tcol <- 3
@@ -1638,9 +1253,8 @@ other <- apply(bfDF,1,function(x)
   ))
 bfDF <- setNames(cbind(bfDF, t(other)),
     c('p','n','t','bf','bfInterval'))
-```
 
-```{r A10_32, eval=xtras}
+## A10_32
 df <- data.frame(d = with(datasets::sleep, extra[group==2] - extra[group==1]))
 library(statsr)
 BayesFactor::ttestBF(df$d, rscale=1/sqrt(2))   # Or, `rscale="medium"`
@@ -1653,10 +1267,8 @@ bayes_inference(d, type='ht', data=df, statistic='mean', method='t', rscale=1/sq
 # with (if not supplied) default settings
 bayes_inference(d, type='ht', data=df, statistic='mean', method='t',
                 alternative='twosided', null=0, prior_family = "JUI")
-```
 
-```{r eval=T}
+## unnamed-chunk-1
 code <- knitr::knit_code$get()
 txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n'))
 writeLines(txt, con="/Users/johnm1/pkgs/PGRcode/inst/doc/ch1.R")
-```

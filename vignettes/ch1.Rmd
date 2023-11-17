@@ -25,13 +25,6 @@ opts_chunk[['set']](fig.width=6, fig.height=6, comment=" ",
                     tidy.opts = list(replace.assign=FALSE))
 ```
 
-```{r setup, cache=FALSE, echo=FALSE}
-## The following extends available code chunk options, and simplifies 
-## figure width and height arguments to `w` and `h`.
-Hmisc::knitrSet(basename="intro", fig.path="figs/g", lang="markdown")
-oldopt <- options(digits=4, formatR.arrow=FALSE, width=70, scipen=999)
-``` 
-
 ```{r CodeControl, echo=TRUE}
 options(rmarkdown.html_vignette.check_title = FALSE)
 ## xtras=TRUE    ## Set to TRUE to execute code 'extras'
@@ -41,6 +34,14 @@ library(knitr)
 ## opts_chunk[['set']](eval=FALSE)   ## Set to TRUE to execute main part of code
 opts_chunk[['set']](eval=FALSE) 
 ```
+
+```{r setup, cache=FALSE, echo=FALSE}
+## The following extends available code chunk options, and simplifies 
+## figure width and height arguments to `w` and `h`.
+Hmisc::knitrSet(basename="intro", fig.path="figs/g", lang="markdown")
+oldopt <- options(digits=4, formatR.arrow=FALSE, width=70, scipen=999)
+``` 
+
 
 ##### Packages required (plus any dependencies)
 latticeExtra (lattice is a dependency); DAAG; car; MASS; AICcmodavg; BayesFactor; boot; MPV; ggplot2; tidyr

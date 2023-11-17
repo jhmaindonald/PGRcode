@@ -1654,8 +1654,8 @@ bayes_inference(d, type='ht', data=df, statistic='mean', method='t',
                 alternative='twosided', null=0, prior_family = "JUI")
 ```
 
-```{r eval=T}
-code <- knitr::knit_code$get()
-txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n'))
-writeLines(txt, con="../inst/doc/ch1.R")
-```
+<!-- ```{r eval=T} -->
+<!-- code <- knitr::knit_code$get() -->
+<!-- txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n')) -->
+<!-- writeLines(txt, con="../inst/doc/ch1.R") -->
+<!-- ``` -->

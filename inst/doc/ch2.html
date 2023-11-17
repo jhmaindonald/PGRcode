@@ -1080,9 +1080,11 @@ package</h4>
 <span id="cb71-10"><a href="#cb71-10" tabindex="-1"></a>          <span class="at">par.strip.text=</span><span class="fu">list</span>(<span class="at">cex=</span><span class="fl">0.65</span>), <span class="at">auto.key=</span><span class="fu">list</span>(<span class="at">columns=</span><span class="dv">2</span>),</span>
 <span id="cb71-11"><a href="#cb71-11" tabindex="-1"></a>          <span class="at">scales=</span><span class="fu">list</span>(<span class="at">x=</span><span class="fu">list</span>(<span class="at">relation=</span><span class="st">&quot;free&quot;</span>))))</span>
 <span id="cb71-12"><a href="#cb71-12" tabindex="-1"></a>}</span></code></pre></div>
-<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" tabindex="-1"></a>code <span class="ot">&lt;-</span> knitr<span class="sc">::</span>knit_code<span class="sc">$</span><span class="fu">get</span>()</span>
-<span id="cb72-2"><a href="#cb72-2" tabindex="-1"></a>txt <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">## &quot;</span>, <span class="fu">names</span>(code),<span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="fu">sapply</span>(code, paste, <span class="at">collapse=</span><span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span>))</span>
-<span id="cb72-3"><a href="#cb72-3" tabindex="-1"></a><span class="fu">writeLines</span>(txt, <span class="at">con=</span><span class="st">&quot;../inst/doc/ch2.R&quot;</span>)</span></code></pre></div>
+<!-- ```{r eval=T} -->
+<!-- code <- knitr::knit_code$get() -->
+<!-- txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n')) -->
+<!-- writeLines(txt, con="../inst/doc/ch2.R") -->
+<!-- ``` -->
 </div>
 
 

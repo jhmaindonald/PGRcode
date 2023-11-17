@@ -593,9 +593,11 @@ correlated errors model</h4>
 <span id="cb44-6"><a href="#cb44-6" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">I</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(airq)), simSeries)</span>
 <span id="cb44-7"><a href="#cb44-7" tabindex="-1"></a><span class="do">## Compare with initial series</span></span>
 <span id="cb44-8"><a href="#cb44-8" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">I</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(airq)), airq<span class="sc">$</span>Temp)</span></code></pre></div>
-<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" tabindex="-1"></a>code <span class="ot">&lt;-</span> knitr<span class="sc">::</span>knit_code<span class="sc">$</span><span class="fu">get</span>()</span>
-<span id="cb45-2"><a href="#cb45-2" tabindex="-1"></a>txt <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">## &quot;</span>, <span class="fu">names</span>(code),<span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="fu">sapply</span>(code, paste, <span class="at">collapse=</span><span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span>))</span>
-<span id="cb45-3"><a href="#cb45-3" tabindex="-1"></a><span class="fu">writeLines</span>(txt, <span class="at">con=</span><span class="st">&quot;../inst/doc/ch6.R&quot;</span>)</span></code></pre></div>
+<!-- ```{r eval=T} -->
+<!-- code <- knitr::knit_code$get() -->
+<!-- txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n')) -->
+<!-- writeLines(txt, con="../inst/doc/ch6.R") -->
+<!-- ``` -->
 </div>
 
 

@@ -1783,9 +1783,11 @@ threshold help?</h5>
 <span id="cb126-10"><a href="#cb126-10" tabindex="-1"></a><span class="co"># with (if not supplied) default settings</span></span>
 <span id="cb126-11"><a href="#cb126-11" tabindex="-1"></a><span class="fu">bayes_inference</span>(d, <span class="at">type=</span><span class="st">&#39;ht&#39;</span>, <span class="at">data=</span>df, <span class="at">statistic=</span><span class="st">&#39;mean&#39;</span>, <span class="at">method=</span><span class="st">&#39;t&#39;</span>,</span>
 <span id="cb126-12"><a href="#cb126-12" tabindex="-1"></a>                <span class="at">alternative=</span><span class="st">&#39;twosided&#39;</span>, <span class="at">null=</span><span class="dv">0</span>, <span class="at">prior_family =</span> <span class="st">&quot;JUI&quot;</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb127"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb127-1"><a href="#cb127-1" tabindex="-1"></a>code <span class="ot">&lt;-</span> knitr<span class="sc">::</span>knit_code<span class="sc">$</span><span class="fu">get</span>()</span>
-<span id="cb127-2"><a href="#cb127-2" tabindex="-1"></a>txt <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">## &quot;</span>, <span class="fu">names</span>(code),<span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="fu">sapply</span>(code, paste, <span class="at">collapse=</span><span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span>))</span>
-<span id="cb127-3"><a href="#cb127-3" tabindex="-1"></a><span class="fu">writeLines</span>(txt, <span class="at">con=</span><span class="st">&quot;../inst/doc/ch1.R&quot;</span>)</span></code></pre></div>
+<!-- ```{r eval=T} -->
+<!-- code <- knitr::knit_code$get() -->
+<!-- txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n')) -->
+<!-- writeLines(txt, con="../inst/doc/ch1.R") -->
+<!-- ``` -->
 </div>
 
 

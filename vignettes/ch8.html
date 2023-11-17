@@ -670,9 +670,11 @@ randomForest()</h4>
 <span id="cb46-2"><a href="#cb46-2" tabindex="-1"></a>  (\(x)<span class="dv">100</span><span class="sc">*</span>x<span class="sc">/</span><span class="fu">sum</span>(x))() <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">1</span>) <span class="sc">|&gt;</span> <span class="fu">t</span>()</span></code></pre></div>
 <div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" tabindex="-1"></a>(diamond5KU.rf <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(<span class="at">x=</span>diamonds[samp5K,<span class="sc">-</span><span class="dv">7</span>], <span class="at">y=</span>Y[samp5K],</span>
 <span id="cb47-2"><a href="#cb47-2" tabindex="-1"></a>                   <span class="at">xtest=</span>diamonds[<span class="sc">-</span>samp5K,<span class="sc">-</span><span class="dv">7</span>], <span class="at">ytest=</span>Y[<span class="sc">-</span>samp5K]))</span></code></pre></div>
-<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" tabindex="-1"></a>code <span class="ot">&lt;-</span> knitr<span class="sc">::</span>knit_code<span class="sc">$</span><span class="fu">get</span>()</span>
-<span id="cb48-2"><a href="#cb48-2" tabindex="-1"></a>txt <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">## &quot;</span>, <span class="fu">names</span>(code),<span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="fu">sapply</span>(code, paste, <span class="at">collapse=</span><span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span>))</span>
-<span id="cb48-3"><a href="#cb48-3" tabindex="-1"></a><span class="fu">writeLines</span>(txt, <span class="at">con=</span><span class="st">&quot;../inst/doc/ch8.R&quot;</span>)</span></code></pre></div>
+<!-- ```{r eval=T} -->
+<!-- code <- knitr::knit_code$get() -->
+<!-- txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n')) -->
+<!-- writeLines(txt, con="../inst/doc/ch8.R") -->
+<!-- ``` -->
 </div>
 
 

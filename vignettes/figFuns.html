@@ -419,9 +419,11 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a>}</span>
 <span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a>bfDF</span>
 <span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a>}</span></code></pre></div>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>code <span class="ot">&lt;-</span> knitr<span class="sc">::</span>knit_code<span class="sc">$</span><span class="fu">get</span>()</span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>txt <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">## &quot;</span>, <span class="fu">names</span>(code),<span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="fu">sapply</span>(code, paste, <span class="at">collapse=</span><span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span>))</span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="fu">writeLines</span>(txt, <span class="at">con=</span><span class="st">&quot;../inst/doc/figFuns.R&quot;</span>)</span></code></pre></div>
+<!-- ```{r eval=T} -->
+<!-- code <- knitr::knit_code$get() -->
+<!-- txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n')) -->
+<!-- writeLines(txt, con="../inst/doc/figFuns.R") -->
+<!-- ``` -->
 </div>
 
 

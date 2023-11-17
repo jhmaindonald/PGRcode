@@ -357,7 +357,7 @@ for changes to take effect.</p>
 <code>build_home_index(); init_site()</code>.</p>
 <div id="setup-so-that-download-from-github-makes-vignettes-available" class="section level2">
 <h2>Setup so that download from GitHub makes vignettes available</h2>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>tools<span class="sc">::</span><span class="fu">buildVignettes</span>(<span class="at">dir =</span> <span class="st">&quot;.&quot;</span>, <span class="at">tangle=</span><span class="cn">TRUE</span>)</span>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>tools<span class="sc">::</span><span class="fu">buildVignettes</span>(<span class="at">dir =</span> <span class="st">&quot;.&quot;</span>, <span class="at">tangle=</span><span class="cn">FALSE</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">dir.exists</span>(<span class="st">&#39;inst&#39;</span>))<span class="fu">dir.create</span>(<span class="st">&quot;~/pkgs/PGRcode/inst&quot;</span>)   </span>
 <span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">dir.exists</span>(<span class="st">&#39;inst/doc&#39;</span>))<span class="fu">dir.create</span>(<span class="st">&quot;~/pkgs/PGRcode/inst/doc&quot;</span>) </span>
 <span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="do">## On installation, files in &#39;inst/doc/&#39; are copied to &#39;doc/&#39;</span></span>

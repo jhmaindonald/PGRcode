@@ -1104,9 +1104,11 @@ models</h4>
 <span id="cb83-2"><a href="#cb83-2" tabindex="-1"></a>                       (<span class="sc">-</span><span class="dv">1</span> <span class="sc">+</span> Dose <span class="sc">|</span> gp), <span class="at">data =</span> DAAG<span class="sc">::</span>sorption, <span class="at">REML=</span><span class="cn">TRUE</span>)</span>
 <span id="cb83-3"><a href="#cb83-3" tabindex="-1"></a>cultdose.lmer <span class="ot">&lt;-</span> <span class="fu">lmer</span>(ct <span class="sc">~</span> Cultivar<span class="sc">/</span>Dose <span class="sc">+</span> <span class="fu">factor</span>(year) <span class="sc">+</span></span>
 <span id="cb83-4"><a href="#cb83-4" tabindex="-1"></a>                           (<span class="sc">-</span><span class="dv">1</span> <span class="sc">+</span> Dose <span class="sc">|</span> gp), <span class="at">data =</span> DAAG<span class="sc">::</span>sorption, <span class="at">REML=</span><span class="cn">TRUE</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" tabindex="-1"></a>code <span class="ot">&lt;-</span> knitr<span class="sc">::</span>knit_code<span class="sc">$</span><span class="fu">get</span>()</span>
-<span id="cb84-2"><a href="#cb84-2" tabindex="-1"></a>txt <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">## &quot;</span>, <span class="fu">names</span>(code),<span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="fu">sapply</span>(code, paste, <span class="at">collapse=</span><span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span>))</span>
-<span id="cb84-3"><a href="#cb84-3" tabindex="-1"></a><span class="fu">writeLines</span>(txt, <span class="at">con=</span><span class="st">&quot;../inst/doc/ch7.R&quot;</span>)</span></code></pre></div>
+<!-- ```{r eval=T} -->
+<!-- code <- knitr::knit_code$get() -->
+<!-- txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n')) -->
+<!-- writeLines(txt, con="../inst/doc/ch7.R") -->
+<!-- ``` -->
 </div>
 
 

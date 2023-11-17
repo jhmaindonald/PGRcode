@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PGRcode</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5-6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5-7</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,7 +78,7 @@
                         <h4 data-toc-skip class="author">John
 Maindonald</h4>
             
-            <h4 data-toc-skip class="date">2023-11-09</h4>
+            <h4 data-toc-skip class="date">2023-11-17</h4>
       
       
       <div class="d-none name"><code>UsingCode.Rmd</code></div>
@@ -141,7 +141,7 @@ settings is:</p>
 <pre><code>---
 title: "Use of Code Files"
 author: "John Maindonald"
-date: "2023-11-09"
+date: "2023-11-17"
 output: 
   html_document
 ---</code></pre>
@@ -190,6 +190,11 @@ change from the default globally, or accompany
 <span><span class="va">z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">4</span>,<span class="fl">4</span>,length<span class="op">=</span><span class="fl">101</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">z</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">dnorm</a></span><span class="op">(</span><span class="va">z</span><span class="op">)</span>, type<span class="op">=</span><span class="st">"l"</span>, ylab<span class="op">=</span><span class="st">"Normal density"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">z</span>, <span class="fu"><a href="https://rdrr.io/r/stats/TDist.html" class="external-link">dt</a></span><span class="op">(</span><span class="va">z</span>, df<span class="op">=</span><span class="fl">5</span><span class="op">)</span>, type<span class="op">=</span><span class="st">"l"</span>, ylab<span class="op">=</span><span class="st">"t-statistic density, 5 df"</span><span class="op">)</span></span></code></pre></div>
+<!-- ```{r eval=T} -->
+<!-- code <- knitr::knit_code$get() -->
+<!-- txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n')) -->
+<!-- writeLines(txt, con="../inst/doc/UsingCode.R") -->
+<!-- ``` -->
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

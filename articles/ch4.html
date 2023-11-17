@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PGRcode</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5-6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5-7</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -76,7 +76,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Chapter 4: Exploiting the linear model framework</h1>
             
-            <h4 data-toc-skip class="date">2023-11-09</h4>
+            <h4 data-toc-skip class="date">2023-11-17</h4>
       
       
       <div class="d-none name"><code>ch4.Rmd</code></div>
@@ -480,7 +480,7 @@ US<a class="anchor" aria-label="anchor" href="#subsection-4-4-9-atlantic-hurrica
 <span>  <span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">is.element</a></span><span class="op">(</span><span class="st">"WDI"</span>, <span class="fu"><a href="https://rdrr.io/r/utils/installed.packages.html" class="external-link">installed.packages</a></span><span class="op">(</span><span class="op">)</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span><span class="op">)</span> <span class="op">)</span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"WDI"</span><span class="op">)</span></span>
 <span><span class="va">inds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'SP.DYN.TFRT.IN'</span>,<span class="st">'SP.DYN.LE00.IN'</span>, <span class="st">'SP.POP.TOTL'</span><span class="op">)</span></span>
 <span><span class="va">indnams</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FertilityRate"</span>, <span class="st">"LifeExpectancy"</span>, <span class="st">"population"</span><span class="op">)</span></span>
-<span><span class="va">wdi2020</span> <span class="op">&lt;-</span> <span class="fu">WDI</span><span class="fu">::</span><span class="fu"><a href="https://vincentarelbundock.github.io/WDI/reference/WDI.html" class="external-link">WDI</a></span><span class="op">(</span>country<span class="op">=</span><span class="st">"all"</span>, indicator<span class="op">=</span><span class="va">inds</span>, start<span class="op">=</span><span class="fl">2020</span>, end<span class="op">=</span><span class="fl">2020</span>,</span>
+<span><span class="va">wdi2020</span> <span class="op">&lt;-</span> <span class="fu">WDI</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/WDI/man/WDI.html" class="external-link">WDI</a></span><span class="op">(</span>country<span class="op">=</span><span class="st">"all"</span>, indicator<span class="op">=</span><span class="va">inds</span>, start<span class="op">=</span><span class="fl">2020</span>, end<span class="op">=</span><span class="fl">2020</span>,</span>
 <span>                    extra<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">wdi2020</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html" class="external-link">na.omit</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/droplevels.html" class="external-link">droplevels</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">wdi2020</span>, <span class="op">!</span><span class="va">region</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="st">"Aggregates"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">wdi</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="va">wdi2020</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">wdi2020</span><span class="op">[</span>, <span class="va">inds</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>,<span class="va">inds</span><span class="op">]</span>, <span class="va">indnams</span><span class="op">)</span></span>
@@ -578,6 +578,11 @@ US<a class="anchor" aria-label="anchor" href="#subsection-4-4-9-atlantic-hurrica
 <span><span class="va">xy</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">200</span>, y<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/arima.sim.html" class="external-link">arima.sim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>ar<span class="op">=</span><span class="fl">0.75</span><span class="op">)</span>, n<span class="op">=</span><span class="fl">200</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">df.gam</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mgcv/man/gam.html" class="external-link">gam</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/pkg/mgcv/man/s.html" class="external-link">s</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, data<span class="op">=</span><span class="va">xy</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">df.gam</span>, residuals<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<!-- ```{r eval=T} -->
+<!-- code <- knitr::knit_code$get() -->
+<!-- txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n')) -->
+<!-- writeLines(txt, con="../inst/doc/ch4.R") -->
+<!-- ``` -->
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PGRcode</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5-6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5-7</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,7 +78,7 @@
                         <h4 data-toc-skip class="author">John
 Maindonald</h4>
             
-            <h4 data-toc-skip class="date">2023-11-09</h4>
+            <h4 data-toc-skip class="date">2023-11-17</h4>
       
       
       <div class="d-none name"><code>GITready.Rmd</code></div>
@@ -101,13 +101,13 @@ for changes to take effect.</p>
 <h2 id="setup-so-that-download-from-github-makes-vignettes-available">Setup so that download from GitHub makes vignettes available<a class="anchor" aria-label="anchor" href="#setup-so-that-download-from-github-makes-vignettes-available"></a>
 </h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">tools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/tools/buildVignettes.html" class="external-link">buildVignettes</a></span><span class="op">(</span>dir <span class="op">=</span> <span class="st">"."</span>, tangle<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu">tools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/tools/buildVignettes.html" class="external-link">buildVignettes</a></span><span class="op">(</span>dir <span class="op">=</span> <span class="st">"."</span>, tangle<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.exists</a></span><span class="op">(</span><span class="st">'inst'</span><span class="op">)</span><span class="op">)</span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="st">"~/pkgs/PGRcode/inst"</span><span class="op">)</span>   </span>
 <span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.exists</a></span><span class="op">(</span><span class="st">'inst/doc'</span><span class="op">)</span><span class="op">)</span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="st">"~/pkgs/PGRcode/inst/doc"</span><span class="op">)</span> </span>
 <span><span class="co">## On installation, files in 'inst/doc/' are copied to 'doc/'</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.copy</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">dir</a></span><span class="op">(</span><span class="st">"vignettes"</span>, full.names<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>, <span class="st">"~/pkgs/PGRcode/inst/doc"</span>, overwrite<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">## For an individual file, go e.g., for GITready.Rmd</span></span>
-<span><span class="fu">tools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/tools/buildVignette.html" class="external-link">buildVignette</a></span><span class="op">(</span><span class="st">'~/pkgs/PGRcode/vignettes/GITready.Rmd'</span>, dir <span class="op">=</span> <span class="st">"inst/doc"</span>, tangle<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">tools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/tools/buildVignette.html" class="external-link">buildVignette</a></span><span class="op">(</span><span class="st">'~/pkgs/PGRcode/vignettes/GITready.Rmd'</span>, dir <span class="op">=</span> <span class="st">"inst/doc"</span>, tangle<span class="op">=</span><span class="cn">F</span><span class="op">)</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

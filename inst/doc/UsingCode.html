@@ -12,7 +12,7 @@
 
 <meta name="author" content="John Maindonald" />
 
-<meta name="date" content="2023-11-17" />
+<meta name="date" content="2023-11-18" />
 
 <title>Use of Code Files</title>
 
@@ -340,7 +340,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Use of Code Files</h1>
 <h4 class="author">John Maindonald</h4>
-<h4 class="date">2023-11-17</h4>
+<h4 class="date">2023-11-18</h4>
 
 
 
@@ -396,7 +396,7 @@ settings is:</p>
 <pre><code>---
 title: &quot;Use of Code Files&quot;
 author: &quot;John Maindonald&quot;
-date: &quot;2023-11-17&quot;
+date: &quot;2023-11-18&quot;
 output: 
   html_document
 ---</code></pre>
@@ -440,11 +440,11 @@ change from the default globally, or accompany
 <span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">4</span>,<span class="dv">4</span>,<span class="at">length=</span><span class="dv">101</span>)</span>
 <span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="fu">plot</span>(z, <span class="fu">dnorm</span>(z), <span class="at">type=</span><span class="st">&quot;l&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;Normal density&quot;</span>)</span>
 <span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="fu">plot</span>(z, <span class="fu">dt</span>(z, <span class="at">df=</span><span class="dv">5</span>), <span class="at">type=</span><span class="st">&quot;l&quot;</span>, <span class="at">ylab=</span><span class="st">&quot;t-statistic density, 5 df&quot;</span>)</span></code></pre></div>
-<!-- ```{r eval=T} -->
-<!-- code <- knitr::knit_code$get() -->
-<!-- txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n')) -->
-<!-- writeLines(txt, con="../inst/doc/UsingCode.R") -->
-<!-- ``` -->
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">file.exists</span>(<span class="st">&quot;/Users/johnm1/pkgs/PGRcode/inst/doc/&quot;</span>)){</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>code <span class="ot">&lt;-</span> knitr<span class="sc">::</span>knit_code<span class="sc">$</span><span class="fu">get</span>()</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>txt <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">## &quot;</span>, <span class="fu">names</span>(code),<span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="fu">sapply</span>(code, paste, <span class="at">collapse=</span><span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span>))</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="fu">writeLines</span>(txt, <span class="at">con=</span><span class="st">&quot;/Users/johnm1/pkgs/PGRcode/inst/doc/UsingCode.R&quot;</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>}</span></code></pre></div>
 </div>
 </div>
 

@@ -7,7 +7,6 @@ opts_chunk[['set']](fig.width=6, fig.height=6, comment=" ",
                     tidy.opts = list(replace.assign=FALSE))
 
 ## CodeControl
-options(rmarkdown.html_vignette.check_title = FALSE)
 ## xtras=TRUE    ## Set to TRUE to execute code 'extras'
 xtras <- FALSE
 library(knitr)
@@ -1269,6 +1268,8 @@ bayes_inference(d, type='ht', data=df, statistic='mean', method='t',
                 alternative='twosided', null=0, prior_family = "JUI")
 
 ## unnamed-chunk-1
+if(file.exists("/Users/johnm1/pkgs/PGRcode/inst/doc/")){
 code <- knitr::knit_code$get()
 txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n'))
 writeLines(txt, con="/Users/johnm1/pkgs/PGRcode/inst/doc/ch1.R")
+}

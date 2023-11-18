@@ -1,6 +1,9 @@
 ---
 title: "Chapter 1: Learning from data . . ."
 output: rmarkdown::html_vignette
+options: 
+  params: 
+    rmarkdown.html_vignette.check_title: false
 vignette: >
   %\VignetteIndexEntry{Ch1: Learning from Data}
   %\VignetteEngine{knitr::rmarkdown}
@@ -26,7 +29,6 @@ opts_chunk[['set']](fig.width=6, fig.height=6, comment=" ",
 ```
 
 ```{r CodeControl, echo=TRUE}
-options(rmarkdown.html_vignette.check_title = FALSE)
 ## xtras=TRUE    ## Set to TRUE to execute code 'extras'
 xtras <- FALSE
 library(knitr)
@@ -1656,8 +1658,9 @@ bayes_inference(d, type='ht', data=df, statistic='mean', method='t',
 ```
 
 ```{r eval=T}
+if(file.exists("/Users/johnm1/pkgs/PGRcode/inst/doc/")){
 code <- knitr::knit_code$get()
 txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n'))
-if(file.exists("/Users/johnm1/pkgs/PGRcode/inst/doc/ch1.R"))
 writeLines(txt, con="/Users/johnm1/pkgs/PGRcode/inst/doc/ch1.R")
+}
 ```

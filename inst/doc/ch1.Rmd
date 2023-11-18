@@ -1,6 +1,9 @@
 ---
 title: "Chapter 1: Learning from data . . ."
 output: rmarkdown::html_vignette
+options: 
+  params: 
+    rmarkdown.html_vignette.check_title: false
 vignette: >
   %\VignetteIndexEntry{Ch1: Learning from Data}
   %\VignetteEngine{knitr::rmarkdown}
@@ -25,15 +28,7 @@ opts_chunk[['set']](fig.width=6, fig.height=6, comment=" ",
                     tidy.opts = list(replace.assign=FALSE))
 ```
 
-```{r setup, cache=FALSE, echo=FALSE}
-## The following extends available code chunk options, and simplifies 
-## figure width and height arguments to `w` and `h`.
-Hmisc::knitrSet(basename="intro", fig.path="figs/g", lang="markdown")
-oldopt <- options(digits=4, formatR.arrow=FALSE, width=70, scipen=999)
-``` 
-
 ```{r CodeControl, echo=TRUE}
-options(rmarkdown.html_vignette.check_title = FALSE)
 ## xtras=TRUE    ## Set to TRUE to execute code 'extras'
 xtras <- FALSE
 library(knitr)
@@ -41,6 +36,14 @@ library(knitr)
 ## opts_chunk[['set']](eval=FALSE)   ## Set to TRUE to execute main part of code
 opts_chunk[['set']](eval=FALSE) 
 ```
+
+```{r setup, cache=FALSE, echo=FALSE}
+## The following extends available code chunk options, and simplifies 
+## figure width and height arguments to `w` and `h`.
+Hmisc::knitrSet(basename="intro", fig.path="figs/g", lang="markdown")
+oldopt <- options(digits=4, formatR.arrow=FALSE, width=70, scipen=999)
+``` 
+
 
 ##### Packages required (plus any dependencies)
 latticeExtra (lattice is a dependency); DAAG; car; MASS; AICcmodavg; BayesFactor; boot; MPV; ggplot2; tidyr
@@ -1654,8 +1657,10 @@ bayes_inference(d, type='ht', data=df, statistic='mean', method='t',
                 alternative='twosided', null=0, prior_family = "JUI")
 ```
 
-<!-- ```{r eval=T} -->
-<!-- code <- knitr::knit_code$get() -->
-<!-- txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n')) -->
-<!-- writeLines(txt, con="../inst/doc/ch1.R") -->
-<!-- ``` -->
+```{r eval=T}
+if(file.exists("/Users/johnm1/pkgs/PGRcode/inst/doc/")){
+code <- knitr::knit_code$get()
+txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n'))
+writeLines(txt, con="/Users/johnm1/pkgs/PGRcode/inst/doc/ch1.R")
+}
+```

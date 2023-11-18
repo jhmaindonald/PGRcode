@@ -12,7 +12,7 @@
 
 <meta name="author" content="John Maindonald" />
 
-<meta name="date" content="2023-11-17" />
+<meta name="date" content="2023-11-18" />
 
 <title>Code for Selected Figures</title>
 
@@ -340,7 +340,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Code for Selected Figures</h1>
 <h4 class="author">John Maindonald</h4>
-<h4 class="date">2023-11-17</h4>
+<h4 class="date">2023-11-18</h4>
 
 
 
@@ -351,6 +351,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="do">## opts_chunk[[&#39;set&#39;]](results=&quot;asis&quot;)</span></span>
 <span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="do">## opts_chunk[[&#39;set&#39;]](eval=FALSE)   ## Set to TRUE to execute main part of code</span></span>
 <span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>opts_chunk[[<span class="st">&#39;set&#39;</span>]](<span class="at">eval=</span><span class="cn">FALSE</span>) </span></code></pre></div>
+<p>Figures for which code appears here may in due course be made
+available for execution as functions.</p>
 <div id="figure-1.20" class="section level2">
 <h2>Figure 1.20</h2>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>eff2stat <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">eff=</span><span class="fu">c</span>(.<span class="dv">2</span>,.<span class="dv">4</span>,.<span class="dv">8</span>,<span class="fl">1.2</span>), <span class="at">n=</span><span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">40</span>), <span class="at">numreps=</span><span class="dv">100</span>,</span>
@@ -419,11 +421,11 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a>}</span>
 <span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a>bfDF</span>
 <span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a>}</span></code></pre></div>
-<!-- ```{r eval=T} -->
-<!-- code <- knitr::knit_code$get() -->
-<!-- txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n')) -->
-<!-- writeLines(txt, con="../inst/doc/figFuns.R") -->
-<!-- ``` -->
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">file.exists</span>(<span class="st">&quot;/Users/johnm1/pkgs/PGRcode/inst/doc/&quot;</span>)){</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>code <span class="ot">&lt;-</span> knitr<span class="sc">::</span>knit_code<span class="sc">$</span><span class="fu">get</span>()</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>txt <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">## &quot;</span>, <span class="fu">names</span>(code),<span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="fu">sapply</span>(code, paste, <span class="at">collapse=</span><span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span>))</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="fu">writeLines</span>(txt, <span class="at">con=</span><span class="st">&quot;/Users/johnm1/pkgs/PGRcode/inst/doc/figFuns.R&quot;</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>}</span></code></pre></div>
 </div>
 
 

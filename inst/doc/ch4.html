@@ -11,7 +11,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 
-<meta name="date" content="2023-11-17" />
+<meta name="date" content="2023-11-18" />
 
 <title>Chapter 4: Exploiting the linear model framework</title>
 
@@ -339,7 +339,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Chapter 4: Exploiting the linear model
 framework</h1>
-<h4 class="date">2023-11-17</h4>
+<h4 class="date">2023-11-18</h4>
 
 
 
@@ -739,11 +739,11 @@ US</h4>
 <span id="cb67-2"><a href="#cb67-2" tabindex="-1"></a>xy <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">200</span>, <span class="at">y=</span><span class="fu">arima.sim</span>(<span class="fu">list</span>(<span class="at">ar=</span><span class="fl">0.75</span>), <span class="at">n=</span><span class="dv">200</span>))</span>
 <span id="cb67-3"><a href="#cb67-3" tabindex="-1"></a>df.gam <span class="ot">&lt;-</span> <span class="fu">gam</span>(y <span class="sc">~</span> <span class="fu">s</span>(x), <span class="at">data=</span>xy)</span>
 <span id="cb67-4"><a href="#cb67-4" tabindex="-1"></a><span class="fu">plot</span>(df.gam, <span class="at">residuals=</span><span class="cn">TRUE</span>)</span></code></pre></div>
-<!-- ```{r eval=T} -->
-<!-- code <- knitr::knit_code$get() -->
-<!-- txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n')) -->
-<!-- writeLines(txt, con="../inst/doc/ch4.R") -->
-<!-- ``` -->
+<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">file.exists</span>(<span class="st">&quot;/Users/johnm1/pkgs/PGRcode/inst/doc/&quot;</span>)){</span>
+<span id="cb68-2"><a href="#cb68-2" tabindex="-1"></a>code <span class="ot">&lt;-</span> knitr<span class="sc">::</span>knit_code<span class="sc">$</span><span class="fu">get</span>()</span>
+<span id="cb68-3"><a href="#cb68-3" tabindex="-1"></a>txt <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">## &quot;</span>, <span class="fu">names</span>(code),<span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="fu">sapply</span>(code, paste, <span class="at">collapse=</span><span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span>))</span>
+<span id="cb68-4"><a href="#cb68-4" tabindex="-1"></a><span class="fu">writeLines</span>(txt, <span class="at">con=</span><span class="st">&quot;/Users/johnm1/pkgs/PGRcode/inst/doc/ch4.R&quot;</span>)</span>
+<span id="cb68-5"><a href="#cb68-5" tabindex="-1"></a>}</span></code></pre></div>
 </div>
 
 

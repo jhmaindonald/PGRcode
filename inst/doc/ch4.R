@@ -1,21 +1,5 @@
----
-title: "Chapter 4: Exploiting the linear model framework"
-date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-options: 
-  params: 
-    rmarkdown.html_vignette.check_title: false
-vignette: >
-  %\VignetteIndexEntry{Ch4: Exploiting . . .}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
----
 
-On options for working with the code see the vignettes
-[Ch1-Learning](PGRcode/Ch1-Learning.html) and
-[UsingCode](PGRcode/UsingCode.html).
-
-```{r CodeControl, echo=FALSE}
+## CodeControl
 options(rmarkdown.html_vignette.check_title = FALSE)
 ## xtras=FALSE
 xtras <- F
@@ -23,17 +7,8 @@ library(knitr)
 ## opts_chunk[['set']](results="asis")
 ## opts_chunk[['set']](eval=T)
 opts_chunk[['set']](eval=F)
-```
 
-##### Packages required (with dependencies)
-DAAG effects mgcv splines scam MASS latticeExtra car WDI AICcmodavg ggplot2 kableExtra qgam
-
-Additionally, Hmisc and knitr are required in order to process the Rmd source file. 
-
-Note the use of the 'patchwork' package to make it easy
-to place two ggplot2 plots side by side.
-
-```{r setup, cache=FALSE}
+## setup
 Hmisc::knitrSet(basename="exploit", lang='markdown', fig.path="figs/g", w=7, h=7)
 oldopt <- options(digits=4, width=70, scipen=999)
 library(knitr)
@@ -42,140 +17,102 @@ opts_chunk[['set']](cache.path='cache-', out.width="80%", fig.align="center",
                     fig.show='hold', formatR.arrow=FALSE, ps=10, 
                     strip.white = TRUE, comment=NA, width=70, 
                     tidy.opts = list(replace.assign=FALSE))
-```
 
-### Section 4.1 Levels of a factor -- using indicator variables
-#### Subsection 4.1.1: Example -- sugar weight
-
-```{r D1_1a}
+## D1_1a
 sugar <- DAAG::sugar  # Copy dataset 'sugar' into the workspace
 ## Ensure that "Control" is the first level
 sugar[["trt"]] <- relevel(sugar[["trt"]], ref="Control")
 options()[["contrasts"]]  # Check the default factor contrasts
 ## If your output does not agree with the above, then enter
 ## options(contrasts=c("contr.treatment", "contr.poly"))
-```
 
-```{r 4.1, w=3.25, h=2.4, echo=FALSE, out.width="50%"}
+## 4.1
 gph <- lattice::stripplot(trt ~ weight, pch=4, data=sugar,
   xlab=list("Weight (mg)", cex=0.9))
   bw10 <- list(fontsize=list(text=10, points=5))
 update(gph, aspect=0.5, par.settings=bw10)
-```
 
-```{r D1_1c}
+## D1_1c
 sugar.aov <- aov(weight ~ trt, data=sugar)
 ## To display the model matrix, enter: model.matrix(sugar.aov)
 ## Note the use of summary.lm(), not summary() or summary.aov()
 round(signif(coef(summary.lm(sugar.aov)), 3), 4)
-```
 
-```{r D1_1d}
+## D1_1d
 sem <- summary.lm(sugar.aov)$sigma/sqrt(3)  # 3 results/trt
 # Alternatively, sem <- 6.33/sqrt(2)
 qtukey(p=.95, nmeans=4, df=8) * sem
-```
 
-#### Subsection 4.1.2: Different choices for the model matrix when there are factors
-
-```{r D1_2a}
+## D1_2a
 contrasts(sugar$trt) <- 'contr.sum'
 sugarSum.aov <- aov(weight ~ trt, data = sugar)
 round(signif(coef(summary.lm(sugarSum.aov)), 3),4)
-```
 
-```{r D1_2b, echo=T}
+## D1_2b
 dummy.coef(sugarSum.aov)
-```
 
-#####                Factor contrasts -- further details
-
-```{r D1_2c}
+## D1_2c
 contrasts(sugar$trt) <- "contr.sum"
-```
 
-```{r D1_2d}
+## D1_2d
 fish <- factor(1:3, labels=c("Trout","Cod","Perch"))
-```
 
-```{r D1_2e}
+## D1_2e
 contr.treatment(fish)
 # Base is "Trout"
-```
 
-```{r D1_2f}
+## D1_2f
 contr.SAS(fish)
 # Base is "Perch"
-```
 
-```{r D1_2g}
+## D1_2g
 contr.sum(fish)
 # Base is mean of levels
-```
 
-#####  *Tests for main effects in the presence of interactions?
-
-### Section 4.2 Block designs and balanced incomplete block designs
-#### Subsection 4.2.1: Analysis of the rice data, allowing for block effects
-
-```{r D2_1a}
+## D2_1a
 rice <- DAAG::rice
 ricebl.aov <- aov(ShootDryMass ~ Block + variety * fert, data=rice)
 print(summary(ricebl.aov), digits=3)
-```
 
-```{r D2_1b}
+## D2_1b
 round(signif(coef(summary.lm(ricebl.aov)), 3), 5)
 with(summary.lm(ricebl.aov),
 cat("Residual standard error: ", sigma, "on", df[2], "degrees of freedom"))
-```
 
-```{r D2_1c, size='normalsize', results='asis'}
+## D2_1c
 ## AOV calculations, ignoring block effects
 rice.aov <- aov(ShootDryMass ~ variety * fert, data=rice)
 summary.lm(rice.aov)$sigma
-```
 
-```{r D2_1d}
+## D2_1d
 ricebl.aov <- aov(ShootDryMass ~ factor(Block) + variety * fert, data=rice)
-```
 
-```{r D2_1e}
+## D2_1e
 model.tables(ricebl.aov, type="means", se=TRUE, cterms="variety:fert")
-```
 
-#### Subsection 4.2.2: A balanced incomplete block design
-
-```{r D2_2a}
+## D2_2a
 appletaste <- DAAG::appletaste
 with(appletaste, table(product, panelist))
-```
 
-```{r D2_2b}
+## D2_2b
 sapply(appletaste, is.factor)  # panelist & product are factors
 appletaste.aov <- aov(aftertaste ~ product + panelist, data=appletaste)
 summary(appletaste.aov)
-```
 
-```{r 4_2, w=6, h=2.0, left=-1, cex.lab=0.8, echo=FALSE, ps=9, mfrow=c(1,2), out.width="90%"}
+## 4_2
 termplot(appletaste.aov, partial=TRUE, col.res="black", fg='gray',
          cex=0.8, mgp=c(1.5,0.4,0))
  # Specify `partial=TRUE` to show partial residuals
-```
 
-```{r D2_2e}
+## D2_2e
 as.data.frame(effects::Effect("product", appletaste.aov, confidence.level=0.95))
-```
 
-```{r D2_2f}
+## D2_2f
 ## NB that 'product' was first term in the model formula
 ## Thus, the 1st 4 coefficients have the information required
 coef(summary.lm(appletaste.aov))[1:4, ]
-```
 
-### Section 4.3 Fitting multiple lines
-
-```{r D3a}
+## D3a
 ## Fit various models to columns of data frame leaftemp (DAAG)
 leaftemp <- DAAG::leaftemp
 leaf.lm1 <- lm(tempDiff ~ 1 , data = leaftemp)
@@ -183,13 +120,11 @@ leaf.lm2 <- lm(tempDiff ~ vapPress, data = leaftemp)
 leaf.lm3 <- lm(tempDiff ~ CO2level + vapPress, data = leaftemp)
 leaf.lm4 <- lm(tempDiff ~ CO2level + vapPress +
                vapPress:CO2level, data = leaftemp)
-```
 
-```{r D3b}
+## D3b
 anova(leaf.lm1, leaf.lm2, leaf.lm3, leaf.lm4)
-```
 
-```{r 4_3, echo=FALSE, w=6, h=2.8, left=-1, top=2.5, lwd=0.5, cex.lab=0.9, ps=8, mgp=c(1.8, 0.5,0), out.width="100%"}
+## 4_3
 options(contrasts = c("contr.treatment", "contr.poly"))
 cex.eq <- 0.85
 yran <- with(leaftemp, range(tempDiff))
@@ -249,22 +184,15 @@ plot(0:1, 0:1, bty="n", axes=F, xlab="", ylab="", type="n")
 legend(0.55, 0.985, legend=c("low","medium","high"), lty=c(4,5,7), col="black",
 pch=1:3, xjust=0.5, yjust=1, bty="n", pt.cex=0.72, ncol=3,
 text.width=0.1, cex=0.85)
-```
 
-```{r 4_4, echo=FALSE, w=7.25, h=1.65, mgp=c(1.8,0.5,0), top=1, left=-0.5, ps=9, mfrow=c(1,4), out.width="100%"}
+## 4_4
 plot(leaf.lm3, cook.levels=0.12, caption=c('A: Resids vs Fitted', 'B: Normal Q-Q',
 'C: Scale-Location', '', 'D: Resids vs Leverage'), cex.caption=0.85, fg="gray")
-```
 
-```{r D3e}
+## D3e
 print(coef(summary(leaf.lm3)), digits=2)
-```
 
-### Section 4.4 Methods for fitting smooth curves
-
-#### Subsection 4.4.1: Polynomial Regression
-
-```{r D4_1a, warning=FALSE}
+## D4_1a
 seedrates <- DAAG::seedrates
 form2 <- grain ~ rate + I(rate^2)
 # Without the wrapper function I(), rate^2 would be interpreted
@@ -272,13 +200,11 @@ form2 <- grain ~ rate + I(rate^2)
 quad.lm2 <- lm(form2, data = seedrates)
 ## Alternative, using gam()
 ## quad.gam <- mgcv::gam(form2, data = seedrates)
-```
 
-```{r D4_1b}
+## D4_1b
 suppressPackageStartupMessages(library(ggplot2))
-```
 
-```{r 4_5, w=7.2, h=3.0, left=1, lwd=0.5, tcl=-0.35, echo=FALSE, out.width="100%"}
+## 4_5
 ## Use ggplot2 functions to plot points, line, curve, & 95% CIs
 ## library(ggplot2)
 gph <- ggplot(DAAG::seedrates, aes(rate,grain))+
@@ -299,36 +225,26 @@ gph1 +  geom_line(data = ggdat, aes(x = x, y = y, color="Quadratic"),
   guides(size='none',
          color = guide_legend(override.aes = list(fill="transparent") ) )
 ## detach("package:ggplot2")
-```
 
-```{r 4_5, eval=F}
-```
-
-```{r D4_1d, results="hold"}
+## D4_1d
 quad.lm2 <- lm(grain ~ rate + I(rate^2), data = DAAG::seedrates)
 print(coef(summary(quad.lm2)), digits=2)
 cat("\nCorrelation matrix\n")
 print(summary(quad.lm2, corr=TRUE)$correlation, digits=2)
-```
 
-#####      *An alternative formulation using orthogonal polynomials
-
-```{r D4_1e}
+## D4_1e
 seedratesP.lm2 <- lm(grain ~ poly(rate,2), data = seedrates)
 print(coef(summary(seedratesP.lm2)), digits=2)
-```
 
-```{r D4_1f}
+## D4_1f
 ## Alternative, using mgcv::gam()
 seedratesP.gam <- mgcv::gam(grain ~ poly(rate,2), data = seedrates)
-```
 
-```{r D4_2a}
+## D4_2a
 logseed.lm <- lm(log(grain) ~ log(rate), data=DAAG::seedrates)
 coef(summary(logseed.lm))
-```
 
-```{r 4_6, w=7, h=2.8, left=2, rt=2, fig.pos='ht', echo=FALSE, out.width="100%"}
+## 4_6
 ## Use ggplot2 functions to plot points, line, curve, & 95% CIs
 ## library(ggplot2)
 gph <- ggplot(DAAG::seedrates, aes(rate,grain)) +
@@ -371,25 +287,19 @@ labs(title="B: Residuals") +
 library(patchwork)
 gphA+gphB
 ## detach("package:ggplot2")
-```
 
-```{r 4_6, eval=F}
-```
-
-```{r D4_2c}
+## D4_2c
 aic <- AIC(quad.lm2, logseed.lm)
 aic["logseed.lm",2] <- aic["logseed.lm",2] + sum(2*log(seedrates$grain))
 round(aic,1)
-```
 
-```{r D4_3a}
+## D4_3a
 seedrates<-DAAG::seedrates
 quad.lm2 <- lm(grain ~ poly(rate,degree=2), data=seedrates)
 ns.lm2 <- lm(grain ~ splines::ns(rate,df=2), data=seedrates)
 tps.gam2 <- mgcv::gam(grain ~ s(rate, k=3, fx=T), data=seedrates)
-```
 
-```{r D4_3b}
+## D4_3b
 mflist <- lapply(list(quad=quad.lm2, nsplines=ns.lm2, tps=tps.gam2), model.matrix)
 mftab <- with(mflist, cbind(quad, nsplines, tps))
 colnames(mftab) <- c("(Int)", "poly2.1", "poly2.2", "(Int)", "ns2.1", "ns2.2", "(Int)", "s3.1", "s3.2")
@@ -402,17 +312,13 @@ add_header_above(c('poly(rate,2)' = 3, 'splines::ns(rate,df=2)' = 3, 's(rate, k=
 align='c', monospace=rep(T,3))|>
 add_header_above(c('lm: grain~' = 3, 'lm: grain~'=3, 'gam: grain~'=3),
                  align='c', monospace=rep(T,3), line=F)
-```
 
-#####          GAM models versus models fitted using lm()
-#####            Alternative fits -- what is the best choice?
-```{r D4_3c}
+## D4_3c
 ## Load required packages
 suppressPackageStartupMessages(library(splines))
 suppressPackageStartupMessages(library(mgcv))
-```
 
-```{r 4_7, echo=FALSE, mfrow=c(1,2), mgp=c(2,0.5,0), w=6, h=2.7, left=-2.5, top=2, lwd=0.5, out.width="100%"}
+## 4_7
 library(mgcv)
 fruitohms <- within(DAAG::fruitohms, kohms <- ohms/1000)
 ## Panel A: 3, 4 and 5 d.f. tprs (cubic spline fits are almost identical)
@@ -442,25 +348,19 @@ legend("topright", title="Penalized regression spline fits", cex=0.8,
 legend=c('method="GCV.Cp"','method="ML"', 'gamma=log(n)/2'),
          lty=1:3, col=c(2,2,2), lwd=c(1,2,2))
 mtext(side=3, line=0.75, "B: Penalized regression spline fits", adj=0, cex=1.25)
-```
 
-```{r D4_3e, echo=T}
+## D4_3e
 ohms.tp <- gam(kohms~s(juice, bs="tp"), data=fruitohms)
 ohms.cs <- gam(kohms~s(juice, bs="cs"), data=fruitohms)
 range(fitted(ohms.tp)-fitted(ohms.cs))
-```
 
-```{r D4_3f, echo=T}
+## D4_3f
 summary(ohms.tp)
-```
 
-```{r D4_3g}
+## D4_3g
 summary(ohms.tpBIC)
-```
 
-#### Subsection 4.4.3: The contributions of basis curves to the fit
-
-```{r 4_8, echo=FALSE, w=6.5, h=3.75, out.width="90%"}
+## 4_8
 ## k=3 gives 3 basis terms; k=4 gives 4 basis terms
 ohms.tp3 <- gam(kohms ~ s(juice, k=3), data=fruitohms)
 ohms.tp4 <- gam(kohms ~ s(juice, k=4), data=fruitohms)
@@ -510,22 +410,15 @@ strip.left=stripfun(factor.levels=striplabels[["A"]]),
 print(update(gph2, par.settings=bw10,
   strip.left=stripfun(factor.levels=striplabels[["B"]]),
   main=list(maint["B"], y=-0.5)), position=c(.5,0,1,1), newpage=FALSE)
-```
 
-#### Subsection 4.4.4: Checks on the fitted model
-
-```{r 4_9, w=6, h=5, mfrow=c(2,2), tcl=-0.5, left=-2, top=1, mar=c(2.5,2.5,2.1,.5), col=adjustcolor('black', 0.4), fg="gray", echo=FALSE, ps=9, out.width="100%"}
+## 4_9
 out <- capture.output(gam.check(ohms.tpBIC, tcl=-0.5))
-```
 
-```{r D4_4c}
+## D4_4c
 ## Printed output from `gam.check(ohms.tpBIC)`
 cat(out, sep="\n")
-```
 
-#### Subsection 4.3.5: Monotone curves
-
-```{r 4_10, echo=FALSE, mfrow=c(1,3), mgp=c(2,0.5,0), w=7.2, h=2.4, left=-2.0, top=1, lwd=0.5, out.width="100%", fig.pos="t"}
+## 4_10
 ohms.scam <- scam::scam(kohms ~ s(juice,bs="mpd"), data=fruitohms)
 plot(ohms.scam, resid=T, pch=1, shift=mean(predict(ohms.scam)),
      xlab="Apparent juice content (%)", ylab="Resistance (kohms)",
@@ -540,29 +433,22 @@ plot(s2$x, s2$yin, fg="gray", xlab="Apparent juice content", ylab="Residual")
 lines(s2$x, s2$y, col=2)
 lines(s2p$x, s2p$y, col=2, lty=2, lwd=2)
 mtext(side=3, line=0.5, "C: Residuals vs ... juice content", cex=1.25, adj=0)
-```
 
-```{r D4_5b}
+## D4_5b
 ohms.scam <- scam::scam(kohms ~ s(juice,bs="mpd"), data=fruitohms)
 summary(ohms.scam)
-```
 
-```{r D4_5}
+## D4_5
 AIC(ohms.scam, ohms.tp)
-```
 
-```{r D4_5d}
+## D4_5d
 BIC(ohms.scam, ohms.tp)
-```
 
-#### Subsection 4.4.6: Different smooths for different levels of a factor
-
-```{r D4_6a}
+## D4_6a
 whiteside <- MASS::whiteside
 gas.gam <- gam(Gas ~ Insul+s(Temp, by=Insul), data=whiteside)
-```
 
-```{r 4_11, echo=FALSE, warning=FALSE, w=6.5, h=3.5, bot=-1.0, left=1.5, cache=FALSE}
+## 4_11
 library(mgcv)
 suppressPackageStartupMessages(library(latticeExtra, quietly=TRUE))
 whiteside <- MASS::whiteside
@@ -602,34 +488,21 @@ gph2 <- xyplot(fit~Temp, data=df2, groups=Insul, upper = df2$high, lower = df2$l
                scales=list(cex=1.0, tck=0.5, xlim=lims), par.settings=parset)
 
 update(gph, xlim=lims)+latticeExtra::as.layer(gph2)
-```
 
-```{r D4_6c}
+## D4_6c
 summary(gas.gam)
-```
 
-```{r D4_6d, eval=FALSE}
+## D4_6d
 Box.test(resid(gas.gam)[whiteside$Insul=='Before'], lag=1)
 Box.test(resid(gas.gam)[whiteside$Insul=='After'], lag=1)
-```
 
-#### Subsection 4.4.7: The remarkable reach of mgcv and related packages
-#####              Departures from independence assumptions
-#### Subsection 4.4.8: Multiple spline smoothing terms --- dewpoint data
-
-```{r 4_12, echo=FALSE, w=5.5, h=2.0, left=-1, fig.pos='h', ps=9, mfrow=c(1,2), out.width="80%"}
+## 4_12
 ## GAM model -- `dewpoint` data
 dewpoint <- DAAG::dewpoint
 ds.gam <- gam(dewpt ~ s(mintemp) + s(maxtemp), data=dewpoint)
 plot(ds.gam, resid=TRUE, pch=".", se=2, cex=2, fg="gray")
-```
 
-```{r 4_12, eval=F}
-```
-
-#####        Using residuals as a check for non-additive effects
-
-```{r 4_13, echo=FALSE, w=5, h=2.5, out.width="80%"}
+## 4_13
 library(lattice)
 ## Residuals vs maxtemp, for different mintemp ranges
 mintempRange <- equal.count(dewpoint$mintemp, number=3)
@@ -638,65 +511,40 @@ ds.xy <- xyplot(residuals(ds.gam) ~ maxtemp|mintempRange, data=dewpoint,
                 par.strip.text=list(cex=0.75), type=c("p","smooth"),
                 xlab="Maximum temperature", ylab="Residual")
 ds.xy
-```
 
-```{r 4_13, eval=F}
-```
-
-#####                         *A smooth surface
-
-```{r D5_1c,  w=6, h=2.7, mfrow=c(1,2), out.width="100%"}
+## D5_1c
 ## Fit surface
 ds.tp <- gam(dewpt ~ s(mintemp, maxtemp), data=DAAG::dewpoint)
 vis.gam(ds.tp, plot.type="contour")   # gives a contour plot of the
 # fitted regression surface
 vis.gam(ds.gam, plot.type="contour")  # cf, model with 2 smooth terms
-```
 
-#### Subsection 4.4.9:  Atlantic hurricanes that made landfall in the US
-
-```{r D5_2a}
+## D5_2a
 hurricNamed <- DAAG::hurricNamed
 hurricS.gam <- gam(car::yjPower(deaths, lambda=-0.2) ~
   s(log(BaseDam2014)) + s(LF.PressureMB),
   data=hurricNamed, method="ML")
 anova(hurricS.gam)
-```
 
-```{r 4_14, echo=FALSE, w=6, h=1.95, bot=1, left=-1, top=1.5, fig.pos='b', ps=9, mgp=c(2,0.5,0), mfrow=c(1,3), out.width="100%"}
+## 4_14
 plot(hurricS.gam, resid=TRUE, pch=16, cex=0.5, select=1, fg="gray")
 mtext(side=3, line=1, "A: Term in log(BaseDam2014)", cex=1.0, adj=0, at=-3.75)
 plot(hurricS.gam, resid=TRUE, pch=16, cex=0.5, select=2, fg="gray")
 mtext(side=3, line=1, "B: Term in LF.PressureMB", cex=1.0, adj=0, at=878)
 qqnorm(resid(hurricS.gam), main="", fg="gray")
 mtext(side=3, line=1, "C: Q-Q plot of residuals", cex=1.0, adj=0, at=-4.25)
-```
 
-```{r 4_14, eval=F}
-```
-
-#####  An explanatory variable with an overly long-tailed distribution
-
-```{r D5_2c"100%"}
+## D5_2c"100%"
 hurricSlog1.gam <- gam(log(deaths+1) ~ s(log(BaseDam2014)), data=hurricNamed)
 hurricSlog2.gam <- gam(log(deaths+1) ~ s(BaseDam2014), data=hurricNamed)
-```
 
-```{r 4_15, echo=FALSE, w=6.5, h=3, left=-1, top=1.5, ps=10, fig.pos='b', mfrow=c(1,2), out.width="80%"}
+## 4_15
 plot(hurricSlog1.gam, resid=TRUE, pch=16, cex=0.5, adj=0, fg="gray")
 mtext(side=3, "A: Use log(BaseDam2014)", cex=1.4, adj=0, line=1, at=-3.15)
 plot(hurricSlog2.gam, resid=TRUE, pch=16, cex=0.5, fg="gray")
 mtext(side=3, "B: Use BaseDam2014", cex=1.4, adj=0, line=1, at=-28500)
-```
 
-```{r 4_15, eval=F}
-```
-
-#### Subsection 4.4.10: Other smoothing methods
-
-### Section 4.5 Quantile regression
-
-```{r D5_3a}
+## D5_3a
 ## If necessary, install the 'WDI' package & download data
 if(!file.exists("wdi.RData")){
   if(!is.element("WDI", installed.packages()[,1]) )install.packages("WDI")
@@ -708,11 +556,8 @@ wdi2020 <- na.omit(droplevels(subset(wdi2020, !region %in% "Aggregates")))
 wdi <- setNames(wdi2020[order(wdi2020[, inds[1]]),inds], indnams)
 save(wdi, file="wdi.RData")
 }
-```
 
-#####       2020 World Bank data on fertility and life expectancy
-
-```{r D5_3b}
+## D5_3b
 load("wdi.RData")  # Needs `wdi.RData` in working directory; see footnote
 library(qgam)
 wdi[, "ppop"] <- with(wdi, population/sum(population))
@@ -724,9 +569,8 @@ fit.qgam <- qgam(form, data=wdi, qu=.5)
 fit19.mqgam <- mqgam(form, data=wdi, qu=c(.1,.9))
 wtd19.mqgam <- mqgam(form, data=wdi, qu=c(.1,.9),
                       argGam=list(weights=wdi[["ppop"]]))
-```
 
-```{r D5_3c}
+## D5_3c
 hat50 <- cbind(LifeExpectancy=wdi[, "LifeExpectancy"], logFert=wdi[,"logFert"],
                 as.data.frame(predict(fit.qgam, se=T)))
 hat50 <- within(hat50, {lo <- fit-2*se.fit; hi <- fit+2*se.fit})
@@ -736,9 +580,8 @@ for(i in 1:2){hat19[[i]] <- qdo(fit19.mqgam, c(.1,.9)[i], predict)
   ## NB, can replace `predict` by `plot`, or `summary`
 colnames(hat19) <- c(paste0(rep(c('q','qwt'),c(2,2)), rep(c('10','90'),2)))
 hat19 <- cbind(hat19, logFert=wdi[,"logFert"])
-```
 
-```{r 4_16, echo=FALSE, w=7.2, h=2.4, out.width="100%", warning=FALSE,  message=FALSE, mfrow=c(1,3)}
+## 4_16
 ## Panel A: Fit with SE limits, 50% quantile
 gphA <- xyplot(lo+fit+hi~logFert, data=hat50, lty=c(2,1,2),lwd=1.5,type='l') +
   latticeExtra::as.layer(xyplot(LifeExpectancy~logFert,
@@ -753,12 +596,8 @@ update(c("A: 50% curve, 2 SE limits"=gphA, "B: 0.1, 0.9 quantiles"=gphB,
        scales=list(x=list(at=log(2^((0:5)/2)), labels=round(2^((0:5)/2),1)),
                    alternating=F),
        par.settings=DAAG::DAAGtheme(color=F, col='gray50', cex=2, pch='.'))
-```
 
-```{r 4_16, eval=F}
-```
-
-```{r D5_3e}
+## D5_3e
 ## Plots for the individual quantiles can be obtained thus:
 ## ## Panel A
 plot(fit.qgam, shift=mean(predict(fit.qgam)))
@@ -769,68 +608,52 @@ plot(fitm10, resid=T, shift=mean(predict(fitm10)),
 wfitm10 <- qdo(wtd19.mqgam, qu=0.1)
 plot(wfitm10, resid=T, shift=mean(predict(wfitm10)),
      ylim=range(wdi$LifeExpectancy), cex=2)
-```
 
-### Section 4.6: Further reading and remarks
-
-### Exercises (4.7)
-
-```{r D7a1}
+## D7a1
 roller.lm <- lm(depression~weight, data=DAAG::roller)
 roller.lm2 <- lm(depression~weight+I(weight^2), data=DAAG::roller)
-```
 
-```{r D7a2, w=4, h=4, out.width="40%"}
+## D7a2
 toycars <- DAAG::toycars
 lattice::xyplot(distance ~ angle, groups=factor(car), type=c('p','r'),
                 data=toycars, auto.key=list(columns=3))
-```
 
-```{r D7b1}
+## D7b1
 parLines.lm <- lm(distance ~ 0+factor(car)+angle, data=toycars)
 sepLines.lm <- lm(distance ~ factor(car)/angle, data=toycars)
-```
 
-```{r D7b2}
+## D7b2
 sepPol3.lm <- lm(distance ~ factor(car)/angle+poly(angle,3)[,2:3], data=toycars)
-```
 
-```{r D7b3}
+## D7b3
 sapply(list(parLines.lm, sepLines.lm, sepPol3.lm), AICcmodavg::AICc)
-```
 
-```{r <<D7b4}
+## <<D7b4
 setNames(sapply(list(parLines.lm, sepLines.lm, sepPol3.lm),
   function(x)summary(x)$adj.r.squared), c("parLines","sepLines","sepPol3"))
-```
 
-```{r D7c}
+## D7c
 seedrates.lm <- lm(grain ~ rate + I(rate^2), data=seedrates)
 seedrates.pol <- lm(grain ~ poly(rate,2), data=seedrates)
-```
 
-```{r D7d1}
+## D7d1
 geo.gam <- gam(thickness ~ s(distance), data=DAAG::geophones)
-```
 
-```{r D7d2, w=6, h=2.7, mfrow=c(1,2), out.width="95%"}
+## D7d2
 plot(DAAG::geophones$distance, acf(resid(geo.gam), lag.max=55)$acf)
 Box.test(resid(geo.gam), lag=10)
 Box.test(resid(geo.gam), lag=20)
 Box.test(resid(geo.gam), lag=20, type="Ljung")
-```
 
-```{r D7e, w=4, h=4, out.width="40%"}
+## D7e
 library(mgcv)
 xy <- data.frame(x=1:200, y=arima.sim(list(ar=0.75), n=200))
 df.gam <- gam(y ~ s(x), data=xy)
 plot(df.gam, residuals=TRUE)
-```
 
-```{r, eval=T}
+## unnamed-chunk-1
 if(file.exists("/Users/johnm1/pkgs/PGRcode/inst/doc/")){
 code <- knitr::knit_code$get()
 txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n'))
 writeLines(txt, con="/Users/johnm1/pkgs/PGRcode/inst/doc/ch4.R")
 }
-```

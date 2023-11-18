@@ -3,6 +3,9 @@ title: "Code for Selected Figures"
 author: "John Maindonald"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
+options: 
+  params: 
+    rmarkdown.html_vignette.check_title: false
 vignette: >
   %\VignetteIndexEntry{Code for Selected Figures}
   %\VignetteEngine{knitr::rmarkdown}
@@ -26,6 +29,9 @@ library(knitr)
 ## opts_chunk[['set']](eval=FALSE)   ## Set to TRUE to execute main part of code
 opts_chunk[['set']](eval=FALSE) 
 ```
+
+Figures for which code appears here may in due course be 
+made available for execution as functions.
 
 ## Figure 1.20
 
@@ -150,9 +156,10 @@ bfDF
 }
 ```
 
-
-<!-- ```{r eval=T} -->
-<!-- code <- knitr::knit_code$get() -->
-<!-- txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n')) -->
-<!-- writeLines(txt, con="../inst/doc/figFuns.R") -->
-<!-- ``` -->
+```{r, eval=T}
+if(file.exists("/Users/johnm1/pkgs/PGRcode/inst/doc/")){
+code <- knitr::knit_code$get()
+txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n'))
+writeLines(txt, con="/Users/johnm1/pkgs/PGRcode/inst/doc/figFuns.R")
+}
+```

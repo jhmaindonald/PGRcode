@@ -1,35 +1,12 @@
----
-title: "Chapter 2: Generalizing from models"
-output: rmarkdown::html_vignette
-options: 
-  params: 
-    rmarkdown.html_vignette.check_title: false
-vignette: >
-  %\VignetteIndexEntry{Ch2: Generalizing . . .}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
----
 
-On options for working with the code see the vignettes
-[Ch1-Learning](PGRcode/Ch1-Learning.html) and
-[UsingCode](PGRcode/UsingCode.html).
-
-```{r CodeControl, echo=FALSE}
+## CodeControl
 options(rmarkdown.html_vignette.check_title = FALSE)
 xtras <- F
 library(knitr)
 ## opts_chunk[['set']](results="asis")
 opts_chunk[['set']](eval=F)
-```
 
-##### Packages required (plus any dependencies)
-DAAG MASS qra investr HistData BHH2 xtable BayesFactor boot zoo boot 
-MCMCpack,
-
-Additionally, knitr and Hmisc are required in order to process the Rmd source file. 
-
-
-```{r setup, cache=FALSE, echo=FALSE}
+## setup
 Hmisc::knitrSet(basename="models", lang='markdown', fig.path="figs/g", w=7, h=7)
 oldopt <- options(digits=4, formatR.arrow=FALSE, width=70, scipen=999)
 library(knitr)
@@ -37,24 +14,18 @@ library(knitr)
 opts_chunk[['set']](cache.path='cache-', out.width="80%", fig.align="center", 
                     fig.show='hold', size="small", ps=10, strip.white = TRUE,
                     comment=NA, width=70, tidy.opts = list(replace.assign=FALSE))
-```
 
-### Section 2.1 Model assumptions
-#### Subsection 2.1.1: Inferences are never assumption free
-#### Subsection 2.1.2: Has account been taken of all relevant effects?
-```{r B1_2a}
+## B1_2a
 ## Tabulate by Admit and Gender
 byGender <- 100*prop.table(margin.table(UCBAdmissions, margin=1:2), margin=2)
 round(byGender,1)
-```
 
-```{r B1_2b}
+## B1_2b
 ## Admission rates, by department
 pcAdmit <- 100*prop.table(UCBAdmissions, margin=2:3)["Admitted", , ]
 round(pcAdmit,1)
-```
 
-```{r 2_1, echo=FALSE, w=4.5, h=2.25, left=-1, rt=1, top=1.5, mgp=c(1.5,0.5,0), ps=7, out.width="85%"}
+## 2_1
 applied <- margin.table(UCBAdmissions, margin=2:3)
 pcAdmit <- 100*prop.table(UCBAdmissions, margin=2:3)["Admitted", , ]
       byGender <- 100*prop.table(margin.table(UCBAdmissions,
@@ -90,39 +61,23 @@ abline(h=200*(0:4),col="lightgray",lty="dotted")
 abline(v=20*(0:4),col="lightgray",lty="dotted")
 legend("topleft", col=c('blue','red'),lty=c(1,1), lwd=0.75, cex=0.9,
        y.intersp=0.65, legend=c("Males","Females"),bty="n")
-```
 
-```{r 2_1, eval=F}
-```
-
-```{r B1_2d}
+## B1_2d
 ## Calculate totals, by department, of males & females applying
 margin.table(UCBAdmissions, margin=2:3)
-```
 
-#### Subsection 2.1.3: The limitations of models
-#### Subsection 2.1.4: Use the methodology that best suits the task in hand?
-
-### Section 2.2: t-statistics, binomial proportions, and correlations
-#### Subsection 2.2.1: One- and two-sample t-tests
-#### Subsection 2.2.2: A two-sample comparison
-
-```{r B2_2a}
+## B2_2a
 stats2 <- sapply(DAAG::two65,
                  function(x) c(av=mean(x), sd=sd(x), n=length(x)))
 pooledsd <- sqrt( sum(stats2['n',]*stats2['sd',]^2)/sum(stats2['n',]-1) )
 stats2 <- setNames(c(as.vector(stats2), pooledsd),
                    c('av1','sd1','n1','av2','sd2','n2','pooledsd'))
 print(stats2, digits=4)
-```
 
-```{r B2_2b}
+## B2_2b
 with(DAAG::two65, t.test(heated, ambient, var.equal=TRUE))
-```
 
-#####                      When is pairing helpful?
-
-```{r 2_2, echo=FALSE, w=6, h=2.75, top=1, rt=2, las=0, tcl=-0.4, results='hide', ps=8, mfrow=c(1,2), out.width="85%"}
+## 2_2
 titl <- paste("Second versus first member, for each pair.  The first",
 "\npanel is for the elastic band data. The second (from",
 "\nDarwin) is for plants of the species Reseda lutea")
@@ -136,16 +91,8 @@ DAAG::onesamp(dset = DAAG::pair65, x = "ambient", y = "heated",
 DAAG::onesamp(dset = DAAG::mignonette, x = "self", y = "cross",
   xlab = "Height of self-fertilised plant", ylab =
   "Height of cross-fertilised plant", dubious = 0, cex=0.7, fg='gray')
-```
 
-```{r 2_2, eval=F}
-```
-
-#####            What if the standard deviations are unequal?
-#### Subsection 2.2.3: The normal approximation to the binomial
-#### Subsection 2.2.4: The Pearson or product--moment correlation
-
-```{r B2_4a}
+## B2_4a
 ## Pearson correlation between `body` and `brain`: Animals
 Animals <- MASS::Animals
 rho <- with(Animals, cor(body, brain))
@@ -155,11 +102,8 @@ rhoLogged <- with(log(Animals), cor(body, brain))
 rhoSpearman <- with(Animals, cor(body, brain, method="spearman"))
 c(Pearson=round(rho,2), " Pearson:log values"=round(rhoLogged,2),
   Spearman=round(rhoSpearman,2))
-```
 
-### Section 2.3 Extra-binomial and extra-Poisson variation
-
-```{r B3_1a}
+## B3_1a
 maleDF <- data.frame(number=0:12, freq=unname(qra::malesINfirst12[["freq"]]))
 N <- sum(maleDF$freq)
 pihat <- with(maleDF, weighted.mean(number, freq))/12
@@ -169,18 +113,16 @@ rbind(Frequency=setNames(maleDF$freq, nm=0:12),
       rawResiduals = maleDF$freq-probBin*N,
       SDbinomial=sqrt(probBin*(1-probBin)*N)) |>
   formatC(digits=2, format="fg") |> print(digits=2, quote=F, right=T)
-```
 
-```{r B3_1b, echo=F}
+## B3_1b
 ## Fit binomial and betabinomial distributions.
 suppressPackageStartupMessages(library(gamlss))
 doBI <- gamlss(cbind(number, 12-number)~1, weights=freq,
                family=BI, data=maleDF, trace=FALSE)
 doBB <- gamlss(cbind(number, 12-number)~1, weights=freq,
                      family=BB, data=maleDF, trace=FALSE)
-```
 
-```{r 2_3, w=9, h=6, ps=10, top=2, left=-2, bot=0.5, mfrow=c(2,3), echo=FALSE,mar=c(3.1,2.6,3.1,0.6), mgp=c(2,.5,0), out.width="100%"}
+## 2_3
 set.seed(29)
 rqres.plot(doBI, plot.type='all', type="QQ", main=""); box(col='white')
 mtext(side=3, line=0.5, "A: Binomial model, Q-Q", adj=0, cex=1.25)
@@ -195,20 +137,15 @@ rqres.plot(doBB, plot.type='all', type="wp", main="", ylab=''); box(col='white')
 mtext(side=3, line=0.5, "E: BB, worm plot 1", adj=0, cex=1.25)
 rqres.plot(doBB, plot.type='all', type="wp", main="", ylab=''); box(col='white')
 mtext(side=3, line=0.5, "F: BB, worm plot 2", adj=0, cex=1.25)
-```
 
-```{r 2_3, eval=FALSE}
-```
-
-```{r B3_1d}
+## B3_1d
 aicStat <- AIC(doBI, doBB)
 rownames(aicStat) <-
   c(doBI="Binomial", doBB="Betabinomial")[rownames(aicStat)]
 aicStat$dAIC <- with(aicStat, round(AIC-AIC[1],1))
 aicStat
-```
 
-```{r B3_1e}
+## B3_1e
 ## Numbers of accidents in three months, with Poisson fit
 machinists <- data.frame(number=0:8, freq=c(296, 74, 26, 8, 4, 4, 1, 0, 1))
 N <- sum(machinists[['freq']])
@@ -217,16 +154,14 @@ fitPoisson <- dpois(0:8, lambda)*sum(machinists[['freq']])
 rbind(Frequency=with(machinists, setNames(freq, number)),
       poissonFit=fitPoisson) |>
   formatC(digits=2, format="fg") |> print(quote=F, digits=2, right=T)
-```
 
-```{r B3_1f, echo=FALSE}
+## B3_1f
 doPO <- gamlss(number~1, weights=freq,
                 family=PO, data=machinists, trace=FALSE)
 doNBI <- gamlss(number~1, weights=freq,
                   family=NBI, data=machinists, trace=FALSE)
-```
 
-```{r 2_4, w=9, h=3, ps=10, left=-2, top=2, bot=0.5, mfrow=c(1,3), echo=FALSE,mar=c(3.1,2.6,3.1,0.6), mgp=c(2,.5,0), out.width="100%"}
+## 2_4
 set.seed(23)
 rqres.plot(doPO, plot.type='all', type="QQ", main=""); box(col='white')
 ## Repeat, changing the argument, for remaining plots
@@ -235,27 +170,17 @@ rqres.plot(doPO, plot.type='all', type="wp", main="", ylab=''); box(col='white')
 mtext(side=3, line=0.5, "B: Poisson, worm plot", adj=0, cex=1.25)
 rqres.plot(doNBI, plot.type='all', type="wp", main="", ylab='')
 mtext(side=3, line=0.5, "C: NBI, worm plot", adj=0, cex=1.25); box(col='white')
-```
 
-```{r 2_4, eval=F}
-```
-
-### Subsection 2.3.2: *Technical details -- extra-binomial or extra-Poisson variation
-
-```{r B3_1i}
+## B3_1i
 sigma <- exp(coef(doBB, "sigma"))
 cat("Phi =", (1+12*sigma)/(1+sigma))
-```
 
-```{r B3_1j}
+## B3_1j
 mu <- exp(coef(doNBI, "mu"))
 sigma <- exp(coef(doNBI, "sigma"))
 cat("Phi =", (1+sigma*mu))
-```
 
-### Section 2.4 Contingency tables
-
-```{r B4a}
+## B4a
 ## 'Untreated' rows (no training) from psid3, 'treated' rows from nswdemo
 nswpsid3 <- rbind(DAAG::psid3, subset(DAAG::nswdemo, trt==1))
 degTAB <- with(nswpsid3, table(trt,nodeg))
@@ -263,58 +188,38 @@ degTAB <- with(nswpsid3, table(trt,nodeg))
 dimnames(degTAB) <- list(trt=c("PSID3_males","NSW_male_trainees"),
                          deg =c("Yes","No"))
 degTAB
-```
 
-```{r B4b}
+## B4b
 # To agree with hand calculation below, specify correct=FALSE
 chisq.test(degTAB, correct=FALSE)
-```
 
-#####               The mechanics of the chi-squared test
-#####        An example where a chi-squared test may not be valid
-
-```{r B4c}
+## B4c
 ## Engine man data
 engineman <- matrix(c(5,3,17,85), 2,2)
 chisq.test(engineman)
-```
 
-#####                 Rare and endangered plant species
-
-```{r B4d}
+## B4d
 fisher.test(engineman)
-```
 
-```{r B4e}
+## B4e
 ## Enter the data thus:
 rareplants <- matrix(c(37,190,94,23, 59,23,10,141, 28,15,58,16), ncol=3,
   byrow=TRUE, dimnames=list(c("CC","CR","RC","RR"), c("D","W","WD")))
-```
 
-```{r B4f}
+## B4f
 (x2 <- chisq.test(rareplants))
-```
 
-#####  Examination of departures from a consistent overall row pattern
-
-```{r B4h, echo=-1}
+## B4h
 options(digits=3)
 ## Expected values
 x2$expected
-```
 
-```{r B4i}
+## B4i
 options(digits=2)
 ## Standardized residuals
 residuals(x2)
-```
 
-#####                       Interpretation issues
-
-### Section 2.5 Issues for Regression with a single explanatory variable
-#### Subsection 2.5.1: Iron slag example --- check residuals with care!
-
-```{r 2_5, echo=FALSE,  w=5.5, h=3.35, cex.lab=0.9,  left=-2, top=1,  rt=0.5, mgp=c(1.6,0.5,0), echo=FALSE, ps=10, mfrow=c(2,3), out.width="100%"}
+## 2_5
 leg <- c("A: Fitted line", "B: Residuals from line", "C: Variance check")
 ord <- order(DAAG::ironslag[["magnetic"]])
 ironslag <- DAAG::ironslag[ord,]
@@ -353,21 +258,12 @@ scatter.smooth(sqrtabs2 ~ fitchem2, lpars=list(col="red"),
 span=0.8, xlab = "Predicted chemical", fg="gray",
 ylab = expression(sqrt(abs(residual))))
 mtext(side = 3, line = 0.25, leg2[3], adj = -0.1, cex=0.925)
-```
 
-```{r 2_5, eval=F}
-```
-
-#### Subsection 2.5.2: The analysis of variance table
-
-```{r B5_2a}
+## B5_2a
 roller.lm <- lm(depression ~ weight, data=DAAG::roller)
 anova(roller.lm)
-```
 
-#### Subsection 2.5.3: Outliers, influence, and robust regression
-
-```{r 2_6, w=2.75, h=2.4, left=-1, lwd=0.75, ps=10, tcl=-0.25, lwd=0.75, echo=FALSE, fig.pos='h', out.width="42%"}
+## 2_6
 softbacks <- DAAG::softbacks
 x <- softbacks[,"volume"]
 y <- softbacks[,"weight"]
@@ -391,49 +287,31 @@ paste("b =", format(round(z[2, 1], 2)),
 "  SE =", format(round(z[2, 2], 2))))
 legend(bottomright[1],  bottomright[2],
 legend=btxt, xjust=1, yjust=0, cex=0.8, bty="n")
-```
 
-```{r 2_6, eval=F}
-```
-
-```{r B5_3a}
+## B5_3a
 softbacks.lm <- lm(weight ~ volume, data=DAAG::softbacks)
 print(coef(summary(softbacks.lm)), digits=3)
-```
 
-```{r 2_7, w=7.25, h=1.65, mgp=c(1.95,0.5,0), top=1, left=-0.5, ps=10, mfrow=c(1,4), echo=FALSE, out.width="100%"}
+## 2_7
 plot(softbacks.lm, fg="gray",
 caption = c("A: Residuals vs Fitted", "B: Normal Q-Q",
 "C: Scale-Location", "", "D: Resids vs Leverage"))
-```
 
-```{r 2_7, eval=F}
-```
-
-#####                         Robust regression
-#### Subsection 2.5.4: Standard errors and confidence intervals
-#####            Confidence intervals and tests for the slope
-
-```{r B5_4a}
+## B5_4a
 SEb <- coef(summary(roller.lm))[2, 2]
 coef(roller.lm)[2] + qt(c(0.025,.975), 8)*SEb
-```
 
-#####         SEs and confidence intervals for predicted values
-
-```{r B5_4b}
+## B5_4b
 ## Code to obtain fitted values and standard errors (SE, then SE.OBS)
 fit.with.se <- predict(roller.lm, se.fit=TRUE)
 fit.with.se$se.fit                                            # SE
 sqrt(fit.with.se[["se.fit"]]^2+fit.with.se$residual.scale^2)  # SE.OBS
-```
 
-```{r B5_4c}
+## B5_4c
 predict(roller.lm, interval="confidence", level=0.95)
 predict(roller.lm, interval="prediction", level=0.95)  # CI for a new observation
-```
 
-```{r 2_8, w=6.0, h=2.85, left=-1, top=1.5, mfrow=c(1,2), ps=10, tcl=-0.25, lwd=0.75, echo=FALSE, warning=FALSE, out.width="80%"}
+## 2_8
 ## Depression vs weight, with 95\% pointwise bounds for both
 ## the fitted line and predicted values
 investr::plotFit(roller.lm, interval="both", col.conf="red", fg="gray")
@@ -444,18 +322,11 @@ galton.lm <- lm(childHeight~father, data=galtonMales)
 investr::plotFit(galton.lm, interval="both", col.conf="red", hide=FALSE,
                  col=adjustcolor('black',alpha=0.5), fg="gray")
 mtext(side=3,line=0.75, "B: Son vs father heights", cex=1.2, adj=-0.25)
-```
 
-```{r 2_8, eval=F}
-```
-
-```{r B5_4e, echo=FALSE}
+## B5_4e
 round(coef(summary(galton.lm))[,-4],2)
-```
 
-#####             Implications for design
-
-```{r 2_9, echo=FALSE, w=5, h=3, bot=2, lwd=0.75, ps=10, out.width="75%"}
+## 2_9
 panelci<-function(data,...)
 {
 nrows<-list(...)$nrows
@@ -487,12 +358,8 @@ DAAG::panelplot(xy,panel=panelci,totrows=1,totcols=2,
                 par.strip.text=list(cex=.9), oma=c(4,4,2.5,2), fg='gray')
 mtext(side = 2, line = 3.35, "Distance moved (cm)", cex=1.1, las=0)
 mtext(side=1,line=3,"Amount of stretch (mm)", cex=1.1)
-```
 
-```{r 2_9, eval=F}
-```
-
-```{r 2_10, echo=FALSE, w=5.5, h=2.7, left=-1, top=1.5, cex.lab=0.75, ps=10, mfrow=c(1,2), out.width="85%"}
+## 2_10
 ## There are two regression lines!
 pair65 <- DAAG::pair65
 bothregs <- function(x=pair65[, "ambient"], y=pair65[, "heated"],
@@ -510,17 +377,8 @@ mtext(side = 3, line = 0.5, "A", adj = 0)
 bothregs(x=trees[, "Girth"], y=trees[, "Height"],
          xlab="Girth (in)", ylab <- "Height (ft)", pch=16)
 mtext(side = 3, line = 0.5, "B", adj = 0)
-```
 
-#### Subsection 2.5.5: There are two regression lines!
-
-```{r 2_10, eval=F}
-```
-
-#####                An alternative to a regression line
-#### Subsection 2.5.6: Logarithmic and Power Transformations
-
-```{r 2_11, w=6, h=3.6, left=-1, top=1.5, ps=10, tcl=-0.25, mfrow=c(2,3), echo=FALSE, out.width="80%"}
+## 2_11
 ## Logarithmic and Power Transformations
 DAAG::powerplot(expr="sqrt(x)", xlab="")
 DAAG::powerplot(expr="x^0.25", xlab="", ylab="")
@@ -528,16 +386,8 @@ DAAG::powerplot(expr="log(x)", xlab="", ylab="")
 DAAG::powerplot(expr="x^2")
 DAAG::powerplot(expr="x^4", ylab="")
 DAAG::powerplot(expr="exp(x)", ylab="")
-```
 
-```{r 2_11, eval=F}
-```
-
-#####  General power transformations --- Box-Cox and Yeo-Johnson
-#### Subsection 2.5.7: General forms of nonlinear response
-#### Subsection 2.5.8: Size and shape data -- allometric growth
-
-```{r 2_12, w=3.25, h=2.7, top=1.25, rt=1, ps=10, tcl=-0.25, echo=FALSE, out.width="42%"}
+## 2_12
 ## Heart weight versus body weight, for 30 Cape fur seals.
 g2.12 <- function()
 {
@@ -569,24 +419,13 @@ mtext(side=3, line=1.15, eqn, adj = 0.4, cex = 0.8)
 mtext(side=3, line=0.25, "(Values in square brackets are SEs)", adj = 0.4, cex = 0.8)
 }
 g2.12()
-```
 
-```{r 2_12, eval=F}
-```
-
-#####                  The  allometric growth equation
-
-```{r B5_4f}
+## B5_4f
 options(scipen=4)
 cfseal.lm <- lm(log(heart) ~ log(weight), data=DAAG::cfseal)
 print(coef(summary(cfseal.lm)), digits=4)
-```
 
-### Section 2.6 Empirical assessment of predictive accuracy
-#### Subsection 2.6.1: The training/test approach, and cross-validation
-#####               Cross-validation -- a tutorial example
-
-```{r 2_13, w=3.0, h=2.65, echo=FALSE, out.width="42%"}
+## 2_13
 houseprices <- DAAG::houseprices
 df <- DAAG::CVlm(houseprices, form.lm = formula(sale.price ~ area),m=3,printit=F,plotit=FALSE)
 panelfun <- function(x,y,subscripts,groups, ...){
@@ -597,40 +436,30 @@ gph <- lattice::xyplot(sale.price ~ area, groups=fold, data=df, pch=1:3, panel=p
 parset <- DAAG::DAAGtheme(color=T, lty=1:3, pch=1:3, lwd=2)
 keylist <- list(lines=TRUE, columns=3, between.columns=1.5, between=1, cex=0.85)
 update(gph, par.settings=parset, auto.key=keylist)
-```
 
-```{r 2_13, eval=F}
-```
-
-```{r B6_1b}
+## B6_1b
 set.seed(29)        # Generate results shown
 rand <- sample(rep(1:3, length=15))
 ## sample() randomly permutes the vector of values 1:3
 for(i in 1:3) cat(paste0(i,":"), (1:15)[rand == i],"\n")
-```
 
-```{r B6_1c}
+## B6_1c
 houseprices <- DAAG::houseprices
 row.names(houseprices) <- (1:nrow(houseprices))
 DAAG::CVlm(houseprices, form.lm = formula(sale.price ~ area), plotit=FALSE)
-```
 
-```{r B6_1d}
+## B6_1d
 ## Estimate of sigma^2 from regression output
 houseprices <- DAAG::houseprices
 houseprices.lm <- lm(sale.price ~ area, houseprices)
 summary(houseprices.lm)[["sigma"]]^2
-```
 
-#### Subsection 2.6.2: Bootstrapping in regression
-
-```{r B6_2a}
+## B6_2a
 houseprices <- DAAG::houseprices
 houseprices.lm <- lm(sale.price ~ area, houseprices)
 print(coef(summary(houseprices.lm)),digits=2)
-```
 
-```{r B6_2b}
+## B6_2b
 houseprices.fn <-
   function (houseprices, index,
             statfun=function(obj)coef(obj)[2]){
@@ -638,23 +467,20 @@ houseprices.fn <-
             house.lm <- lm(sale.price ~ area, data=house.resample)
             statfun(house.lm)    # slope estimate for resampled data
             }
-```
 
-```{r B6_2c, warning=FALSE, message=FALSE}
+## B6_2c
 set.seed(1028)     # use to replicate the exact results below
 library(boot)      # ensure that the boot package is loaded
 ## requires the data frame houseprices (DAAG)
 (houseprices.boot <- boot(houseprices, R=999, statistic=houseprices.fn))
-```
 
-```{r B6_2d}
+## B6_2d
 statfun1200 <- function(obj)predict(obj, newdata=data.frame(area=1200))
 price1200.boot <- boot(houseprices, R=999, statistic=houseprices.fn,
 statfun=statfun1200)
 boot.ci(price1200.boot, type="perc") # "basic" is an alternative to "perc"
-```
 
-```{r 2_14, echo=FALSE, w=6, h=2.65, top=1, cex.lab=0.9, ps=10, mfrow=c(1,2), echo=FALSE, lwd=0.75, out.width="90%"}
+## 2_14
 set.seed(1111)
 library(boot)
 par(las=0)
@@ -680,16 +506,8 @@ plot(boot.se/model.se, ylab="", xlab="House",pch=16, fg="gray")
 mtext(side=2, line=2.0, "Ratio of SEs\nBootstrap to Model-Based", cex=0.9)
 mtext(side = 3, line = 0.5, "B", adj = 0)
 abline(1,0)
-```
 
-```{r 2_14, eval=F}
-```
-
-#####                             Commentary
-
-### Section 2.7 One- and two-way comparisons
-#### Subsection 2.7.1: One-way comparisons
-```{r B7_1a}
+## B7_1a
 tomato <- data.frame(Weight = c(1.5, 1.9, 1.3, 1.5, 2.4, 1.5,   # Water
                                 1.5, 1.2, 1.2, 2.1, 2.9, 1.6,   # Nutrient
                                 1.9, 1.6, 0.8, 1.15, 0.9, 1.6), # Nutrient+24D
@@ -697,90 +515,58 @@ tomato <- data.frame(Weight = c(1.5, 1.9, 1.3, 1.5, 2.4, 1.5,   # Water
 ## Make `Water` the first level of trt.  In aov or lm calculations, it is
 ## then taken as the baseline or reference level.
 tomato$trt <- relevel(tomato$trt, ref="Water")
-```
 
-```{r 2_15a, w=3.5, h=2, echo=FALSE, lwd=0.5, out.width="55%", message=FALSE}
+## 2_15a
 ## A: Weights of tomato plants (g)
 library(lattice, quietly=TRUE)
 gph <- stripplot(trt~Weight, aspect=0.35, scale=list(tck=0.6), data=tomato)
 update(gph, scales=list(tck=0.4), cex=0.9, col="black", xlab="",
        main=list('A: Weights of tomato plants (g)', y=0, cex=1.1))
-```
 
-```{r 2_15a, eval=F}
-```
-
-```{r 2_15b, w=9, h=3.5, ps=9, echo=FALSE, out.width="100%"}
+## 2_15b
 ## B: Summarize comparison between LSD and Tukey's HSD graphically
 tomato.aov <- aov(Weight ~ trt, data=tomato)
 DAAG::onewayPlot(obj=tomato.aov)
 title(main="B: LSD, compared with Tukey HSD", adj=0.1, outer=T,
       line=-1.0, font.main=1, cex.main=1.25)
-```
 
-```{r 2_15b, eval=F}
-```
-
-```{r B7_1d, eval=xtras}
+## B7_1d
 BHH2::anovaPlot(tomato.aov)
-```
 
-#####                   The analysis of variance table
-
-```{r B7_1e}
+## B7_1e
 ## Do analysis of variance calculations
 anova(tomato.aov)
-```
 
-#####                  Other multiple comparison tests
-#### Subsection 2.7.2: Regression versus qualitative comparisons -- issues of power
-
-```{r 2_16, w=2.85, h=2.65, left=-1, mgp=c(2,0.5,0), echo=FALSE, out.width="42%"}
+## 2_16
 gph <- DAAG::simulateLinear(alpha=0.6, seed=17, aspect='iso')
 update(gph, par.settings=DAAG::DAAGtheme(color=FALSE, alpha=0.4))
-```
 
-```{r 2_16, eval=F}
-```
-
-#### Subsection 2.7.3: *Severe multiplicity --- the false discovery rate
-#####          *Microarrays and alternatives --- technical note
-#####                   The false discovery rate (FDR)
-
-```{r B7_3a}
+## B7_3a
 coralPval <- DAAG::coralPval
 pcrit <- c(0.05, 0.02, 0.01, 0.001)
 under <- sapply(pcrit, function(x)sum(coralPval<=x))
-```
 
-```{r B7_3b}
+## B7_3b
 expected <- pcrit*length(coralPval)
-```
 
-```{r B7_3c}
+## B7_3c
 fdrtab <- data.frame(Threshold=pcrit, Expected=expected,
 Discoveries=under, FDR=round(expected/under, 4))
 print(xtable::xtable(fdrtab), include.rownames=FALSE, hline.after=FALSE)
-```
 
-```{r B7_3d}
+## B7_3d
 fdr <- p.adjust(coralPval, method="BH")
-```
 
-```{r B7_3e}
+## B7_3e
 fdrcrit <- c(0.05, 0.04, 0.02, 0.01)
 under <- sapply(fdrcrit, function(x)sum(coralPval<=x))
 setNames(under, paste(fdrcrit))
-```
 
-```{r B7_3f, echo=FALSE}
+## B7_3f
 p45 <- (fdrcrit[1]*under[1]-fdrcrit[2]*under[2])/(under[1]-under[2])
 p12 <- (fdrcrit[3]*under[3]-fdrcrit[4]*under[4])/(under[3]-under[4])
-```
 
-#### Subsection 2.7.4: Data with a two-way structure, i.e., two factors
-
-```{r 2_18, echo=FALSE, w=7.5, h=3.4, left=-1, top=1.5, tcl=-0.2, cex=0.9, echo=FALSE, ps=9, out.width="100%"}
+## 2_18
 par(fig=c(0.525,1,0,1), mgp=c(1.5,0.4,0))
 lev <- c("F10", "NH4Cl", "NH4NO3", "F10 +ANU843",
          "NH4Cl +ANU843", "NH4NO3 +ANU843")
@@ -805,24 +591,8 @@ gph <- dotplot(trt ~ ShootDryMass, pch=1, cex=0.9, las=2,
 pars <-  DAAG::DAAGtheme(fontsize=list(text=9, points=6), color=FALSE)
 print(update(gph, scales=list(tck=0.5), par.settings=pars, aspect=0.9),
       position=c(-0.065,0.0,0.6,1), newpage=FALSE)
-```
 
-```{r 2_18, eval=F}
-```
-
-#### Subsection 2.7.5: Presentation issues
-
-### Section 2.8 Data with a nested variation structure
-#### Subsection 2.8.1: Degrees of freedom considerations
-#### Subsection 2.8.2: General multi-way analysis of variance designs
-
-### Section 2.9 Bayesian estimation -- further commentary and approaches
-#### Subsection 2.9.1: Bayesian estimation with normal priors and likelihood
-#### Subsection 2.9.2: Further comments on Bayes Factors
-#####             The Sellke calibration upper limit
-#####       A note on the Bayesian Information Criterion
-
-```{r B9_2a}
+## B9_2a
 pval <- c(.05,.01,.001); np <- length(pval)
 Nval <- c(4,6,10,20,40,80,160); nlen <- length(Nval)
 ## Difference in BIC statistics, interpreted as Bayes factor
@@ -839,49 +609,31 @@ dimnames(cfVal) <- list(
   paste(rep(pval,rep(2,np)), rep(c("- from ttest.tstat", "- from BIC"),np)),
         paste0(c("n=",rep("",nlen-1)),Nval))
 round(cfVal,1)
-```
 
-#### Subsection 2.9.3: Bayesian regression estimation using the MCMCpack package
-
-```{r B9_3a, message=FALSE, warning=FALSE}
+## B9_3a
 suppressPackageStartupMessages(library(MCMCpack))
 roller.mcmc <- MCMCregress(depression ~ weight, data=DAAG::roller)
 summary(roller.mcmc)
-```
 
-```{r 2_19, w=6, h=4.0, left=-1, top=1, ps=10, tcl=-0.25, lwd=0.75, mar=c(4.1,4.1,3.1,2), mfrow=c(2,3), echo=FALSE, out.width="100%"}
+## 2_19
 mat <- matrix(c(1:6), byrow=TRUE, ncol=2)
 layout(mat, widths=rep(c(2,1.1),3), heights=rep(0.9,8))
   # NB: widths & heights are relative
 plot(roller.mcmc, auto.layout=FALSE, ask=FALSE, col="gray", fg="gray")
-```
 
-```{r 2_19, eval=F}
-```
-
-### Section 2.10: Recap
-#####                 Regress $y$ on $x$, or $x$ on~$y$?
-
-### Section 2.11: Further reading
-
-### Exercises (2.12)
-
-```{r B12_22}
+## B12_22
 ## UCBAdmissions is in the datasets package
 ## For each combination of margins 1 and 2, calculate the sum
 UCBtotal <- apply(UCBAdmissions, c(1,2), sum)
-```
 
-```{r B12_2b}
+## B12_2b
 apply(UCBAdmissions, 3, function(x)(x[1,1]*x[2,2])/(x[1,2]*x[2,1]))
-```
 
-```{r B12_3AB}
+## B12_3AB
 tabA <- array(c(30,30,10,10,15,5,30,10), dim=c(2,2,2))
 tabB <- array(c(30,30,20,10,10,5,20,25), dim=c(2,2,2))
-```
 
-```{r B12_5}
+## B12_5
 z.transform <- function(r) .5*log((1+r)/(1-r))
 z.inverse <- function(z) (exp(2*z)-1)/(exp(2*z)+1)
   possum.fun <- function(data, indices) {
@@ -892,13 +644,11 @@ possum.boot <- boot::boot(DAAG::possum, possum.fun, R=999)
 z.inverse(boot.ci(possum.boot, type="perc")$percent[4:5])
  # The 4th and 5th elements of the percent list element
  # hold the interval endpoints. See ?boot.ci
-```
 
-```{r B12_11, fig.width=5, fig.height=4, out.width="40%"}
+## B12_11
 with(pressure, MASS::boxcox(pressure ~ I(1/(temperature+273))))
-```
 
-```{r B12_14}
+## B12_14
 "funRel" <-
 function(x=leafshape$logpet, y=leafshape$loglen, scale=c(1,1)){
   ## Find principal components rotation; see Subsection 9.1.2
@@ -911,9 +661,8 @@ function(x=leafshape$logpet, y=leafshape$loglen, scale=c(1,1)){
 leafshape <- DAAG::leafshape
 funRel(scale=c(1,1))    # Take x and y errors as equally important
   # Note that all lines pass through (mean(x), mean(y))
-```
 
-```{r B12_15}
+## B12_15
 P <- rbind(
     c(1 , 0 , 0 , 0 , 0 , 0),
     c(.5, 0 , .5, 0 , 0 , 0),
@@ -923,9 +672,8 @@ P <- rbind(
     c(0 , 0 , 0 , 0 , 0 , 1))
 dimnames(P) <- list(0:5,0:5)
 P
-```
 
-```{r B12_15x}
+## B12_15x
 Markov <- function(N=15, initial.value=1, transition=P, stopval=NULL)
   {X <- numeric(N)
    X[1] <- initial.value + 1  # States 0:(n-1); subscripts 1:n
@@ -936,17 +684,15 @@ Markov <- function(N=15, initial.value=1, transition=P, stopval=NULL)
   X - 1
 }
  # Set `stopval=c(0,5)` to stop when  the player's fortune is $0 or $5
-```
 
-```{r B12_16}
+## B12_16
 Pb <- rbind(
   Sun = c(Sun=0.6, Cloud=0.2, Rain=0.2),
   Cloud= c(0.2, 0.4, 0.4),
   Rain= c(0.4, 0.3, 0.3))
 Pb
-```
 
-```{r B12_16b}
+## B12_16b
 plotmarkov <-
   function(n=1000, width=101, start=0, transition=Pb, npanels=5){
     xc2 <- Markov(n, initial.value=start, transition)
@@ -959,12 +705,10 @@ plotmarkov <-
           par.strip.text=list(cex=0.65), auto.key=list(columns=2),
           scales=list(x=list(relation="free"))))
 }
-```
 
-```{r eval=T}
+## unnamed-chunk-1
 if(file.exists("/Users/johnm1/pkgs/PGRcode/inst/doc/")){
 code <- knitr::knit_code$get()
 txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n'))
 writeLines(txt, con="/Users/johnm1/pkgs/PGRcode/inst/doc/ch2.R")
 }
-```

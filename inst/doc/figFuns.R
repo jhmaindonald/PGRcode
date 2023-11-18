@@ -1,26 +1,11 @@
----
-title: "Code for Selected Figures"
-author: "John Maindonald"
-date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-options: 
-  params: 
-    rmarkdown.html_vignette.check_title: false
-vignette: >
-  %\VignetteIndexEntry{Code for Selected Figures}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
----
 
-```{r echo=F}
+## unnamed-chunk-1
 options(rmarkdown.html_vignette.check_title = FALSE)
-```
 
-```{r setup, include=FALSE}
+## setup
 knitr::opts_chunk$set(echo = TRUE)
-```
 
-```{r CodeControl, echo=TRUE}
+## CodeControl
 options(rmarkdown.html_vignette.check_title = FALSE)
 ## xtras=TRUE    ## Set to TRUE to execute code 'extras'
 xtras <- FALSE
@@ -28,14 +13,8 @@ library(knitr)
 ## opts_chunk[['set']](results="asis")
 ## opts_chunk[['set']](eval=FALSE)   ## Set to TRUE to execute main part of code
 opts_chunk[['set']](eval=FALSE) 
-```
 
-Figures for which code appears here may in due course be 
-made available for execution as functions.
-
-## Figure 1.20
-
-```{r A6_2e}
+## A6_2e
 eff2stat <- function(eff=c(.2,.4,.8,1.2), n=c(10,40), numreps=100,
                      FUN=function(x,N)pt(sqrt(N)*mean(x)/sd(x), df=N-1, 
                                          lower.tail=FALSE)){
@@ -50,9 +29,8 @@ eff2stat <- function(eff=c(.2,.4,.8,1.2), n=c(10,40), numreps=100,
   data.frame(effsize=rep(rep(eff, each=numreps), length(n)),
              N=rep(n, each=numreps*length(eff)), stat=as.vector(mat))
 }
-```
 
-```{r 1_20, w=7.0, h=3.0, echo=FALSE, out.width="100%"}
+## 1_20
 set.seed(31)
 df200 <- eff2stat(eff=c(.2,.4,.8,1.2), n=c(10, 40), numreps=200)
 labx <- c(0.001,0.01,0.05,0.2,0.4,0.8)
@@ -62,14 +40,8 @@ gph <- bwplot(factor(effsize) ~ I(stat^0.25) | factor(N), data=df200,
 update(gph+latticeExtra::layer(panel.abline(v=labx[1:3]^0.25, col='lightgray')),
        strip=strip.custom(factor.levels=paste0("n=",c(10,40))),
        par.settings=DAAG::DAAGtheme(color=F, col.points="gray50"))
-```
 
-```{r 1_20, eval=F}
-```
-
-## Figure 1.24
-
-```{r A10_31a}
+## A10_31a
 t2bfInterval <- function(t, n=10, rscale="medium", mu=c(-.1,.1)){
      null0 <- BayesFactor::ttest.tstat(t=t, n1=n, nullInterval=mu,
                                        rscale=rscale,simple=TRUE)
@@ -77,9 +49,8 @@ alt0 <- BayesFactor::ttest.tstat(t=t, n1=n, nullInterval=mu, rscale=rscale,
                                  complement=TRUE, simple=TRUE)
 alt0/null0
 }
-```
 
-```{r A10_31b, eval=FALSE}
+## A10_31b
 pval <- c(0.05,0.01,0.001); nval <- c(4,6,10,20,40,80,160)
 bfDF <- expand.grid(p=pval, n=nval)
 pcol <- 1; ncol <- 2; tcol <- 3
@@ -95,9 +66,8 @@ other <- apply(bfDF,1,function(x)
   ))
 bfDF <- setNames(cbind(bfDF, t(other)),
     c('p','n','t','bf','bfInterval'))
-```
 
-```{r 1_24, echo=FALSE, fig.width=6.5, fig.asp=0.425, fig.pos='ht', message=F, warning=F, out.width='100%'}
+## 1_24
 plabpos <- with(subset(bfDF, n==max(bfDF$n)), log((bf+bfInterval)/2))
 gphA1 <- lattice::xyplot(log(bf)~log(n), groups=factor(p), data=bfDF,
                         panel=function(x,y,...){
@@ -133,11 +103,8 @@ gphB <- xyplot(log(eff)~log(n), groups=log(p), data=bfDF, pch=1:3, lty=1:3,
   latticeExtra::layer(panel.grid(h=-1,v=-1))
 plot(gphA2+latticeExtra::as.layer(gphA1), position=c(0, 0, 0.525, 1), more=T)
 plot(gphB, position=c(0.52, 0, 1, 1), par.settings=DAAG::DAAGtheme(color=T))
-```
 
-An alternative way to do the calculations for Exercise 31 in Chapter 1 is:
-
-```{r A10_31e, eval=FALSE}
+## A10_31e
 doBF <- function(pval=c(0.05,0.01,0.002), nval=c(10,40,160)){
 bfDF <- cbind(expand.grid(p=pval, n=nval),
               matrix(nrow=nrow(bfDF), ncol=5))
@@ -154,12 +121,10 @@ bfDF[ij,'bfIntervalw'] <- t2BF(t, n, mu=c(-0.1,0.1),rscale="wide")
 }
 bfDF
 }
-```
 
-```{r, eval=T}
+## unnamed-chunk-2
 if(file.exists("/Users/johnm1/pkgs/PGRcode/inst/doc/")){
 code <- knitr::knit_code$get()
 txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n'))
 writeLines(txt, con="/Users/johnm1/pkgs/PGRcode/inst/doc/figFuns.R")
 }
-```

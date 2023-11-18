@@ -3,14 +3,16 @@ title: "Use of Code Files"
 author: "John Maindonald"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
+options: 
+  params: 
+    rmarkdown.html_vignette.check_title: false
 vignette: >
-  %\VignetteIndexEntry{Use of Code}
+  %\VignetteIndexEntry{Use of Code Files}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}
-options(rmarkdown.html_vignette.check_title = FALSE)
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -130,9 +132,10 @@ plot(z, dnorm(z), type="l", ylab="Normal density")
 plot(z, dt(z, df=5), type="l", ylab="t-statistic density, 5 df")
 ```
 
-
-<!-- ```{r eval=T} -->
-<!-- code <- knitr::knit_code$get() -->
-<!-- txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n')) -->
-<!-- writeLines(txt, con="../inst/doc/UsingCode.R") -->
-<!-- ``` -->
+```{r, eval=T}
+if(file.exists("/Users/johnm1/pkgs/PGRcode/inst/doc/")){
+code <- knitr::knit_code$get()
+txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n'))
+writeLines(txt, con="/Users/johnm1/pkgs/PGRcode/inst/doc/UsingCode.R")
+}
+```

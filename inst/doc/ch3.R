@@ -1,33 +1,11 @@
----
-title: "Chapter 3: Multiple linear regression"
-date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-options: 
-  params: 
-    rmarkdown.html_vignette.check_title: false
-vignette: >
-  %\VignetteIndexEntry{Ch3: Multiple Linear Regression}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
----
 
-On options for working with the code see the vignettes
-[Ch1-Learning](PGRcode/Ch1-Learning.html) and
-[UsingCode](PGRcode/UsingCode.html).
-
-```{r CodeControl, echo=FALSE}
+## CodeControl
 xtras <- F
 library(knitr)
 ## opts_chunk[['set']](results="asis")
 opts_chunk[['set']](eval=F)
-```
 
-##### Packages required (plus any dependencies)
-DAAG car MASS AICcmodavg leaps BayesFactor splines
-
-Additionally, Hmisc and knitr are required in order to process the Rmd source file. 
-
-```{r setup, cache=FALSE, echo=FALSE}
+## setup
 Hmisc::knitrSet(basename="multilr", lang='markdown', fig.path="figs/g", w=7, h=7)
 oldopt <- options(digits=4, formatR.arrow=FALSE, width=70, scipen=999)
 library(knitr)
@@ -35,17 +13,13 @@ library(knitr)
 opts_chunk[['set']](cache.path='cache-', out.width="80%", fig.align="center", 
                     fig.show='hold', size="small", ps=10, strip.white = TRUE,
                     comment=NA, width=70, tidy.opts = list(replace.assign=FALSE))
-```
 
-### Section 3.1 Basic ideas: the allbacks book weight data
-
-```{r C1a}
+## C1a
 allbacks <- DAAG::allbacks  # Place the data in the workspace
 allbacks.lm <- lm(weight ~ volume+area, data=allbacks)
 print(coef(summary(allbacks.lm)), digits=2)
-```
 
-```{r 3_1, echo=FALSE, w=3.5, h=3.5, left=-1, ps=10, out.width="45%"}
+## 3_1
 xlim <- range(allbacks$volume)
 xlim <- xlim+c(-.075,.075)*diff(xlim)
 ## Plot of weight vs volume: data frame allbacks (DAAG)
@@ -58,86 +32,58 @@ with(allbacks, text(weight ~ volume, labels=paste(1:15), cex=0.75, offset=0.35,
 pos=c(2,4)[unclass(cover)]))
 legend(x='topleft', pch=c(16,1), legend=c("hardback  ","softback"),
 horiz=T, bty="n", xjust=0.5, x.intersp=0.75, )
-```
 
-```{r 3_1, eval=FALSE}
-```
-
-```{r C1c}
+## C1c
 ## Correlations between estimates -- model with intercept
 round(summary(allbacks.lm, corr=TRUE)$correlation, 3)
-```
 
-```{r C1d}
+## C1d
 out <- capture.output(summary(allbacks.lm,digits=2))
 cat(out[15:17], sep='\n')
-```
 
-```{r C1e, size='normalsize'}
+## C1e
 ## 5% critical value; t-statistic with 12 d.f.
 qt(0.975, 12)
-```
 
-```{r C1f}
+## C1f
 cat(out[5:7], sep='\n')
-```
 
-#### Subsection 3.1.1: A sequential analysis of variance table
-
-```{r C1_1a}
+## C1_1a
 anova(allbacks.lm)
-```
 
-#####                   Omission of the intercept term
-
-```{r C1_1b}
+## C1_1b
 ## Show rows 1, 7, 8 and 15 only
 model.matrix(allbacks.lm)[c(1,7,8,15), ]
 ## NB, also, code that returns the data frame used
 model.frame(allbacks.lm)
-```
 
-```{r C1_1c}
+## C1_1c
 allbacks.lm0 <- lm(weight ~ -1+volume+area, data=allbacks)
 print(coef(summary(allbacks.lm0)), digits=2)
-```
 
-```{r C1_2d}
+## C1_2d
 ## Correlations between estimates -- no intercept
 print(round(summary(allbacks.lm0, corr=TRUE)$correlation, 3))
-```
 
-#### Subsection 3.1.2: Diagnostic plots
-
-```{r 3_2, echo=FALSE, w=7.25, h=1.65, left=-0.5, mgp=c(1.85,0.5,0), top=1, ps=10, mfrow=c(1,4), out.width="100%"}
+## 3_2
 allbacks.lm0 <- lm(weight ~ -1+volume+area, data=allbacks)
 plot(allbacks.lm0, caption=c('A: Resids vs Fitted', 'B: Normal Q-Q',
      'C: Scale-Location', '', 'D: Resids vs Leverage'), cex.caption=0.85,
      fg='gray')
-```
 
-```{r 3_2, eval=FALSE}
-```
-
-```{r C1_3a, eval=FALSE}
+## C1_3a
 ## To show all plots in the one row, precede with
 par(mfrow=c(1,4))      # Follow with par(mfrow=c(1,1))
-```
 
-```{r C1_3b, eval=xtras, w=7.25, h=1.65, mfrow=c(1,4),}
+## C1_3b
 ## The following has the default captions
 plot(allbacks.lm0)
-```
 
-```{r C1_3d}
+## C1_3d
 allbacks.lm13 <- lm(weight ~ -1+volume+area, data=allbacks[-13, ])
 print(coef(summary(allbacks.lm13)), digits=2)
-```
 
-### Section 3.2 The interpretation of model coefficients
-#### Subsection 3.2.1: Times for Northern Irish hill races
-
-```{r 3_3, w=4.5, h=4.65, echo=FALSE, lwd=0.75, out.width="49%"}
+## 3_3
 oldpar <- par(fg='gray20',col.axis='gray20',lwd=0.5,col.lab='gray20')
 nihr <- within(DAAG::nihills, {mph <- dist/time; gradient <- climb/dist})
 nihr <- nihr[, c("time", "dist", "climb", "gradient", "mph")]
@@ -157,15 +103,8 @@ car::spm(log(nihr), regLine=FALSE, col="blue", oma=c(1.95,2.5,4, 2.5),
 title("B: Logarithmic scales", outer=TRUE,
       adj=0, line=-1.0, cex.main=1, font.main=1)
 par(oldpar)
-```
 
-```{r 3_3, eval=F}
-```
-
-#####         What is special about logarithmic transformations?
-#### Subsection 3.2.2: An  equation that predicts dist/time
-
-```{r C2_1c}
+## C2_1c
 ##  Hold climb constant at mean on logarithmic scale
 mphClimb.lm <- lm(mph ~ log(dist)+log(climb), data = nihr)
 ## Hold `gradient=climb/dist` constant at mean on logarithmic scale
@@ -180,9 +119,8 @@ constSl <- c(bGradient[1]+bGradient[3]*mean((log(nihr$climb/nihr$dist))),
 coef(mphClimb.lm)
 # Use `dist` and `gradient` as explanatory variables
 coef(mphGradient.lm)
-```
 
-```{r 3_4, echo=FALSE, fig.width=8.25, fig.asp=0.5, out.width="90%", fig.show="hold"}
+## 3_4
 opar <- par(mfrow=c(1,2), mgp=c(2.25,0.5,0), mar=c(3.6,4.1,2.1,1.6))
 lineCols <- c("red", adjustcolor("magenta",0.4))
 yaxlab<-substitute(paste("Minutes per mile (Add ", ym, ")"), list(ym=round(avRate,2)))
@@ -201,54 +139,37 @@ axis(2, at=4:7, labels=paste(4:7))
 box(col="white")
 mtext("B: Hold log(gradient) constant at mean", adj=0, line=0.8, at=0.6, cex=1.15)
 par(opar)
-```
 
-```{r 3_4, eval=F}
-```
-
-```{r C2_1f}
+## C2_1f
 summary(mphClimb.lm, corr=T)$correlation["log(dist)", "log(climb)"]
 summary(mphGradient.lm, corr=T)$correlation["log(dist)", "log(gradient)"]
-```
 
-```{r C2_1g, eval=FALSE}
+## C2_1g
 ## Show the plots, with default captions
 plot(mphClimb.lm, fg='gray')
-```
 
-```{r 3_5, echo=FALSE, w=7.25, h=1.65, mgp=c(2.5,0.5,0), top=1, left=-0.5, bot=1, ps=10, mfrow=c(1,4), out.width="100%"}
+## 3_5
 plot(mphGradient.lm, caption=c('A: Resids vs Fitted', 'B: Normal Q-Q',
 'C: Scale-Location', '', 'D: Resids vs Leverage'),
 cex.caption=0.85, fg='gray')
-```
-```{r 3_5, eval=FALSE}
-```
 
-#### Subsection 3.2.3: Equations that predict log(time)
-
-```{r C2_2a}
+## C2_2a
 lognihr <- setNames(log(nihr), paste0("log", names(nihr)))
 timeClimb.lm <- lm(logtime ~ logdist + logclimb, data = lognihr)
-```
 
-```{r 3_6, echo=FALSE, w=7.25, h=1.65, mgp=c(2.5,0.5,0), top=1, left=-0.5, bot=1, ps=10, mfrow=c(1,4), out.width="100%"}
+## 3_6
 plot(timeClimb.lm, caption=c('A: Resids vs Fitted', 'B: Normal Q-Q',
                              'C: Scale-Location', '', 'D: Resids vs Leverage'),
                              cex.caption=0.85, fg='gray')
-```
 
-```{r C2_2d}
+## C2_2d
 print(coef(summary(timeClimb.lm)), digits=2)
-```
 
-```{r C2_2f}
+## C2_2f
 timeGradient.lm <- lm(logtime ~ logdist + loggradient, data=lognihr)
 print(coef(summary(timeGradient.lm)), digits=3)
-```
 
-#### Subsection 3.2.4: Book dimensions --- the oddbooks dataset
-
-```{r 3_7, w=3.65, h=4.0, echo=FALSE, lwd=0.75, out.width="49%"}
+## 3_7
 oldpar <- par(fg='gray40',col.axis='gray20',lwd=0.5,col.lab='gray20')
 ## Code for Panel A
 oddbooks <- DAAG::oddbooks
@@ -267,107 +188,71 @@ gap=0.5, oma=c(1.95,1.95,4, 1.95), col='blue')
 title("B: Add density & area; omit breadth & height",
 outer=TRUE, adj=0, line=-1.0, cex.main=1.1, font.main=1)
 par(oldpar)
-```
 
-```{r 3_7, eval=F}
-```
-
-```{r C2_5d}
+## C2_5d
 lob3.lm <- lm(log(weight) ~ log(thick)+log(breadth)+log(height),
               data=oddbooks)
 coef(summary(lob3.lm))
 drop1(lob3.lm)           # Compare all three leave one out models
-```
 
-```{r C2_5e}
+## C2_5e
 lob2.lm <- lm(log(weight) ~ log(thick)+log(breadth), data=oddbooks)
 coef(summary(lob2.lm))
-```
 
-```{r C2_5f}
+## C2_5f
 lob0.lm <- lm(log(weight) ~ 1, data=oddbooks)
 add1(lob0.lm, scope=~log(breadth) + log(thick) + log(height))
 lob1.lm <- update(lob0.lm, formula=. ~ .+log(breadth))
-```
 
-```{r C2_5g}
+## C2_5g
 round(rbind("lob1.lm"=predict(lob1.lm), "lob2.lm"=predict(lob2.lm),
             "lob3.lm"=predict(lob3.lm)),2)
-```
 
-```{r C2_5h}
+## C2_5h
 oddbooks <- within(oddbooks, density <- weight/(thick*breadth*height))
 lm(log(weight) ~ log(density), data=oddbooks) |> summary() |> coef() |>
   round(3)
-```
 
-```{r C2.5i, eval=xtras}
+## C2.5i
 ## Code that the reader may care to try
 lm(log(weight) ~ log(thick)+log(breadth)+log(height)+log(density),
    data=oddbooks) |> summary() |> coef() |> round(3)
-```
 
-#### Subsection 3.2.5: Mouse brain weight example
-
-```{r 3_8, echo=FALSE, w=3.5, h=3.5, out.width="55%"}
+## 3_8
 oldpar <- par(fg='gray40',col.axis='gray20',lwd=0.5,col.lab='gray20')
 litters <- DAAG::litters
 pairs(litters, labels=c("lsize\n\n(litter size)", "bodywt\n\n(Body Weight)",
                         "brainwt\n\n(Brain Weight)"), gap=0.5, fg='gray',
                         col="blue", oma=rep(1.95,4))
 par(oldpar)
-```
 
-```{r 3_8, eval=F}
-```
-
-```{r C2_6c}
+## C2_6c
 ## Regression of brainwt on lsize
 summary(lm(brainwt ~ lsize, data = litters), digits=3)$coef
 ## Regression of brainwt on lsize and bodywt
 summary(lm(brainwt ~ lsize + bodywt, data = litters), digits=3)$coef
-```
 
-#### Subsection 3.2.6: Issues for causal interpretation
-#####                   Effects of lifestyle on health
-#####          The studies mostly agree.  But what do they say?
-#####                     Adjusting for confounders
-
-### Section 3.3 Choosing the model, and checking it out
-#####                   Effects of lifestyle on health
-#####          The studies mostly agree.  But what do they say?
-#####                     Adjusting for confounders
-
-```{r C3_2a}
+## C3_2a
 oddbooks.lm <- lm((weight) ~ log(thick)+log(height)+log(breadth),
 data=DAAG::oddbooks)
 yterms <- predict(oddbooks.lm, type="terms")
-```
 
-```{r 3_9, echo=FALSE, w=5.5, h=1.65, bot=1, mgp=c(2,0.5,0), mfrow=c(1,3), cex.lab=0.7, ps=10, out.width="100%"}
+## 3_9
 oddbooks.lm <- lm(log(weight) ~ log(thick)+log(height)+log(breadth),
 data=DAAG::oddbooks)
 termplot(oddbooks.lm, partial.resid = TRUE, smooth=panel.smooth,
 col.res="gray40", transform.x=TRUE, fg="gray")
-```
 
-#### Subsection 3.3.3: A more formal approach to the choice of  transformation
-
-```{r C3_3a}
+## C3_3a
 ## Use car::powerTransform
 nihr <- within(DAAG::nihills, {mph <- dist/time; gradient <- climb/dist})
 summary(car::powerTransform(nihr[, c("dist", "gradient")]), digits=3)
-```
 
-```{r C3_3b}
+## C3_3b
 form <- mph ~ log(dist) + log(gradient)
 summary(car::powerTransform(form, data=nihr))
-```
 
-#####          The use of transformations --- further comments
-#### Subsection 3.3.4: Accuracy estimates, fitted values and new observations
-
-```{r C3_4a}
+## C3_4a
 lognihr <- log(DAAG::nihills)
 names(lognihr) <- paste0("log", names(lognihr))
 timeClimb.lm <- lm(logtime  ~ logdist + logclimb, data = lognihr)
@@ -381,9 +266,8 @@ colnames(ci_then_pi) <- paste0(c("", rep(c("ci-","pi-"), c(2,2))),
                                colnames(ci_then_pi))
 ## First 4 rows
 print(ci_then_pi[1:4,], digits=2)
-```
 
-```{r 3_10}
+## 3_10
 timeClimb2.lm <- update(timeClimb.lm, formula = . ~ . + I(logdist^2))
 g3.10 <-
 function(model1=timeClimb.lm, model2=timeClimb2.lm)
@@ -431,20 +315,14 @@ hat2 <- citimes2[,"fit"]
 lines(hat, citimes2[,"lwr"]-hat2, col = "blue", lty=2, lwd=1.5)
 lines(hat, citimes2[,"upr"]-hat2, col = "blue", lty=2, lwd=1.5)
 }
-```
 
-```{r 3_10x, echo=FALSE, w=6.25, h=2.75, bot=1, top=1.5, rt=1.5, ps=9, mgp=c(2.15, 0.5,0), mar=c(3.6,3.1,4.1,3.1), mfrow=c(1,2), out.width="100%"}
+## 3_10x
 g3.10()
-```
 
-
-```{r C3_4d}
+## C3_4d
 timeClimb2.lm <- update(timeClimb.lm, formula = . ~ . + I(logdist^2))
-```
 
-#### Subsection 3.3.5: Choosing the model --- deaths from Atlantic hurricanes
-
-```{r 3_11, echo=FALSE, w=3.8, h=3.8, rt=2, lwd=0.75, out.width="55%"}
+## 3_11
 oldpar <- par(fg='gray20',col.axis='gray20',lwd=0.5,col.lab='gray20')
 hurric <- DAAG::hurricNamed[,c("LF.PressureMB", "BaseDam2014", "deaths")]
 thurric <- car::powerTransform(hurric, family="yjPower")
@@ -453,41 +331,25 @@ smoothPars <- list(col.smooth='red', lty.smooth=2, lwd.smooth=1, spread=0)
 car::spm(transY, lwd=0.5, regLine=FALSE, oma=rep(2.5,4), gap=0.5,
          col="blue", smooth=smoothPars, cex.labels=1)
 par(oldpar)
-```
 
-```{r 3_11}
-```
-
-```{r C3_5b}
+## C3_5b
 modelform <- deaths ~ log(BaseDam2014) + LF.PressureMB
 powerT <- car::powerTransform(modelform, data=as.data.frame(hurric),
                               family="yjPower")
 summary(powerT, digits=3)
-```
 
-```{r C3_5c}
+## C3_5c
 deathP <- with(hurric, car::yjPower(deaths, lambda=-0.2))
 power.lm <- MASS::rlm(deathP ~ log(BaseDam2014) + LF.PressureMB, data=hurric)
 print(coef(summary(power.lm)),digits=2)
-```
 
-```{r 3_12, w=7.25, h=1.65, echo=F, mgp=c(1.85,0.5,0), top=1, left=-0.5, ps=10, mfrow=c(1,4), out.width="100%", fig.pos="t"}
+## 3_12
 ## Use (deaths+1)^(-0.2) as outcome variable
 plot(power.lm, cex.caption=0.85, fg="gray",
   caption=list('A: Resids vs Fitted', 'B: Normal Q-Q', 'C: Scale-Location', '',
                'D: Resids vs Leverage'))
-```
 
-```{r 3_12, eval=F}
-```
-
-#### Subsection 3.3.6: Strategies for fitting models --- suggested steps
-#####                         Diagnostic checks
-
-### Section 3.4 Robust regression,  outliers, and influence
-#### Subsection 3.4.1: Making outliers obvious --- robust regression
-
-```{r 3_13, echo=FALSE, w=3.5, h=3.5, lwd=0.75, out.width="55%"}
+## 3_13
 hills2000 <- DAAG::hills2000[,c("dist", "climb", "time")]
 varLabels <- c("\ndist\n(log miles)", "\nclimb\n(log feet)", "\ntime\n(log hours)")
 smoothPars <- list(col.smooth='red', lty.smooth=2, lwd.smooth=1, spread=0)
@@ -495,12 +357,8 @@ hills2000 <- DAAG::hills2000[,c("dist", "climb", "time")]
 varLabels <- c("\ndist\n(log miles)", "\nclimb\n(log feet)", "\ntime\n(log hours)")
 car::spm(log(hills2000), smooth=smoothPars,  regLine=FALSE, cex.labels=1.5,
 var.labels = varLabels, lwd=0.5, gap=0.5, oma=c(1.95,1.95,1.95,1.95))
-```
 
-```{r 3_13, eval=F}
-```
-
-```{r 3_14, w=6, h=2.65, top=1, mgp=c(2,0.5,0), cex.lab=0.9, echo=FALSE, ps=9, mfrow=c(1,2), out.width="90%"}
+## 3_14
 ## Panel A
 lhills2k.lm <- lm(log(time) ~ log(climb) + log(dist), data = hills2000)
 plot(lhills2k.lm, caption="", which=1, fg="gray", col=adjustcolor("black", alpha=0.8))
@@ -516,28 +374,15 @@ lines(lowess(reres ~ refit), col=2)
 text(reres[big3] ~ refit[big3], labels=rownames(hills2000)[big3],
 pos=4-2*(refit[big3] > mean(refit)), cex=0.8)
 mtext(side=3, line=0.75, "B: Resistant (lqs) fit", adj=0, cex=1.1)
-```
 
-```{r 3_14, eval=F}
-```
-
-```{r C4_1c, eval=FALSE}
+## C4_1c
 ## Show only the 2nd diognostic plot, i.e., a normal Q-Q plot
 ## plot(lhills2k.lm, which=2)
-```
 
-#####      Outliers, influential or not, should be taken seriously
-#### Subsection 3.4.2: Leverage, influence, and Cook's distance
-#####       $^*$ Leverage and the hat matrix --- technical details
-
-```{r C4_2a}
+## C4_2a
 round(unname(hatvalues(timeClimb.lm)),2)
-```
 
-#####               Influential points and Cook's distance
-#####                          Dynamic graphics
-
-```{r 3_15, echo=FALSE, w=4, h=4.5, top=1, lwd=0.75, ps=10, out.width="40%"}
+## 3_15
 ## Residuals versus leverages
 nihills <- DAAG::nihills
 timeClimb.lm <- lm(log(time)  ~ log(dist) + log(climb), data = nihills)
@@ -545,19 +390,14 @@ plot(timeClimb.lm, which=5, add.smooth=FALSE, ps=9, sub.caption="",
      cex.caption=1.1, fg="gray")
   ## The points can alternatively be plotted using
   ## plot(hatvalues(model.matrix(timeClimb.lm)), residuals(timeClimb.lm))
-```
 
-```{r 3_15, eval=FALSE}
-```
-
-```{r C4_2b, eval=F}
+## C4_2b
 ## Residuals versus leverages
 plot(timeClimb.lm, which=5, add.smooth=FALSE)
 ## The points can alternatively be plotted using
 ## plot(hatvalues(model.matrix(timeClimb.lm)), residuals(timeClimb.lm))
-```
 
-```{r C4_2c, eval=FALSE}
+## C4_2c
 ## This code is designed to be evaluated separately from other chunks
 with(nihills, scatter3d(x=log(dist), y=log(climb), z=log(time), grid=FALSE,
                         point.col="black", surface.col="gray60",
@@ -567,11 +407,8 @@ with(nihills, Identify3d(x=log(dist), y=log(climb), z=log(time),
 ## To rotate display, hold down the left mouse button and move the mouse.
 ## To put labels on points, right-click and drag a box around them, perhaps
 ## repeatedly.  Create an empty box to exit from point identification mode.
-```
 
-#####              Influence on the regression coefficients
-
-```{r 3_16, w=4.25, h=1.4, bot=1, left=1, top=1, ps=9, mgp=c(1.25,0.25,0), echo=FALSE}
+## 3_16
 allbacks.lm0 <- lm(weight ~ -1+volume+area, data=allbacks)
 z <- dfbetas(allbacks.lm0)
 par(xpd=T, mgp=c(1.5,0.25,0))
@@ -590,34 +427,23 @@ par(family="mono")
 text(rep(par()$usr[1],2), c(.5,1), c("volume", "area"), pos=2)
 title(sub="dfbetas(allbacks.lm0)")
 par(family="sans")
-```
 
-```{r 3_15, eval=F}
-```
-
-#####                *Additional diagnostic plots
-
-```{r C4_2d, w=4.5, h=4.5, out.width="50%"}
+## C4_2d
 ## As an indication of what is available, try
 car::influencePlot(allbacks.lm)
-```
 
-### Section 3.5 Assessment and comparison of regression models
-#### Subsection 3.5.1: *AIC, AICc, BIC, and Bayes Factors for normal  theory  regression models
-```{r C5_3a}
+## C5_3a
 ## Calculations using mouse brain weight data
 mouse.lm <- lm(brainwt ~ lsize+bodywt, data=DAAG::litters)
 mouse0.lm <- update(mouse.lm, formula = . ~ . - lsize)
-```
 
-```{r C5_3b}
+## C5_3b
 aicc <- sapply(list(mouse0.lm, mouse.lm), AICcmodavg::AICc)
 infstats <- cbind(AIC(mouse0.lm, mouse.lm), AICc=aicc,
                   BIC=BIC(mouse0.lm, mouse.lm)[,-1])
 print(rbind(infstats, "Difference"=apply(infstats,2,diff)), digits=3)
-```
 
-```{r 3_17, w=6, h=3.5, echo=F, out.width="80%"}
+## 3_17
 library(lattice)
 df <- data.frame(n=5:35, AIC=rep(2,31), BIC=log(5:35))
 cfAICc <- function(n,p,d) 2*(p+d)*n/(n-(p+d)-1) - 2*p*n/(n-p-1)
@@ -626,60 +452,42 @@ labs <- sort(c(2^(0:6),2^(0:6)*1.5))
 xyplot(AICc12+AICc34+AIC+BIC ~ n, data=df, type='l', auto.key=list(columns=4),
        scales=list(y=list(log=T, at=labs, labels=paste(labs))),
  par.settings=simpleTheme(lty=c(1,1:3), lwd=2, col=rep(c('gray','black'), c(1,3))))
-```
 
-```{r 3_17, eval=F}
-```
-
-#####             The functions drop1() and add1()
-
-```{r C5_3c}
+## C5_3c
 ## Obtain AIC or BIC using `drop1()` or `add1()`
 n <- nrow(DAAG::litters)
 drop1(mouse.lm, scope=~lsize)              # AIC, with/without `lsize`
 drop1(mouse.lm, scope=~lsize, k=log(n))   # BIC, w/wo `lsize`
 add1(mouse0.lm, scope=~bodywt+lsize)     # AIC, w/wo `lsize`, alternative
-```
 
-#####    The use of Bayesfactor::lmBF to compare the two models
-
-```{r C5_3d}
+## C5_3d
 suppressPackageStartupMessages(library(BayesFactor))
 bf1 <- lmBF(brainwt ~ bodywt, data=DAAG::litters)
 bf2 <- lmBF(brainwt ~ bodywt+lsize, data=DAAG::litters)
 bf2/bf1
-```
 
-```{r C5_3e}
+## C5_3e
 ## Relative support statistics
 setNames(exp(-apply(infstats[,-1],2,diff)/2), c("AIC","AICc","BIC"))
-```
 
-#### Subsection 3.5.2: Using anova() to compare models --- the ihills data
-
-```{r C5_3f}
+## C5_3f
 lognihr <- log(DAAG::nihills)
 lognihr <- setNames(log(nihr), paste0("log", names(nihr)))
 timeClimb.lm <- lm(logtime ~ logdist + logclimb, data = lognihr)
 timeClimb2.lm <- update(timeClimb.lm, formula = . ~ . + I(logdist^2))
 print(anova(timeClimb.lm, timeClimb2.lm, test="F"), digits=4)
-```
 
-```{r C5_3g}
+## C5_3g
 print(anova(timeClimb.lm, timeClimb2.lm, test="Cp"), digits=3)
 ## Compare with the AICc difference
 sapply(list(timeClimb.lm, timeClimb2.lm), AICcmodavg::AICc)
-```
 
-```{r C5_3h}
+## C5_3h
 form1 <- update(formula(timeClimb.lm), ~ . + I(logdist^2) + logdist:logclimb)
 addcheck <- add1(timeClimb.lm, scope=form1, test="F")
 print(addcheck, digits=4)
-```
 
-#### Subsection 3.5.3: Training/test approaches, and cross-validation
-
-```{r C5_4a}
+## C5_4a
 ## Check how well timeClimb.lm model predicts for hills2000 data
 timeClimb.lm <- lm(logtime  ~ logdist + logclimb, data = lognihr)
 logscot <- log(subset(DAAG::hills2000,
@@ -690,85 +498,50 @@ trainVar <- summary(timeClimb.lm)[["sigma"]]^2
 trainDF <- summary(timeClimb.lm)[["df"]][2]
 mspe <- mean((logscot[,'logtime']-scotpred[['fit']])^2)
 mspeDF <- nrow(logscot)
-```
 
-```{r C5_4b}
+## C5_4b
 pf(mspe/trainVar, mspeDF, trainDF, lower.tail=FALSE)
-```
 
-```{r C5_4c}
+## C5_4c
 scot.lm <- lm(logtime ~ logdist+logclimb, data=logscot)
 signif(summary(scot.lm)[['sigma']]^2, 4)
-```
 
-#### Subsection 3.5.4: Further points and issues
-#####   Patterns in the diagnostic plots -- are they more than hints?
-
-```{r 3_18, w=5.2, h=3.25, echo=FALSE, mfrow=c(2,4), out.width="95%XS"}
+## 3_18
 set.seed(91)        # Reproduce plots as shown in text
 gph <- DAAG::plotSimDiags(timeClimb.lm, layout=c(4,2), which=1)
 update(gph, par.settings=list(fontsize=list(text=8, points=5)))
-```
 
-```{r 3_18, eval=F|
-```
-
-#####           What is the scatter about the fitted response
-#####                  Model selection and tuning risks
-#####  Generalization to new contexts requires a random sample of contexts
-#####       What happens if we do not transform the hillrace data?
-#####                    Are "errors in x" an issue?
-
-### Section 3.6 Problems with many explanatory variables
-#### Subsection 3.6.1: Variable selection issues
-#####        Variable selection -- a simulation with random data
-
-```{r C6_1a}
+## C6_1a
 y <- rnorm(100)
 ## Generate a 100 by 40 matrix of random normal data
 xx <- matrix(rnorm(4000), ncol = 40)
 dimnames(xx)<- list(NULL, paste("X",1:40, sep=""))
-```
 
-```{r C6_1b, warning=FALSE}
+## C6_1b
 ## ## Find the best fitting model. (The 'leaps' package must be installed.)
 xx.subsets <- leaps::regsubsets(xx, y, method = "exhaustive", nvmax = 3, nbest = 1)
 subvar <- summary(xx.subsets)$which[3,-1]
 best3.lm <- lm(y ~ -1+xx[, subvar])
 print(summary(best3.lm, corr = FALSE))
-```
 
-```{r C6_1c}
+## C6_1c
 ## DAAG::bestsetNoise(m=100, n=40)
 best3 <- capture.output(DAAG::bestsetNoise(m=100, n=40))
 cat(best3[9:14], sep='\n')
-```
 
-#####     The extent of selection effects -- a detailed simulation:
-
-```{r 3_20, echo=FALSE, w=4.25, h=2.75, top=1, ps=10, out.width="60%",message=FALSE, warning=FALSE, mgp=c(3,0.5,0)}
+## 3_20
 oldpar <- par(fg='gray20',col.axis='gray20',lwd=0.5,col.lab='gray20')
 set.seed(41)
 library(splines)
 DAAG::bsnVaryNvar(nvmax=3, nvar = 3:35, xlab="")
 mtext(side=1, line=1.75, "Number selected from")
-```
 
-```{r 3_20, eval=F}
-```
-
-#####  Cross-validation that accounts for the variable selection process
-#####                *Regularization approaches
-#### Subsection 3.6.2: Multicollinearity
-#####                  An example -- compositional data
-
-```{r C6_2a}
+## C6_2a
 data(Coxite, package="compositions")  # Places Coxite in the workspace
   # NB: Proceed thus because `Coxite` is not exported from `compositions`
 coxite <- as.data.frame(Coxite)
-```
 
-```{r 3_19, echo=FALSE, w=4.5, h=4.5, lwd=0.5, ps=8, tcl=-0.25, out.width="100%"}
+## 3_19
 oldpar <- par(fg='gray20',col.axis='gray20',lwd=0.5,col.lab='gray20', tcl=-0.25)
 panel.cor <- function(x, y, digits = 3, prefix = "", cex.cor=0.8, ...)
 {
@@ -781,17 +554,12 @@ text(0.5, 0.5, txt, cex = cex.cor * sqrt(r))
 }
 pairs(coxite, gap=0.4, col=adjustcolor("blue", alpha=0.9), upper.panel=panel.cor)
 par(oldpar)
-```
 
-```{r 3_19, eval=F}
-```
-
-```{r C6_2d}
+## C6_2d
 coxiteAll.lm <- lm(porosity ~ A+B+C+D+E+depth, data=coxite)
 print(coef(summary(coxiteAll.lm)), digits=2)
-```
 
-```{r 3_21, echo=FALSE, h=2.75, w=3.25, ps=9, tcl=-0.25, mgp=c(1.85,0.4,0), out.width="50%"}
+## 3_21
 coxiteAll.lm <- lm(porosity ~ A+B+C+D+E+depth, data=coxite)
 coxite.hat <- predict(coxiteAll.lm, interval="confidence")
 hat <- coxite.hat[,"fit"]
@@ -811,23 +579,15 @@ for(i in q)sebar(hat[i], coxite.hat[i,"lwr"], coxite.hat[i,"upr"])
 coxiteAll.lm <- lm(porosity ~ A+B+C+D+E+depth, data=coxite)
 coxite.hat <- predict(coxiteAll.lm, interval="confidence")
 hat <- coxite.hat[,"fit"]
-```
 
-```{r 3_21, eval=FALSE}
-```
-
-```{r C6_2f}
+## C6_2f
 ## Pointwise confidence bounds can be obtained thus:
 hat <- predict(coxiteAll.lm, interval="confidence", level=0.95)
-```
 
-#### Subsection 3.6.3: The variance inflation factor (VIF)
-
-```{r C6_3a}
+## C6_3a
 print(DAAG::vif(lm(porosity ~ A+B+C+D+depth, data=coxite)), digits=2)
-```
 
-```{r C6_3b}
+## C6_3b
 b <- leaps::regsubsets(porosity ~ ., data=coxite, nvmax=4, method='exhaustive')
 ## The calculation fails for nvmax=5
 inOut <- summary(b)[["which"]]
@@ -838,78 +598,45 @@ for(i in 1:4)cmat[i,inOut[i,]] <- signif(coef(b,id=1:4)[[i]],3)
 outMat <- cbind(cmat,"  "=rep(NA,4),
 as.matrix(as.data.frame(summary(b)[c("adjr2", "cp", "bic")])))
 print(signif(outMat,3),na.print="")
-```
 
-```{r C6_3c}
+## C6_3c
 BC.lm <- lm(porosity ~ B+C, data=coxite)
 print(signif(coef(summary(BC.lm)), digits=3))
 car::vif(BC.lm)
-```
 
-```{r C6_3d, mfrow=c(1,4), w=7.25, h=1.65, bot=1, top=1.5, rt=1.5, ps=9, mgp=c(2.15, 0.5,0), mar=c(3.6,3.1,4.1,3.1), out.width="100%"}
+## C6_3d
 ## Diagnostic plots can be checked thus:
 plot(BC.lm, eval=xtras)
-```
 
-#####                  Numbers that do not quite add up
-
-```{r C6_3e}
+## C6_3e
 coxiteR <- coxite
 coxiteR[, 1:5] <- round(coxiteR[, 1:5])
 coxiteR.lm <- lm(porosity ~ ., data=coxiteR)
 print(coef(summary(coxiteR.lm)), digits=2)
 print(DAAG::vif(lm(porosity ~ .-E, data=coxiteR)), digits=2)
-```
 
-#####                  Remedies for  multicollinearity
-
-### Section 3.7 Errors in x
-#####                   Measurement of dietary intake
-#####           Simulations of the effect of measurement error
-
-```{r 3_22, echo=FALSE, w=6.5, h=2.5, out.width="100%"}
+## 3_22
 gph <- DAAG::errorsINx(gpdiff=0, plotit=FALSE, timesSDx=(1:4)/2,
                        layout=c(5,1), print.summary=FALSE)[["gph"]]
 parset <- DAAG::DAAGtheme(color=FALSE, alpha=0.6, lwd=2,
                           col.points=c("gray50","black"),
                           col.line=c("gray50","black"), lty=1:2)
 update(gph, par.settings=parset)
-```
 
-```{r 3_22, eval=F}
-```
-
-#####                     *Two explanatory variables
-#####  Two explanatory variables, one measured without error -- a simulation
-
-```{r 3_23, echo=FALSE, w=5, h=2.7, out.width="80%"}
+## 3_23
 gph <- DAAG::errorsINx(gpdiff=1.5, timesSDx=(1:2)*0.8, layout=c(3,1),
 print.summary=FALSE, plotit=FALSE)[["gph"]]
 parset <- DAAG::DAAGtheme(color=FALSE, alpha=0.6, lwd=2,
                           col.points=c("gray50","black"),
                           col.line=c("gray50","black"), lty=1:2)
 update(gph, par.settings=parset)
-```
 
-```{r 3_23, eval=F}
-```
-
-#####                  An arbitrary number of variables
-#####     *The classical error model versus the Berkson error model
-#####    Using missing value approaches to address measurement error
-
-### Section 3.8 Multiple regression models -- additional points
-
-```{r C8_1a}
+## C8_1a
 coef(lm(area ~ volume + weight, data=allbacks))
 b <- as.vector(coef(lm(weight ~ volume + area, data=allbacks)))
 c("_Intercept_"=-b[1]/b[3], volume=-b[2]/b[3], weight=1/b[3])
-```
 
-#####                      Unintended correlations
-#### Subsection 3.8.2: Missing explanatory variables
-
-```{r 3_24, echo=FALSE, w=5, h=1.6, out.width="90%"}
+## 3_24
 gaba <- DAAG::gaba
 gabalong <- stack(gaba["30", -match('min', colnames(gaba))])
 gabalong$sex <- factor(rep(c("male", "female","all"), rep(2,3)),
@@ -926,33 +653,23 @@ cex=c(1.5,1.5), pch=c(1,16))
 update(gph, par.settings=parset,
 xlab=list("Average reduction: 30 min vs 0 min", cex=1.0),
 scales=list(cex=1.0, tck=0.35))
-```
 
-```{r 3_24, eval=F}
-```
-
-#####                             Strategies
-#### Subsection 3.8.3: Added variable plots
-
-```{r C8_3a}
+## C8_3a
 yONx.lm <- lm(logtime ~ logclimb, data=lognihr)
 e_yONx <- resid(yONx.lm)
 print(coef(yONx.lm), digits=4)
-```
 
-```{r C8_3b}
+## C8_3b
 zONx.lm <- lm(logdist ~ logclimb, data=lognihr)
 e_zONx <- resid(zONx.lm)
 print(coef(yONx.lm), digits=4)
-```
 
-```{r C8_3c}
+## C8_3c
 ey_xONez_x.lm <- lm(e_yONx ~ 0+e_zONx)
 e_yONxz <- resid(ey_xONez_x.lm)
 print(coef(ey_xONez_x.lm), digits=4)
-```
 
-```{r 3_25, message=FALSE, warning=FALSE, w=6, h=2.7, top=1, bot=1, ps=10, mfrow=c(1,2), mgp=c(2.15, 0.5,0), cex.lab=0.9, echo=FALSE, out.width="85%"}
+## 3_25
 oldpar <- par(fg='gray')
 ## Code for added variable plots
 logtime.lm <- lm(logtime ~ logclimb+logdist, data=lognihr)
@@ -961,113 +678,81 @@ mtext(side=3, line=0.5, "A: Added var: 'logdist'", col="black", adj=0, cex=1.15)
 car::avPlots(logtime.lm, lwd=1, terms="logclimb", fg="gray")
 mtext(side=3, line=0.5, "B: Added var: 'logclimb'", col="black", adj=0, cex=1.15)
 par(oldpar)
-```
 
-```{r 3_25, eval=F}
-```
-
-```{r C8_3e, eval=xtras, w=6, h=2.7, mfrow=c(1,2), out.width="95%"}
+## C8_3e
 ## One call to show both plots
 car::avPlots(timeClimb.lm, terms=~.)
-```
 
-```{r C8_3f, eval=xtras, w=4, h=4, out.width="40%"}
+## C8_3f
 ## Alternative code for first plot
 plot(e_yONx ~ e_zONx)
-```
 
-```{r 3_26, echo=FALSE, w=6, h=1.9, left=-1, top=1, cex.lab=0.9, ps=10, mgp=c(2,0.5,0), mfrow=c(1,3), out.width="100%"}
+## 3_26
 plot(yONx.lm, which=1, caption="", fg="gray")
 mtext(side=3, line=0.5, "A: From 'logtime' on 'logclimb'", adj=0, cex=0.85)
 plot(zONx.lm, which=1, caption="", fg="gray")
 mtext(side=3, line=0.5, "B: From 'logdist' on 'logclimb'", adj=0, cex=0.85)
 plot(ey_xONez_x.lm, which=1, caption="", fg="gray")
 mtext(side=3, line=0.5, "C: From AVP", adj=-0, cex=0.85)
-```
 
-```{r 3_26, eval=F}
-```
-
-#####                Alternatives to Added Variable Plots
-#####                         *Algebraic details
-
-```{r C8_3i}
+## C8_3i
 ab1 <- coef(yONx.lm)
 ab2 <- coef(zONx.lm)
 b2 <- coef(ey_xONez_x.lm)
 b1 <- ab1[2] - b2*ab2[2]
 a <- ab1[1] - b2*ab2[1]
-```
 
-```{r C8_3j}
+## C8_3j
 coef(lm(logtime ~ logclimb + logdist, data=lognihr))
-```
 
-#### Subsection 3.8.4: Nonlinear methods -- an alternative to transformation?
-
-```{r C8_4a}
+## C8_4a
 nihr$climb.mi <- nihr$climb/5280
 nihr.nls0 <- nls(time ~ (dist^alpha)*(climb.mi^beta), start =
                     c(alpha = 0.68, beta = 0.465), data = nihr)
 ## plot(residuals(nihr.nls0) ~ log(predict(nihr.nls0)))
-```
 
-```{r C8_4b}
+## C8_4b
 signif(coef(summary(nihr.nls0)),3)
-```
 
-```{r C8_4c}
+## C8_4c
 nihr.nls <- nls(time ~ gamma + delta1*dist^alpha + delta2*climb.mi^beta,
 start=c(gamma = .045, delta1 = .09, alpha = 1,
 delta2=.9, beta = 1.65), data=nihr)
 ## plot(residuals(nihr.nls) ~ log(predict(nihr.nls)))
-```
 
-```{r C8_4d}
+## C8_4d
 signif(coef(summary(nihr.nls)),3)
-```
 
-### Section 3.9: Recap
-
-### Section 3.10: Further readingqx
-
-## Exercises (3.11)
-
-```{r C11a}
+## C11a
 ## ## Set up factor that identifies the `have' cities
 cities <- DAAG::cities
 cities$have <- with(cities, factor(REGION %in% c("ON","WEST"),
                                    labels=c("Have-not","Have")))
-```
 
-```{r C11b, eval=xtras, w=6, h=2.7, out.width="95%"}
+## C11b
 gphA <- lattice::xyplot(POP1996~POP1992, groups=have, data=cities,
                 auto.key=list(columns=2))
 gphB<-lattice::xyplot(log(POP1996)~log(POP1992), groups=have, data=cities,
                 auto.key=list(columns=2))
 print(gphA, split=c(1,1,2,1), more=TRUE)
 print(gphB, split=c(2,1,2,1))
-```
 
-```{r C11c}
+## C11c
 cities.lm1 <- lm(POP1996 ~ have+POP1992, data=cities)
 cities.lm2 <- lm(log(POP1996) ~ have+log(POP1992), data=cities)
-```
 
-```{r C11d}
+## C11d
 nihills.lm <- lm(time ~ dist+climb, data=DAAG::nihills)
 nihillsX.lm <- lm(time ~ dist+climb+dist:climb, data=DAAG::nihills)
 anova(nihills.lm, nihillsX.lm)   # Use `anova()` to make the comparison
 coef(summary(nihillsX.lm))       # Check coefficient for interaction term
 drop1(nihillsX.lm)
-```
 
-```{r C11e}
+## C11e
 log(time) ~ log(dist) + log(climb)    ## lm model
 time ~ alpha*dist + beta*I(climb^2)   ## nls model
-```
 
-```{r C11f}
+## C11f
 x1 <- runif(10)            # predictor which will be missing
 x2 <- rbinom(10, 1, 1-x1)
   ## observed predictor, depends on missing predictor
@@ -1076,36 +761,30 @@ y.lm <- lm(y ~ factor(x2)) # model fitted to observed data
 coef(y.lm)
 y.lm2 <- lm(y ~ x1 + factor(x2))   # correct model
 coef(y.lm2)
-```
 
-```{r C11g, eval=xtras, w=6, h=2.7, mfrow=c(1,2), out.width="95%"}
+## C11g
 bomData <- DAAG::bomregions2021
 nraw.lqs <- MASS::lqs(northRain ~ SOI + CO2, data=bomData)
 north.lqs <- MASS::lqs(I(northRain^(1/3)) ~ SOI + CO2, data=bomData)
 plot(residuals(nraw.lqs) ~ Year, data=bomData)
 plot(residuals(north.lqs) ~ Year, data=bomData)
-```
 
-```{r C11l, w=5, h=5, out.width="40%"}
+## C11l
 socpsych <- subset(DAAG::repPsych, Discipline=='Social')
 with(socpsych, scatter.smooth(T_r.R~T_r.O))
 abline(v=.5)
-```
 
-```{r C11m, eval=xtras, w=4.5, h=4.5, out.width="40%"}
+## C11m
 soc.rlm <- MASS::rlm(T_r.R~T_r.O, data=subset(socpsych, T_r.O<=0.5))
 ## Look at summary statistics
 termplot(soc.rlm, partial.resid=T, se=T)
-```
 
-```{r C11n, eval=xtras, w=7.2, h=1.65, mfrow=c(1,4), out.width="100%"}
+## C11n
 plot(soc.rlm)
-```
 
-```{r eval=T}
+## unnamed-chunk-1
 if(file.exists("/Users/johnm1/pkgs/PGRcode/inst/doc/")){
 code <- knitr::knit_code$get()
 txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n'))
 writeLines(txt, con="/Users/johnm1/pkgs/PGRcode/inst/doc/ch3.R")
 }
-```

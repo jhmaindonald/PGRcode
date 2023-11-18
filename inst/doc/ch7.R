@@ -1,20 +1,5 @@
----
-title: "Chapter 7: Multilevel models, and repeated measures"
-output: rmarkdown::html_vignette
-options: 
-  params: 
-    rmarkdown.html_vignette.check_title: false
-vignette: >
-  %\VignetteIndexEntry{Ch7: Multilevel models . . .}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
----
 
-On options for working with the code see the vignettes
-[Ch1-Learning](PGRcode/Ch1-Learning.html) and
-[UsingCode](PGRcode/UsingCode.html).
-
-```{r CodeControl, echo=FALSE}
+## CodeControl
 ## xtras=TRUE
 xtras <- F
 library(knitr)
@@ -22,14 +7,8 @@ library(knitr)
 ## opts_chunk[['set']](eval=T)
 opts_chunk[['set']](eval=F)
 options(rmarkdown.html_vignette.check_title = FALSE)
-```
 
-##### Packages required (plus any dependencies)
-DAAG lme4 afex MASS utils devtools qra glmmTMB DHARMa MEMSS forecast splines gamlss plotrix nlme
-
-Additionally, knitr and Hmisc are required in order to process the Rmd source file.
-
-```{r setup, cache=FALSE}
+## setup
 Hmisc::knitrSet(basename="mva", lang='markdown', fig.path="figs/g", w=7, h=7)
 oldopt <- options(digits=4, formatR.arrow=FALSE, width=70, scipen=999)
 library(knitr)
@@ -37,62 +16,32 @@ library(knitr)
 opts_chunk[['set']](cache.path='cache-', out.width="80%", fig.align="center", 
                     fig.show='hold', size="small", ps=10, strip.white = TRUE,
                     comment=NA, width=70, tidy.opts = list(replace.assign=FALSE))
-```
 
-### Section 7.1 Corn yield data --- analysis using `aov()`
-
-#####                  Corn yield measurements example
-
-```{r 7_1, echo=FALSE, w=4,h=2.5, las=0, out.width="65%"}
+## 7_1
 ant111b <- within(DAAG::ant111b, Site <- reorder(site, harvwt, FUN=mean))
 gph <- lattice::stripplot(Site ~ harvwt, data=ant111b,
                           xlab="Harvest weight of corn")
 update(gph, par.settings=DAAG::DAAGtheme(color=FALSE), scales=list(tck=0.5))
-```
 
-```{r 7_1, eval=F}
-```
-
-```{r G1a}
+## G1a
 ant111b <- DAAG::ant111b
 ant111b.aov <- aov(harvwt ~ 1 + Error(site), data=ant111b)
-```
 
-```{r G1b}
+## G1b
 summary(ant111b.aov)
-```
 
-#####                   Interpreting the mean squares
-#####                    Details of the calculations
-#####         Practical use of the analysis of variance results
-#####                  Random effects vs. fixed effects
-#####            Nested factors -- a variety of applications
-#### Subsection 7.1.1: A More Formal Approach
-#####       Relations between variance components and mean squares
-#####               Interpretation of variance components
-#####                      Intra-class correlation
-
-### Section 7.2 Analysis using `lme4::lmer()`
-
-```{r G2a, message=FALSE}
+## G2a
 library(lme4)
 ant111b.lmer <- lmer(harvwt ~ 1 + (1 | site), data=ant111b)
-```
 
-```{r G2b}
+## G2b
 ## Note that there is no degrees of freedom information.
 print(ant111b.lmer, ranef.comp="Variance")
-```
 
-#####             The processing of  output from lmer()
-
-```{r G2c}
+## G2c
 coef(summary(ant111b.lmer))
-```
 
-#####             Fitted values and residuals in lmer()
-
-```{r G2d}
+## G2d
 s2W <- 0.578; s2L <- 2.37; n <- 4
 sitemeans <- with(ant111b, sapply(split(harvwt, site), mean))
 grandmean <- mean(sitemeans)
@@ -101,39 +50,25 @@ shrinkage <- (n*s2L)/(n*s2L+s2W)
 BLUP <- grandmean + shrinkage*(sitemeans - grandmean)
 BLUP <- fitted(ant111b.lmer)[match(names(sitemeans), ant111b$site)]
 BLUP <- grandmean + ranef(ant111b.lmer)$site[[1]]
-```
 
-```{r G2e}
+## G2e
 rbind(BLUP=BLUP, sitemeans=sitemeans)
-```
 
-#####  *Uncertainty in the parameter estimates --- profile likelihood and alternatives
-
-```{r G2f, message=FALSE}
+## G2f
 prof.lmer <- profile(ant111b.lmer)
 CI95 <- confint(prof.lmer, level=0.95)
 rbind("sigmaL^2"=CI95[1,]^2, "sigma^2"=CI95[2,]^2)
-```
 
-```{r G2g}
+## G2g
 CI95[3,]
-```
 
-```{r 7_2, w=5.25, h=2.1, echo=FALSE, out.width="85%"}
+## 7_2
 library(lattice)
 gph <- xyplot(prof.lmer, conf=c(50, 80, 95, 99)/100,
               aspect=0.8, between=list(x=0.35))
 update(gph, scales=list(tck=0.5), ylab="Normal deviate")
-```
 
-```{r 7_2, eval=F}
-```
-
-#####         Modeling more than two levels of random variation
-
-### Section 7.3 Survey data, with clustering
-
-```{r 7_3, w=4.0, h=2.5, echo=FALSE, out.width="65%"}
+## 7_3
 ## Means of like (data frame science: DAAG), by class
 science <- DAAG::science
 classmeans <- with(science, aggregate(like, by=list(PrivPub, Class), mean))
@@ -144,54 +79,39 @@ gph <- bwplot(~avlike|PrivPub, layout=c(1,2), xlab="Average score",
               panel=function(x,y,...){panel.bwplot(x,y,...)
               panel.rug(x,y,...)}, data=classmeans)
 update(gph, scales=list(tcl=0.4))
-```
 
-```{r 7_3, eval=F}
-```
-
-#### Subsection 7.3.1: Alternative models
-
-```{r G3_1a}
+## G3_1a
 science <- DAAG::science
 science.lmer <- lmer(like ~ sex + PrivPub + (1 | school) +
                      (1 | school:class), data = science,
                      na.action=na.exclude)
-```
 
-```{r G3_1b}
+## G3_1b
 print(VarCorr(science.lmer), comp="Variance", digits=2)
-```
 
-```{r G3_1c}
+## G3_1c
 print(coef(summary(science.lmer)), digits=2)
-```
 
-```{r G3_1d}
+## G3_1d
 summary(science.lmer)$ngrps
-```
 
-```{r G3_1e}
+## G3_1e
 science1.lmer <- lmer(like ~ sex + PrivPub + (1 | school:class),
                       data = DAAG::science, na.action=na.exclude)
-```
 
-```{r G3_1f}
+## G3_1f
 print(VarCorr(science1.lmer), comp="Variance", digits=3)
 print(coef(summary(science1.lmer)), digits=2)
-```
 
-```{r G3_1g}
+## G3_1g
 opt <- options(contrasts=c("contr.sum","contr.poly"))
   # Change is otherwise made as and if required for individual factors
   # prior to fitting model, and a warning message is generated.
 afex::mixed(like ~ sex + PrivPub + (1 | school:class), method="KR", type=2,
             data = na.omit(science),  sig_symbols=rep("",4), progress=FALSE)
 options(opt)       # Reset to previous contrasts setting
-```
 
-#####              More detailed examination of the output
-
-```{r G3_1h}
+## G3_1h
 ## Use profile likelihood
 pp <- profile(science1.lmer, which="theta_")
 # which="theta_": all random parameters
@@ -200,9 +120,8 @@ var95 <- confint(pp, level=0.95)^2
 # Square to get variances in place of SDs
 rownames(var95) <- c("sigma_Class^2", "sigma^2")
 signif(var95, 3)
-```
 
-```{r G3_1i}
+## G3_1i
 ## Fit model and generate quantities that will be plotted
 science1.lmer <- lmer(like ~ sex + PrivPub + (1 | school:class),
 data = science, na.action=na.omit)
@@ -216,9 +135,8 @@ res <- residuals(science1.lmer)
 vars <- tapply(res, INDEX=list(flist), FUN=var)*(num-1)/(num-2)
 ## Panel C: Normal probability of random site effects (`ranf`)
 ## Panel D: Normal probability of residuals (`res`)
-```
 
-```{r 7_4, w=6, h=4.4, bot=0.5, left=-1, top=0.5, ps=10, mgp=c(1.75,0.5,0), mfrow=c(2,2), echo=FALSE, out.width="100%"}
+## 7_4
 opar <- par(oma=c(0,0,1.5,0))
 ## Panel A: Plot effect estimates vs number
 xlab12 <- "# in class (square root scale)"
@@ -249,38 +167,22 @@ legend(x="top", legend=c("Private     ", "Public"), pch=c(1,3),
        lwd=c(1,1), lty=2:3, cex=1.25,
        xjust=0.5, yjust=0.8, horiz=TRUE, merge=FALSE, bty="n")
 par(opar)
-```
 
-```{r 7_4, eval=F}
-```
-
-#### Subsection 7.3.2: Instructive, though faulty, analyses
-#####                Ignoring class as the random effect
-
-```{r G3_2a}
+## G3_2a
 science2.lmer <- lmer(like ~ sex + PrivPub + (1 | school),
 data = science, na.action=na.exclude)
 print(coef(summary(science2.lmer)), digits=3)
-```
 
-```{r G3_2b}
+## G3_2b
 ## NB: Output is misleading
 print(VarCorr(science2.lmer), comp="Variance", digits=3)
-```
 
-#####             Ignoring the random structure in the data
-
-```{r G3_2c}
+## G3_2c
 ## Faulty analysis, using lm
 science.lm <- lm(like ~ sex + PrivPub, data=science)
 round(coef(summary(science.lm)), digits=4)
-```
 
-#### Subsection 7.3.3: Predictive accuracy
-
-### Section 7.4 A multilevel experimental design
-
-```{r 7_5, w=6, h=4.0, mgp=c(0,.5,.5), echo=FALSE, out.width="100%"}
+## 7_5
 par(mar=rep(0.25,4))
 MASS::eqscplot(c(0,13),c(4.0,13),type="n",xlab="",ylab="", asp=1, axes=F)
 eps <- 0.1
@@ -319,35 +221,22 @@ text(6.5,suby-3,"16 meters height willow shelter belt")
 offset <- c(4.75, 4.75-sqrt(3)*0.5)/6
 arrows(x0=0,y0=12.1, x1=0+offset[1], y1=12.1+offset[2], length=0.15)
 text(0.17, 12.55,"N")
-```
 
-```{r 7_5, eval=F}
-```
-
-#### Subsection 7.4.1: The analysis of variance (anova) table
-
-```{r G4_1a}
+## G4_1a
 ## Analysis of variance: data frame kiwishade (DAAG)
 kiwishade <- DAAG::kiwishade
 kiwishade.aov <- aov(yield ~ shade + Error(block/shade),
 data=kiwishade)
 summary(kiwishade.aov)
-```
 
-#### Subsection 7.4.2: Expected values of mean squares
-
-```{r G4_2a}
+## G4_2a
 model.tables(kiwishade.aov, type="means", cterms="shade")
-```
 
-```{r G4_2b, size='normalsize'}
+## G4_2b
 ## Calculate treatment means
 with(kiwishade, sapply(split(yield, shade), mean))
-```
 
-#### Subsection 7.4.3: \kern-4pt* The analysis of variance sums of squares breakdown
-
-```{r G4_3a, size='normalsize'}
+## G4_3a
 ## For each plot, calculate mean, and differences from the mean
 vine <- paste("vine", rep(1:4, 12), sep="")
 vine1rows <- seq(from=1, to=45, by=4)
@@ -357,9 +246,8 @@ kiwivines <- cbind(kiwishade[vine1rows,  c("block","shade")],
 Mean=kiwimeans, kiwivines-kiwimeans)
 kiwivines <- with(kiwivines, kiwivines[order(block, shade), ])
 mean(kiwimeans)      # the grand mean
-```
 
-```{r 7_6, w=6, h=2.8, lwd=1, echo=FALSE, results="hide"}
+## 7_6
 kiwishade <- DAAG::kiwishade
 kiwimeans <- with(kiwishade, aggregate(yield,by=list(block,shade),mean))
 names(kiwimeans) <- c("block","shade","meanyield")
@@ -391,27 +279,16 @@ mtext(side=1,line=2.25, cex=0.9,
 text="Variation in Yield (kg)\n(Add to grand mean of yield = 96.53)")
 par(las=2)
 axis(2, at=1:4, labels=levels(gps), lwd=0, lwd.ticks=1)
-```
 
-```{r 7_6, eval=F}
-```
-
-#### Subsection 7.4.4: The variance components
-#### Subsection 7.4.5: The mixed model analysis
-
-```{r G4_5a}
+## G4_5a
 kiwishade.lmer <- lmer(yield ~ shade + (1|block) + (1|block:plot),
 data=kiwishade)
 # block:shade is an alternative to block:plot
-```
 
-```{r G4_5b}
+## G4_5b
 print(kiwishade.lmer, ranef.comp="Variance", digits=3)
-```
 
-#####                  Residuals and estimated effects
-
-```{r 7_7, w=6, h=6, echo=FALSE, out.width="100%"}
+## 7_7
 ## Panel A
 parsetA <- modifyList(DAAG::DAAGtheme(color=FALSE),
                       list(layout.heights=list(key.top=2.25, axis.top=.75)))
@@ -453,20 +330,11 @@ pk3 <- qqmath(~ sim_1+sim_2+sim_3, data=simeff,
                xlab="Normal quantiles")
 print(update(pk3, scales=list(tck=0.35), par.settings=parsetB),
       newpage=FALSE, position=c(0.48,0,1,.5))
-```
 
-```{r 7_7, eval=F}
-```
-
-```{r G4_5e}
+## G4_5e
 with(kiwishade, sapply(split(yield, shade), mean))
-```
 
-#### Subsection 7.4.6: Predictive accuracy
-
-### Section 7.5 Within and between subject effects
-
-```{r 7_8, w=6.0, h=5.0, out.width="100%", echo=FALSE}
+## 7_8
 library(lattice)
 tinting <- within(DAAG::tinting, targtint <- paste(target,toupper(tint),sep=':'))
 gphA <- bwplot(targtint~log(csoa) | sex*agegp, data=tinting, layout=c(4,1), between=list(x=0.25))
@@ -477,83 +345,58 @@ mainB <- list("B: Boxplots for `log(it)`, by combinations of `target` and `tint`
               font=1, x=0.125, y=0.125, cex=1.0, just='left')
 print(update(gphA, main=mainA, xlab=""), position=c(0, 0.48, 1, 1.0), more=T)
 print(update(gphB, main=mainB, xlab=""), position=c(0,0,1,0.52))
-```
 
-```{r 7_8, eval=F}
-```
-
-#####                       Model fitting criteria
-#### Subsection 7.5.1: Model selection
-
-```{r G5_1a}
+## G5_1a
 ## Capitalize tinting$agegp
 levels(tinting$agegp) <- R.utils::capitalize(levels(tinting$agegp))
 ## Fit all interactions: data frame tinting (DAAG)
 it3.lmer <- lmer(log(it) ~ tint*target*agegp*sex + (1 | id),
                  data=DAAG::tinting, REML=FALSE)
-```
 
-```{r G5_1b}
+## G5_1b
 it2.lmer <- lmer(log(it) ~ (tint+target+agegp+sex)^2 + (1 | id),
                  data=DAAG::tinting, REML=FALSE)
-```
 
-```{r G5_1c}
+## G5_1c
 it1.lmer <- lmer(log(it)~(tint+target+agegp+sex) + (1 | id),
                  data=DAAG::tinting, REML=FALSE)
-```
 
-```{r G5_1d}
+## G5_1d
 anova(it1.lmer, it2.lmer, it3.lmer)
-```
 
-```{r G5_1e, eval=xtras, w=6, h=5, mfrow=c(2,2), out.width="100%"}
+## G5_1e
 ## Code that gives the first four such plots, for the observed data
 interaction.plot(tinting$tint, tinting$agegp, log(tinting$it))
 interaction.plot(tinting$target, tinting$sex, log(tinting$it))
 interaction.plot(tinting$tint, tinting$target, log(tinting$it))
 interaction.plot(tinting$tint, tinting$sex, log(tinting$it))
-```
 
-#### Subsection 7.5.2: Estimates of model parameters
-
-```{r G5_2a}
+## G5_2a
 it2.reml <- update(it2.lmer, REML=TRUE)
 print(coef(summary(it2.reml)), digits=2)
 # NB: The final column, giving degrees of freedom, is not in the
 # summary output. It is our addition.
-```
 
-```{r G5_2b, size='normalsize'}
+## G5_2b
 subs <- with(tinting, match(unique(id), id))
 with(tinting, table(sex[subs], agegp[subs]))
-```
 
-### Section 7.6 A mixed model with a betabinomial error
-#### Subsection 7.6.1: The betabinomial distribution
-
-```{r G6_1a}
+## G6_1a
 ## devtools::install_github("jhmaindonald/qra")  # Use if not found on CRAN
-```
 
-#####                              Notation
-#####                           Source of data
-
-```{r G6_1b}
+## G6_1b
 HawCon <- within(as.data.frame(qra::HawCon), {
   trtGp <- gsub("Fly", "", paste0(CN,LifestageTrt))
   trtGp <- factor(trtGp, levels=sort(unique(trtGp))[c(1,5,2,6,3,7,4,8)])
   trtGpRep <- paste0(CN,LifestageTrt,":",RepNumber)
   scTime <- scale(TrtTime)  # Centering and scaling can help model fit
   })
-```
 
-```{r G6_1c, message=FALSE, warning=FALSE}
+## G6_1c
 ## Load packages that will be used
 suppressMessages(library(lme4)); suppressMessages(library(glmmTMB))
-```
 
-```{r G6_1d, message=FALSE, warning=FALSE}
+## G6_1d
 library(splines)
 form <- cbind(Dead,Live)~0+trtGp/TrtTime+(1|trtGpRep)
 ## Add the quadratic term from a degree 2 orthogonal polynomial
@@ -565,21 +408,18 @@ HCbb2s.cll <- update(HCbb.cll, formula=form2s)
 HCbb.logit <- glmmTMB(form, dispformula=~trtGp+ns(scTime,2),
                       family=glmmTMB::betabinomial(link="logit"), data=HawCon)
 HCbb2s.logit <- update(HCbb.logit, formula=form2s)
-```
 
-```{r G6_1e, message=FALSE, warning=FALSE}
+## G6_1e
 summary(HCbb2s.cll)$coefficients$cond["scale(scTime^2)",]    ## CLL
 summary(HCbb2s.logit)$coefficients$cond["scale(scTime^2)",]  ## Logit
-```
 
-```{r G6_1f}
+## G6_1f
 AICtab <- AIC(BB=HCbb.cll,HCbb2s.cll,HCbb.logit,HCbb2s.logit)
 AICtab[['Details']] <- c(paste0('BB: Compl. log-log', c('', ', added curve')),
                           paste0('BB: Logit', c('', ', added curve')))
 AICtab[order(AICtab[["AIC"]]), ]
-```
 
-```{r 7_9, fig.width=8.5, fig.height=4.25, fig.show='hold', top=2, out.width="100%",  fig.align='center', message=FALSE, echo=FALSE}
+## 7_9
 dat <- expand.grid(trtGp=factor(levels(HawCon$trtGp), levels=levels(HawCon$trtGp)),
 TrtTime=pretty(range(HawCon$TrtTime),15), trtGpRep=NA)
 ab <- qra::getScaleCoef(HawCon$scTime)
@@ -627,12 +467,8 @@ gph <- xyplot(fit~TrtTime|link, outer=TRUE, data=dat2, groups=trtGp,
               at=fitpos, labels=lab, limits=lim), alternating=c(1,1)))
 update(gph, strip=strip.custom(factor.levels=c("A: Complementary log-log link",
 "B: Logit link")))
-```
 
-```{r 7_9, eval=F}
-```
-
-```{r 7_10, fig.width=6.5, fig.height=2.65, top=2, out.width="100%",  fig.align='center', fig.show="hold", echo=FALSE}
+## 7_10
 parset <- DAAG::DAAGtheme(color=TRUE, col.points=rep(1:4,rep(2,4)),
                           pch=rep(1:4,2), lwd=2)
 HawCon$rho2clog <- qra::getRho(HCbb.cll)
@@ -650,14 +486,8 @@ xyplot(rho2clog+rho2logit+dispClog ~ TrtTime, groups=trtGp, data=HawCon,
    xlab="Days in coolstorage", ylab="Parameter Estimate",
    strip=strip.custom(factor.levels=titles))
 
-```
 
-```{r 7_10, eval=F}
-```
-
-#### Subsection 7.6.2: Diagnostic checks
-
-```{r 7_11, fig.width=8, fig.height=8, left=-1.5, top=3.5, bot=1.5, out.width="100%", mgp=c(2.65,.5,0), fig.align='center', mfrow=c(2,2), message=FALSE, echo=FALSE}
+## 7_11
 par(oma=c(0,0,2,0.5))
 ## Code for plots, excluding main titles
 set.seed(29)
@@ -676,36 +506,27 @@ title(main="C: Plot against model predictions", adj=0, font.main=1, line=3.25,
 DHARMa::plotResiduals(simRef, form=HawCon$Total)
 title(main="D: Plot against total number", adj=0, font.main=1, line=3.25,
        cex.main=1.25)
-```
 
-```{r 7_11, eval=F}
-```
-
-#### Subsection 7.6.3: Lethal time estimates and confidence intervals
-
-```{r G6_3a}
+## G6_3a
 shorten <- function(nam, leaveout=c('trtGp','Fly',':')){
 for(txt in leaveout){
 nam <- gsub(txt,'', nam, fixed=TRUE)
 }
 nam
 }
-```
 
-```{r G6_3b, echo=-3}
+## G6_3b
 LTbb.cll <- qra::extractLT(p=0.99, obj=HCbb.cll, link="cloglog",
                         a=1:8, b=9:16, eps=0, df.t=NULL)[,-2]
 rownames(LTbb.cll) <- shorten(rownames(LTbb.cll))
-```
 
-```{r G6_3c}
+## G6_3c
 LTbb.logit <- qra::extractLT(p=0.99, obj=HCbb.logit, link="logit",
                              a=1:8, b=9:16, eps=0, offset=0,
 df.t=NULL)[,-2]
 rownames(LTbb.logit) <- shorten(rownames(LTbb.logit))
-```
 
-```{r 7_12, echo=FALSE, fig.width=5, fig.asp=0.6, warning=FALSE, fig.align='center', message=FALSE, out.width="65%", fig.show="hold"}
+## 7_12
 library(plotrix)
 gpNam <- rownames(LTbb.cll)
 ordEst <- order(LTbb.cll[,1])
@@ -729,41 +550,30 @@ legend("topleft", legend=c("BB-clog", "BB-logit"),
        inset=c(0.01,0.01), lty=c(1,1), col=col5[1:2],
 text.col=col5[1:2], bty="n",y.intersp=0.85)
 
-```
 
-```{r 7_12, eval=F}
-```
-
-```{r G6_3e, echo=1:4}
+## G6_3e
 HCbin.cll <- glmmTMB(cbind(Dead,Live)~0+trtGp/TrtTime+(scTime|trtGp),
                      family=binomial(link="cloglog"), data=HawCon)
 LTbin.cll <- qra::extractLT(p=0.99, obj=HCbin.cll,
                             a=1:8, b=9:16, eps=0, df.t=NULL)[,-2]
 rownames(LTbin.cll) <- shorten(rownames(LTbin.cll))
-```
 
-#####               A warning against over-interpretation
-
-### Section 7.7 Observation level random effects --- the `moths` dataset
-
-```{r G7a}
+## G7a
 moths <- DAAG::moths
 moths$transect <- 1:41  # Each row is from a different transect
 moths$habitat <- relevel(moths$habitat, ref="Lowerside")
 A.glmer <-  glmer(A~habitat+sqrt(meters)+(1|transect),
 family=poisson(link=sqrt), data=moths)
 print(summary(A.glmer), show.resid=FALSE, correlation=FALSE, digits=3)
-```
 
-```{r G7b}
+## G7b
 suppressPackageStartupMessages(library(gamlss))
 A1quasi.glm <- glm(A~habitat, data=moths, family=quasipoisson(link=sqrt))
 Asqrt.lss <- gamlss(A ~ habitat + sqrt(meters), trace=FALSE,
                     family = NBI(mu.link='sqrt'), data = moths)
 A1.glmer <- glmer(A~habitat+(1|transect), data=moths, family=poisson(link=sqrt))
-```
 
-```{r G7c}
+## G7c
 Cglm <- coef(summary(A1quasi.glm))
 Cglmer <- coef(summary(A1.glmer))
 fitAll <- cbind("quasi-Coef"=Cglm[-1,1], "quasi-SE"=Cglm[-1,2],
@@ -772,23 +582,14 @@ fitAll <- cbind("quasi-Coef"=Cglm[-1,1], "quasi-SE"=Cglm[-1,2],
 rownames(fitAll) <- substring(rownames(fitAll),8)
 round(fitAll, 2)  # NB, all SEs are for the difference from 'Lowerside'
 
-```
 
-```{r G7d}
+## G7d
 detach("package:glmmTMB", character.only=TRUE)
-```
 
-### Section 7.8 Repeated measures in time
-#####              The theory of repeated measures modeling
-#####                       *Correlation structure
-#####         Different approaches to repeated measures analysis
-#### Subsection 7.8.1: Example -- random variation between profiles
-
-```{r G8_1a}
+## G8_1a
 humanpower1 <- DAAG::humanpower1
-```
 
-```{r 7_13, echo=FALSE, w=4, h=4, out.width="50%"}
+## 7_13
 ## Plot points and fitted lines
 xyplot(o2 ~ wattsPerKg, groups=id, data=humanpower1,
        par.settings=DAAG::DAAGtheme(color=F), scales=list(tck=0.5),
@@ -800,14 +601,8 @@ xyplot(o2 ~ wattsPerKg, groups=id, data=humanpower1,
        auto.key=list(columns=5, lines=T),
        xlab="Watts per kilogram",
        ylab=expression("Oxygen intake ("*ml.min^{-1}*.kg^{-1}*")"))
-```
 
-```{r 7_13, eval=F}
-```
-
-#####               Separate lines for different athletes
-
-```{r G8_1c}
+## G8_1c
 ## Calculate intercepts and slopes; plot Slopes vs Intercepts
 ## Uses the function lmList() from the lme4 package
 humanpower1 <- DAAG::humanpower1
@@ -815,45 +610,30 @@ hp.lmList <- lmList(o2 ~ wattsPerKg | id, data=humanpower1)
 coefs <- coef(hp.lmList)
 round(coefs,3)
 c("Correlation between intercept and slope"=cor(coefs[,1],coefs[,2]))
-```
 
-#####                    A random coefficients model
-
-```{r G8_1d}
+## G8_1d
 hp.lmer <- lmer(o2 ~ wattsPerKg + (wattsPerKg | id), data=humanpower1)
-```
 
-```{r G8_1e}
+## G8_1e
 hp.lmer <- lmer(o2 ~ wattsPerKg + (0+wattsPerKg | id), data=humanpower1)
 print(summary(hp.lmer), digits=3)
-```
 
-```{r G8_1f}
+## G8_1f
 sort(coef(lmList(o2 ~ wattsPerKg | id, data=humanpower1))[,1])
-```
 
-#### Subsection 7.8.2: Orthodontic measurements on children
-
-```{r G8_2a}
+## G8_2a
 Orthodont <- MEMSS::Orthodont
 Orthodont$logdist <- log(Orthodont$distance)
-```
 
-```{r 7_14, echo=FALSE, w=5.5, h=3.3, cex.lab=0.9, out.width="100%"}
+## 7_14
 ## Plot showing pattern of change for each of the 25 individuals
 gph <- xyplot(distance ~ age | Subject, groups=Sex, data=Orthodont,
               scales=list(x=list(rot=90, tick.number=3), y=list(log=2), tck=0.5), type=c("p","r"),
               layout=c(11,3))
 update(gph, xlab=list("Age", cex=1.4), ylab=list("Distance", cex=1.4),
        par.settings=DAAG::DAAGtheme(color=FALSE, fontsize=list(text=7, points=4)))
-```
 
-```{r 7_14, eval=F}
-```
-
-#####                    Preliminary data exploration
-
-```{r G8_2d}
+## G8_2d
 ## Use lmList() to find the slopes
 ab <- cbind(coef(lmList(distance ~ age | Subject, Orthodont)),
             coef(lmList(logdist ~ age|Subject, data=Orthodont)))
@@ -866,9 +646,8 @@ ab <- within(ab, {ybar = a + b*11; b=b; ylogbar = alog + blog * 11;
 bySex <- sapply(split(ab, ab$sex), function(z)range(z$b))
 extremes <- with(ab, ybar %in% range(ybar) | b %in% bySex)
 
-```
 
-```{r 7_15, w=7.2, h=3.6, bot=1, left=-1, top=1, rt=1, ps=9, mfrow=c(1,2), mgp=c(2,0.5,0), echo=FALSE, out.width="100%"}
+## 7_15
 fundiff <- function(x)range(x)+diff(range(x))*c(-0.015, 0.04)
 lims <- sapply(subset(ab, select=c('ybar',"b","ylogbar","blog")), fundiff)
 plot(b ~ ybar, col=c(F="gray40", M="black")[sex], data=ab,
@@ -885,41 +664,31 @@ plot(blog ~ ylogbar, col=c(F="gray40", M="black")[sex], data=ab, fg="gray",
 with(subset(ab, extremes),
      text(blog ~ ylogbar, labels=rownames(ab)[extremes], pos=4, xpd=TRUE))
 mtext(side=3, line=0.75,"B: Logarithms of distances", adj=0)
-```
 
-```{r 7_15, eval=F}
-```
-
-```{r G8_2f, size='normalsize'}
+## G8_2f
 ## Compare male slopes with female slopes
 extreme.males <- match(c("M04","M13"), rownames(ab))
 with(ab[-extreme.males,],
 t.test(blog[sex=="F"], blog[sex=="M"], var.equal=TRUE))
 # Specify var.equal=TRUE, to allow comparison with anova output
-```
 
-#####                    A random coefficients model
-
-```{r G8_2h}
+## G8_2h
 keep <- !(Orthodont$Subject%in%c("M04","M13"))
 Orthodont$scAge <- with(Orthodont, age-11)  ## Center values of age
 orthdiffx.lmer <- lmer(logdist ~ Sex * scAge + (scAge | Subject),
                        data=Orthodont, subset=keep)
-```
 
-```{r G8_2i}
+## G8_2i
 rePCA(orthdiffx.lmer)
-```
 
-```{r G8_2j, echo=2:3}
+## G8_2j
 opt <- options(digits=3, scipen=2)
 orthdiff.lmer <- lmer(logdist ~ Sex * scAge + (1 | Subject),
                       data=Orthodont, subset=keep)
 summary(orthdiff.lmer)
 options(opt)
-```
 
-```{r G8_2k}
+## G8_2k
 Orthodont2 <- droplevels(subset(Orthodont, keep))
 opt <- options(contrasts=c("contr.sum","contr.poly"))
 orthdiff.mixed <- afex::mixed(logdist ~ Sex * scAge + (1 | Subject), type=2,
@@ -927,32 +696,24 @@ orthdiff.mixed <- afex::mixed(logdist ~ Sex * scAge + (1 | Subject), type=2,
   ## NB `type` refers to type of test, NOT `error` type.
 options(opt)       # Reset to previous contrasts setting
 orthdiff.mixed
-```
 
-```{r G8_2l}
+## G8_2l
 contrasts(Orthodont2[['Subject']]) <- 'contr.sum'
 contrasts(Orthodont2[['Sex']]) <- 'contr.sum'
-```
 
-```{r G8_2m}
+## G8_2m
 orthdiffa.lmer <- update(orthdiff.lmer, formula=. ~ . -Sex:scAge)
 AIC(orthdiffa.lmer,orthdiff.lmer)
-```
 
-#####                Correlation between successive times
-
-```{r G8_2n}
+## G8_2n
 res <- resid(orthdiff.lmer)
 Subject <- factor(Orthodont$Subject[keep])
 orth.arma <- sapply(split(res, Subject),
                     function(x)forecast::auto.arima(x)$arma[c(1,6,2)])
 orthsum <- apply(orth.arma,2,sum)
 orth.arma[, orthsum>0]
-```
 
-#####             Fitting a sequential correlation structure
-
-```{r G8_2o}
+## G8_2o
 library(nlme)
 keep <- !(Orthodont$Subject%in%c("M04","M13"))
 Orthodont2 <- droplevels(subset(Orthodont,keep))
@@ -960,22 +721,8 @@ orthdiff.lme <- lme(logdist ~ Sex * scAge, random = ~1|Subject,
                     cor=corCAR1(0.1, form=~1|Subject), data=Orthodont2)
 ## For AR1 models `phi` is the sequential correlation estimate
 orthdiff.lme$modelStruct$corStruct
-```
 
-#####             *The variance for the difference in slopes
-
-### Section 7.9: Further notes on multilevel models
-#### Subsection 7.9.1: Sources of variation -- complication or focus of interest?
-#### Subsection 7.9.2: Predictions from models with a complex error structure
-#####  Consequences from assuming an overly simplistic error structure
-#### Subsection 7.9.3: An historical perspective on multilevel models
-#### Subsection 7.9.4: Meta-analysis
-#### Subsection 7.9.5: Functional data analysis
-#### Subsection 7.9.6: Error structure in explanatory variables
-
-### Exercises (7.12)
-
-```{r G12a}
+## G12a
 n.omit <- 2
 take <- rep(TRUE, 48)
 take[sample(1:48,2)] <- FALSE
@@ -984,19 +731,16 @@ kiwishade.lmer <- lmer(yield ~ shade + (1|block) + (1|block:plot),
 vcov <- VarCorr(kiwishade.lmer)
 print(vcov, comp="Variance")
 
-```
 
-```{r G12b}
+## G12b
 cult.lmer <- lmer(ct ~ Cultivar + Dose + factor(year) +
                        (-1 + Dose | gp), data = DAAG::sorption, REML=TRUE)
 cultdose.lmer <- lmer(ct ~ Cultivar/Dose + factor(year) +
                            (-1 + Dose | gp), data = DAAG::sorption, REML=TRUE)
-```
 
-```{r, eval=T}
+## unnamed-chunk-1
 if(file.exists("/Users/johnm1/pkgs/PGRcode/inst/doc/")){
 code <- knitr::knit_code$get()
 txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n'))
 writeLines(txt, con="/Users/johnm1/pkgs/PGRcode/inst/doc/ch7.R")
 }
-```

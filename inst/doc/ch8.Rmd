@@ -1,18 +1,16 @@
 ---
 title: "Chapter 8: Tree-based Classification and Regression"
 output: rmarkdown::html_vignette
+options: 
+  params: 
+    rmarkdown.html_vignette.check_title: false
 vignette: >
   %\VignetteIndexEntry{Ch8: TreeBased Classification and . . .}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r echo=F}
-options(rmarkdown.html_vignette.check_title = FALSE)
-```
-
 ```{r CodeControl, echo=FALSE}
-options(rmarkdown.html_vignette.check_title = FALSE)
 xtras <- F
 library(knitr)
 ## opts_chunk[['set']](results="asis")
@@ -471,11 +469,12 @@ sort(importance(diamond5K.rf)[,1], decreasing=T) |>
 ```{r H7k}
 (diamond5KU.rf <- randomForest(x=diamonds[samp5K,-7], y=Y[samp5K],
                    xtest=diamonds[-samp5K,-7], ytest=Y[-samp5K]))
+```  
+
+```{r, eval=T}
+if(file.exists("/Users/johnm1/pkgs/PGRcode/inst/doc/")){
+code <- knitr::knit_code$get()
+txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n'))
+writeLines(txt, con="/Users/johnm1/pkgs/PGRcode/inst/doc/ch8.R")
+}
 ```
-
-
-<!-- ```{r eval=T} -->
-<!-- code <- knitr::knit_code$get() -->
-<!-- txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n')) -->
-<!-- writeLines(txt, con="../inst/doc/ch8.R") -->
-<!-- ``` -->

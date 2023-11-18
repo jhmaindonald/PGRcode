@@ -889,11 +889,11 @@ colors</h3>
 <h5>Colors</h5>
 <div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" tabindex="-1"></a><span class="fu">library</span>(RColorBrewer)</span>
 <span id="cb85-2"><a href="#cb85-2" tabindex="-1"></a><span class="fu">palette</span>(<span class="fu">brewer.pal</span>(<span class="dv">12</span>, <span class="st">&quot;Set3&quot;</span>))</span></code></pre></div>
-<!-- ```{r eval=T} -->
-<!-- code <- knitr::knit_code$get() -->
-<!-- txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n')) -->
-<!-- writeLines(txt, con="../inst/doc/Appendix.R") -->
-<!-- ``` -->
+<div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">file.exists</span>(<span class="st">&quot;/Users/johnm1/pkgs/PGRcode/inst/doc/&quot;</span>)){</span>
+<span id="cb86-2"><a href="#cb86-2" tabindex="-1"></a>code <span class="ot">&lt;-</span> knitr<span class="sc">::</span>knit_code<span class="sc">$</span><span class="fu">get</span>()</span>
+<span id="cb86-3"><a href="#cb86-3" tabindex="-1"></a>txt <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">## &quot;</span>, <span class="fu">names</span>(code),<span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="fu">sapply</span>(code, paste, <span class="at">collapse=</span><span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span>))</span>
+<span id="cb86-4"><a href="#cb86-4" tabindex="-1"></a><span class="fu">writeLines</span>(txt, <span class="at">con=</span><span class="st">&quot;/Users/johnm1/pkgs/PGRcode/inst/doc/Appendix.R&quot;</span>)</span>
+<span id="cb86-5"><a href="#cb86-5" tabindex="-1"></a>}</span></code></pre></div>
 </div>
 </div>
 </div>

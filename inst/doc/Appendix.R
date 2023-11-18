@@ -1,34 +1,12 @@
----
-title: "Appendix A: The R System – A Brief Overview"
-output: rmarkdown::html_vignette
-options: 
-  params: 
-    rmarkdown.html_vignette.check_title: false
-vignette: >
-  %\VignetteIndexEntry{R system Overview}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
----
 
-On options for working with the code see the vignettes
-[Ch1-Learning](PGRcode/Ch1-Learning.html) and
-[UsingCode](PGRcode/UsingCode.html).
-
-```{r CodeControl, echo=FALSE}
+## CodeControl
 options(rmarkdown.html_vignette.check_title = FALSE)
 xtras=F
 library(knitr)
 ## opts_chunk[['set']](results="asis")
 opts_chunk[['set']](eval=F)
-```
 
-##### Packages required (plus any dependencies)
-
-DAAG dplyr tidyr tibble MASS gplots plotrix latticeExtra RColorBrewer
-
-Additionally, knitr and Hmisc are required in order to process the Rmd source file.
-
-```{r setup, cache=FALSE, echo=FALSE}
+## setup
 Hmisc::knitrSet(basename="addNotes", lang='markdown', fig.path="figs/g", w=7, h=7)
 oldopt <- options(digits=4, formatR.arrow=FALSE, width=70, scipen=999)
 library(knitr)
@@ -36,93 +14,66 @@ library(knitr)
 opts_chunk[['set']](cache.path='cache-', out.width="80%", fig.align="center", 
                     fig.show='hold', size="small", ps=10, strip.white = TRUE,
                     comment=NA, width=70, tidy.opts = list(replace.assign=FALSE))
-```
 
-## The R System – A Brief Overview
-
-### Section 10.1: Getting started with R
-#### Subsection 19.1.1: Learn by typing code at the command line
-```{r J1_1a, prompt=TRUE}
+## J1_1a
 ## Arithmetic calculations.  See the help page `?Arithmetic`
 2*3+10            # The symbol `*` denotes 'multiply'
-```
 
-```{r J1_1b, hold=T, prompt=TRUE}
+## J1_1b
 ## Use the `c()` function to join results into a numeric vector
 c(sqrt(10), 2*3+10, sqrt(10), 2^3)  # 2^3 is 2 to the power of 3
 ## R knows about pi
 2*pi*6378         # Approximate circumference of earth at equator (km)
-```
 
-```{r J1_1c}
+## J1_1c
 ?help              # Get information on the use of `help()`
 ?sqrt              # Or, type help(sqrt)
 ?Arithmetic        # See, in similar vein ?Syntax
 ?'<'               # `?Comparison` finds the same help page
-```
 
-```{r J1_1d}
+## J1_1d
 ## Two commands on one line; Use ';' as separator
 2*3*4+10; sqrt(10)        ## Try also `cat(2*3*4+10, sqrt(10), sep='n')
 ## Convert CO2 carbon emissions from tonnes of carbon to tonnes of CO2 
 3.664*c(.53, 2.56, 9.62)  ## Data are for 1900, 1960 & 2020
-```
 
-```{r J1_1e}
+## J1_1e
 ## Use `cat()` to print several items, with control of formatting
 cat(2*3*4+10, sqrt(10), '\n')
-```
 
-#####                             Assignment
-```{r J1_1f}
+## J1_1f
 ## Convert from amounts of carbon to amounts of CO2 (billions of tonnes)
 ## and assign result to a named object
 fossilCO2vals <- c(.53, 2.56, 9.62)*3.664  # Amounts in 1900, 1960, and 2020
   # Equivalently `fossilCO2vals <- c(.53, 2.56, 9.62)*rep(3.664,3)`
 ## To assign and print, enclose in round brackets
 (fossilCO2vals <- c(.53, 2.56, 9.62)*3.664)
-```
 
-```{r J1_1g}
+## J1_1g
 3.664*c(.53,2.56, 9.62) -> fossilCO2vals
-```
 
-#####  Entry of data at the command line, a graphics formula,  and a graph
-
-```{r 10_1, w=3.25, h=2.825, ps=11, mgp=c(2.25,0.5,0), tcl=-0.25, echo=FALSE, out.width="100%", fig.show='hold'}
+## 10_1
 Year <- c(1900, 1920, 1940, 1960, 1980, 2000, 2020)
 CO2 <- c(.53,.96,1.32,2.56,5.32,6.95,9.62)*3.664
 ## Now plot Carbon Dioxide emissions as a function of Year
 plot(CO2 ~ Year, pch=16, fg="gray")
-``` 
 
-```{r 10_1}
-```
-
-#####             Grouping vectors togeher into data frames
-```{r J1_1h}
+## J1_1h
 CO2byYear <- data.frame(year=Year, co2gas=CO2)
 CO2byYear         # Display the contents of the data frame.
 rm(Year, CO2)     # Optionally, remove `Year` and `Carbon` from the workspace
 plot(co2gas ~ year, data=CO2byYear, pch=16)  
-```
 
-```{r J1_1i}
+## J1_1i
 sqrt(10)           # Number of digits is determined by current seting
 options(digits=2)  # Change until further notice,
 sqrt(10)
-```
 
-#####            Wide-ranging information access and searches
-
-### Section 10.2: R data structures
-#### Subsection 10.2.1: Vectors, dates, and arrays
-```{r J2_1a}
+## J2_1a
 vehicles <- c("Compact", "Large", "Midsize", "Small", "Sporty", "Van")
 c(T, F, F, F, T, T, F)   # A logical vector, assuming F=FALSE and T=TRUE
-```
 
-```{r J2_1b, echo=T}
+## J2_1b
 ## Character vector
 mammals <- c("Rat", "Pig", "Rat", "Mouse", "Pig")
 ## Logical vector
@@ -131,17 +82,13 @@ rodent <- c("TRUE", "FALSE", "TRUE", "FALSE", "TRUE", "FALSE")
 mfac <- factor(mammals)
 levels(mfac)  
 table(mfac)
-```
 
-#####                               Dates
-```{r J2_1c}
+## J2_1c
 day1 <- as.Date(c("2022-01-01", "2022-02-01", "2022-03-01"))
 as.numeric(day1)   # Days since 1 January 1970
 day1[3] - day1[2]
-```
 
-#####      The use of square brackets to extract subsets of vectors
-```{r J2_1d}
+## J2_1d
 ## Specify the indices of the elements that are to be extracted
 x <- c(3, 11, 8, 15, 12,18)
 x[c(1,4:6)]        # Elements in positions 1, 4, 5, and 6
@@ -150,67 +97,52 @@ x[-c(2,3)]         # Positive and negative indices cannot be mixed
 ## Specify a vector of logical values. 
 x > 10             # This generates a vector of logical values
 x[x > 10]
-```
 
-```{r J2_1e}
+## J2_1e
 bodywt <- c(Cow=465, Goat=28, Donkey=187, Pig=192)
 bodywt[c("Goat", "Pig")]
-```
 
-#####                        Matrices and arrays
-```{r J2_4c}
+## J2_4c
 arr123 <- array(1:24, dim=c(2,4,3))
 ## This prints as three 2 by 4 matrices.  Print just the first of the three.
 arr123[, 2, 1]     # Column 2 and index 1 of 3rd dimension
 attributes(arr123)
-```
 
-#### Subsection 10.2.2: Factors
-```{r J2_2a}
+## J2_2a
 gender <- c(rep("male",691), rep("female",692))
 gender <- factor(gender)  # From character vector, create factor
 levels(gender)            # Notice that `female` comes first
-```
 
-```{r J2_2b}
+## J2_2b
 Gender <- factor(gender, levels=c("male", "female"))
-```
 
-```{r J2_2c}
+## J2_2c
 mf1 <- factor(rep(c('male','female'),c(2,3)), labels=c("f", "m"))
 ## The following has the same result
 mf2 <- factor(rep(c('male','female'), c(2,3)))
 levels(mf2) <- c("f","m")   # Assign new levels
 if(all(mf1==mf2))print(mf1)
-```
 
-```{r J2_2d}
+## J2_2d
 sum(gender=="male")
-```
 
-```{r J2_2e}
+## J2_2e
 table(chickwts$feed)  # feed is a factor
 source <- chickwts$feed  
 levels(source) <- c("milk","plant","plant","meat","plant","plant")
 table(source)
-```
 
-#####                          Ordered factors
-```{r J2_2f}
+## J2_2f
 stress <- rep(c("low","medium","high"), 2)
 ord.stress <- ordered(stress, levels=c("low", "medium", "high"))
 ord.stress
 ord.stress >= "medium"
-```
 
-#####                Missing values in values of factors
-#### Subsection 10.2.3: Operations with data frames
-```{r J2_5a}
+## J2_5a
 Cars93sum <- DAAG::Cars93.summary  # Create copy in workspace
 Cars93sum
-```
 
-```{r J2_5b}
+## J2_5b
 Cars93sum[4:6, 2:3]   # Extract rows 4 to 6 and columns 2 and 3
 Cars93sum[6:4, ]      # Extract rows in the order 6, 5, 4
 Cars93sum[, 2:3]      # Extract columns 2 and 3
@@ -218,143 +150,108 @@ Cars93sum[, 2:3]      # Extract columns 2 and 3
 Cars93sum[-(1:3), -c(1,4)]  # In each case, numbers must be all +ve or all -ve
 ## Specify row and/or column names
 Cars93sum[c("Small","Sporty","Van"), c("Max.passengers","No.of.cars")]
-```
 
-#####                      Data frames vs matrices
-```{r J2_5c}
+## J2_5c
 names(Cars93sum)[3] <- "numCars"
 names(Cars9sum) <- c("minPass","maxPass","numCars","code")
-```
 
-#####  Using a data frame as a database -- with() and within()
-```{r J2_5d}
+## J2_5d
 ## trees (datasets) has data on Black Cherry Trees
 with(trees, round(c(mean(Girth), median(Girth), sd(Girth)),1))
-```
 
-```{r J2_5e}
+## J2_5e
 with(DAAG::pair65,       # stretch of rubber bands
   {lenchange = heated-ambient
    c(mean(lenchange), median(lenchange))
 })
-```
 
-```{r J2_5f, eval=F}
+## J2_5f
 ## Add variables `mph` and `gradient` to `DAAG::nihills`
 nihr <- within(DAAG::nihills, {mph <- dist/time; gradient <- climb/dist})
-```
 
-#####                  Extracting rows from data frames
-```{r J2_5g}
+## J2_5g
 unlist(Cars93sum[1, ])
-```
 
-#### Subsection 10.2.4: Data manipulation functions used in earlier chapters
-```{r J2_5h}
+## J2_5h
 ## For columns of `DAAG::jobs`, show the range of values
 sapply(DAAG::jobs, range)
 ## Split egg lengths by species, calculate mean, sd, and number for each
 with(DAAG::cuckoos, sapply(split(length,species), 
                            function(x)c(av=mean(x), sd=sd(x), nobs=length(x))))
-```
 
-```{r J2_5i}
+## J2_5i
 apply(UCBAdmissions, 3, function(x)(x[1,2]/(x[1,2]+x[2,2]))*100) # Females
 apply(UCBAdmissions, 3, function(x)(x[1,1]/(x[1,1]+x[2,1]))*100) # Males
-```
 
-```{r J2_5j}
+## J2_5j
 UCBAdmissions[, , 1]
-```
 
-```{r J2_5k, }
+## J2_5k
 DAAG::cricketer |> dplyr::count(year, left, name="Freq") -> handYear
 names(handYear)[2] <- "hand"
 byYear <- tidyr::pivot_wider(handYear, names_from='hand', values_from="Freq")
-```
 
-#### Subsection 10.2.5: Writing data to a file, and reading data from a file
-```{r J2_6a}
+## J2_6a
 CO2byYear <- data.frame(year = seq(from=1900, to=2020, by=20),
                         co2gas = c(1.94, 3.52, 4.84, 9.38, 19.49, 25.46, 35.25))
 write.table(CO2byYear, file='gas.txt')    # Write data frame to file
 CO2byYear <- read.table(file="gas.txt")   # Read data back in
 write.csv(CO2byYear, file='gas.csv')                  # Write data frame
 CO2byYear <- read.csv(file="gas.csv", row.names=1)    # Read data back in
-```
 
-#####   Data input from the RStudio menu --- data frames vs tibbles
-#### Subsection 10.2.6: Issues for working with data frames and tibbles
-#####         Extraction of columns from data frames and tibbles
-```{r J2_7a}
+## J2_7a
 sites <- DAAG::possumsites    # sites is then a data frame
 sites[,3]                     # returns a vector
 sites[,3, drop=FALSE]         # returns a 1-column data frame
-```
 
-```{r J2_7b}
+## J2_7b
 dplyr::as_tibble(sites)[,3]   # returns a 1-column tibble
 dplyr::as_tibble(sites)[[3]]  # returns a vector
 sites[[3]]                    # returns a vector
-```
 
-#####        Conversion between data frames and tibbles
-```{r J2_7c}
+## J2_7c
 attributes(DAAG::possumsites)[['row.names']]
-```
 
-```{r J2_7e}
+## J2_7e
 possumSites <- tibble::as_tibble(DAAG::possumsites, rownames="Site")
 possumSites
-```
 
-#### Subsection 10.2.7: Lists
-```{r J2_8a}
+## J2_8a
 ## Summary statistics for 31 felled black cherry tree
 ## Median (middle value), range, number, units
 htstats <- list(med=76, range=c(low=63,high=87), n=31, units="ft")
 htstats[1:2]       # Show first two list elements only
-```
 
-```{r J2_8b}
+## J2_8b
 ## The following are alternative ways to extract the second list element
 htstats[2]          # First list element (Can replace `2` by 'range')
 htstats[2][1]       # A subset of a list is a list 
-```
 
-```{r J2_8c}
+## J2_8c
 htstats[[2]]; htstats$range; htstats[["range"]]
-```
 
-```{r J2_8d, echo=FALSE}
+## J2_8d
 htstats[[2]];
-```
 
-```{r J2_8e}
+## J2_8e
 unlist(htstats[2])  # Contents of second list element, with composite names
 unlist(htstats[2], use.names=F)   # Elements have no names
-```
 
-```{r J2_8f}
+## J2_8f
 tstats <- with(MASS::shoes, t.test(B, A, paired=TRUE))
 names(tstats)        ## Names of list elements. See `?t.test` for details.
 tstats[1]            ## Type tstats[1] to see the first list element
 ## Compact listing of contents list elements 1 to 5, which are all numeric
 unlist(tstats[1:5])  ## With `unlist(tstats)` all elements become character 
-```
 
-
-### Section 10.3: Functions and operators
-#### Subsection 10.3.1: Common useful built-in functions
-```{r J3_1a}
+## J3_1a
 ## Data indices
 length()       # number of elements in a vector or a list
 order()        # x[order(x)] sorts x (by default, NAs are last)
 which()        # which indices of a logical vector are `TRUE`
 which.max()    # locates (first) maximum (NB, also: `which.min()`)
-```
 
-```{r J3_1b}
+## J3_1b
 ## Data manipulation
 c()            # join together (`concatenate`) elements or vectors or lists
 diff()         # vector of first differences
@@ -363,9 +260,8 @@ rev()          # reverse the order of vector elements
 t()            # transpose matrix or data frame 
                # (a data frame is first coerced to a matrixwith() 
 with()         # do computation using columns of specified data frame
-```
 
-```{r J3_1c}
+## J3_1c
 ## Data summary
 mean()         # mean of the elements of a vector
 median()       # median of the elements of a vector
@@ -373,168 +269,125 @@ range()        # minimum and maximum value elements of vector
 unique()       # form the vector of distinct values
 ## List function arguments
 args()         # information on the arguments to a function
-```
 
-```{r J3_1d}
+## J3_1d
 ## Obtain details
 head()         # display first few rows (by default 6) of object
 ls()           # list names of objects in the workspace
-```
 
-```{r J3_1e}
+## J3_1e
 ## Print multiple objects
 cat()          # prints multiple objects, one after the other
-```
 
-```{r J3_1f}
+## J3_1f
 ## Functions that return TRUE or FALSE?
 all()          # returns TRUE if all values are TRUE
 any()          # returns TRUE if any values are TRUE
 is.factor()    # returns TRUE if the argument is a factor
 is.na()        # returns TRUE if the argument is an NA
                # NB also is.logical(), etc.
-```
 
-```{r J3_2e, hold=TRUE}
+## J3_2e
 seq(from =1, by=2, length.out=3)  # Unabbeviated arguments
 seq(from =1, by=2, length=3)      # Abbreviate `length.out` to `length`
-```
 
-#### Subsection 10.3.2: User-written functions
-```{r J3_2a, echo=FALSE}
+## J3_2a
 mean.and.sd <- function(x){
     av <- mean(x)
     sdev <- sd(x)
     c(mean=av, SD=sdev)   # Return value (here, a numeric vector of length 2)
     }
-```
 
-```{r J3_2b}
+## J3_2b
 distance <- c(148,182,173,166,109,141,166)
 mean.and.sd(distance)
-```
 
-```{r J3_2c}
+## J3_2c
 ## Execute the function with the  default argument:
 mean.and.sd()
-```
 
-```{r J3_2d}
+## J3_2d
 ## Thus, to return the mean, SD and name of the input vector
 ## replace c(mean=av, SD=sdev) by
 list(mean=av, SD=sdev, dataset = deparse(substitute(x)))
-```
 
-#### Subsection 10.3.3: Generic functions, and the class of an object
-#### Subsection 10.3.4: Pipes --- a "Do this, then this, . . ." syntax
-```{r J3_3a}
+## J3_3a
 mean(rnorm(20, sd=2))
 20 |> rnorm(sd=2) |> mean()
-```
 
-```{r J3_3b}
+## J3_3b
 logmammals <- MASS::mammals |> log() |> setNames(c("logbody","logbrain"))
 ## Alternatively, use the ability to reverse the assignment operator.
 MASS::mammals |> log() |> setNames(c("logbody","logbrain")) -> logmammals 
   ## This last is more in the spirit of pipes.
-```
 
-```{r J3_3c}
+## J3_3c
 MASS::mammals |>
   log() |>
   setNames(c("logbody","logbrain")) |>
   (\(d)lm(logbrain ~ logbody, data=d))() |>
   coef()
-```
 
-#### Subsection 10.3.5: Operators
-```{r J3_e4a}
+## J3_e4a
 ## Multiple of divisor that leaves smallest non-negative remainder
 c("Multiple of divisor" = 24 %/% 9, "Remainder after division" = 6)
-```
 
-
-### Section 10.4: Calculations with matrices, arrays, lists, and data frames
-#####      Calculations in parallel across all elements of a vector
-```{r J4_1b}
+## J4_1b
 x <- 1:6
 log(x)                 # Natural logarithm of 1, 2, ... 6
 log(x, base=10)        # Common logarithm (base 10)
 log(64, base=c(2,10))  # Apply different bases to one number
 log(matrix(1:6, nrow=2), base=2)  # Take logarithms of all matrix elements
-```
 
-#####                           Patterned data
-```{r J4_1c}
+## J4_1c
 seq(from=5, to=22, by=3)  # The first value is 5.
 rep(c(2,3,5), 4)          #  Repeat the sequence (2, 3, 5) four times over
 rep(c("female", "male"), c(2,3))    # Use syntax with a character vector
-```
 
-#### Subsection 10.4.1: Missing values
-```{r J4_2a}
+## J4_2a
 nbranch <- subset(DAAG::rainforest, species=="Acacia mabellae")$branch
 nbranch            # Number of small branches (2cm or less)
-```
 
-```{r J4_2b}
+## J4_2b
 mean(nbranch, na.rm=TRUE)
-```
 
-```{r J4_2c}
+## J4_2c
 nbranch == NA      # This always equals `NA`
-```
 
-```{r J4_2d}
+## J4_2d
 is.na(nbranch)    # Use to check for NAs
-```
 
-```{r J4_2e}
+## J4_2e
 nbranch[is.na(nbranch)] <- -999
   # `mean(nbranch)` will then be a nonsense value
-```
 
-#####                   NAs in modeling functions
-```{r J4_2g}
+## J4_2g
 options()$na.action # Version 3.2.2, following startup
-```
 
-#####    Counting and identifying NAs -- the use of table()
-```{r J4_2f}
+## J4_2f
 with(DAAG::nswdemo, table(trt, re74>0, useNA="ifany"))
-```
 
-#####                      Infinities and NaNs
-```{r J4_4a}
+## J4_4a
 summary(DAAG::primates)
-```
 
-```{r J4_4b}
+## J4_4b
 primates <- DAAG::primates
-```
 
-```{r J4_4d, eval=F}
+## J4_4d
 gplots::plotCI()    # `plotCI() function in package `gplots`
 plotrix::plotCI()   # `plotCI() function in package `plotrix`
-```
 
-```{r J4_4e}
+## J4_4e
 sessionInfo()[['basePkgs']]
-```
 
-```{r J4_4f}
+## J4_4f
 ## List just the workspace and the first eight packages on the search list:
 search()[1:9]
-```
 
-```{r J4_4g}
+## J4_4g
 data(package="datasets") 
-```
 
-
-### Section 10.5: Brief notes on R graphics packages and functions
-#### Subsection 10.5.1: Lattice graphics --- a step beyond base graphics
-```{r J5_1a, eval=xtras, w=5.5, fig.asp=0.9, top=2, out.width="60"}
+## J5_1a
 grog <- DAAG::grog
 chr <- with(grog, match(Country, c('Australia', 'NewZealand')))  
   # Australia: 1; matches 1st element of c('Australia', 'NewZealand')
@@ -543,56 +396,47 @@ plot(Beer ~ Year, data=grog, ylim=c(0, max(Beer)*1.1), pch = chr)
 with(grog, points(Wine ~ Year, pch=chr, col='red'))
 legend("bottomright", legend=c("Australia", "New Zealand"), pch=1:2)
 title(main="Beer consumption (l, pure alcohol)", line=1)
-```
 
-```{r J5_1b, eval=xtras, w=5.5, fig.asp=0.9, out.width="60"}
+## J5_1b
 library(latticeExtra)    ## Loads both lattice and the add-on latticeExtra
 gph <- xyplot(Beer+Wine ~ Year, groups=Country, data=grog)
 update(gph, par.settings=simpleTheme(pch=19), auto.key=list(columns=2))
-```
 
-```{r J5_1c, eval=xtras, w=5.5, fig.asp=0.8, out.width="100%"}
+## J5_1c
 ## Or, condition on `Country`
 xyplot(Beer+Wine+Spirit ~ Year | Country, data=grog,
        par.settings=simpleTheme(pch=19), auto.key=list(columns=3))
-```
 
-```{r J5_1d, eval=xtras, w=5.5, fig.asp=1.15, fig.show='asis', out.width="100%"}
+## J5_1d
 tinting <- DAAG::tinting
 xyplot(csoa~it | tint*target, groups=agegp, data=tinting, auto.key=list(columns=2))
-```
 
-```{r J5_1e, eval=xtras, w=5.5, fig.asp=0.7, out.width="100%"}
+## J5_1e
 cuckoos <- DAAG::cuckoos
 av <- with(cuckoos, aggregate(length, list(species=species), FUN=mean))
 gph <- dotplot(species ~ length, data=cuckoos, alpha=0.4) +
   as.layer(dotplot(species ~ x, pch=3, cex=1.4, col="black", data=av))
 update(gph, xlab="Length of egg (mm)")
-```
 
-```{r J5_1f, eval=xtras, w=5.5, fig.asp=0.7, out.width="100%"}
+## J5_1f
 ## Alternatives, using `layer()` or `as.layer()`
 avg <- with(cuckoos, data.frame(nspec=1:nlevels(species), 
                              av=sapply(split(length,species),mean)))
 dotplot(species ~ length, data=cuckoos) + 
   layer(lpoints(nspec~av, pch=3, cex=1.25, col="black"), data=avg)
-```  
 
-```{r J5_1g, eval=xtras, w=5.5, fig.asp=0.7, out.width="100%"}
+## J5_1g
 dotplot(species ~ length, data=cuckoos) + 
   as.layer(dotplot(nspec~av, data=avg, pch=3, cex=1.25, col="black"))
-```
 
-```{r J5_1h, eval=xtras, w=5.5, fig.asp=0.7, out.width="100%"}
+## J5_1h
 ## Specify panel function
 dotplot(species ~ length, data=cuckoos, 
   panel=function(x,y,...){panel.dotplot(x, y, pch=1, col="gray40")
     avg <- data.frame(nspec=1:nlevels(y), av=sapply(split(x,y),mean))
     with(avg, lpoints(nspec~av, pch=3, cex=1.25, col="black")) })
-```
 
-#####           Combining separately created graphics objects
-```{r J5_1i, eval=xtras, w=5.5, fig.asp=0.7, out.width="100%"}
+## J5_1i
 cuckoos <- DAAG::cuckoos
 ## Panel A: Dotplot without species means added
 gphA <- dotplot(species ~ length, data=cuckoos) 
@@ -602,17 +446,11 @@ update(c("A: Dotplot"=gphA, "B: Boxplot"=gphB), between=list(x=0.4),
        xlab="Length of egg (mm)", layout=c(2,1))
   ## `latticeExtra::c()` joins compatible plots together. 
   ## `layout=c(2,1)` : join horizontally; `layout=c(1,2)` : join vertically
-```
 
-#### Subsection 10.5.2: Dynamic graphics -- the rgl package
-```{r J5_2a, eval=F}
+## J5_2a
 vignette('plot3D', package='plot3D')
-```
 
-
-### Section 10.6: Plotting characters, symbols, line types and colors
-
-```{r 10_2, w=6, h=4.75, eval=FALSE, left=-2, bot=-2, ps=10, message=FALSE, warning=FALSE, out.width="100%"}
+## 10_2
 ycol <- -2.1 - (0:9) * 2.1
 ftype <- c("plain", "bold", "italic", "bold italic", "symbol")
 yline <- 4.2
@@ -680,22 +518,14 @@ text(farleft + 3.5, yline + 4.5 - 0.8 * i, ltypes[i +
 text(farleft + 7.5, yline + 4.5 - 0.8 * i, lcode[i +
 1], cex = 0.85, xpd = TRUE)
 }
-```
 
-```{r 10_2, eval=F}
-```
-
-#####                           Font families
-#####                               Colors
-```{r J6_1b, eval=xtras}
+## J6_1b
 library(RColorBrewer)
 palette(brewer.pal(12, "Set3"))
-```
 
-```{r, eval=T}
+## unnamed-chunk-1
 if(file.exists("/Users/johnm1/pkgs/PGRcode/inst/doc/")){
 code <- knitr::knit_code$get()
 txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n'))
 writeLines(txt, con="/Users/johnm1/pkgs/PGRcode/inst/doc/Appendix.R")
 }
-```

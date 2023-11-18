@@ -1,21 +1,5 @@
----
-title: "Chapter 5: Generalized linear models and survival analysis"
-date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-options: 
-  params: 
-    rmarkdown.html_vignette.check_title: false
-vignette: >
-  %\VignetteIndexEntry{Ch5: GLMs and Survival Analysis}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
----
 
-On options for working with the code see the vignettes
-[Ch1-Learning](PGRcode/Ch1-Learning.html) and
-[UsingCode](PGRcode/UsingCode.html).
-
-```{r CodeControl, echo=FALSE}
+## CodeControl
 ## xtras=FALSE
 xtras <- F
 library(knitr)
@@ -23,23 +7,14 @@ library(knitr)
 opts_chunk[['set']](fig.width=5, fig.height=5, comment=NA, eval=F)
 ## opts_chunk[['set']](eval=F)
 options(rmarkdown.html_vignette.check_title = FALSE)
-```
 
-##### Packages required (with dependencies)
-DAAG car mgcv colorspace HistData gamlss dplyr tidyr MASS ggplot2 latticeExtra qgam VGAM survival
-
-Additionally, knitr is required in order to process the Rmd source file. 
-
-### Section 5.1 Generalized linear models
-#### Subsection 5.1.1: Linking the expected value to the covariate
-```{r E1_1a, eval=FALSE}
+## E1_1a
 ## Simplified plot showing the logit link function
 p <- (1:39)/40
 logitp <- log(p/(1 - p))
 plot(p, logitp, xlab = "Proportion", ylab = "logit(p)", type = "l", pch = 1)
-```
 
-```{r 5_1, fig.width=4.0, fig.height=3.75, top=1.5, rt=2.0, ps=9, cex.lab=0.85, mgp=c(2.75,0.5,0), tcl=-0.35, echo=FALSE, out.width="32%"}
+## 5_1
 par(las=0)
 p <- seq(from=1, to=99, by=1)/100; n<- 150; eps=0.001
 gitp <- log(p/(1 - p))
@@ -69,18 +44,8 @@ las=1, xlim=0:1, xaxs="i", fg="gray")
 mtext(side = 1, line = 1.75, expression("Proportion "*pi))
 mtext(side = 2, line = 1.75, expression("SD[logit("*p*")], "*n*"=100"))
 mtext(side = 3, line = 0.5, "C: SD[logit(p)]", adj=0, cex=1.0)
-```
 
-```{r 5_1, eval=F}
-```
-
-#### Subsection 5.1.2: Noise terms need not be normal
-#### Subsection 5.1.3:  Variation that is greater than binomial or Poisson
-#####              Least squares versus logistic regression
-#### Subsection 5.1.4: Log odds in contingency tables
-#### Subsection 5.1.5: Logistic regression with a continuous explanatory variable
-
-```{r E1_5a}
+## E1_5a
 anestot <- aggregate(DAAG::anesthetic[, c("move","nomove")],
 by=list(conc=DAAG::anesthetic$conc), FUN=sum)
 ## The column 'conc', because from the 'by' list, is then a factor.
@@ -88,9 +53,8 @@ by=list(conc=DAAG::anesthetic$conc), FUN=sum)
 anestot$conc <- as.numeric(as.character(anestot[["conc"]]))
 anestot$total <- apply(anestot[, c("move","nomove")], 1 , sum)
 anestot$prop <- anestot$nomove/anestot$total
-```
 
-```{r 5_2, w=2.75, h=2.5, ps=9, tcl=-0.35, echo=FALSE, out.width="40%"}
+## 5_2
 par(mgp=c(2.5,.5,0))
 anesthetic <- DAAG::anesthetic
 z <- table(anesthetic$nomove, anesthetic$conc)
@@ -110,21 +74,16 @@ chw <- par()$cxy[1]
 text(conc - 0.3 * chw, prop-sign(prop-0.5)*chh/4, paste(tot),
 adj = 1, cex=0.65)
 abline(h = oprop, lty = 2)
-```
 
-```{r 5_2, eval=FALSE}
-```
-
-```{r E1_5c}
+## E1_5c
 ## Fit model directly to the 0/1 data in nomove
 anes.glm <- glm(nomove ~ conc, family=binomial(link="logit"),
                 data=DAAG::anesthetic)
 ## Fit model to the proportions; supply total numbers as weights
 anes1.logit <- glm(prop ~ conc, family=binomial(link="logit"),
                   weights=total, data=anestot)
-```
 
-```{r 5_3, w=2.75, h=2.5, ps=9, tcl=-0.35, echo=FALSE, out.width="40%"}
+## 5_3
 par(mgp=c(2.25,.5,0), mar=c(5.1,5.1,4.1,2.1))
 tab <- table(anesthetic$nomove, anesthetic$conc)
 tot <- colSums(tab)               # totals at each concentration
@@ -138,28 +97,20 @@ prop <- tab[2,  ]/tot
 text(unique.conc, emplogit, paste(round(prop,2)),
      pos=c(2,4,2,4,4,4), cex=0.8)
 abline(-6.47, 5.57, lwd=0.8)
-```
 
-```{r E1_5e}
+## E1_5e
 DAAG::sumry(anes.glm, digits=2)
-```
 
-#####                       A note on model output 
-
-```{r E1_5f}
+## E1_5f
 ## Tp get coefficients, SEs, and associated statistics, specify:
 print(coef(summary(anes.glm)), digits=2)
 ## Get full default output
 summary(anes.glm, digits=2)
-```
 
-### Section 5.2 Logistic multiple regression
-
-```{r E2a}
+## E2a
 frogs <- DAAG::frogs
-```
 
-```{r 5_4, w=6, h=2.8, echo=FALSE, mgp=c(2.75, .75, 0), mar=c(4.6, 0.5, 1.6, 1), warning=FALSE, out.width="80%"}
+## 5_4
 ## Presence/absence information: data frame frogs (DAAGS)
 suppressMessages(library(ggplot2))
 p <- ggplot(frogs, aes(easting, northing)) +
@@ -168,17 +119,12 @@ p <- ggplot(frogs, aes(easting, northing)) +
   theme(axis.title=element_text(size=11), axis.text=element_text(size=8))
 p + geom_point(data=subset(frogs, pres.abs==1),
                aes(easting, northing), alpha=1, shape=3, col="white", size=1.5)
-```
 
-```{r 5_4, eval=F}
-```
-
-```{r E2d}
+## E2d
 frogs <- within(frogs, {maxSubmin <- meanmax-meanmin
                         maxAddmin <- meanmax+meanmin})
-```
 
-```{r E2e, echo=FALSE}
+## E2e
 frogmatT <- with(frogs, cbind(logdist=log(distance),logNpools=log(NoOfPools),
                  rt2Nsites=sqrt(NoOfSites), avrain=avrain,
                  maxSubmin=maxSubmin, maxAddmin= maxAddmin))
@@ -195,9 +141,8 @@ text(0.5, 0.5, txt, cex = cex.cor * sqrt(r), col="gray40")
 panel.D <- function(x,...){den <-density(x); ## usr <- par("usr"); on.exit(par(usr))
   ## par(usr = c(usr[1:2], 0, 1.04*max(den$y)))
   lines(den,...)}
-```
 
-```{r 5_5, w=5,h=5,fig.show="hold", echo=FALSE, out.width="49%"}
+## 5_5
 oldpar <- par(col.axis='gray20',lwd=0.5,col.lab='gray20', tcl=-0.25, oma=c(0,0,1.5,0))
 pairs(frogs[,c("meanmin","meanmax","altitude")],
       gap=0.25, col=adjustcolor("blue", alpha=0.8), upper.panel=panel.cor,
@@ -210,21 +155,16 @@ pairs(frogs[,c('maxSubmin', 'maxAddmin', 'altitude')],
 mtext(side=3, line=4.5, "B: Pairs plot, difference/sum variables", cex=1.25, at=0,
       adj=0, col="gray40")
 par(oldpar)
-```
 
-#####           Implications for the Variance Inflation Factor
-#### Subsection 5.2.1: Choose explanatory terms, and fit model
-
-```{r E2g}
+## E2g
 ## Find power transformations
 useCols <- c('distance','NoOfPools','NoOfSites','avrain','maxAddmin','maxSubmin')
 tfrogs <- car::powerTransform(frogs[,useCols], family="yjPower")
 ## Create, for later use, a matrix with variables transformed as suggested
 transY <- car::yjPower(frogs[,useCols], coef(tfrogs, round=TRUE))
 summary(tfrogs, digits=2)
-```
 
-```{r 5_6, w=5.5, h=5.5, left=-1, lwd=0.5, ps=9, tcl=-0.35, echo=FALSE, out.width="75%"}
+## 5_6
 oldpar <- par(fg='gray20',col.axis='gray20',lwd=0.5,col.lab='gray20', tcl=-0.25)
 frogmatT <- with(frogs, cbind(logdist=log(distance),logNpools=log(NoOfPools),
                  rt2Nsites=sqrt(NoOfSites), avrain=avrain,
@@ -247,48 +187,40 @@ pairs(frogmatT, labels=c('log\ndistance','log\nNoOfPools','sqrt\nNoOfSites','avr
       gap=0.4, col=adjustcolor("blue", alpha=0.8), upper.panel=panel.cor,
       lower.panel=panel.smooth, diag.panel=panel.D, cex.labels=1.0, label.pos=0.5)
 par(oldpar)
-```
 
-```{r E2_1a}
+## E2_1a
 frogs0.glm <- glm(formula = pres.abs ~ log(distance) + log(NoOfPools)+
                   sqrt(NoOfSites) + avrain + maxAddmin + maxSubmin,
                   family = binomial, data = frogs)
 DAAG::sumry(frogs0.glm, digits=1)
-```
 
-```{r E2_1b}
+## E2_1b
 ## Check effect of omitting sqrt(NoOfSites) and avrain from the model
 ## ~ . takes the existing formula. Precede terms to be
 ## omitted by '-'.  (For additions, precede with '+')
 frogs.glm <- update(frogs0.glm, ~ . -sqrt(NoOfSites)-avrain)
 frogsAlt.glm <- update(frogs.glm, ~ . -maxAddmin+altitude)
 AIC(frogs0.glm, frogs.glm,frogsAlt.glm)
-```
 
-```{r E2_1c}
+## E2_1c
 rbind(
 'frogs0.glm'=coef(frogs0.glm)[c('log(distance)','log(NoOfPools)','maxAddmin','maxSubmin')],
 'frogs.glm'=coef(frogs.glm)[c('log(distance)','log(NoOfPools)','maxAddmin','maxSubmin')]
 )
 coef(frogsAlt.glm)[c('log(distance)','log(NoOfPools)','altitude','maxSubmin')]
-```
 
-```{r E2_1e}
+## E2_1e
 coef(summary(frogs.glm))
-```
 
-#### Subsection 5.2.2: Fitted values
-
-```{r E2_2a, eval=xtras}
+## E2_2a
 ## Use of `predict()` and `fitted()` --- examples
 fitted(frogs.glm)    # Fitted values' scale of response
 predict(frogs.glm, type="response")  # Same as fitted(frogs.glm)
 predict(frogs.glm, type="link")      # Scale of linear predictor
 ## For approximate SEs, specify
 predict(frogs.glm, type="link", se.fit=TRUE)
-```
 
-```{r 5_7, w=6, h=2.8, echo=FALSE, mgp=c(2.75, .75, 0), mar=c(4.6, 0.5, 1.6, 1), out.width="90%"}
+## 5_7
 library(ggplot2)
 frogs$Prob. <- fitted(frogs.glm)
 frogs$presAbs <- factor(frogs$pres.abs)
@@ -301,27 +233,14 @@ p2 <- p+scale_color_gradientn(colours=colorspace::heat_hcl(10,h=c(0,-100),
   guides(fill=guide_legend(title=NULL))
 p2 + geom_point(data=subset(frogs, presAbs==1),
                 aes(easting, northing), alpha=1, shape=3, col="white", size=1)
-```
 
-```{r 5_7, eval=F}
-```
-
-#### Subsection 5.2.3: Plots that show the contributions of explanatory variables
-
-```{r 5_8, echo=FALSE, fig.width=3.5, fig.height=3.75, left=-0.5, mfrow=c(1,4), mgp=c(1.85,0.5,0), top=1, ps=9, echo=FALSE, out.width="23.5%"}
+## 5_8
 termplot(frogs.glm, transform.x=TRUE, col.term=1, fg='gray')
-```
 
-```{r 5_9, eval=F}
-```
-
-#### Subsection 5.2.4: Cross-validation estimates of predictive accuracy
-
-```{r E2_4a}
+## E2_4a
 DAAG::CVbinary(frogs.glm)
-```
 
-```{r E2_4b}
+## E2_4b
 set.seed(19)
 frogs.acc <- frogs0.acc <- numeric(6)
 for (j in 1:6){
@@ -334,12 +253,8 @@ for (j in 1:6){
 }
 print(rbind("frogs (all variables)" = frogs.acc,
             "frogs0 (selected variables)" = frogs0.acc), digits=3)
-```
 
-#### Subsection 5.2.5: Cholera deaths in London --- 1849 to 1855
-#####             By air, or by water --- the 1849 epidemic
-
-```{r 5_9, fig.width=7, fig.height=2.25, fig.show='hold', echo=F, out.width="100%"}
+## 5_9
 opar <- par(mgp=c(2.1,.4,0), mfrow=c(1,3))
 Cholera <- HistData::Cholera
 fitP2.glm <- glm(cholera_deaths ~ offset(log(popn)) + water +
@@ -355,23 +270,14 @@ termplot(fitP2.glm, partial=T, se=TRUE, pch =1,
 termplot(fitP2.glm, partial=T, se=TRUE, pch =1,
          ylabs=rep("Partial residual",3), terms='poly(poor_rate, 2)', fg="gray")
 par(opar)
-```
 
-```{r 5_9, eval=F}
-```
-
-#####             The 1854 epidemic --- a natural experiment
-
-```{r E2_4c, echo=FALSE}
+## E2_4c
 tab <- cbind("#houses"=c(40046,26107,256423), "#Deaths"=c(1263,98,1422),
   "Rate per 10,000"=c(315,37,59))
 row.names(tab) <- c("Southwark & Vauxhall","Lambeth","Rest of London")
 tab
-```
 
-### Section 5.3 Logistic models for categorical data -- an example
-
-```{r E3a}
+## E3a
 ## Create data frame from multi-way table UCBAdmissions (datasets)
 ## dimnames(UCBAdmissions)  # Check levels of table margins
 UCB <- as.data.frame.table(UCBAdmissions["Admitted", , ], responseName="admit")
@@ -380,73 +286,53 @@ UCB$Gender <- relevel(UCB$Gender, ref="Male")
 ## Add further columns total and p (proportion admitted)
 UCB$total <- UCB$admit + UCB$reject
 UCB$pAdmit <- UCB$admit/UCB$total
-```
 
-```{r E3c}
+## E3c
 UCB.glm <- glm(pAdmit ~ Dept*Gender, family=binomial, data=UCB, weights=total)
 ## Abbreviated `anova()` output:
 anova(UCB.glm, test="Chisq") |>
  capture.output() |> tail(8) |> (\(x)x[-c(2,3)])() |> cat(sep='\n')
-```
 
-```{r E3d}
+## E3d
 round(signif(coef(summary(UCB.glm)),4), 3)
-```
 
-### Section 5.4 Models for counts --- poisson, quasipoisson, and negative binomial
-#### Subsection 5.4.1: Data on aberrant crypt foci
-
-```{r 5_10, w=2.65, h=2.5, left=-1, ps=9, tcl=-0.35, echo=FALSE, out.width="40%"}
+## 5_10
 par(pty="s")
 plot(count ~ endtime, data=DAAG::ACF1, pch=16, fg="gray")
-```
 
-```{r 5_10, eval=F}
-```
-
-```{r E4_1c}
+## E4_1c
 ACF.glm <- glm(formula = count ~ endtime + I(endtime^2),
                family = poisson(link="identity"), data = DAAG::ACF1)
 DAAG::sumry(ACF.glm, digits=2)
-```
 
-```{r E4_1d}
+## E4_1d
 unique(round(predict(ACF.glm),2))
-```
 
-```{r E4_1e}
+## E4_1e
 sum(resid(ACF.glm, type="pearson")^2)/19
-```
 
-```{r E4_1f}
+## E4_1f
 ACFq.glm <- glm(formula = count ~ endtime + I(endtime^2),
 family = quasipoisson, data = DAAG::ACF1)
 print(coef(summary(ACFq.glm)), digits=2)
-```
 
-```{r E4_1g}
+## E4_1g
 sapply(split(residuals(ACFq.glm), DAAG::ACF1$endtime), var)
-```
 
-```{r E4_1h}
+## E4_1h
 fligner.test(resid(ACFq.glm) ~ factor(DAAG::ACF1$endtime))
-```
 
-#### Subsection 5.4.2: Moth habitat example
-
-```{r E4_2a}
+## E4_2a
 ## Number of moths by habitat: data frame DAAG::moths
 moths <- DAAG::moths
 tab <- rbind(Number=table(moths[, 4]),
              sapply(split(moths[, -4], moths$habitat), apply, 2, sum))
-```
 
-```{r E4_2b}
+## E4_2b
 ## Number of zero counts, by habitats
 with(droplevels(subset(moths, A==0)), table(habitat))
-```
 
-```{r 5_11, echo=FALSE, fig.width=6.5, fig.height=2.5, las=0, out.width="100%"}
+## 5_11
 library(lattice)
 gph <- dotplot(habitat ~ A+P, data=DAAG::moths, xlab="Number of moths", outer=TRUE,
                strip=strip.custom(factor.levels=paste("Number of species",c("A","B"))),
@@ -461,56 +347,40 @@ points=list(pch=c(1,3), cex=c(1,1.25), col=c("black","gray45")),
 columns=2), scales=list(tck=0.5, alternating=1))
 bw9 <- list(fontsize=list(text=9, points=5))
 update(gph, par.settings=bw9)
-```
 
-```{r 5_11, eval=F}
-```
-
-```{r E4_2d}
+## E4_2d
 Astats <- with(DAAG::moths, sapply(split(A, habitat),
 function(x)c(Amean=mean(x),Avar=var(x))))
 avlength <- with(DAAG::moths, sapply(split(meters, habitat), mean))
 round(rbind(Astats, avlen=avlength),1)
-```
 
-#####                     A quasipoisson model
-
-```{r E4_2e}
+## E4_2e
 A.glm <- glm(A ~ habitat + log(meters), family=quasipoisson,
 data=DAAG::moths)
 DAAG::sumry(A.glm, digits=1)
-```
 
-```{r E4_2f}
+## E4_2f
 subset(DAAG::moths, habitat=="Bank")
-```
 
-```{r E4_2g, eval=FALSE, size='normalsize', results='asis', echo=TRUE}
+## E4_2g
 ## Analysis with tighter convergence criterion
 A.glm <- update(A.glm, epsilon=1e-10)
 print(coef(summary(A.glm)), digits=2)
-```
 
-```{r E4_2h}
+## E4_2h
 AfitSE <- predict(A.glm, se=TRUE)$se.fit
 cfSE <- with(DAAG::moths, c(AfitSE[habitat=="Bank"],
 range(AfitSE[habitat!="Bank"])))
 round(setNames(cfSE, c("SEbank", "SEotherMIN", "SEotherMAX")), digits=2)
-```
 
-#####           A more satisfactory choice of reference level
-
-```{r E4_2i}
+## E4_2i
 moths <- DAAG::moths
 moths$habitat <- relevel(moths$habitat, ref="Lowerside")
 Alower.glm <- glm(A ~ habitat + log(meters),
                   family = quasipoisson, data = moths)
 print(coef(summary(Alower.glm)), digits=1)
-```
 
-#### Subsection 5.4.3: Models with negative binomial errors
-
-```{r 5_12, echo=FALSE, fig.width=6.5, fig.height=2.5, las=0, out.width="100%"}
+## 5_12
 dframe <- data.frame(sigma1A =(Astats[2,]-Astats[1,])/Astats[1,]^2,
 sigma2A =(Astats[2,]-Astats[1,])/Astats[1,]^1,
 mu = Astats[1,], habitat=colnames(Astats))
@@ -521,111 +391,75 @@ par.settings=bw9, auto.key=list(columns=4),
 strip=strip.custom(factor.levels=paste("Model",c("NBI","NBII"))),
 xlab="Mean number of species A moths",
 ylab=expression("Estimate of "*sigma))
-```
 
-```{r 5_12, eval=F}
-```
-
-```{r E4_3b, message=FALSE}
+## E4_3b
 library(gamlss, quietly=TRUE)
 noBank <- subset(moths, habitat!='Bank')
 mothsCon.lss <- gamlss(A ~ log(meters)+habitat, family=NBI(), data=noBank,
                        trace=F)
 mothsVary.lss <- gamlss(A ~ log(meters)+habitat, family=NBI(),
                         sigma.formula=~habitat, trace=FALSE, data=noBank)
-```
 
-```{r E4_3c}
+## E4_3c
 LR.test(mothsCon.lss, mothsVary.lss)
-```
 
-```{r E4_3d, echo=1:2}
+## E4_3d
 ## mothsCon.lss <- gamlss(A ~ log(meters)+habitat,family=NBI(),data=noBank)
 ## summary(mothsCon.lss, type="qr")   ## Main part of output
 out <- capture.output(summary(mothsCon.lss, type="qr", digits=1))
 cat(out[-(3:10)], sep="\n")
-```
 
-#####                          Diagnostic plots
-
-```{r 5_13, echo=FALSE, fig.width=7.25, fig.height=5.5, left=-0.5, mgp=c(1.85,0.5,0), top=1, ps=9, echo=FALSE, out.width="72%", tidy=TRUE}
+## 5_13
 plot(mothsCon.lss, panel=panel.smooth)
-```
 
-```{r 5_13, eval=F}
-```
-
-#####          Use of the square root link function
-
-```{r E4_3f}
+## E4_3f
 Asqrt.lss <- gamlss(A ~ habitat + sqrt(meters), trace=FALSE,
                     family = NBI(mu.link='sqrt'), data = moths)
-```
 
-```{r E4_3g, warning=FALSE}
+## E4_3g
 ## Asqrt.lss <- gamlss(A ~ habitat + sqrt(meters),
 ##                     family = NBI(mu.link='sqrt'), data = moths)
 ## summary(Asqrt.lss, type="qr")   ## Main part of output
 out <- capture.output(summary(Asqrt.lss, digits=1))[-(3:10)]
 cat(out, sep="\n")
-```
 
-#### Subsection 5.4.4:  Negative binomial versus alternatives ---  hurricane deaths
-#####               Aside -- a quasibinomial binomial fit
-
-```{r 5_14, echo=FALSE, fig.width=3.5, fig.height=3.35, left=-1.0, ps=12, mgp=c(1.85,0.5,0), top=1,  echo=FALSE, out.width="24%"}
+## 5_14
 ordx <- with(DAAG::hurricNamed, order(BaseDam2014))
 hurric <- DAAG::hurricNamed[ordx,]
 # Ordering a/c values of BaseDam2014 simplifies later code
 hurr.glm <- glm(deaths ~ log(BaseDam2014), family=quasipoisson, data=hurric)
 plot(hurr.glm, col=adjustcolor('black', alpha=0.4),
      cex.caption=0.95, sub.caption=rep("",4), fg="gray")
-```
 
-```{r 5_14, eval=F}
-```
-
-#####          Negative binomial versus power transformed scale
-#####                Fit a negative binomial (NBI) model
-
-```{r E4_4b, warning=FALSE, message=FALSE, results="hide"}
+## E4_4b
 library(gamlss)
 hurrNB.gamlss <- gamlss::gamlss(deaths ~ log(BaseDam2014), family=NBI(),
                                 data=hurric[-56,])
 mures <- resid(hurrNB.gamlss, what="mu")
 zres <- resid(hurrNB.gamlss, what="z-scores")  ## equivalent normal quantiles
-```
 
-```{r E4_4c}
+## E4_4c
 table(sign(mures))
-```
 
-#####           Fit linear model to power transformed response
-
-```{r E4_4d}
+## E4_4d
 hurr.lm <- lm(car::yjPower(deaths,-0.2) ~ log(BaseDam2014), data=hurric[-56,])
 ## Use the following function to transform from power scale to log scale
 powerTOlog <- function(z, lambda)log(lambda*z+1)/lambda
 ## Calculate fitted values, and transform to log(deaths+1) scale
 hatPower <- powerTOlog(predict(hurr.lm), lambda=-0.2)
 resPower <- log(hurric[-56,"deaths"]+1) - hatPower
-```
 
-```{r E4_4e}
+## E4_4e
 table(sign(resPower))
-```
 
-#####    Compare NBI and power transform fits with smoothed quantiles
-
-```{r E4_4f, warning=FALSE, message=FALSE}
+## E4_4f
 library(qgam, quietly=TRUE)
 hat68.8 <- predict(qgam(log(deaths+1) ~ s(log(BaseDam2014)), qu=.648,
                         data=hurric[-56,]))
 hat40.9 <- predict(qgam(log(deaths+1) ~ s(log(BaseDam2014)), qu=.409,
                         data=hurric[-56,]))
-```
 
-```{r 5_15, echo=FALSE, fig.width=5, fig.height=4.5, left=-1.5,top=1,right=2, ps=10, fig.show='hold',warning=FALSE, message=FALSE, out.width="48.5%"}
+## 5_15
 xvar <- log(hurric$BaseDam2014)[-56]
 plot(log(deaths+1) ~ log(BaseDam2014), data=hurric, xaxt="n", yaxt="n",
   cex=4, pch=".", fg="gray", col=adjustcolor("black",alpha.f=0.65),
@@ -652,47 +486,36 @@ mtext(side=3, "A: Deaths vs damage", line=0.5, cex=1.15, adj=0)
 qqnorm(zres, main="", fg="gray", cex=0.5,
   col=adjustcolor("black",alpha.f=0.65)); qqline(zres, col=2)
 mtext(side=3, "B: Q-Q plot", line=0.5, cex=1.15, adj=0)
-```
 
-```{r 5_15, eval=F}
-```
-
-```{r E4_4h}
+## E4_4h
 ## a) Fitted and empirical centiles from hurrNB.gamlss
 pc <- t(centiles.split(hurrNB.gamlss, xvar=log(hurric$BaseDam2014)[-56],
    cent=c(5,10,25,50,75,90,95), xcut.points=log(c(150, 1500)),
    plot=FALSE))
 rownames(pc) <- c("up to 150M", "150M to 1500M", "above 1500M")
 round(pc,2)
-```
 
-```{r E4_4i, results="hide"}
+## E4_4i
 hurrP.gamlss <- gamlss(car::yjPower(deaths, -0.2) ~ log(BaseDam2014), data=hurric)
-```
 
-```{r E4_4j, message=FALSE,warning=FALSE}
+## E4_4j
 ## Fitted and empirical centiles from hurrP.gamlss
 pc <- t(centiles.split(hurrP.gamlss, xvar=log(hurric$BaseDam2014),
 cent=c(5,10,25,50,75,90,95),
 xcut.points=log(c(150, 1500)), plot=FALSE))
 rownames(pc) <- c("up to 150M", "150M to 1500M", "above 1500M")
 round(pc,2)
-```
 
-```{r E4_4k, echo=FALSE}
+## E4_4k
 detach(package:gamlss)
-```
 
-### Section 5.5 Fitting smooths
-#### Subsection 5.5.1: Handedness of first-class cricketers in the UK
-
-```{r table-left-rt}
+## table-left-rt
 tab <- with(DAAG::cricketer, table(left,dead))
 colnames(tab) <- c('live','dead')
 tab <- cbind(addmargins(tab, margin=2), prop.table(tab, margin=1))
 tab
-```
-```{r 5_16, echo=FALSE, fig.width=4.5, fig.height=3.5, top=2.5, warning=FALSE, mgp=c(2.5,0.5,0), fig.show="hold", wo='48.5%'}
+
+## 5_16
 library(mgcv)
 library(latticeExtra)
 DAAG::cricketer |> dplyr::count(year, left, name="Freq") -> handYear
@@ -721,25 +544,14 @@ gph2 <- xyplot(I(4.4*fit) ~ year, data=subset(handYear, hand=="left"),
                type="l", lty=2, lwd=2, col=col2[2])
 update(gph+as.layer(gph1)+as.layer(gph2), par.settings=DAAG::DAAGtheme(color=TRUE),
        scales=list(cex=1.2))
-```
 
-```{r 5_16, eval=F}
-```
-
-### Section 5.6 Additional notes on generalized linear models
-#### Subsection 5.6.1:  Residuals, and estimating the dispersion
-#####         Other choices of link function for binomial models
-#####             Quasi models --- estimating the dispersion
-#### Subsection 5.6.2: Standard errors and $z$- or $t$-statistics for binomial models
-
-```{r E6_2a}
+## E6_2a
 fac <- factor(LETTERS[1:4])
 p <- c(73, 30, 11, 2)/500
 n <- rep(500,4)
 round(signif(coef(summary(glm(p ~ fac, family=binomial, weights=n))), 6), 6)
-```
 
-```{r 5_17, fig.width=4.5, fig.height=4.0, left=-1, top=2, ps=9, tcl=-0.35, echo=FALSE, out.width="50%", warning=FALSE}
+## 5_17
 p <- c(0.001,0.002,(1:99)/100,0.998,0.999)
 for(i in 1:3){
 link <- c("logit", "probit", "cloglog")[i]
@@ -767,14 +579,8 @@ axis(2, at=c(0,.01,.02,.03), cex.axis=.7, lwd=0, lwd.ticks=1)
 legend("topleft", lty=c(1,2,1),
 legend=c("logit link", "probit link", "cloglog link"),
 col=c("black","black","gray"), bty="n", cex=0.8)
-```
 
-```{r 5_17, eval=F}
-```
-
-### Section 5.7 Models with an ordered categorical or categorical response
-
-```{r E7_1a, results="hide", message=FALSE}
+## E7_1a
 library(VGAM)
 inhaler <-  data.frame(freq=c(99,76,41,55,2,13),
   choice=rep(c("inh1","inh2"), 3),
@@ -783,50 +589,39 @@ inhaler1.vglm <-  vglm(ease ~ 1, weights=freq, data=inhaler,
   cumulative(link="logitlink"), subset=inhaler$choice=="inh1")
 inhaler2.vglm <-  vglm(ease ~ 1, weights=freq, data=inhaler,
   cumulative(link="logitlink"), subset=inhaler$choice=="inh2")
-```
 
-```{r E7_1b}
+## E7_1b
 ## Inhaler 1
 round(coef(summary(inhaler1.vglm)),3)
 ## Inhaler 2
 round(coef(summary(inhaler2.vglm)),3)
-```
 
-```{r E7_1c}
+## E7_1c
 inhaler.vglm <-  vglm(ease ~ choice, weights=freq, data=inhaler,
 cumulative(link="logitlink", parallel=FALSE))
 round(coef(summary(inhaler.vglm)),3)
-```
 
-```{r E7_1d}
+## E7_1d
 inhalerP.vglm <-  vglm(ease ~ choice, weights=freq, data=inhaler,
 cumulative(link="logitlink", parallel=TRUE))
 round(coef(summary(inhalerP.vglm)),3)
-```
 
-```{r E7_1e}
+## E7_1e
 pred <- predict(inhalerP.vglm, se.fit=TRUE, newdata=inhaler[1:2,])
 colnames(pred$se.fit) <- paste("SE", colnames(pred$se.fit))
 fitvals <- with(pred, cbind(fitted.values, se.fit))
 colnames(fitvals) <- gsub('link', '', colnames(fitvals))
 round(fitvals, 2)
-```
 
-```{r E7_1f}
+## E7_1f
 d <- deviance(inhalerP.vglm) - deviance(inhaler.vglm)
 ## Refer to chi-squared distribution with 1 degree of freedom
 c(Difference=d, "p-Value"=pchisq(3.416, df=1, lower.tail=FALSE))
-```
 
-#### Subsection 5.7.2:  Loglinear Models
-
-### Section 5.8 Survival analysis
-
-```{r E8a}
+## E8a
 suppressMessages(library(survival))
-```
 
-```{r 5_18, fig.width=6, fig.height=5, bot=1, top=3.5, ps=8, echo=FALSE, lwd=0.75, out.width="50%"}
+## 5_18
 df <- data.frame(x0 = c(1, 5, 1, 2, 14, 10, 12, 19)*30,
 x1 = c(46, 58, 85, 67, 17, 85, 18, 42)*30,
 fail = c(1, 0, 0, 1, 1, 0, 0, 1))
@@ -863,24 +658,16 @@ par(xpd=TRUE)
 legend(0, 11.5, pch = 16, legend = "Entry", y.intersp=0.15)
 legend(1230, 11.5, pch = c(15, 0),
 legend = c("Dead", "Censored"), ncol=2, y.intersp=0.15)
-```
 
-```{r 5_18, eval=F}
-```
-
-#### Subsection 5.8.1: Analysis of the Aids2 data
-
-```{r E8_1a, echo=TRUE}
+## E8_1a
 str(MASS::Aids2, vec.len=2)
-```
 
-```{r E8_1b}
+## E8_1b
 bloodAids <- subset(MASS::Aids2, T.categ=="blood")
 bloodAids$days <- bloodAids$death-bloodAids$diag
 bloodAids$dead <- as.integer(bloodAids$status=="D")
-```
 
-```{r 5_19, w=3.5, h=2.75, left=-1, ps=10, tcl=-0.35, echo=FALSE, out.width="45%"}
+## 5_19
 bloodAids <- subset(MASS::Aids2, T.categ=="blood")
 bloodAids$days <- bloodAids$death-bloodAids$diag
 bloodAids$dead <- as.integer(bloodAids$status=="D")
@@ -889,20 +676,15 @@ plot(survfit(Surv(days, dead) ~ sex, data=bloodAids),
      xlab="Days from diagnosis", ylab="Survival probability")
 legend("top", legend=levels(bloodAids$sex), lty=c(1,1),
        col=c(2,4), horiz=TRUE, bty="n")
-```
 
-```{r 5_19, eval=F}
-```
-
-```{r E8_2a}
+## E8_2a
 ## Pattern of censoring for male homosexuals
 hsaids <- subset(MASS::Aids2, sex=="M" & T.categ=="hs")
 hsaids$days <- hsaids$death-hsaids$diag
 hsaids$dead <- as.integer(hsaids$status=="D")
 table(hsaids$status,hsaids$death==11504)
-```
 
-```{r 5_20, w=3.5, h=3, left=-1, ps=10, tcl=-0.35, echo=FALSE, out.width="42%"}
+## 5_20
 hsaids <- subset(MASS::Aids2, sex=="M" & T.categ=="hs")
 hsaids$days <- hsaids$death-hsaids$diag
 hsaids$dead <- as.integer(hsaids$status=="D")
@@ -933,41 +715,27 @@ text(mean(xval[1:2])+650, hat[2]+0.2-0.5*chh,
 paste(round(diff(xval[1:2]))), col="gray20", cex=0.75)
 text(xval[1]+650-0.5*chw, mean(hat[1:2]+0.2), paste(round(hat[1]-hat[2],3)),
 srt=90, adj=0.5, col="gray20", cex=0.75)
-```
 
-```{r 5_20, eval=F}
-```
-
-#### Subsection 5.8.4: Hazard rates
-#### Subsection 5.8.5: The Cox proportional hazards model
-
-```{r E8_5a}
+## E8_5a
 bloodAids.coxph <- coxph(Surv(days, dead) ~ sex, data=bloodAids)
 print(summary(bloodAids.coxph), digits=6)
-```
 
-```{r E8_5b, eval=FALSE, echo=TRUE}
+## E8_5b
 ## Add `age` as explanatory variable
 bloodAids.coxph1 <- coxph(Surv(days, dead) ~ sex+age, data=bloodAids)
-```
 
-```{r 5_21, fig.width=5, fig.height=4.5, left=-1, ps=10, tcl=-0.35, echo=FALSE, out.width="50%"}
+## 5_21
 bloodAids <- subset(MASS::Aids2,T.categ=="blood")
 bloodAids <- within(bloodAids, {days <- death-diag
 dead <- as.integer(status=="D")})
 bloodAids.coxph <- coxph(Surv(days, dead) ~ sex, data = bloodAids)
 plot(cox.zph(bloodAids.coxph), cex=0.75, bty="n")
 box(col="gray")
-```
 
-```{r 5_21, eval=F}
-```
-
-```{r E8_5d}
+## E8_5d
 cox.zph(bloodAids.coxph)
-```
 
-```{r E8_6a}
+## E8_6a
 cricketer <- DAAG::cricketer
 kia4.coxph <- coxph(Surv(life, kia) ~ left/poly(year,4),
                     data = cricketer, model=T)
@@ -976,23 +744,12 @@ kia6.coxph <- update(kia4.coxph, . ~ left/poly(year,6),
 # Type `plot(cox.zph(kia6.coxph)` to plot the two graphs
 # Perhaps check also `AIC(kia4.coxph, kia6.coxph)`
 cox.zph(kia6.coxph)
-```
 
-```{r 5_22, w=3.85, h=2.4, left=-1, ps=10, tcl=-0.35, echo=FALSE, out.width="48%"}
+## 5_22
 plot(cox.zph(kia6.coxph), cex=0.75, bty="n")
 box(col="gray")
-```
 
-```{r 5_22, eval=F}
-```
-
-### Section 5.9: Transformations for proportions and counts
-
-### Section 5.10: Further reading
-
-Exercises (5.11)
-
-```{r E11a}
+## E11a
 inhibition <- rbind(
 conc =c(0.1,0.5, 1,10,20,30,50,70,80,100,150),
 no  = c(7,  1, 10, 9, 2, 9, 13, 1, 1,  4,  3),
@@ -1000,12 +757,10 @@ yes = c(0,  0, 3, 4, 0, 6, 7, 0, 0,  1,  7)
 )
 colnames(inhibition) <- rep("", ncol(inhibition))
 inhibition
-```
 
-```{r, eval=T}
+## unnamed-chunk-1
 if(file.exists("/Users/johnm1/pkgs/PGRcode/inst/doc/")){
 code <- knitr::knit_code$get()
 txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n'))
 writeLines(txt, con="/Users/johnm1/pkgs/PGRcode/inst/doc/ch5.R")
 }
-```

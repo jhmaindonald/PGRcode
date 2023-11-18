@@ -959,11 +959,12 @@ package<a class="anchor" aria-label="anchor" href="#subsection-2-9-3-bayesian-re
 <span>          par.strip.text<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>cex<span class="op">=</span><span class="fl">0.65</span><span class="op">)</span>, auto.key<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>columns<span class="op">=</span><span class="fl">2</span><span class="op">)</span>,</span>
 <span>          scales<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>x<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>relation<span class="op">=</span><span class="st">"free"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<!-- ```{r eval=T} -->
-<!-- code <- knitr::knit_code$get() -->
-<!-- txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n')) -->
-<!-- writeLines(txt, con="../inst/doc/ch2.R") -->
-<!-- ``` -->
+<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.exists</a></span><span class="op">(</span><span class="st">"/Users/johnm1/pkgs/PGRcode/inst/doc/"</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span><span class="va">code</span> <span class="op">&lt;-</span> <span class="fu">knitr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/knitr/man/knit_code.html" class="external-link">knit_code</a></span><span class="op">$</span><span class="fu">get</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">txt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"\n## "</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">code</span><span class="op">)</span>,<span class="st">"\n"</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">code</span>, <span class="va">paste</span>, collapse<span class="op">=</span><span class="st">'\n'</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="va">txt</span>, con<span class="op">=</span><span class="st">"/Users/johnm1/pkgs/PGRcode/inst/doc/ch2.R"</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

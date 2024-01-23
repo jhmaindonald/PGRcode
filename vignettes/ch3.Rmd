@@ -275,16 +275,15 @@ par(oldpar)
 ```{r C2_5d}
 lob3.lm <- lm(log(weight) ~ log(thick)+log(breadth)+log(height),
               data=oddbooks)
-coef(summary(lob3.lm))
-drop1(lob3.lm)           # Compare all three leave one out models
+# coef(summary(lob3.lm))
 ```
 
-```{r C2_5e}
+```{r C2_5e, results='markup'}
 lob2.lm <- lm(log(weight) ~ log(thick)+log(breadth), data=oddbooks)
 coef(summary(lob2.lm))
 ```
 
-```{r C2_5f}
+```{r C2_5f, results='markup'}
 lob0.lm <- lm(log(weight) ~ 1, data=oddbooks)
 add1(lob0.lm, scope=~log(breadth) + log(thick) + log(height))
 lob1.lm <- update(lob0.lm, formula=. ~ .+log(breadth))

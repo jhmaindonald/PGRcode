@@ -192,8 +192,7 @@ par(oldpar)
 ## C2_5d
 lob3.lm <- lm(log(weight) ~ log(thick)+log(breadth)+log(height),
               data=oddbooks)
-coef(summary(lob3.lm))
-drop1(lob3.lm)           # Compare all three leave one out models
+# coef(summary(lob3.lm))
 
 ## C2_5e
 lob2.lm <- lm(log(weight) ~ log(thick)+log(breadth), data=oddbooks)

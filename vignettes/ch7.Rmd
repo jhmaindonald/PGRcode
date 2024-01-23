@@ -695,7 +695,7 @@ nam
 ```{r G6_3b, echo=-3}
 LTbb.cll <- qra::extractLT(p=0.99, obj=HCbb.cll, link="cloglog",
                         a=1:8, b=9:16, eps=0, df.t=NULL)[,-2]
-rownames(LTbb.cll) <- shorten(rownames(LTbb.cll))
+rownames(LTbb.cll) <- gsub("trtGp|Fly|:", '', rownames(LTbb.cll), perl=T)
 ```
 
 ```{r G6_3c}

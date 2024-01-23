@@ -518,7 +518,7 @@ nam
 ## G6_3b
 LTbb.cll <- qra::extractLT(p=0.99, obj=HCbb.cll, link="cloglog",
                         a=1:8, b=9:16, eps=0, df.t=NULL)[,-2]
-rownames(LTbb.cll) <- shorten(rownames(LTbb.cll))
+rownames(LTbb.cll) <- gsub("trtGp|Fly|:", '', rownames(LTbb.cll), perl=T)
 
 ## G6_3c
 LTbb.logit <- qra::extractLT(p=0.99, obj=HCbb.logit, link="logit",

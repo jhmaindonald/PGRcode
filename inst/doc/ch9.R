@@ -1010,10 +1010,6 @@ ggplot2::quickplot(twoD[,1], twoD[,2], color=Vehicle$Class,
 
 ## I7e
 library(ape); library(MASS)
-webpage <-
-"http://evolution.genetics.washington.edu/book/primates.dna"
-primates.dna <- read.dna(webpage)
-# Alternatively, work with primateDNA from the DAAGbio package
 library(DAAGbio)
 primates.dna <- as.DNAbin(primateDNA)
 primates.dist <- dist.dna(primates.dna, model="K80")
@@ -1039,6 +1035,36 @@ pacific.cmd <- cmdscale(pacific.dist)
 pacific.sam <- sammon(pacific.dist)
 
 ## unnamed-chunk-2
+Wine <- setNames(cbind(stack(wine, select=2:14), rep(wine[,-1], 13)),
+                 c("value", "measure", "Class"))
+bwplot(measure ~ value, data=Wine)
+
+## unnamed-chunk-3
+wine.pr <- prcomp(wine[,-1], scale=TRUE)
+round(wine.pr$sdev,2)
+t(round(wine.pr$rotation[,1:2],2))
+scores <- as.data.frame(cbind(predict(wine.pr), Class=wine[,1]))
+xyplot(PC2 ~ PC1, groups=Class, data=scores, aspect='iso', 
+       par.settings=simpleTheme(pch=16), auto.key=list(columns=3))
+
+## unnamed-chunk-4
+library(MASS)
+wine.lda <- lda(Class ~ ., data=wine)
+wineCV.lda <- lda(Class ~ ., data=wine, CV=T)
+t(round(wine.lda$scaling,2))
+tab <- table(wine$Class, wineCV.lda$class, 
+             dnn=c('Actual', 'Predicted'))   
+tab
+setNames(round(1-sum(diag(tab))/sum(tab),4), "CV error rate")
+scores <- as.data.frame(cbind(predict(wine.lda)$x, Class=wine[,1]))
+xyplot(LD2 ~ LD1, groups=Class, data=scores, aspect='iso', 
+       par.settings=simpleTheme(pch=16), auto.key=list(columns=3))
+
+## unnamed-chunk-5
+wine$Class <- factor(Wine$Class)
+wine.rf <- randomForest(x=wine[,-1], y=wine$Class)
+
+## unnamed-chunk-6
 if(file.exists("/Users/johnm1/pkgs/PGRcode/inst/doc/")){
 code <- knitr::knit_code$get()
 txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n'))

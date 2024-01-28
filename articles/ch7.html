@@ -982,6 +982,7 @@ models<a class="anchor" aria-label="anchor" href="#subsection-7-9-3-an-historica
 <div class="section level3">
 <h3 id="exercises-7-12">Exercises (7.12)<a class="anchor" aria-label="anchor" href="#exercises-7-12"></a>
 </h3>
+<p>7.1</p>
 <div class="sourceCode" id="cb82"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">n.omit</span> <span class="op">&lt;-</span> <span class="fl">2</span></span>
 <span><span class="va">take</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="fl">48</span><span class="op">)</span></span>
@@ -990,6 +991,7 @@ models<a class="anchor" aria-label="anchor" href="#subsection-7-9-3-an-historica
 <span>                       data <span class="op">=</span> <span class="va">kiwishade</span>,subset<span class="op">=</span><span class="va">take</span><span class="op">)</span></span>
 <span><span class="va">vcov</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/nlme/man/VarCorr.html" class="external-link">VarCorr</a></span><span class="op">(</span><span class="va">kiwishade.lmer</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">vcov</span>, comp<span class="op">=</span><span class="st">"Variance"</span><span class="op">)</span></span></code></pre></div>
+<p>7.6</p>
 <div class="sourceCode" id="cb83"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cult.lmer</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lme4/man/lmer.html" class="external-link">lmer</a></span><span class="op">(</span><span class="va">ct</span> <span class="op">~</span> <span class="va">Cultivar</span> <span class="op">+</span> <span class="va">Dose</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">year</span><span class="op">)</span> <span class="op">+</span></span>
 <span>                       <span class="op">(</span><span class="op">-</span><span class="fl">1</span> <span class="op">+</span> <span class="va">Dose</span> <span class="op">|</span> <span class="va">gp</span><span class="op">)</span>, data <span class="op">=</span> <span class="fu">DAAG</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/DAAG/man/sorption.html" class="external-link">sorption</a></span>, REML<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>

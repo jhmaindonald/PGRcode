@@ -1,5 +1,5 @@
 ---
-title: '"A Practical Guide ..." -- Style and Content'
+title: 'ç'
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Practical Guide Style And Content}
@@ -11,10 +11,11 @@ vignette: >
 options(rmarkdown.html_vignette.check_title = FALSE)
 ```
 
-This new text, which should appear in May 2024, is a
-derivative of the "Data Analysis and Graphics Using R" text
-(Maindonald and Braun, CUP, 3rd edn, 2010.)  The following is a
-summary of changes in content, style, and emphasis.
+
+The text is a derivative of the "Data Analysis and Graphics Using R" 
+text (Maindonald and Braun, CUP, 3rd edn, 2010.)  The notes that
+now follow comment on the style and content of the new text, noting 
+changes from the earlier text in content, style, and emphasis.  
 
 1. The R tutorial content has been replaced by a brief introductory
 overview, included as an appendix.  For more detail, readers are

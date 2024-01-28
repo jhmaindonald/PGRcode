@@ -1,12 +1,12 @@
 # Code and Other Resources for "A Practical Guide to Data Analysis Using R"
 
 This website makes available code and other supplementary content 
-that relates to the new Cambridge University Press text  
+that relates to the new Cambridge University Press text, due to
+appear in print in May or June 2024.
 
 "A Practical Guide to Data Analysis Using R -- An Example-Based Approach",  
 by John H Maindonald, W John Braun, and Jeffrey L Andrews.   
 
-Copy-editing is currently in progress, with publication due in May 2024.
 The new text builds on "Data Analysis and Graphics Using R" (Maindonald 
 and Braun, CUP, 3rd edn, 2010.)
 
@@ -14,7 +14,8 @@ and Braun, CUP, 3rd edn, 2010.)
   [![R-CMD-check](https://github.com/jhmaindonald/PGRcode/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/jhmaindonald/PGRcode/actions/workflows/R-CMD-check.yaml)
   <!-- badges: end -->
 
-To install the package, do 
+To install the package that holds the files from the website,
+proceed thus:
 ```
 ## If necessary, first install the 'remotes' package
 if(!require("remotes"))install.packages("remotes")

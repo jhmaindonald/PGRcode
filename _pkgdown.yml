@@ -2,4 +2,49 @@ url: https://jhmaindonald.github.io/PGRcode/
 template:
   bootstrap: 5
   bootswatch: materia
+navbar:
+  structure:
+    left:
+    - intro
+    - tutorials
+    - news
+    right: articles
+  components:
+    intro:
+      text: Website overview
+      menu:
+      - text: A Practical Guide -- the Book
+      - href: articles/PGRcode.html
+      - text: A Practical Guide -- Style and Content
+      - href: articles/PGoverview.html
+      - text: Use of Code Files
+      - href: articles/UsingCode.html
+    articles:
+      text: Code files and their use
+      menu:
+      - text: 'Chapter 1: Learning from data . . .'
+        href: articles/ch1.html
+      - text: 'Chapter 2: Generalizing from models'
+        href: articles/ch2.html
+      - text: 'Chapter 3: Multiple linear regression'
+        href: articles/ch3.html
+      - text: 'Chapter 4: Exploiting the linear model framework'
+        href: articles/ch4.html
+      - text: 'Chapter 5: Generalized linear models and survival analysis'
+        href: articles/ch5.html
+      - text: 'Chapter 6: Time series models'
+        href: articles/ch6.html
+      - text: 'Chapter 7: Multilevel models, and repeated measures'
+        href: articles/ch7.html
+      - text: 'Chapter 8: Tree-based Classification and Regression'
+        href: articles/ch8.html
+      - text: 'Chapter 9: Multivariate data exploration and discrimination'
+        href: articles/ch9.html
+      - text: 'Appendix A: The R System – A Brief Overview'
+        href: articles/Appendix.html
+      - text: Code for Selected Figures
+        href: articles/figFuns.html
+      - text: Create static html files for posting to GitHub
+        href: articles/GITready.html
+
 

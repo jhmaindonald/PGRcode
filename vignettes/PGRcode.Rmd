@@ -1,0 +1,70 @@
+---
+title: "PGRcode"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{PGRcode}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+suppressPackageStartupMessages(library(PGRcode))
+```
+
+This website is designed  to make available code and other
+supplementary materials for a new Cambridge University Press text,
+due to appear in print in May or June 2024.
+
+"A Practical Guide to Data Analysis Using R -- An Example-Based Approach",  
+by John H Maindonald, W John Braun, and Jeffrey L Andrews.   
+
+Chapter and appendix headings are:
+
+* Chapter 1: Learning from data, and tools for the task
+* Chapter 2: Generalizing from models
+* Chapter 3: Multiple linear regression
+* Chapter 4: Exploiting the linear model framework
+* Chapter 5: Generalized linear models and survival analysis
+* Chapter 6: Time series models
+* Chapter 7: Multilevel models, and repeated measures
+* Chapter 8: Tree-based Classification and Regression
+* Chapter 9: Multivariate data exploration and discrimination
+* Appendix A: The R System – A Brief Overview
+
+Major changes from the earlier text are 
+
+* There is much more limited tutorial content on R syntax and semantics 
+(readers are encouraged to refer to the wealth of online material.)
+* There is more critical attention to $p$-values
+* The use of Bayes Factors, contrasting them with $p$-values for the
+different and complementary perspective that they provide.
+* Ihere is greater attention to effect size issues.
+* There is extended commentary on the insights that
+replicability/reproducability studies provide.
+* Simulation and resampling approaches get more extended use -- as
+sources of insight, as devices for building intuition, and as mechanisms
+for obtaining sampling distributions when theoretical results are not
+available.
+* There is new content on quantile regression with automatic
+choice of smoothing parameter, and on fitting monotonic increasing or
+decreasing response curves as specific forms as shape constrained
+additive response.
+* The treatment of models that allow for extra-binomial or
+extra-Poisson variation has been substantially extended.
+* Exponential time series (ETS) get greater attention, especially for
+their use in forecasting.  Modeling of seasonal terms now gets
+attention.
+* A new section treats hierarchical and other forms of clustering.
+* The treatment of causal inference from observational data has been
+greatly extended.
+* There is some limited attention to the use of multiple imputation to
+fill in missing values in data where some observations are incomplete.
+
+More detailed commentary is provided in "A Practical Guide -- Style and Content".

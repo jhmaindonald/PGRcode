@@ -47,6 +47,7 @@ if(!dir.exists('inst'))dir.create("~/pkgs/PGRcode/inst")
 if(!dir.exists('inst/doc'))dir.create("~/pkgs/PGRcode/inst/doc") 
 ## On installation, files in 'inst/doc/' are copied to 'doc/'
 file.copy(dir("vignettes", full.names=TRUE), "inst/doc/", overwrite=TRUE)
+## If nothing happens, first do `dir("vignettes", full.names=TRUE)`
 ## For an individual file, go e.g., for GITready.Rmd
 ## tools::buildVignette('~/pkgs/PGRcode/vignettes/GITready.Rmd',
 ##                      dir =  "inst/doc", tangle=F)

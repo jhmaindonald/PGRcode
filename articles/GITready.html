@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PGRcode</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5-7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.6-1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -110,6 +110,7 @@ the commenting out for code that is not executed when
 <span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.exists</a></span><span class="op">(</span><span class="st">'inst/doc'</span><span class="op">)</span><span class="op">)</span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="st">"~/pkgs/PGRcode/inst/doc"</span><span class="op">)</span> </span>
 <span><span class="co">## On installation, files in 'inst/doc/' are copied to 'doc/'</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.copy</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">dir</a></span><span class="op">(</span><span class="st">"vignettes"</span>, full.names<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>, <span class="st">"inst/doc/"</span>, overwrite<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">## If nothing happens, first do `dir("vignettes", full.names=TRUE)`</span></span>
 <span><span class="co">## For an individual file, go e.g., for GITready.Rmd</span></span>
 <span><span class="co">## tools::buildVignette('~/pkgs/PGRcode/vignettes/GITready.Rmd',</span></span>
 <span><span class="co">##                      dir =  "inst/doc", tangle=F)</span></span></code></pre></div>

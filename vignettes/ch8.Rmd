@@ -385,13 +385,15 @@ for(i in 1:100)acctree.mat[i,] <- DAAG::compareTreecalcs(data=spam7,
 ### Section 8.6: Further reading and extensions
 
 ### Exercises (8.7)
+
+8.5
 ```{r H7a}
 sapply(MASS::biopsy, function(x)sum(is.na(x)))   ## Will omit rows with NAs
 biops <- na.omit(MASS::biopsy)[,-1]               ## Omit also column 1 (IDs)
 ## Examine list element names in randomForest object
 names(randomForest(class ~ ., data=biops))
 ```
-
+8.5a
 ```{r H7b}
 ## Repeated runs, note variation in OOB accuracy.
 for(i in 1:10) {
@@ -401,7 +403,7 @@ for(i in 1:10) {
   print(round(biops.rf$confusion,4))
 }
 ```
-
+8.5b
 ```{r H7c}
 ## Repeated train/test splits: OOB accuracy vs test set accuracy.
 for(i in 1:10){
@@ -413,18 +415,18 @@ for(i in 1:10){
 print(round(c(oobErr,testErr),4))
 }
 ```
-
+8.5c
 ```{r H7d}
 randomForest(class ~ ., data=biops, xtest=biops[,-10], ytest=biops[,10])
 ```
-
+8.7
 ```{r H7e}
 ## Run model on total data
 randomForest(as.factor(type) ~ ., data=Pima.tr)
 rowsamp <- sample(dim(Pima.tr)[1], replace=TRUE)
 randomForest(as.factor(type) ~ ., data=Pima.tr[rowsamp, ])
 ```
-
+8.8a
 ```{r H7f}
 d500 <- ggplot2::diamonds[sample(1:nrow(ggplot2::diamonds), 500),]
 unlist(sapply(d500, class))  # Check the class of the 10 columns
@@ -433,7 +435,7 @@ car::spm(d500)       # If screen space is limited do two plots, thus:
 plot(density(d500[, "price", drop = T]))         # Distribution is highly skew
 MASS::boxcox(price~., data=ggplot2::diamonds)  # Suggests log transformation
 ```
-
+8.8b
 ```{r H7g}
 diamonds <- ggplot2::diamonds; Y <- diamonds[,"price", drop=T]
 library(rpart)
@@ -452,7 +454,7 @@ rbind("d.rpart"=d.rpart[['variable.importance']],
       "dOpt.rpart"=dOpt.rpart[['variable.importance']]) |>
   (\(x)100*apply(x,1,function(x)x/sum(x)))() |> round(1) |> t()
 ```
-
+8.9
 ```{r H7i}
 Y <- ggplot2::diamonds[,"price", drop=T]
 samp5K <- sample(1:nrow(diamonds), size=5000)
@@ -465,7 +467,7 @@ samp5K <- sample(1:nrow(diamonds), size=5000)
 sort(importance(diamond5K.rf)[,1], decreasing=T) |> 
   (\(x)100*x/sum(x))() |> round(1) |> t()
 ```
-
+8.9a
 ```{r H7k}
 (diamond5KU.rf <- randomForest(x=diamonds[samp5K,-7], y=Y[samp5K],
                    xtest=diamonds[-samp5K,-7], ytest=Y[-samp5K]))

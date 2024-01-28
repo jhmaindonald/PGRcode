@@ -621,7 +621,7 @@ layout(mat, widths=rep(c(2,1.1),3), heights=rep(0.9,8))
   # NB: widths & heights are relative
 plot(roller.mcmc, auto.layout=FALSE, ask=FALSE, col="gray", fg="gray")
 
-## B12_22
+## B12_2
 ## UCBAdmissions is in the datasets package
 ## For each combination of margins 1 and 2, calculate the sum
 UCBtotal <- apply(UCBAdmissions, c(1,2), sum)

@@ -38,12 +38,15 @@ Rebuild just the home page and the CSS by running `build_home_index(); init_site
 
 ## Setup so that download from GitHub makes vignettes available
 
+Individual vignettes include code that extracts the R code,
+without the commenting out for code that is not executed
+when `tools::buildVignettes()` is executed with `tangle=TRUE`.
 ```{r exampleCode, eval=F}
-tools::buildVignettes(dir = ".", tangle=FALSE)
+tools::buildVignettes(dir = "~/pkgs/PGRcode/", tangle=FALSE)
 if(!dir.exists('inst'))dir.create("~/pkgs/PGRcode/inst")   
 if(!dir.exists('inst/doc'))dir.create("~/pkgs/PGRcode/inst/doc") 
 ## On installation, files in 'inst/doc/' are copied to 'doc/'
-file.copy(dir("vignettes", full.names=TRUE), "inst/doc", overwrite=TRUE)
+file.copy(dir("vignettes", full.names=TRUE), "inst/doc/", overwrite=TRUE)
 ## For an individual file, go e.g., for GITready.Rmd
 ## tools::buildVignette('~/pkgs/PGRcode/vignettes/GITready.Rmd',
 ##                      dir =  "inst/doc", tangle=F)

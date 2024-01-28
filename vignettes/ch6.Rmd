@@ -547,16 +547,18 @@ garch(x, order = c(0, 1), trace=FALSE)
 #####               Other time series models and packages
 
 ### Section 6.4: Exercises
+
+6.4
 ```{r F7b, eval=FALSE}
 xx <- matrix(x, ncol=1000)
 ```
-
+6.7
 ```{r F7c, eval=FALSE}
 library(tseries)
 data(ice.river)
 river1 <- diff(log(ice.river[, 1]))
 ```
-
+6.9
 ```{r F7d}
 library(forecast)
 Eu1 <- window(EuStockMarkets[,1], end = c(1996, 260))
@@ -565,7 +567,7 @@ Eu1f <- forecast(Eu1nn, end=end(EuStockMarkets[,1]))
 plot(Eu1f, ylim=c(1400, 7000))
 lines(EuStockMarkets[,1])
 ```
-
+6.10a
 ```{r F7e}
 airq <- cbind(airquality[, 1:4], day=1:nrow(airquality))
   # Column 5 ('day' starting May 1) replaces columns 'Month' & 'Day')
@@ -575,7 +577,7 @@ tempAR1.gamm <- gamm(Temp~s(day), data=airq, correlation=corAR1())
 plot(temp.gam, res=T, cex=2)
 plot(tempAR1.gamm$gam, res=T, cex=2)
 ``` 
-
+6.10b
 ```{r F7f, eval=F}
 (Phi <- coef(tempAR1.gamm$lme$modelStruct$corStruct, unconstrained = FALSE) )
 Sigma <- sqrt(tempAR1.gamm$gam$sig2)

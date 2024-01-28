@@ -731,7 +731,6 @@ kiwishade.lmer <- lmer(yield ~ shade + (1|block) + (1|block:plot),
 vcov <- VarCorr(kiwishade.lmer)
 print(vcov, comp="Variance")
 
-
 ## G12b
 cult.lmer <- lmer(ct ~ Cultivar + Dose + factor(year) +
                        (-1 + Dose | gp), data = DAAG::sorption, REML=TRUE)

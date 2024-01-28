@@ -1202,8 +1202,8 @@ abline(0,1)
 effFun <- function(x,N)mean(x)/sd(x)   
   # Try: `labx <- ((-1):6)/2`; `at = log(labx)`; `v = log(labx)  
 ## NB also, Bayes Factors: Set `FUN=BFfun` in the call to `eff2stat()`
-BFfun <- function(x,N)BayesFactor::ttest.tstat(sqrt(N)*mean(x)/sd(x), n1=N, 
-                                               simple=T)
+BFfun <- function(x,N)BayesFactor::ttest.tstat(sqrt(N)*mean(x)/sd(x),
+                                               n1=N, simple=T)
   # A few very large Bayes Factors are likely to dominate the plots
 
 ## A10_27

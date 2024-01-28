@@ -1032,6 +1032,7 @@ signif(coef(summary(nihr.nls)),3)
 
 ## Exercises (3.11)
 
+3.1
 ```{r C11a}
 ## ## Set up factor that identifies the `have' cities
 cities <- DAAG::cities
@@ -1052,7 +1053,7 @@ print(gphB, split=c(2,1,2,1))
 cities.lm1 <- lm(POP1996 ~ have+POP1992, data=cities)
 cities.lm2 <- lm(log(POP1996) ~ have+log(POP1992), data=cities)
 ```
-
+3.8a
 ```{r C11d}
 nihills.lm <- lm(time ~ dist+climb, data=DAAG::nihills)
 nihillsX.lm <- lm(time ~ dist+climb+dist:climb, data=DAAG::nihills)
@@ -1060,12 +1061,12 @@ anova(nihills.lm, nihillsX.lm)   # Use `anova()` to make the comparison
 coef(summary(nihillsX.lm))       # Check coefficient for interaction term
 drop1(nihillsX.lm)
 ```
-
+3.11
 ```{r C11e}
 log(time) ~ log(dist) + log(climb)    ## lm model
 time ~ alpha*dist + beta*I(climb^2)   ## nls model
 ```
-
+3.13
 ```{r C11f}
 x1 <- runif(10)            # predictor which will be missing
 x2 <- rbinom(10, 1, 1-x1)
@@ -1076,7 +1077,7 @@ coef(y.lm)
 y.lm2 <- lm(y ~ x1 + factor(x2))   # correct model
 coef(y.lm2)
 ```
-
+3.16
 ```{r C11g, eval=xtras, w=6, h=2.7, mfrow=c(1,2), out.width="95%"}
 bomData <- DAAG::bomregions2021
 nraw.lqs <- MASS::lqs(northRain ~ SOI + CO2, data=bomData)
@@ -1084,7 +1085,7 @@ north.lqs <- MASS::lqs(I(northRain^(1/3)) ~ SOI + CO2, data=bomData)
 plot(residuals(nraw.lqs) ~ Year, data=bomData)
 plot(residuals(north.lqs) ~ Year, data=bomData)
 ```
-
+3.17f
 ```{r C11l, w=5, h=5, out.width="40%"}
 socpsych <- subset(DAAG::repPsych, Discipline=='Social')
 with(socpsych, scatter.smooth(T_r.R~T_r.O))

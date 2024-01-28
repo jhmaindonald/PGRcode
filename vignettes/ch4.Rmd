@@ -775,56 +775,78 @@ plot(wfitm10, resid=T, shift=mean(predict(wfitm10)),
 
 ### Exercises (4.7)
 
+4.2
 ```{r D7a1}
 roller.lm <- lm(depression~weight, data=DAAG::roller)
 roller.lm2 <- lm(depression~weight+I(weight^2), data=DAAG::roller)
 ```
-
+4.4
 ```{r D7a2, w=4, h=4, out.width="40%"}
 toycars <- DAAG::toycars
 lattice::xyplot(distance ~ angle, groups=factor(car), type=c('p','r'),
                 data=toycars, auto.key=list(columns=3))
 ```
-
+4.4a
 ```{r D7b1}
 parLines.lm <- lm(distance ~ 0+factor(car)+angle, data=toycars)
 sepLines.lm <- lm(distance ~ factor(car)/angle, data=toycars)
 ```
-
+4.4b
 ```{r D7b2}
 sepPol3.lm <- lm(distance ~ factor(car)/angle+poly(angle,3)[,2:3], data=toycars)
 ```
-
+4.4c
 ```{r D7b3}
 sapply(list(parLines.lm, sepLines.lm, sepPol3.lm), AICcmodavg::AICc)
 ```
-
+4.4e
 ```{r <<D7b4}
 setNames(sapply(list(parLines.lm, sepLines.lm, sepPol3.lm),
   function(x)summary(x)$adj.r.squared), c("parLines","sepLines","sepPol3"))
 ```
-
+4,7
 ```{r D7c}
 seedrates.lm <- lm(grain ~ rate + I(rate^2), data=seedrates)
 seedrates.pol <- lm(grain ~ poly(rate,2), data=seedrates)
 ```
-
+4.10a
 ```{r D7d1}
 geo.gam <- gam(thickness ~ s(distance), data=DAAG::geophones)
 ```
-
+4.11
 ```{r D7d2, w=6, h=2.7, mfrow=c(1,2), out.width="95%"}
 plot(DAAG::geophones$distance, acf(resid(geo.gam), lag.max=55)$acf)
 Box.test(resid(geo.gam), lag=10)
 Box.test(resid(geo.gam), lag=20)
 Box.test(resid(geo.gam), lag=20, type="Ljung")
 ```
-
+4.15
 ```{r D7e, w=4, h=4, out.width="40%"}
 library(mgcv)
 xy <- data.frame(x=1:200, y=arima.sim(list(ar=0.75), n=200))
 df.gam <- gam(y ~ s(x), data=xy)
 plot(df.gam, residuals=TRUE)
+```
+4.16
+```{r kiwiViz, eval=F}
+library(mgcViz)
+ohms.tpBIC <- gam(kohms ~ s(juice, bs="tp"), data=fruitohms, 
+                  gamma=log(nrow(fruitohms))/2, method="REML")
+ohms.gamViz <- mgcViz::getViz(ohms.tpBIC)   # Convert to a `gamViz` object              
+g1 <- plot(sm(ohms.gamViz, 1))  # Graphics object for term 1 (of 1)
+g1 + l_fitLine(colour = "red") + l_rug(mapping = aes(x=x, y=y), alpha = 0.4) +
+     l_ciLine(mul = 2, colour = "blue", linetype = 2) +  # Multiply SE by `mul`
+     l_points(shape = 19, size = 1, alpha = 0.5)
+```
+4.16a
+```{r kiwiViz-sim, eval=F}
+plot(sm(ohms.gamViz, 1), nsim = 20) + l_ciLine() + l_fitLine() + l_simLine()
+```
+4.16b
+```{r gasViz, eval=F}
+gam(Gas ~ Insul+s(Temp, by=Insul), data=whiteside) |> 
+   getViz() -> gas.gamViz
+plot(sm(gas.gamViz,1), nsim = 20) + l_ciLine() + l_fitLine() + l_simLine()
 ```
 
 ```{r, eval=T}

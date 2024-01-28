@@ -1256,6 +1256,8 @@ out <- micemd::overimpute(airq.imp)
 #####                        Multiple imputation
 
 ### Section 9.10: Exercises
+
+9.3
 ```{r I7a, eval=xtras}
 library(DAAG)
 oz::oz(sections=c(3:5, 11:16))
@@ -1265,7 +1267,7 @@ points(long, lat);
 text(long, lat, row.names(possumsites), pos=c(2,4,2,2,4,2,2))
 })
 ```
-
+9.7
 ```{r I7b}
 data(wine, package='gclus')
 mat <- with(wine, 
@@ -1273,7 +1275,7 @@ mat <- with(wine,
 colnames(mat) <- rownames(mat) <- 1:5
 print(mat)
 ```
-
+9.9a
 ```{r I7c, eval=xtras}
 `confusion` <-
 function(actual, predicted, digits=4){
@@ -1292,12 +1294,13 @@ randomForest::randomForest(Class ~ ., data=Vehicle, CV=TRUE)
 ```
 
 ```{r I7d, eval=xtras}
+## 9.9c
 Vehicle.lda <- MASS::lda(Class ~ ., data=Vehicle)
 twoD <- predict(Vehicle.lda)$x
 ggplot2::quickplot(twoD[,1], twoD[,2], color=Vehicle$Class,
                    geom=c("point","density2d"))
 ```
-
+9.10
 ```{r I7e, eval=xtras}
 library(ape); library(MASS)
 library(DAAGbio)
@@ -1313,7 +1316,7 @@ text(primates.cmd, labels=row.names(primates.cmd), pos=rtleft)
 d <- dist(primates.cmd)
 sum((d-primates.dist)^2)/sum(primates.dist^2)
 ```
-
+9.11
 ```{r I7g, eval=xtras}
 library(DAAG)
 pacific.dist <- dist(x = as.matrix(rockArt[-c(47,54,60,63,92),28:641]), 
@@ -1326,7 +1329,7 @@ table(apply(symmat, 2, function(x) sum(x<1)))
 pacific.cmd <- cmdscale(pacific.dist)
 pacific.sam <- sammon(pacific.dist)
 ```
-
+9.15
 ```{r eval=F}
 Wine <- setNames(cbind(stack(wine, select=2:14), rep(wine[,-1], 13)),
                  c("value", "measure", "Class"))

@@ -651,6 +651,24 @@ xy <- data.frame(x=1:200, y=arima.sim(list(ar=0.75), n=200))
 df.gam <- gam(y ~ s(x), data=xy)
 plot(df.gam, residuals=TRUE)
 
+## kiwiViz
+library(mgcViz)
+ohms.tpBIC <- gam(kohms ~ s(juice, bs="tp"), data=fruitohms, 
+                  gamma=log(nrow(fruitohms))/2, method="REML")
+ohms.gamViz <- mgcViz::getViz(ohms.tpBIC)   # Convert to a `gamViz` object              
+g1 <- plot(sm(ohms.gamViz, 1))  # Graphics object for term 1 (of 1)
+g1 + l_fitLine(colour = "red") + l_rug(mapping = aes(x=x, y=y), alpha = 0.4) +
+     l_ciLine(mul = 2, colour = "blue", linetype = 2) +  # Multiply SE by `mul`
+     l_points(shape = 19, size = 1, alpha = 0.5)
+
+## kiwiViz-sim
+plot(sm(ohms.gamViz, 1), nsim = 20) + l_ciLine() + l_fitLine() + l_simLine()
+
+## gasViz
+gam(Gas ~ Insul+s(Temp, by=Insul), data=whiteside) |> 
+   getViz() -> gas.gamViz
+plot(sm(gas.gamViz,1), nsim = 20) + l_ciLine() + l_fitLine() + l_simLine()
+
 ## unnamed-chunk-1
 if(file.exists("/Users/johnm1/pkgs/PGRcode/inst/doc/")){
 code <- knitr::knit_code$get()

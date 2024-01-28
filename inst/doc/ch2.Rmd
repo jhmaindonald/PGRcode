@@ -866,21 +866,22 @@ plot(roller.mcmc, auto.layout=FALSE, ask=FALSE, col="gray", fg="gray")
 
 ### Exercises (2.12)
 
-```{r B12_22}
+2.2
+```{r B12_2}
 ## UCBAdmissions is in the datasets package
 ## For each combination of margins 1 and 2, calculate the sum
 UCBtotal <- apply(UCBAdmissions, c(1,2), sum)
 ```
-
+2.2b
 ```{r B12_2b}
 apply(UCBAdmissions, 3, function(x)(x[1,1]*x[2,2])/(x[1,2]*x[2,1]))
 ```
-
+2.3
 ```{r B12_3AB}
 tabA <- array(c(30,30,10,10,15,5,30,10), dim=c(2,2,2))
 tabB <- array(c(30,30,20,10,10,5,20,25), dim=c(2,2,2))
 ```
-
+2.5
 ```{r B12_5}
 z.transform <- function(r) .5*log((1+r)/(1-r))
 z.inverse <- function(z) (exp(2*z)-1)/(exp(2*z)+1)
@@ -893,11 +894,11 @@ z.inverse(boot.ci(possum.boot, type="perc")$percent[4:5])
  # The 4th and 5th elements of the percent list element
  # hold the interval endpoints. See ?boot.ci
 ```
-
+2.11
 ```{r B12_11, fig.width=5, fig.height=4, out.width="40%"}
 with(pressure, MASS::boxcox(pressure ~ I(1/(temperature+273))))
 ```
-
+2.14
 ```{r B12_14}
 "funRel" <-
 function(x=leafshape$logpet, y=leafshape$loglen, scale=c(1,1)){
@@ -912,7 +913,7 @@ leafshape <- DAAG::leafshape
 funRel(scale=c(1,1))    # Take x and y errors as equally important
   # Note that all lines pass through (mean(x), mean(y))
 ```
-
+2.15
 ```{r B12_15}
 P <- rbind(
     c(1 , 0 , 0 , 0 , 0 , 0),
@@ -937,7 +938,7 @@ Markov <- function(N=15, initial.value=1, transition=P, stopval=NULL)
 }
  # Set `stopval=c(0,5)` to stop when  the player's fortune is $0 or $5
 ```
-
+2.16
 ```{r B12_16}
 Pb <- rbind(
   Sun = c(Sun=0.6, Cloud=0.2, Rain=0.2),
@@ -945,7 +946,7 @@ Pb <- rbind(
   Rain= c(0.4, 0.3, 0.3))
 Pb
 ```
-
+2.16b
 ```{r B12_16b}
 plotmarkov <-
   function(n=1000, width=101, start=0, transition=Pb, npanels=5){

@@ -975,6 +975,7 @@ orthdiff.lme$modelStruct$corStruct
 
 ### Exercises (7.12)
 
+7.1
 ```{r G12a}
 n.omit <- 2
 take <- rep(TRUE, 48)
@@ -983,9 +984,8 @@ kiwishade.lmer <- lmer(yield ~ shade + (1|block) + (1|block:plot),
                        data = kiwishade,subset=take)
 vcov <- VarCorr(kiwishade.lmer)
 print(vcov, comp="Variance")
-
 ```
-
+7.6
 ```{r G12b}
 cult.lmer <- lmer(ct ~ Cultivar + Dose + factor(year) +
                        (-1 + Dose | gp), data = DAAG::sorption, REML=TRUE)

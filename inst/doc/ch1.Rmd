@@ -1485,6 +1485,8 @@ boot.ci(boot.out = corr.boot, type = c("perc", "bca"))
 ### Section 1.11: Further, or supplementary, reading
 
 ### Exercises (1_12)
+
+1.4
 ```{r A10_4}
 Animals <- MASS::Animals
 manyMals <- rbind(Animals, sqrt(Animals), Animals^0.1, log(Animals))
@@ -1495,13 +1497,13 @@ manyMals$transgp <- with(manyMals, factor(transgp, levels=unique(transgp)))
 lattice::xyplot(brain~body|transgp, data=manyMals,
   scales=list(relation='free'), layout=c(2,2))
 ```
-
+1.5
 ```{r A10_5}
 with(Animals, c(cor(brain,body), cor(brain,body, method="spearman")))
 with(Animals, c(cor(log(brain),log(body)),
   cor(log(brain),log(body), method="spearman")))
 ```
-
+1.9
 ```{r A10_9}
 usableDF <- DAAG::cuckoohosts[c(1:6,8),]
 nr <- nrow(usableDF)
@@ -1511,7 +1513,7 @@ with(usableDF, {
   text(hlength, hbreadth, abbreviate(rownames(usableDF),8), pos=c(2,4,2,1,2,4,2))
 })
 ```
-
+1.10
 ```{r A10_10}
 ## Take a random sample of 100 values from the normal distribution
 x <- rnorm(100, mean=3, sd=5)
@@ -1524,19 +1526,19 @@ curve(lsfun, from=xbar-0.01, to=xbar+0.01)
 ```{r A10_11, eval=F}
 boxplot(avs, meds, horizontal=T)
 ```
-
+1.15
 ```{r A10_15}
 x <- rpois(7, 78.3)
 mean(x); var(x)
 ```
-
+1.16
 ```{r A10_16}
 nvals100 <- rnorm(100)
 heavytail <- rt(100, df = 4)
 veryheavytail <- rt(100, df = 2)
 boxplot(nvals100, heavytail, veryheavytail, horizontal=TRUE)
 ```
-
+1.19
 ```{r A10_19}
 boxdists <- function(n=1000, times=10){
   df <- data.frame(normal=rnorm(n*times), t=rt(n*times, 7),
@@ -1545,20 +1547,20 @@ boxdists <- function(n=1000, times=10){
                   horizontal=T)
 }
 ```
-
+1.20
 ```{r A10_20}
 a <- 1
 form <- ~rchisq(1000,1)^a+rchisq(1000,25)^a+rchisq(1000,500)^a
 lattice::qqmath(form, scales=list(relation="free"), outer=TRUE)
 ```
-
+1.21
 ```{r A10_21}
 y <- rnorm(51)
 ydep <- y1[-1] + y1[-51]
 acf(y)      # acf plots `autocorrelation function'(see Chapter 6)
 acf(ydep)
 ```
-
+1.24
 ```{r A10_24}
 ptFun <- function(x,N)pt(sqrt(N)*mean(x)/sd(x), df=N-1, lower.tail=FALSE)
 simStat <- function(eff=.4, N=10, nrep=200, FUN)
@@ -1571,27 +1573,27 @@ labx <- c(0.0001, 0.001, 0.005, 0.01, 0.05, 0.1, 0.25)
 bwplot(~I(pval^0.2), scales=list(x=list(at=labx^0.2, labels=paste(labx))),
        xlab=expression("P-value (scale is "*p^{0.2}*")") )
 ```
-
+1.24a
 ```{r A10_24a}
 pvalDF <- subset(df200, effsize==0.4 & N==10)$stat
 plot(sort(pval^0.2), sort(pvalDF^0.2))
 abline(0,1)
 ```
-
+1.24c
 ```{r A10_24c}
 ## Estimated effect sizes: Set `FUN=effFun` in the call to `eff2stat()`
 effFun <- function(x,N)mean(x)/sd(x)   
   # Try: `labx <- ((-1):6)/2`; `at = log(labx)`; `v = log(labx)  
 ## NB also, Bayes Factors: Set `FUN=BFfun` in the call to `eff2stat()`
-BFfun <- function(x,N)BayesFactor::ttest.tstat(sqrt(N)*mean(x)/sd(x), n1=N, 
-                                               simple=T)
+BFfun <- function(x,N)BayesFactor::ttest.tstat(sqrt(N)*mean(x)/sd(x),
+                                               n1=N, simple=T)
   # A few very large Bayes Factors are likely to dominate the plots
 ```
-
+1.27
 ```{r A10_27}
 (degC <- setNames(c(21,30,38,46),paste('rep',1:4)) ) 
 ```
-
+1.27a
 ```{r A10_27a}
 radonC <- tidyr::pivot_longer(MPV::radon, names_to='key', 
                               cols=names(degC), values_to='percent')
@@ -1602,12 +1604,12 @@ lattice::xyplot(percent ~ temp|factor(diameter), data = radonC)
 ```{r A10_27c}
 matplot(scale(t(MPV::radon[,-1])), type="l", ylab="scaled residuals")  
 ```
-
+1.27d
 ```{r A10_27d}
 radon.res <- aggregate(percent ~ diameter, data = radonC, FUN = scale, 
     scale = FALSE)
 ```
-
+1.30
 ```{r A10_30}
 diamonds <- ggplot2::diamonds
 with(diamonds, plot(carat, price, pch=16, cex=0.25))

@@ -1,4 +1,5 @@
 url: https://jhmaindonald.github.io/PGRcode/
 template:
   bootstrap: 5
+  bootswatch: materia
 

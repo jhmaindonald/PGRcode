@@ -1292,9 +1292,8 @@ DAAG::confusion(Vehicle$Class, lhat)
 DAAG::confusion(Vehicle$Class, qhat)
 randomForest::randomForest(Class ~ ., data=Vehicle, CV=TRUE)
 ```
-
+9.9c
 ```{r I7d, eval=xtras}
-## 9.9c
 Vehicle.lda <- MASS::lda(Class ~ ., data=Vehicle)
 twoD <- predict(Vehicle.lda)$x
 ggplot2::quickplot(twoD[,1], twoD[,2], color=Vehicle$Class,

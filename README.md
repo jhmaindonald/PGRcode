@@ -27,7 +27,7 @@ which these have been generated, should then be available under
 
 Individual code files or other vignette files can be accessed by going
 to https://github.com/jhmaindonald/PGRcode/tree/main/inst/doc/, then clicking 
-on the file name of interest.  Click on first icons to the right of __Raw__
+on the file name of interest.  Click on first icon to the right of __Raw__
 to copy the file, or on the second icon to download it. 
 
 Or, from the R command line, type:

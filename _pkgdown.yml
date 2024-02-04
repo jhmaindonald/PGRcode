@@ -15,8 +15,8 @@ navbar:
       menu:
       - text: A Practical Guide -- the Book
       - href: articles/PGRcode.html
-      - text: A Practical Guide -- Style and Content
-      - href: articles/PGoverview.html
+      - text: Afterword
+      - href: articles/afterword.html
       - text: Use of Code Files
       - href: articles/UsingCode.html
     articles:

@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PGRcode</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.6-1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.6-2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,8 +40,8 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-website-overview">
     <h6 class="dropdown-header" data-toc-skip>A Practical Guide -- the Book</h6>
     <a class="dropdown-item" href="../articles/PGRcode.html"></a>
-    <h6 class="dropdown-header" data-toc-skip>A Practical Guide -- Style and Content</h6>
-    <a class="dropdown-item" href="../articles/PGoverview.html"></a>
+    <h6 class="dropdown-header" data-toc-skip>Afterword</h6>
+    <a class="dropdown-item" href="../articles/afterword.html"></a>
     <h6 class="dropdown-header" data-toc-skip>Use of Code Files</h6>
     <a class="dropdown-item" href="../articles/UsingCode.html"></a>
   </div>
@@ -111,40 +111,105 @@ by John H Maindonald, W John Braun, and Jeffrey L Andrews.</p>
 <li>Chapter 9: Multivariate data exploration and discrimination</li>
 <li>Appendix A: The R System – A Brief Overview</li>
 </ul>
-<p>Major changes from the earlier text are</p>
-<ul>
-<li>There is much more limited tutorial content on R syntax and
-semantics (readers are encouraged to refer to the wealth of online
-material.)</li>
-<li>There is more critical attention to <span class="math inline">\(p\)</span>-values</li>
-<li>The use of Bayes Factors, contrasting them with <span class="math inline">\(p\)</span>-values for the different and
-complementary perspective that they provide.</li>
-<li>Ihere is greater attention to effect size issues.</li>
-<li>There is extended commentary on the insights that
-replicability/reproducability studies provide.</li>
-<li>Simulation and resampling approaches get more extended use – as
+<p>Changes from the earlier text include:</p>
+<ol style="list-style-type: decimal">
+<li><p>Chapter 1 gives a broad overview of the questions, approaches,
+and tools that arise in statistical analysis. Where judged necessary,
+these are filled out in more detail in later chapters. Notes are
+included on reproducible reporting using R Markdown, and on project
+management.</p></li>
+<li><p>P-values get much more critical attention than in the earlier
+text. They are contrasted, in a classical hypothesis testing context,
+with Bayes Factors, calculated assuming a standard family of
+‘uninformative’ priors used in the <strong>BayesFactor</strong> package
+that allows use of a numerical approximation. As the calculations do not
+involve simulation, it is straightforward to make comparisons with <span class="math inline">\(p\)</span>-values for a range of sample sizes,
+effect sizes, and scale parameter for the prior.</p></li>
+<li><p>Information statistics – primarily AIC, AICc, and BIC – are a
+further focus. Associated relative preference measures, with a role
+similar to that of Bayes Factors, are noted.</p></li>
+<li><p>There is extended commentary on the insight that studies where a
+substantial number of published experimental results have been
+independently replicated offer on what p-values mean in practice.
+Selection effects that result from the use of a <span class="math inline">\(p\)</span> &lt;= 0.05 criterion for publication
+have been a major contributor to effect size estimates that may on
+average be too large by a factor that may be 2.0 or more. A case is made
+for the publication in some form of all studies that meet minimum design
+and execution standards. Stricter experimental design criteria are
+called for, perhaps designing for <span class="math inline">\(p \leq
+0.005\)</span> rather than the common <span class="math inline">\(p \leq
+0.05\)</span>,</p></li>
+<li><p>Simulation and resampling approaches get more extended use – as
 sources of insight, as devices for building intuition, and as mechanisms
 for obtaining sampling distributions when theoretical results are not
-available.</li>
-<li>There is new content on quantile regression with automatic choice of
-smoothing parameter, and on fitting monotonic increasing or decreasing
-response curves as specific forms as shape constrained additive
-response.</li>
-<li>The treatment of models that allow for extra-binomial or
-extra-Poisson variation has been substantially extended.</li>
-<li>Exponential time series (ETS) get greater attention, especially for
-their use in forecasting. Modeling of seasonal terms now gets
-attention.</li>
-<li>A new section treats hierarchical and other forms of
-clustering.</li>
-<li>The treatment of causal inference from observational data has been
-greatly extended.</li>
-<li>There is some limited attention to the use of multiple imputation to
-fill in missing values in data where some observations are
-incomplete.</li>
-</ul>
-<p>More detailed commentary is provided in “A Practical Guide – Style
-and Content”.</p>
+available.</p></li>
+<li><p>An important addition is the treatment of gene expression and
+other contexts where there may be hundreds or thousands of
+p-values.</p></li>
+<li><p>The discussion on choosing models and checking model fits has
+been revised and extended.</p></li>
+<li><p>The treatment of Generalized Additive Models has been rewritten
+and extended. There is new content on quantile regression with automatic
+choice of smoothing parameter, and on fitting monotonic increasing or
+decreasing response curves as specific forms of shape constrained
+additive response.</p></li>
+<li><p>The treatment of models that allow for extra-binomial or
+extra-Poisson variation has been substantially extended.</p></li>
+<li><p>Exponential time series (ETS) get greater attention, especially
+for their use in forecasting. Modeling of seasonal terms now gets
+attention.</p></li>
+<li><p>Changes in the lme4 package for fitting mixed-effects models, and
+the implementation of the Kenward-Roger approach that is now available
+in the afex package, have required substantial rewrites. There is a new
+section on “A mixed model with a betabinomial error.” The calculation of
+lethal time estimates and confidence intervals (primarily targeted at
+plant quarantine work) uses the first author’s qra (quantal response
+analysis) package.</p></li>
+<li><p>Tree diagrams from tree-based regression have been finessed.
+There is now more attentio n to the handling of prior probabilities. The
+discussion introduces issues and ideas that are important for machine
+learning approaches more generally. The absence of coverage of machine
+learning methods more generally is an important omission.</p></li>
+<li><p>Principal component calculations now use the function
+<code><a href="https://rdrr.io/r/stats/prcomp.html" class="external-link">prcomp()</a></code>, which uses a singular value decomposition
+approach and is preferred to <code><a href="https://rdrr.io/r/stats/princomp.html" class="external-link">princomp()</a></code>. A new section on
+“High dimensional data – RNA-Seq gene expression” demonstrates
+approaches now available for analysing data of this general
+type.</p></li>
+<li><p>A new section treats hierarchical and other forms of
+clustering.</p></li>
+<li><p>The treatment of causal inference from observational data has
+been greatly extended, with extensive commentary on relevant R packages,
+and discussion of examples from the literature. Approaches to matching
+are a particular focus, with extensive references given. The use of
+directed acyclic graphs as a mechanism for making clear causal pathway
+assumptions is noted and references given, but not further
+discussed.</p></li>
+<li><p>There is some limited attention to the use of multiple imputation
+to fill in missing values in data where some observations are
+incomplete, allowing use of those observations in a regression or other
+further analysis.</p></li>
+<li><p>An appendix gives a brief overview of key features of the R
+system and notes technical issues that have particular relevance for
+users of the text.</p></li>
+<li><p>In Chapter 2 and on, code is given only for those figures that
+are specifically targeted at the methodology under discussion. This site
+will be used as a first point of reference for R markdown scripts that
+have all the code from the book, and other supplementary
+materials.</p></li>
+<li><p>The CRAN (Comprehensive R Archive Network) repository contains,
+at the time of writing, close to 20,000 packages. Further packages are
+available on other repositories, with <strong>Bioconductor</strong>
+perhaps the most important. Several others are listed upon typing
+<code><a href="https://rdrr.io/r/utils/setRepositories.html" class="external-link">setRepositories()</a></code> at the command line. The 20,000 contrasts
+with the around 2,000 packages that were on CRAN prior to 2010 when the
+third edition of “Data Analysis and Graphics Using R” was in
+preparation. We have tried to keep up to date with new packages that
+supplement or extend what was available, but some will undoubtedly have
+been missed.</p></li>
+</ol>
+<p>Reflections, looking back on the text in its published form, appear
+in “The Book – Afterword”.</p>
   </main>
 </div>
 

@@ -2,26 +2,45 @@ url: https://jhmaindonald.github.io/PGRcode/
 template:
   bootstrap: 5
   bootswatch: materia
+---
+articles:
+- title: All vignettes
+  desc: These supply code and other supplementary material
+  contents:
+  - '`afterword`'
+  - '`Appendix`'
+  - '`ch1`'
+  - '`ch2`'
+  - '`ch3`'
+  - '`ch4`'
+  - '`ch5`'
+  - '`ch6`'
+  - '`ch7`'
+  - '`ch8`'
+  - '`ch9`'
+  - '`figFuns`'
+  - '`GITready`'
+  - '`PGRcode`'
+  - '`UsingCode`'
 navbar:
   structure:
     left:
     - intro
+    - articles
     - tutorials
     - news
-    right: articles
+    right: github
   components:
     intro:
-      text: Website overview
-      menu:
-      - text: A Practical Guide -- the Book
-      - href: articles/PGRcode.html
-      - text: Afterword
-      - href: articles/afterword.html
-      - text: Use of Code Files
-      - href: articles/UsingCode.html
+      text: Website Overview
+      href: articles/PGRcode.html
     articles:
-      text: Code files and their use
+      text: Articles
       menu:
+      - text: Afterword
+        href: articles/afterword.html
+      - text: 'Appendix A: The R System – A Brief Overview'
+        href: articles/Appendix.html
       - text: 'Chapter 1: Learning from data . . .'
         href: articles/ch1.html
       - text: 'Chapter 2: Generalizing from models'
@@ -40,11 +59,10 @@ navbar:
         href: articles/ch8.html
       - text: 'Chapter 9: Multivariate data exploration and discrimination'
         href: articles/ch9.html
-      - text: 'Appendix A: The R System – A Brief Overview'
-        href: articles/Appendix.html
       - text: Code for Selected Figures
         href: articles/figFuns.html
       - text: Create static html files for posting to GitHub
         href: articles/GITready.html
-
-
+      - text: Use of Code Files
+        href: articles/UsingCode.html
+---

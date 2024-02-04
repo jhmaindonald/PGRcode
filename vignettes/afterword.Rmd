@@ -42,9 +42,9 @@ argues in his book on human judgment and decision
  size, sample size, and number of model parameters?  What is
  the effect of varying the scale parameter for the prior
  distribution?  What circumstances create a case for centering
- the prior away from the null?  We have made a start, with
- the prior families used in the _BayesFactor_ package, at
- providing graphs that can help answer such questions.  This
+ the prior away from the null?  The start that we have made 
+ at working with the prior families used in the _BayesFactor_ 
+ package to provide graphs that can help answer such questions
  could usefully be extended much further.  What difference 
  does it make if a Cauchy prior is replaced by a normal prior,
 with roughly matched ranges of scale factors?
@@ -118,84 +118,84 @@ an understanding, before proceeding, of the ability of the
 experiment to discriminate between treatments.  Steps taken to
 obtain this understanding should be reported.
 
-## Selection effects and sample size -- an example
+<!-- ## Selection effects and sample size -- an example -->
 
-The variable `d_R` in the data frame _DAAG::repPsych_ has
-estimated effect sizes from the 97 experiments for which 
-results were reported in a psychology replication study. 
-See `?DAAG::repPsych` for details of the data.
-Limiting attention to the cognitive psychology subset, the
-ratio of the average effect size in the original experiment
-to that in the replication is:
-```{r}
-with(subset(DAAG::repPsych, Discipline=='Cognitive'), mean(d_O)/mean(d_R)) |>
-       round(2) |> cat('\n')
-```
-A major factor in this large difference in effect size is
-almost certainly a selection effect -- the published 
-results were for the most part selected, according to a 
-$p$ <= 0.05 or other such criterion, from a much larger
-set of studies.  It is informative to investigate, for
-a particular type of experimental design, the inflation
-of effect sizes that can be expected.
+<!-- The variable `d_R` in the data frame _DAAG::repPsych_ has -->
+<!-- estimated effect sizes from the 97 experiments for which  -->
+<!-- results were reported in a psychology replication study.  -->
+<!-- See `?DAAG::repPsych` for details of the data. -->
+<!-- Limiting attention to the cognitive psychology subset, the -->
+<!-- ratio of the average effect size in the original experiment -->
+<!-- to that in the replication is: -->
+<!-- ```{r} -->
+<!-- with(subset(DAAG::repPsych, Discipline=='Cognitive'), mean(d_O)/mean(d_R)) |> -->
+<!--        round(2) |> cat('\n') -->
+<!-- ``` -->
+<!-- A major factor in this large difference in effect size is -->
+<!-- almost certainly a selection effect -- the published  -->
+<!-- results were for the most part selected, according to a  -->
+<!-- $p$ <= 0.05 or other such criterion, from a much larger -->
+<!-- set of studies.  It is informative to investigate, for -->
+<!-- a particular type of experimental design, the inflation -->
+<!-- of effect sizes that can be expected. -->
 
-Thus, in a thought experiment, consider experiments that 
-used a one-sided $t$-test for analysis, comparing what is
-observed for `n=16` with that for `n=32`.  The effect sizes
-that we use for investigation are the 10 effect sizes that 
-are evenly spaced through the subset of effect sizes that 
-are greater than 0 in the cognitive psychology replications
-data.  
+<!-- Thus, in a thought experiment, consider experiments that  -->
+<!-- used a one-sided $t$-test for analysis, comparing what is -->
+<!-- observed for `n=16` with that for `n=32`.  The effect sizes -->
+<!-- that we use for investigation are the 10 effect sizes that  -->
+<!-- are evenly spaced through the subset of effect sizes that  -->
+<!-- are greater than 0 in the cognitive psychology replications -->
+<!-- data.   -->
 
-For each of the 10 effect sizes we simulate 1000 experiments,
-pick out the subset for which $p$ <= 0.05, and
-compare the mean effect size for the simulations with
-that assumed for the simulations.
-```{r}
-simPsych <- function(n=16, alpha=0.05, times=1000){
-  sel <- with(DAAG::repPsych, Discipline=='Cognitive' & d_R>0)
-  with(subset(DAAG::repPsych, sel), quantile(d_R, (0:9)/10+0.05)) |>
-    round(2) -> dTry
-  eff <- data.frame(d_R = rep(dTry, each=times),
-                    fac=rep(factor(dTry), each=times),
-                    dSim=numeric(length(dTry)*times))
-  simdata <- sapply(eff$d_R, function(x)rnorm(n, mean=x))
-  eff$dSim <- apply(simdata,2,function(x)mean(x)/sd(x))
-  pVal <- pt(eff$dSim*sqrt(n), lower.tail=F, df=n-1)
-  list(eff=eff, under=pVal<=alpha)
-}
-## Now run the function
-set.seed(17)
-efflist <- simPsych(n=16, times=1000, alpha=0.05)  ## Average over 1000 runs
-eff <- efflist[["eff"]]
-under <- efflist$under
-```
-The following shows (i) the proportion, in each case, that falls under 
-the $p$ <= 0.05 criterion is, and (ii) the ratio of the 
-mean effect size for those experiments to the effect size for the
-1000 simulations.  Results are shown for `n=16` and for `n=32`.
-```{r}
-le05 <- table(eff$fac[under])/table(eff$fac)
-ratio <- with(subset(eff, under), sapply(levels(fac),    
-                 function(x)mean(dSim[fac==x])/mean(d_R[fac==x]))) 
-cat('n=16','\n')
-rbind(le05, ratio) |> round(2)
-```
-```{r echo=F}
-efflist <- simPsych(n=32, times=1000, alpha=0.05)  ## Average over 1000 runs
-eff <- efflist[["eff"]]
-under <- efflist$under
-le05 <- table(eff$fac[under])/table(eff$fac)
-ratio <- with(subset(eff, under), sapply(levels(fac),    
-                 function(x)mean(dSim[fac==x])/mean(d_R[fac==x]))) 
-cat('n=32','\n')
-rbind(le05, ratio) |> round(2)
-```
+<!-- For each of the 10 effect sizes we simulate 1000 experiments, -->
+<!-- pick out the subset for which $p$ <= 0.05, and -->
+<!-- compare the mean effect size for the simulations with -->
+<!-- that assumed for the simulations. -->
+<!-- ```{r} -->
+<!-- simPsych <- function(n=16, alpha=0.05, times=1000){ -->
+<!--   sel <- with(DAAG::repPsych, Discipline=='Cognitive' & d_R>0) -->
+<!--   with(subset(DAAG::repPsych, sel), quantile(d_R, (0:9)/10+0.05)) |> -->
+<!--     round(2) -> dTry -->
+<!--   eff <- data.frame(d_R = rep(dTry, each=times), -->
+<!--                     fac=rep(factor(dTry), each=times), -->
+<!--                     dSim=numeric(length(dTry)*times)) -->
+<!--   simdata <- sapply(eff$d_R, function(x)rnorm(n, mean=x)) -->
+<!--   eff$dSim <- apply(simdata,2,function(x)mean(x)/sd(x)) -->
+<!--   pVal <- pt(eff$dSim*sqrt(n), lower.tail=F, df=n-1) -->
+<!--   list(eff=eff, under=pVal<=alpha) -->
+<!-- } -->
+<!-- ## Now run the function -->
+<!-- set.seed(17) -->
+<!-- efflist <- simPsych(n=16, times=1000, alpha=0.05)  ## Average over 1000 runs -->
+<!-- eff <- efflist[["eff"]] -->
+<!-- under <- efflist$under -->
+<!-- ``` -->
+<!-- The following shows (i) the proportion, in each case, that falls under  -->
+<!-- the $p$ <= 0.05 criterion is, and (ii) the ratio of the  -->
+<!-- mean effect size for those experiments to the effect size for the -->
+<!-- 1000 simulations.  Results are shown for `n=16` and for `n=32`. -->
+<!-- ```{r} -->
+<!-- le05 <- table(eff$fac[under])/table(eff$fac) -->
+<!-- ratio <- with(subset(eff, under), sapply(levels(fac),     -->
+<!--                  function(x)mean(dSim[fac==x])/mean(d_R[fac==x])))  -->
+<!-- cat('n=16','\n') -->
+<!-- rbind(le05, ratio) |> round(2) -->
+<!-- ``` -->
+<!-- ```{r echo=F} -->
+<!-- efflist <- simPsych(n=32, times=1000, alpha=0.05)  ## Average over 1000 runs -->
+<!-- eff <- efflist[["eff"]] -->
+<!-- under <- efflist$under -->
+<!-- le05 <- table(eff$fac[under])/table(eff$fac) -->
+<!-- ratio <- with(subset(eff, under), sapply(levels(fac),     -->
+<!--                  function(x)mean(dSim[fac==x])/mean(d_R[fac==x])))  -->
+<!-- cat('n=32','\n') -->
+<!-- rbind(le05, ratio) |> round(2) -->
+<!-- ``` -->
 
-The column headers are the effect sizes assumed for the simulations.
-With the larger sample size, a higher proportion of results fall
-under the $p$ <= 0.05 criterion at the lowest effect sizes, and
-effect sizes that are less inflated by the selection process.
+<!-- The column headers are the effect sizes assumed for the simulations. -->
+<!-- With the larger sample size, a higher proportion of results fall -->
+<!-- under the $p$ <= 0.05 criterion at the lowest effect sizes, and -->
+<!-- effect sizes that are less inflated by the selection process. -->
 
 ## The Big Wide World of R
 
@@ -213,11 +213,11 @@ date with new packages that supplement or extend what was
 available in 2010, but some will undoubtedly have been missed.
 
 
-```{r, eval=T}
-if(file.exists("/Users/johnm1/pkgs/PGRcode/inst/doc/")){
-code <- knitr::knit_code$get()
-txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n'))
-writeLines(txt, con="/Users/johnm1/pkgs/PGRcode/inst/doc/ch7.R")
-}
-```
+<!-- ```{r, eval=T} -->
+<!-- if(file.exists("/Users/johnm1/pkgs/PGRcode/inst/doc/")){ -->
+<!-- code <- knitr::knit_code$get() -->
+<!-- txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n')) -->
+<!-- writeLines(txt, con="/Users/johnm1/pkgs/PGRcode/inst/doc/ch7.R") -->
+<!-- } -->
+<!-- ``` -->
 

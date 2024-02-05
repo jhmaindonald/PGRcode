@@ -146,5 +146,5 @@ date with new packages that supplement or extend what was available, but
 some will undoubtedly have been missed.
 
 Reflections, looking back on the text in its published form,
-appear in "The Book -- Afterword".
+appear in "Postscript".
 

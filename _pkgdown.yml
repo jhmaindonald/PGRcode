@@ -7,7 +7,6 @@ articles:
 - title: All vignettes
   desc: These supply code and other supplementary material
   contents:
-  - '`afterword`'
   - '`Appendix`'
   - '`ch1`'
   - '`ch2`'
@@ -21,6 +20,7 @@ articles:
   - '`figFuns`'
   - '`GITready`'
   - '`PGRcode`'
+  - '`postscript`'
   - '`UsingCode`'
 navbar:
   structure:
@@ -32,15 +32,12 @@ navbar:
     right: github
   components:
     intro:
-      text: Website Overview
+      text: 'A Practical Guide . . .'
       href: articles/PGRcode.html
     articles:
-      text: Articles
+      text: Code and Commentary
       menu:
-      - text: Afterword
-        href: articles/afterword.html
-      - text: 'Appendix A: The R System – A Brief Overview'
-        href: articles/Appendix.html
+      - text: Code
       - text: 'Chapter 1: Learning from data . . .'
         href: articles/ch1.html
       - text: 'Chapter 2: Generalizing from models'
@@ -59,10 +56,20 @@ navbar:
         href: articles/ch8.html
       - text: 'Chapter 9: Multivariate data exploration and discrimination'
         href: articles/ch9.html
-      - text: Code for Selected Figures
+      - text: 'Appendix A: The R System – A Brief Overview'
+        href: articles/Appendix.html
+      - text: -------
+      - text: ~
+      - text: 'Code for Selected Figures'
         href: articles/figFuns.html
-      - text: Create static html files for posting to GitHub
-        href: articles/GITready.html
-      - text: Use of Code Files
+      - text: 'Use of Code Files'
         href: articles/UsingCode.html
+      - text: -------
+      - text: 'Parting Thoughts on the New Text'
+      - text: 'Postscript'
+        href: articles/postscript.html
+      - text: -------
+      - text: ~
+      - text: 'Create static html files for posting to GitHub'
+        href: articles/GITready.html
 ---

@@ -1,5 +1,5 @@
 ---
-title: 'Postscript'
+title: 'Afterword'
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Afterword}

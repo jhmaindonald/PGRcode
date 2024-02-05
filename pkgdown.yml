@@ -6,7 +6,6 @@ articles:
   GITready: GITready.html
   PGRcode: PGRcode.html
   UsingCode: UsingCode.html
-  afterword: afterword.html
   ch1: ch1.html
   ch2: ch2.html
   ch3: ch3.html
@@ -17,7 +16,8 @@ articles:
   ch8: ch8.html
   ch9: ch9.html
   figFuns: figFuns.html
-last_built: 2024-02-04T23:24Z
+  postscript: postscript.html
+last_built: 2024-02-05T06:57Z
 urls:
   reference: https://jhmaindonald.github.io/PGRcode/reference
   article: https://jhmaindonald.github.io/PGRcode/articles

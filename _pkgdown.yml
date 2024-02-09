@@ -5,7 +5,7 @@ template:
 ---
 articles:
 - title: All vignettes
-  desc: These supply code and other supplementary material
+  desc: These provide code and other supplementary material
   contents:
   - '`Appendix`'
   - '`ch1`'

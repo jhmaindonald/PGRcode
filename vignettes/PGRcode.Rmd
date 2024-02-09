@@ -1,8 +1,8 @@
 ---
-title: "PGRcode"
+title: "Supplementary Resources -- 'A Practical Guide . . .'"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{PGRcode}
+  %\VignetteIndexEntry{"Supplementary Resources -- 'A Practical Guide . . .'"}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -18,8 +18,8 @@ knitr::opts_chunk$set(
 suppressPackageStartupMessages(library(PGRcode))
 ```
 
-This website is designed  to make available code and other
-supplementary materials for a new Cambridge University Press text,
+This website, and the associated R package, makes available code and 
+other supplementary materials for a new Cambridge University Press text,
 due to appear in print in May or June 2024.
 
 "A Practical Guide to Data Analysis Using R -- An Example-Based Approach",  

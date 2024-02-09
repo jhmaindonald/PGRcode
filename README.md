@@ -1,4 +1,4 @@
-# Code and Other Resources for "A Practical Guide to Data Analysis Using R"
+# Code and Supplements for "A Practical Guide to Data Analysis Using R"
 
 This website makes available code and other supplementary content 
 that relates to the new Cambridge University Press text, due to

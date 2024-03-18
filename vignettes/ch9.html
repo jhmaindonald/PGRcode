@@ -1221,11 +1221,11 @@ proximities</h4>
 <span id="cb94-12"><a href="#cb94-12" tabindex="-1"></a>DAAG<span class="sc">::</span><span class="fu">confusion</span>(Vehicle<span class="sc">$</span>Class, lhat)</span>
 <span id="cb94-13"><a href="#cb94-13" tabindex="-1"></a>DAAG<span class="sc">::</span><span class="fu">confusion</span>(Vehicle<span class="sc">$</span>Class, qhat)</span>
 <span id="cb94-14"><a href="#cb94-14" tabindex="-1"></a>randomForest<span class="sc">::</span><span class="fu">randomForest</span>(Class <span class="sc">~</span> ., <span class="at">data=</span>Vehicle, <span class="at">CV=</span><span class="cn">TRUE</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb95"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" tabindex="-1"></a><span class="do">## 9.9c</span></span>
-<span id="cb95-2"><a href="#cb95-2" tabindex="-1"></a>Vehicle.lda <span class="ot">&lt;-</span> MASS<span class="sc">::</span><span class="fu">lda</span>(Class <span class="sc">~</span> ., <span class="at">data=</span>Vehicle)</span>
-<span id="cb95-3"><a href="#cb95-3" tabindex="-1"></a>twoD <span class="ot">&lt;-</span> <span class="fu">predict</span>(Vehicle.lda)<span class="sc">$</span>x</span>
-<span id="cb95-4"><a href="#cb95-4" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">quickplot</span>(twoD[,<span class="dv">1</span>], twoD[,<span class="dv">2</span>], <span class="at">color=</span>Vehicle<span class="sc">$</span>Class,</span>
-<span id="cb95-5"><a href="#cb95-5" tabindex="-1"></a>                   <span class="at">geom=</span><span class="fu">c</span>(<span class="st">&quot;point&quot;</span>,<span class="st">&quot;density2d&quot;</span>))</span></code></pre></div>
+<p>9.9c</p>
+<div class="sourceCode" id="cb95"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" tabindex="-1"></a>Vehicle.lda <span class="ot">&lt;-</span> MASS<span class="sc">::</span><span class="fu">lda</span>(Class <span class="sc">~</span> ., <span class="at">data=</span>Vehicle)</span>
+<span id="cb95-2"><a href="#cb95-2" tabindex="-1"></a>twoD <span class="ot">&lt;-</span> <span class="fu">predict</span>(Vehicle.lda)<span class="sc">$</span>x</span>
+<span id="cb95-3"><a href="#cb95-3" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">quickplot</span>(twoD[,<span class="dv">1</span>], twoD[,<span class="dv">2</span>], <span class="at">color=</span>Vehicle<span class="sc">$</span>Class,</span>
+<span id="cb95-4"><a href="#cb95-4" tabindex="-1"></a>                   <span class="at">geom=</span><span class="fu">c</span>(<span class="st">&quot;point&quot;</span>,<span class="st">&quot;density2d&quot;</span>))</span></code></pre></div>
 <p>9.10</p>
 <div class="sourceCode" id="cb96"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1" tabindex="-1"></a><span class="fu">library</span>(ape); <span class="fu">library</span>(MASS)</span>
 <span id="cb96-2"><a href="#cb96-2" tabindex="-1"></a><span class="fu">library</span>(DAAGbio)</span>

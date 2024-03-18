@@ -24,12 +24,8 @@ articles:
   - '`UsingCode`'
 navbar:
   structure:
-    left:
-    - intro
-    - articles
-    - tutorials
-    - news
-    right: github
+    left: [intro, articles, news]
+    right: [github]
   components:
     intro:
       text: 'A Practical Guide . . .'

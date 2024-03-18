@@ -12,7 +12,7 @@
 
 <meta name="author" content="John Maindonald" />
 
-<meta name="date" content="2024-01-28" />
+<meta name="date" content="2024-03-18" />
 
 <title>Create static html files for posting to GitHub</title>
 
@@ -341,7 +341,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <h1 class="title toc-ignore">Create static html files for posting to
 GitHub</h1>
 <h4 class="author">John Maindonald</h4>
-<h4 class="date">2024-01-28</h4>
+<h4 class="date">2024-03-18</h4>
 
 
 
@@ -351,8 +351,9 @@ vignette is changed or added. A commit and push to GitHub will be needed
 for changes to take effect.</p>
 <p>Details of using pkgdown to set up the web page can be found at <a href="https://pkgdown.r-lib.org/articles/pkgdown.html#configuration" class="uri">https://pkgdown.r-lib.org/articles/pkgdown.html#configuration</a></p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_pkgdown</span>()</span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>pkgdown<span class="sc">::</span><span class="fu">build_site</span>()</span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_pkgdown_github_pages</span>()</span></code></pre></div>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_pkgdown_github_pages</span>()</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(pkgdown)</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="fu">build_site</span>()</span></code></pre></div>
 <p>Rebuild just the home page and the CSS by running
 <code>build_home_index(); init_site()</code>.</p>
 <div id="setup-so-that-download-from-github-makes-vignettes-available" class="section level2">
@@ -366,9 +367,10 @@ the commenting out for code that is not executed when
 <span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">dir.exists</span>(<span class="st">&#39;inst/doc&#39;</span>))<span class="fu">dir.create</span>(<span class="st">&quot;~/pkgs/PGRcode/inst/doc&quot;</span>) </span>
 <span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="do">## On installation, files in &#39;inst/doc/&#39; are copied to &#39;doc/&#39;</span></span>
 <span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="fu">file.copy</span>(<span class="fu">dir</span>(<span class="st">&quot;vignettes&quot;</span>, <span class="at">full.names=</span><span class="cn">TRUE</span>), <span class="st">&quot;inst/doc/&quot;</span>, <span class="at">overwrite=</span><span class="cn">TRUE</span>)</span>
-<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="do">## For an individual file, go e.g., for GITready.Rmd</span></span>
-<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="do">## tools::buildVignette(&#39;~/pkgs/PGRcode/vignettes/GITready.Rmd&#39;,</span></span>
-<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="do">##                      dir =  &quot;inst/doc&quot;, tangle=F)</span></span></code></pre></div>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="do">## If nothing happens, first do `dir(&quot;vignettes&quot;, full.names=TRUE)`</span></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="do">## For an individual file, go e.g., for GITready.Rmd</span></span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="do">## tools::buildVignette(&#39;~/pkgs/PGRcode/vignettes/GITready.Rmd&#39;,</span></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="do">##                      dir =  &quot;inst/doc&quot;, tangle=F)</span></span></code></pre></div>
 </div>
 
 

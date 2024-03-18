@@ -1,7 +1,7 @@
 Package: PGRcode
 Type: Package
 Title: Code from "A Practical Guide to Data Analysis Using R"
-Version: 0.1.6-2
+Version: 0.1.6-3
 Date: 2024-02-09
 Authors@R: 
     c(person(c("John","H"), "Maindonald", , email="jhmaindonald@gmail.com", role = c("aut", "cre"),

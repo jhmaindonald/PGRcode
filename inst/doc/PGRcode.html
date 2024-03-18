@@ -12,7 +12,7 @@
 
 
 
-<title>PGRcode</title>
+<title>Supplements – ‘A Practical Guide . . .’</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -39,107 +39,6 @@ ul.task-list{list-style: none;}
 
 
 
-<style type="text/css">
-code {
-white-space: pre;
-}
-.sourceCode {
-overflow: visible;
-}
-</style>
-<style type="text/css" data-origin="pandoc">
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-{ counter-reset: source-line 0; }
-pre.numberSource code > span
-{ position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-{ content: counter(source-line);
-position: relative; left: -1em; text-align: right; vertical-align: baseline;
-border: none; display: inline-block;
--webkit-touch-callout: none; -webkit-user-select: none;
--khtml-user-select: none; -moz-user-select: none;
--ms-user-select: none; user-select: none;
-padding: 0 4px; width: 4em;
-color: #aaaaaa;
-}
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
-div.sourceCode
-{ }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
-code span.al { color: #ff0000; font-weight: bold; } 
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.at { color: #7d9029; } 
-code span.bn { color: #40a070; } 
-code span.bu { color: #008000; } 
-code span.cf { color: #007020; font-weight: bold; } 
-code span.ch { color: #4070a0; } 
-code span.cn { color: #880000; } 
-code span.co { color: #60a0b0; font-style: italic; } 
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.do { color: #ba2121; font-style: italic; } 
-code span.dt { color: #902000; } 
-code span.dv { color: #40a070; } 
-code span.er { color: #ff0000; font-weight: bold; } 
-code span.ex { } 
-code span.fl { color: #40a070; } 
-code span.fu { color: #06287e; } 
-code span.im { color: #008000; font-weight: bold; } 
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
-code span.kw { color: #007020; font-weight: bold; } 
-code span.op { color: #666666; } 
-code span.ot { color: #007020; } 
-code span.pp { color: #bc7a00; } 
-code span.sc { color: #4070a0; } 
-code span.ss { color: #bb6688; } 
-code span.st { color: #4070a0; } 
-code span.va { color: #19177c; } 
-code span.vs { color: #4070a0; } 
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
-</style>
-<script>
-// apply pandoc div.sourceCode style to pre.sourceCode instead
-(function() {
-  var sheets = document.styleSheets;
-  for (var i = 0; i < sheets.length; i++) {
-    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
-    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
-    var j = 0;
-    while (j < rules.length) {
-      var rule = rules[j];
-      // check if there is a div.sourceCode rule
-      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
-        j++;
-        continue;
-      }
-      var style = rule.style.cssText;
-      // check if color or background-color is set
-      if (rule.style.color === '' && rule.style.backgroundColor === '') {
-        j++;
-        continue;
-      }
-      // replace div.sourceCode by a pre.sourceCode rule
-      sheets[i].deleteRule(j);
-      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
-    }
-  }
-})();
-</script>
 
 
 
@@ -336,17 +235,34 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<h1 class="title toc-ignore">PGRcode</h1>
+<h1 class="title toc-ignore">Supplements – ‘A Practical Guide . .
+.’</h1>
 
 
 
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(PGRcode))</span></code></pre></div>
-<p>This website is designed to make available code and other
-supplementary materials for a new Cambridge University Press text, due
-to appear in print in May or June 2024.</p>
-<p>“A Practical Guide to Data Analysis Using R – An Example-Based
-Approach”,<br />
-by John H Maindonald, W John Braun, and Jeffrey L Andrews.</p>
+<div id="accessing-and-using-the-code-files" class="section level1">
+<h1>Accessing and using the code files</h1>
+<p>To install the package that holds the files from the website, proceed
+thus:</p>
+<pre><code>## If necessary, first install the &#39;remotes&#39; package
+if(!require(&quot;remotes&quot;))install.packages(&quot;remotes&quot;)
+remotes::install_github(&#39;jhmaindonald/PGRcode&#39;)</code></pre>
+<p>R files that have the code, html browser files, and Rmd files from
+which these have been generated, should then be available under “User
+guides, package vignettes and other documentation”.</p>
+<p>Individual code files or other vignette files can be accessed by
+going to <a href="https://github.com/jhmaindonald/PGRcode/tree/main/inst/doc/" class="uri">https://github.com/jhmaindonald/PGRcode/tree/main/inst/doc/</a>,
+then clicking on the file name of interest. Click on first icon to the
+right of <strong>Raw</strong> to copy the file, or on the second icon to
+download it.</p>
+<p>Or, from the R command line, type:</p>
+<pre><code>vigdir &lt;- &quot;https://github.com/jhmaindonald/PGRcode/raw/main/vignettes/&quot;
+if(!file.exists(&#39;~/tmp&#39;))system(&#39;mkdir ~/tmp&#39;)
+download.file(paste0(vigdir, &#39;ch1.Rmd&#39;), &#39;~/tmp/ch1.Rmd&#39;)
+  ## Replace &#39;ch1&#39; by other names as required.</code></pre>
+</div>
+<div id="a-brief-summary-of-what-the-text-covers" class="section level1">
+<h1>A brief summary of what the text covers</h1>
 <p>Chapter and appendix headings are:</p>
 <ul>
 <li>Chapter 1: Learning from data, and tools for the task</li>
@@ -373,7 +289,7 @@ with Bayes Factors, calculated assuming a standard family of
 ‘uninformative’ priors used in the <strong>BayesFactor</strong> package
 that allows use of a numerical approximation. As the calculations do not
 involve simulation, it is straightforward to make comparisons with <span class="math inline">\(p\)</span>-values for a range of sample sizes,
-effect sizes, and scale parameter for the prior.</p></li>
+effect sizes, and scale parameters for the prior.</p></li>
 <li><p>Information statistics – primarily AIC, AICc, and BIC – are a
 further focus. Associated relative preference measures, with a role
 similar to that of Bayes Factors, are noted.</p></li>
@@ -458,7 +374,8 @@ supplement or extend what was available, but some will undoubtedly have
 been missed.</p></li>
 </ol>
 <p>Reflections, looking back on the text in its published form, appear
-in “The Book – Afterword”.</p>
+in “Postscript”.</p>
+</div>
 
 
 

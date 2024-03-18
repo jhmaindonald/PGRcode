@@ -1,3 +1,7 @@
-# PGRcode (development version)
+# PGRcode 0.1.6-3
 
-* Initial CRAN submission.
+* Add links to other supplentary materials
+
+# PGRcode 0.1.0
+
+* Initial version

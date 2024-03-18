@@ -28,7 +28,7 @@
     
     <a class="navbar-brand me-2" href="index.html">PGRcode</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.6-2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.6-3</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,6 +62,9 @@
     <a class="dropdown-item" href="articles/postscript.html">Postscript</a>
   </div>
 </li>
+<li class="nav-item">
+  <a class="nav-link" href="news/index.html">Changelog</a>
+</li>
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -77,24 +80,29 @@
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="code-and-supplements-for-a-practical-guide-to-data-analysis-using-r">Code and Supplements for “A Practical Guide to Data Analysis Using R”<a class="anchor" aria-label="anchor" href="#code-and-supplements-for-a-practical-guide-to-data-analysis-using-r"></a>
 </h1></div>
-<p>This website makes available code and other supplementary content that relates to the new Cambridge University Press text, due to appear in print in May or June 2024.</p>
-<p>“A Practical Guide to Data Analysis Using R – An Example-Based Approach”,<br>
-by John H Maindonald, W John Braun, and Jeffrey L Andrews.</p>
+<p>Here is made available code and other supplementary content that relates to the new Cambridge University Press text, due to appear in May or June 2024:<br>
+“A Practical Guide to Data Analysis Using R – An Example-Based Approach”,<br>
+by John H Maindonald, W John Braun, and Jeffrey L Andrews.<a class="footnote-ref" tabindex="0" data-bs-toggle="popover" data-bs-content="&lt;p&gt;The new text builds on “Data Analysis and Graphics Using R” (Maindonald and Braun, CUP, 3rd edn, 2010.)&lt;/p&gt;"><sup>1</sup></a></p>
 <p>The new text builds on “Data Analysis and Graphics Using R” (Maindonald and Braun, CUP, 3rd edn, 2010.)</p>
-<!-- badges: start -->
-
-<p>To install the package that holds the files from the website, proceed thus:</p>
-<pre><code><span><span class="co">## If necessary, first install the 'remotes' package</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://remotes.r-lib.org" class="external-link">"remotes"</a></span><span class="op">)</span><span class="op">)</span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">'jhmaindonald/PGRcode'</span><span class="op">)</span></span></code></pre>
-<p>R files that have the code, html browser files, and Rmd files from which these have been generated, should then be available under “User guides, package vignettes and other documentation”.</p>
-<p>Individual code files or other vignette files can be accessed by going to <a href="https://github.com/jhmaindonald/PGRcode/tree/main/inst/doc/" class="external-link uri">https://github.com/jhmaindonald/PGRcode/tree/main/inst/doc/</a>, then clicking on the file name of interest. Click on first icon to the right of <strong>Raw</strong> to copy the file, or on the second icon to download it.</p>
-<p>Or, from the R command line, type:</p>
-<pre><code><span><span class="va">vigdir</span> <span class="op">&lt;-</span> <span class="st">"https://github.com/jhmaindonald/PGRcode/raw/main/vignettes/"</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.exists</a></span><span class="op">(</span><span class="st">'~/tmp'</span><span class="op">)</span><span class="op">)</span><span class="fu"><a href="https://rdrr.io/r/base/system.html" class="external-link">system</a></span><span class="op">(</span><span class="st">'mkdir ~/tmp'</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html" class="external-link">download.file</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">vigdir</span>, <span class="st">'ch1.Rmd'</span><span class="op">)</span>, <span class="st">'~/tmp/ch1.Rmd'</span><span class="op">)</span></span>
-<span>  <span class="co">## Replace 'ch1' by other names as required.</span></span></code></pre>
+<p>For suggestions on how to work with and use the code files, go to <a href="../articles/PGRcode">Getting</a><a href="../articles/PGRcode">Started</a>.<br></p>
 </div>
+<div class="section level1">
+<h1 id="related-resources">Related Resources<a class="anchor" aria-label="anchor" href="#related-resources"></a>
+</h1>
+<p>Solutions to selected exercises are available at<br><a href="../../PGRselected">https://jhmaindonald.github.io/</a><a href="https://jhmaindonald.githib.io/PGRselected" class="external-link uri">https://jhmaindonald.githib.io/PGRselected</a></p>
+</div>
+<div class="section level1">
+<h1 id="further-links-that-may-be-of-interest">Further links that may be of interest<a class="anchor" aria-label="anchor" href="#further-links-that-may-be-of-interest"></a>
+</h1>
+<div class="section level3">
+<h3 id="updated-version-of-early-2000s-booklet-on-r">Updated version of early 2000s booklet on R<a class="anchor" aria-label="anchor" href="#updated-version-of-early-2000s-booklet-on-r"></a>
+</h3>
+<p><a href="../../usingR-Booklet">https://jhmaindonald.github.io/usingR-Booklet</a></p>
+<p>This is now to a large extent superseded by tutorials that are available on the web. It may however be useful to some beginning R users.</p>
+</div>
+</div>
+
+
   </main><aside class="col-md-3"><div class="license">
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
@@ -119,12 +127,7 @@ by John H Maindonald, W John Braun, and Jeffrey L Andrews.</p>
 </ul>
 </div>
 
-<div class="dev-status">
-<h2 data-toc-skip>Dev status</h2>
-<ul class="list-unstyled">
-<li><a href="https://github.com/jhmaindonald/PGRcode/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/jhmaindonald/PGRcode/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
-</ul>
-</div>
+
 
   </aside>
 </div>

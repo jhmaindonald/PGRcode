@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">PGRcode</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.6-2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.6-3</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,6 +60,9 @@
     <a class="dropdown-item" href="../articles/postscript.html">Postscript</a>
   </div>
 </li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
+</li>
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -81,7 +84,7 @@
                         <h4 data-toc-skip class="author">John
 Maindonald</h4>
             
-            <h4 data-toc-skip class="date">2024-02-09</h4>
+            <h4 data-toc-skip class="date">2024-03-18</h4>
       
       
       <div class="d-none name"><code>GITready.Rmd</code></div>
@@ -96,10 +99,11 @@ for changes to take effect.</p>
 <p>Details of using pkgdown to set up the web page can be found at <a href="https://pkgdown.r-lib.org/articles/pkgdown.html#configuration" class="external-link uri">https://pkgdown.r-lib.org/articles/pkgdown.html#configuration</a></p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">usethis</span><span class="fu">::</span><span class="fu"><a href="https://usethis.r-lib.org/reference/use_pkgdown.html" class="external-link">use_pkgdown</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="fu">pkgdown</span><span class="fu">::</span><span class="fu"><a href="https://pkgdown.r-lib.org/reference/build_site.html" class="external-link">build_site</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="fu">usethis</span><span class="fu">::</span><span class="fu"><a href="https://usethis.r-lib.org/reference/use_pkgdown.html" class="external-link">use_pkgdown_github_pages</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">usethis</span><span class="fu">::</span><span class="fu"><a href="https://usethis.r-lib.org/reference/use_pkgdown.html" class="external-link">use_pkgdown_github_pages</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://pkgdown.r-lib.org" class="external-link">pkgdown</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://pkgdown.r-lib.org/reference/build_site.html" class="external-link">build_site</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>Rebuild just the home page and the CSS by running
-<code>build_home_index(); init_site()</code>.</p>
+<code><a href="https://pkgdown.r-lib.org/reference/build_home.html" class="external-link">build_home_index(); init_site()</a></code>.</p>
 <div class="section level2">
 <h2 id="setup-so-that-download-from-github-makes-vignettes-available">Setup so that download from GitHub makes vignettes available<a class="anchor" aria-label="anchor" href="#setup-so-that-download-from-github-makes-vignettes-available"></a>
 </h2>

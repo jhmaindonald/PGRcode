@@ -8,12 +8,11 @@ by John H Maindonald, W John Braun, and Jeffrey L Andrews.[^readme-1]
 
 The new text builds on "Data Analysis and Graphics Using R" (Maindonald and Braun, CUP, 3rd edn, 2010.)
 
-For suggestions on how to work with and use the code files, go to [Getting](../articles/PGRcode)[ Started](../articles/PGRcode).\
+For suggestions on how to work with and use the code files, go to [Getting](../articles/PGRcode)[ ](../articles/PGRcode)[Started](../PGRcode/articles/PGRcode).\
 
 # Related Resources
 
-Solutions to selected exercises are available at\
-[https://jhmaindonald.github.io/](../../PGRselected)<https://jhmaindonald.githib.io/PGRselected>
+[Solutions to selected exercises](https://jhmaindonald.github.io/PGRselected)
 
 # Further links that may be of interest
 

@@ -1,0 +1,66 @@
+```{r}
+```
+
+---
+title: "A Practical Guide -- Supplementary Notes"
+---
+
+# A brief summary of what the text covers
+
+Chapter and appendix headings are:
+
+-   Chapter 1: Learning from data, and tools for the task
+-   Chapter 2: Generalizing from models
+-   Chapter 3: Multiple linear regression
+-   Chapter 4: Exploiting the linear model framework
+-   Chapter 5: Generalized linear models and survival analysis
+-   Chapter 6: Time series models
+-   Chapter 7: Multilevel models, and repeated measures
+-   Chapter 8: Tree-based Classification and Regression
+-   Chapter 9: Multivariate data exploration and discrimination
+-   Appendix A: The R System – A Brief Overview
+
+Changes from the earlier text include:
+
+1.  Chapter 1 gives a broad overview of the questions, approaches, and tools that arise in statistical analysis. Where judged necessary, these are filled out in more detail in later chapters. Notes are included on reproducible reporting using R Markdown, and on project management.
+
+2.  P-values get much more critical attention than in the earlier text. They are contrasted, in a classical hypothesis testing context, with Bayes Factors, calculated assuming a standard family of ‘uninformative’ priors used in the **BayesFactor** package that allows use of a numerical approximation. As the calculations do not involve simulation, it is straightforward to make comparisons with $p$-values for a range of sample sizes, effect sizes, and scale parameters for the prior.
+
+3.  Information statistics -- primarily AIC, AICc, and BIC -- are a further focus. Associated relative preference measures, with a role similar to that of Bayes Factors, are noted.
+
+4.  There is extended commentary on the insight that studies where a substantial number of published experimental results have been independently replicated offer on what p-values mean in practice. Selection effects that result from the use of a $p$ \<= 0.05 criterion for publication have been a major contributor to effect size estimates that may on average be too large by a factor that may be 2.0 or more. A case is made for the publication in some form of all studies that meet minimum design and execution standards. Stricter experimental design criteria are called for, perhaps designing for $p \leq 0.005$ rather than the common $p \leq 0.05$,
+
+5.  Simulation and resampling approaches get more extended use -- as sources of insight, as devices for building intuition, and as mechanisms for obtaining sampling distributions when theoretical results are not available.
+
+6.  An important addition is the treatment of gene expression and other contexts where there may be hundreds or thousands of p-values.
+
+7.  The discussion on choosing models and checking model fits has been revised and extended.
+
+8.  The treatment of Generalized Additive Models has been rewritten and extended. There is new content on quantile regression with automatic choice of smoothing parameter, and on fitting monotonic increasing or decreasing response curves as specific forms of shape constrained additive response.
+
+9.  The treatment of models that allow for extra-binomial or extra-Poisson variation has been substantially extended.
+
+10. Exponential time series (ETS) get greater attention, especially for their use in forecasting. Modeling of seasonal terms now gets attention.
+
+11. Changes in the lme4 package for fitting mixed-effects models, and the implementation of the Kenward-Roger approach that is now available in the afex package, have required substantial rewrites. There is a new section on "A mixed model with a betabinomial error." The calculation of lethal time estimates and confidence intervals (primarily targeted at plant quarantine work) uses the first author’s qra (quantal response analysis) package.
+
+12. Tree diagrams from tree-based regression have been finessed. There is now more attentio n to the handling of prior probabilities. The discussion introduces issues and ideas that are important for machine learning approaches more generally. The absence of coverage of machine learning methods more generally is an important omission.
+
+13. Principal component calculations now use the function `prcomp()`, which uses a singular value decomposition approach and is preferred to `princomp()`. A new section on “High dimensional data -- RNA-Seq gene expression” demonstrates approaches now available for analysing data of this general type.
+
+14. A new section treats hierarchical and other forms of clustering.
+
+15. The treatment of causal inference from observational data has been greatly extended, with extensive commentary on relevant R packages, and discussion of examples from the literature. Approaches to matching are a particular focus, with extensive references given. The use of directed acyclic graphs as a mechanism for making clear causal pathway assumptions is noted and references given, but not further discussed.
+
+16. There is some limited attention to the use of multiple imputation to fill in missing values in data where some observations are incomplete, allowing use of those observations in a regression or other further analysis.
+
+17. An appendix gives a brief overview of key features of the R system and notes technical issues that have particular relevance for users of the text.
+
+18. In Chapter 2 and on, code is given only for those figures that are specifically targeted at the methodology under discussion. This site will be used as a first point of reference for R markdown scripts that have all the code from the book, and other supplementary materials.
+
+19. The CRAN (Comprehensive R Archive Network) repository contains, at the time of writing, close to 20,000 packages. Further packages are available on other repositories, with **Bioconductor** perhaps the most important. Several others are listed upon typing `setRepositories()` at the command line. The 20,000 contrasts with the around 2,000 packages that were on CRAN prior to 2010 when the third edition of "Data Analysis and Graphics Using R" was in preparation. We have tried to keep up to date with new packages that supplement or extend what was available, but some will undoubtedly have been missed.
+
+Reflections, looking back on the text in its published form, appear in "Afterword".
+
+
+

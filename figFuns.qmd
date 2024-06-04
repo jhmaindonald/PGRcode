@@ -1,0 +1,170 @@
+---
+title: "Code for Selected Figures"
+output:
+  html_document: default
+  pdf_document:
+    includes:
+      in_header: "preamble.tex"
+    latex_engine: xelatex
+---
+
+```{css, echo=F}
+.colbox {
+  padding: 1em;
+  background: white;
+  color: black;
+  border: 2px solid orange;
+  border-radius: 10px;
+}
+.center {
+  text-align: left;
+}
+}
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r CodeControl, echo=TRUE}
+options(rmarkdown.html_vignette.check_title = FALSE)
+## xtras=TRUE    ## Set to TRUE to execute code 'extras'
+xtras <- FALSE
+library(knitr)
+## opts_chunk[['set']](results="asis")
+## opts_chunk[['set']](eval=FALSE)   ## Set to TRUE to execute main part of code
+opts_chunk[['set']](eval=FALSE) 
+```
+
+Figures for which code appears here may in due course be made available for execution as functions.
+
+## Figure 1.20
+
+```{r A6_2e}
+eff2stat <- function(eff=c(.2,.4,.8,1.2), n=c(10,40), numreps=100,
+                     FUN=function(x,N)pt(sqrt(N)*mean(x)/sd(x), df=N-1, 
+                                         lower.tail=FALSE)){
+  simStat <- function(eff=c(.2,.4,.8,1.2), N=10, nrep=100, FUN){
+    num <- N*nrep*length(eff)
+    array(rnorm(num, mean=eff), dim=c(length(eff),nrep,N)) |>
+      apply(2:1, FUN, N=N) 
+  }
+  mat <- matrix(nrow=numreps*length(eff),ncol=length(n))
+  for(j in 1:length(n)) mat[,j] <- 
+    as.vector(simStat(eff, N=n[j], numreps, FUN=FUN))  ## length(eff)*numep
+  data.frame(effsize=rep(rep(eff, each=numreps), length(n)),
+             N=rep(n, each=numreps*length(eff)), stat=as.vector(mat))
+}
+```
+
+```{r 1_20, w=7.0, h=3.0, echo=FALSE, out.width="100%"}
+set.seed(31)
+df200 <- eff2stat(eff=c(.2,.4,.8,1.2), n=c(10, 40), numreps=200)
+labx <- c(0.001,0.01,0.05,0.2,0.4,0.8)
+gph <- bwplot(factor(effsize) ~ I(stat^0.25) | factor(N), data=df200, 
+              layout=c(2,1), xlab="P-value", ylab="Effect size", 
+              scales=list(x=list(at=labx^0.25, labels =labx)))
+update(gph+latticeExtra::layer(panel.abline(v=labx[1:3]^0.25, col='lightgray')),
+       strip=strip.custom(factor.levels=paste0("n=",c(10,40))),
+       par.settings=DAAG::DAAGtheme(color=F, col.points="gray50"))
+```
+
+```{r 1_20, eval=F}
+```
+
+## Figure 1.24
+
+```{r A10_31a}
+t2bfInterval <- function(t, n=10, rscale="medium", mu=c(-.1,.1)){
+     null0 <- BayesFactor::ttest.tstat(t=t, n1=n, nullInterval=mu,
+                                       rscale=rscale,simple=TRUE)
+alt0 <- BayesFactor::ttest.tstat(t=t, n1=n, nullInterval=mu, rscale=rscale, 
+                                 complement=TRUE, simple=TRUE)
+alt0/null0
+}
+```
+
+```{r A10_31b, eval=FALSE}
+pval <- c(0.05,0.01,0.001); nval <- c(4,6,10,20,40,80,160)
+bfDF <- expand.grid(p=pval, n=nval)
+pcol <- 1; ncol <- 2; tcol <- 3
+bfDF[,'t'] <- apply(bfDF,1,function(x){qt(x[pcol]/2, df=x[ncol]-1,                                  lower.tail=FALSE)})
+other <- apply(bfDF,1,function(x)
+    c(BayesFactor::ttest.tstat(t=x[tcol], n1=x[ncol], rscale="medium",
+                               simple=TRUE),
+      BayesFactor::ttest.tstat(t=x[tcol], n1=x[ncol], rscale="wide",
+                               simple=TRUE),
+## Now specify a null interval
+    t2bfInterval(t=x[tcol], n=x[ncol], mu=c(-0.1,0.1),rscale="medium"),
+    t2bfInterval(t=x[tcol], n=x[ncol], mu=c(-0.1,0.1),rscale="wide")
+  ))
+bfDF <- setNames(cbind(bfDF, t(other)),
+    c('p','n','t','bf','bfInterval'))
+```
+
+```{r 1_24, echo=FALSE, fig.width=6.5, fig.asp=0.425, fig.pos='ht', message=F, warning=F, out.width='100%'}
+plabpos <- with(subset(bfDF, n==max(bfDF$n)), log((bf+bfInterval)/2))
+gphA1 <- lattice::xyplot(log(bf)~log(n), groups=factor(p), data=bfDF,
+                        panel=function(x,y,...){
+                        lattice::panel.xyplot(x,y,type='b',...)})
+ylabA <- 10^((-3):6/2)
+scalesA <- list(x=list(at=log(nval), labels=nval),
+                y=list(at=log(ylabA), labels=signif(ylabA,2)))
+keyA <- list(corner=c(0.99,0.98), lines=list(col=c(1,1), lty=1:2),
+             text=list(c('Point null at 0', "null=(-.1,.1)")))
+ylim2 <- log(c(min(bfDF[['bfInterval']])-0.05,150)) 
+gphA2 <- lattice::xyplot(log(bfInterval)~log(n), groups=factor(p), lty=2,
+  xlim=c(log(3.5),log(max(nval)*3.25)), ylim=ylim2, data=bfDF,
+  panel=function(x,y,...){
+    panel.xyplot(x,y,type='b',...)
+    panel.grid(h=-1,v=-1)
+    panel.text(rep(log(max(nval*1.04)),3), plabpos, 
+      labels=c('p=0.05','0.01','0.001'), pos=4)
+  },
+  par.settings=DAAG::DAAGtheme(color=T),
+  main="A: Bayes factor vs sample size", 
+  xlab="Sample size", ylab="Bayes factor", scales=scalesA, key=keyA)
+## Panel B
+bfDF[['eff']] = bfDF[["t"]]/sqrt(bfDF[['n']])
+ylabB <- 10^((-3):2/3)
+scalesB= list(x=list(at=log(nval), labels=nval),
+              y=list(at=log(ylabB), labels=signif(ylabB,2)))
+keyB <- list(corner=c(0.98,0.975), lines=list(lty=1:3), 
+             points=list(pch=1:3), text=list(c('p=0.001','p=0.01','p=0.05')))
+gphB <- xyplot(log(eff)~log(n), groups=log(p), data=bfDF, pch=1:3, lty=1:3, 
+               type='b', xlab="Sample size", ylab="Effect  size",
+               par.settings=DAAG::DAAGtheme(color=T),
+  main="B: Effect size vs sample size", key=keyB, scales=scalesB) +
+  latticeExtra::layer(panel.grid(h=-1,v=-1))
+plot(gphA2+latticeExtra::as.layer(gphA1), position=c(0, 0, 0.525, 1), more=T)
+plot(gphB, position=c(0.52, 0, 1, 1), par.settings=DAAG::DAAGtheme(color=T))
+```
+
+An alternative way to do the calculations for Exercise 31 in Chapter 1 is:
+
+```{r A10_31e, eval=FALSE}
+doBF <- function(pval=c(0.05,0.01,0.002), nval=c(10,40,160)){
+bfDF <- cbind(expand.grid(p=pval, n=nval),
+              matrix(nrow=nrow(bfDF), ncol=5))
+names(bfDF)[3:7] <- c("t","bf","bfw","bfInterval","bfIntervalw")
+ij=0
+for(n in nval)for(p in pval){
+  # Here, `nval` (last specified in `expand.grid()`) is placed first 
+ij <- ij+1
+t <- bfDF[ij,'t'] <- qt(p/2, df=n-1, lower.tail=FALSE)
+bfDF[ij,'bf'] <- t2BF(t, n, mu=0, rscale="medium")
+bfDF[ij,'bfw'] <- t2BF(t, n, mu=0, rscale="wide")
+bfDF[ij,'bfInterval'] <- t2BF(t, n, mu=c(-0.1,0.1), rscale="medium")
+bfDF[ij,'bfIntervalw'] <- t2BF(t, n, mu=c(-0.1,0.1),rscale="wide")
+}
+bfDF
+}
+```
+
+```{r, eval=T}
+if(file.exists("/Users/johnm1/pkgs/PGRcode/inst/doc/")){
+code <- knitr::knit_code$get()
+txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n'))
+writeLines(txt, con="/Users/johnm1/pkgs/PGRcode/inst/doc/figFuns.R")
+}
+```

@@ -1,0 +1,151 @@
+---
+title: "Use of Code Files"
+output:
+  html_document: default
+  pdf_document:
+    includes:
+      in_header: "preamble.tex"
+    latex_engine: xelatex
+---
+```{css, echo=F}
+.colbox {
+  padding: 1em;
+  background: white;
+  color: black;
+  border: 2px solid orange;
+  border-radius: 10px;
+}
+.center {
+  text-align: left;
+}
+}
+```
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Packages
+
+The following are, for each chapter, the packages required, with any
+dependencies, to evaluate all code.
+Additionally, knitr and Hmisc are required in order to process
+the Rmd source file.
+ 
+ The lattice package, which is also a dependency for latticeExtra, gets 
+ some use in all chapters
+ 
+* Ch1: latticeExtra (lattice is a dependency); DAAG car MASS AICcmodavg
+ BayesFactor boot MPV ggplot2 tidyr statsr
+* Ch2: DAAG MASS qra investr HistData BHH2 xtable BayesFactor boot zoo
+ boot MCMCpack
+* Ch3: DAAG car MASS AICcmodavg leaps BayesFactor splin es
+* Ch4: DAAG effects mgcv splines scam MASS latticeExtra car WDI
+ AICcmodavg ggplot2 kableExtra qgam
+* Ch5: DAAG car mgcv colorspace HistData
+* Ch6: DAAG ggsci latticeExtra ggplot2 mice car forecast mgcv tseries
+* Ch7: DAAG lme4 afex MASS utils devtools qra glmmTMB DHARMa MEMSS
+ forecast splines gamlss plotrix nlme
+* Ch 8: DAAG latticeExtra plot rpart rpart.plot MASS ggplot2 car
+ randomForest, bayesreg
+*Ch9: DAAG MASS RColorBrewer teigen BiocManager DAAGbio hddplot lmtest
+ splines cobalt mice datasets car micemd oz randomForest ggplot2
+ latticeExtra mvtnorm teigen limma hddplot mgcv MatchIt sandwich
+ gridExtra DAAGbio mlbench (exercise)
+* Appendix A: DAAG dplyr tidyr tibble MASS gplots plotrix latticeExtra
+ RColorBrewer
+
+Should a package not be available on CRAN, it will in many instances
+be possible to obtain the latest development version from a GitHub site.
+
+# Alternative outputs and themes for the R markdown (`.Rmd`) files
+
+Primarily, it is expected that users will run individual code chunks
+one or more at a time as they work through the text.  In this mode
+of working, needed R packages can be installed as required, as 
+calculations proceed.
+
+# Options and issues for processing a complete R qmd file
+
+An alternatives is to process the whole file at one time, either by supplying the file name as argument to `knitr()`, or by clicking ‘knit’ in Rmarkdown with the file open.  Set the output option in the YAML header at the start of the file as required, to create HTML or PDF or Word output.  Additionally, the Markdown file that is created as an intermediary can be saved, if required.  An example of YAML settings is:
+
+```
+---
+title: "Use of Code Files"
+author: "John Maindonald"
+date: "`r Sys.Date()`"
+output: 
+  html_document
+---
+```
+
+Some available alternatives for the final three lines include:
+
+```
+output:
+  word_document: default
+  html_document: default
+  pdf_document: default
+---
+```
+
+```
+output: rmarkdown::html_vignette
+---
+```
+
+
+```{r}
+library(knitr)
+opts_chunk[['set']](cache.path='cache-', out.width="80%", fig.width=6, fig.height=6, fig.align='center', size="small", ps=10, strip.white = TRUE,
+                    comment=NA, width=70, tidy.opts = list(replace.assign=FALSE))
+```
+
+```{r CodeControl, echo=FALSE}
+xtras=FALSE
+## xtras <- TRUE
+library(knitr)
+## opts_chunk[['set']](results="asis")
+opts_chunk[['set']](eval=F)
+## opts_chunk[['set']](eval=T)
+```
+
+## Code markup
+
+The following shows an approach to placing graphs side by side
+```{r, fig.width=4, fig.height=4,fig.show="hold", fig.align="default", out.width="48.5%"}
+z <- seq(-4,4,length=101)
+plot(z, dnorm(z), type="l", ylab="Normal density")
+plot(z, dt(z, df=5), type="l", ylab="t-statistic density, 5 df")
+```
+
+## Using the `Hmisc::knitrSet()` function
+
+This function creates a setup where 
+
+* Space around the graph can be adjusted by setting the chunk 
+options `bot`, `left`, `top`, and `rt`;
+* Commonly used base graphics parameters can be supplied as chunk options.
+These include `lwd`, `mgp`, `las`, `tcl`, `axes`, `xpd`, `mfg`.
+* Default settings can be supplied for a number of chunk options.
+
+See `?Hmisc::knitrSet` for details.  With R markdown files, the setting
+`fig.align="default"` is required.  Either do not change from the
+default globally, or accompany `fig.show="hold"` whenever used with
+`fig.align="default"`, thus:
+
+```{r, fig.width=4, fig.height=4,fig.show="hold", fig.align="default", out.width="48.5%"}
+Hmisc::knitrSet(basename="tmp", lang='markdown', fig.path="figs/g", w=6, h=6)
+z <- seq(-4,4,length=101)
+plot(z, dnorm(z), type="l", ylab="Normal density")
+plot(z, dt(z, df=5), type="l", ylab="t-statistic density, 5 df")
+```
+
+```{r, eval=T}
+if(file.exists("/Users/johnm1/pkgs/PGRcode/inst/doc/")){
+code <- knitr::knit_code$get()
+txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n'))
+writeLines(txt, con="/Users/johnm1/pkgs/PGRcode/inst/doc/UsingCode.R")
+}
+```

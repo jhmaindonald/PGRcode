@@ -1,0 +1,228 @@
+---
+title: 'Afterword'
+output:
+  html_document: default
+  pdf_document:
+    includes:
+      in_header: "preamble.tex"
+    latex_engine: xelatex
+---
+
+```{css, echo=F}
+.colbox {
+  padding: 1em;
+  background: white;
+  color: black;
+  border: 2px solid orange;
+  border-radius: 10px;
+}
+.center {
+  text-align: left;
+}
+}
+```
+
+```{r}
+```
+
+The writing of a text that has aimed to provide a reasonably well rounded account of modern statistical methodology, albeit with very limited attention to machine learning, has been a huge challenge. Comments now follow on several areas where, more than elsewhere, our text remains a work in progress. A warning is that some technical terms will be used that assume a fair level of prior statistical understanding.
+
+## Inference remains a hotly contested area.
+
+We have used Bayes Factors, calculated assuming the family of ‘uninformative’ priors used in the *BayesFactor* package, as a way to make a connection from the hypothesis testing framework of frequentist statistics into the Bayesian world. As the calculations use a numerical approximation that avoids the need for the extensive chain of simulations required for the Markov Chain Monte Carlo approach, it is straightforward to make comparisons with $p$-values for a range of sample sizes, effect sizes, and scale parameter for the prior.
+
+As Kahneman[^1] argues in his book on human judgment and decision making, humans are not good intuitive statisticians. This surely applies as much or more to the choice of Bayesian priors as to the judgments that are required in more classical contexts.
+
+[^1]: Kahneman, Daniel. Thinking, fast and slow. Macmillan, 2011.
+
+How does the Bayes Factor change with changes in the effect size, sample size, and number of model parameters? What is the effect of varying the scale parameter for the prior distribution? What circumstances create a case for centering the prior away from the null? The start that we have made at working with the prior families used in the *BayesFactor* package to provide graphs that can help answer such questions could usefully be extended much further. What difference does it make if a Cauchy prior is replaced by a normal prior, with roughly matched ranges of scale factors?
+
+More attention to Bayesian credible intervals would have been made sense. Arguably, these make better sense than Bayes Factors if the interest is in finding a replacement for $p$-values and associated confidence intervals.
+
+Information statistics -- primarily AIC, AICc, and BIC -- are a further focus. Associated relative preference measures, with a role similar to that of Bayes Factors, are noted. The BIC relative preference measure can be regarded as arising from the Bayes Factor obtained when a Jeffreys Unit Information prior is used that is centered away from the null.[^2]
+
+[^2]: See http://www.stat.washington.edu/research/reports/1999/tr347.pdf
+
+Note especially the Subsection 2.9.2 comparison between Bayes Factors and the BIC statistic, for the one-sample $t$-test case. At the largest sample sizes ($n$ = 80 and $n$=160) the Bayes Factor, while always smaller than the BIC 'relative preference' statistic, comes close to it in value. Larger sample sizes will be required to obtain a similar rough equivalence when the comparison is between two models that have one or more explanatory variables in common.
+
+These various statistics are tools, to be used with appropriate caution, and having regard to what is known about the studies that generated the data.
+
+## What can be learned from reproducibility/replication studies?
+
+There is extended commentary on the insight that studies where a substantial number of published experimental results have been independently replicated offer on what p-values mean in practice. Effect sizes for the replications have mostly been found to be on average much lower than for the original experiment. A major part of the difference is no doubt caused by selection effects, from publishing mainly or only those results that fall under a $p$ \<= 0.05 or similar criterion.
+
+There is a strong case for the publication in some form of all studies that effmeet minimum design and execution standards. Stricter experimental design criteria are called for, perhaps designing for $p \leq 0.005$ rather than the common $p \leq 0.05$.
+
+## Simulation has many uses
+
+The model that is fitted is just one of the models that might have been fitted. Simulation can be used to repeatedly generate new data from the fitted model, then refitting the model to each set of new data. Overall, the different refits give an indication of how different another model fit, from data generated in the same way as the data presented for analysis, might have been. Do indications of departures from model assumptions for diagnostic plots for the fitted model lie within the range observed in the simulations? What is the extent of variation of $p$-values or other statistics that are of interest?
+
+Simulation can provide important insights when experiments are planned. Thus, where two treatments will be compared, it is insightful to simulate results for one or more effect sizes that are of interest. If sample sizes are overly small, statistics from the simulations (e.g., effect sizes, $p$-values, or other statistics) will show large variation from one simulation to another. There would be merit in requiring reports of results from experimental trials to show plots of relevant statistics that were examined at the study planning stage. Experimenters should have as clear as possible an understanding, before proceeding, of the ability of the experiment to discriminate between treatments. Steps taken to obtain this understanding should be reported.
+
+<!-- ## Selection effects and sample size -- an example -->
+
+<!-- The variable `d_R` in the data frame _DAAG::repPsych_ has -->
+
+<!-- estimated effect sizes from the 97 experiments for which  -->
+
+<!-- results were reported in a psychology replication study.  -->
+
+<!-- See `?DAAG::repPsych` for details of the data. -->
+
+<!-- Limiting attention to the cognitive psychology subset, the -->
+
+<!-- ratio of the average effect size in the original experiment -->
+
+<!-- to that in the replication is: -->
+
+<!-- ```{r} -->
+
+<!-- with(subset(DAAG::repPsych, Discipline=='Cognitive'), mean(d_O)/mean(d_R)) |> -->
+
+<!--        round(2) |> cat('\n') -->
+
+<!-- ``` -->
+
+<!-- A major factor in this large difference in effect size is -->
+
+<!-- almost certainly a selection effect -- the published  -->
+
+<!-- results were for the most part selected, according to a  -->
+
+<!-- $p$ <= 0.05 or other such criterion, from a much larger -->
+
+<!-- set of studies.  It is informative to investigate, for -->
+
+<!-- a particular type of experimental design, the inflation -->
+
+<!-- of effect sizes that can be expected. -->
+
+<!-- Thus, in a thought experiment, consider experiments that  -->
+
+<!-- used a one-sided $t$-test for analysis, comparing what is -->
+
+<!-- observed for `n=16` with that for `n=32`.  The effect sizes -->
+
+<!-- that we use for investigation are the 10 effect sizes that  -->
+
+<!-- are evenly spaced through the subset of effect sizes that  -->
+
+<!-- are greater than 0 in the cognitive psychology replications -->
+
+<!-- data.   -->
+
+<!-- For each of the 10 effect sizes we simulate 1000 experiments, -->
+
+<!-- pick out the subset for which $p$ <= 0.05, and -->
+
+<!-- compare the mean effect size for the simulations with -->
+
+<!-- that assumed for the simulations. -->
+
+<!-- ```{r} -->
+
+<!-- simPsych <- function(n=16, alpha=0.05, times=1000){ -->
+
+<!--   sel <- with(DAAG::repPsych, Discipline=='Cognitive' & d_R>0) -->
+
+<!--   with(subset(DAAG::repPsych, sel), quantile(d_R, (0:9)/10+0.05)) |> -->
+
+<!--     round(2) -> dTry -->
+
+<!--   eff <- data.frame(d_R = rep(dTry, each=times), -->
+
+<!--                     fac=rep(factor(dTry), each=times), -->
+
+<!--                     dSim=numeric(length(dTry)*times)) -->
+
+<!--   simdata <- sapply(eff$d_R, function(x)rnorm(n, mean=x)) -->
+
+<!--   eff$dSim <- apply(simdata,2,function(x)mean(x)/sd(x)) -->
+
+<!--   pVal <- pt(eff$dSim*sqrt(n), lower.tail=F, df=n-1) -->
+
+<!--   list(eff=eff, under=pVal<=alpha) -->
+
+<!-- } -->
+
+<!-- ## Now run the function -->
+
+<!-- set.seed(17) -->
+
+<!-- efflist <- simPsych(n=16, times=1000, alpha=0.05)  ## Average over 1000 runs -->
+
+<!-- eff <- efflist[["eff"]] -->
+
+<!-- under <- efflist$under -->
+
+<!-- ``` -->
+
+<!-- The following shows (i) the proportion, in each case, that falls under  -->
+
+<!-- the $p$ <= 0.05 criterion is, and (ii) the ratio of the  -->
+
+<!-- mean effect size for those experiments to the effect size for the -->
+
+<!-- 1000 simulations.  Results are shown for `n=16` and for `n=32`. -->
+
+<!-- ```{r} -->
+
+<!-- le05 <- table(eff$fac[under])/table(eff$fac) -->
+
+<!-- ratio <- with(subset(eff, under), sapply(levels(fac),     -->
+
+<!--                  function(x)mean(dSim[fac==x])/mean(d_R[fac==x])))  -->
+
+<!-- cat('n=16','\n') -->
+
+<!-- rbind(le05, ratio) |> round(2) -->
+
+<!-- ``` -->
+
+<!-- ```{r echo=F} -->
+
+<!-- efflist <- simPsych(n=32, times=1000, alpha=0.05)  ## Average over 1000 runs -->
+
+<!-- eff <- efflist[["eff"]] -->
+
+<!-- under <- efflist$under -->
+
+<!-- le05 <- table(eff$fac[under])/table(eff$fac) -->
+
+<!-- ratio <- with(subset(eff, under), sapply(levels(fac),     -->
+
+<!--                  function(x)mean(dSim[fac==x])/mean(d_R[fac==x])))  -->
+
+<!-- cat('n=32','\n') -->
+
+<!-- rbind(le05, ratio) |> round(2) -->
+
+<!-- ``` -->
+
+<!-- The column headers are the effect sizes assumed for the simulations. -->
+
+<!-- With the larger sample size, a higher proportion of results fall -->
+
+<!-- under the $p$ <= 0.05 criterion at the lowest effect sizes, and -->
+
+<!-- effect sizes that are less inflated by the selection process. -->
+
+## The Big Wide World of R
+
+The CRAN (Comprehensive R Archive Network) repository contains, at the time of writing, close to 20,000 packages. The 20,000 contrasts with the around 2,000 packages that were on CRAN prior to 2010 when the third edition of "Data Analysis and Graphics Using R" was in preparation.
+
+Further packages are available on other repositories, with **Bioconductor** perhaps the most important. Type `setRepositories()` at the R command line to see the names of several further repositories. We have tried to keep up to date with new packages that supplement or extend what was available in 2010, but some will undoubtedly have been missed.
+
+<!-- ```{r, eval=T} -->
+
+<!-- if(file.exists("/Users/johnm1/pkgs/PGRcode/inst/doc/")){ -->
+
+<!-- code <- knitr::knit_code$get() -->
+
+<!-- txt <- paste0("\n## ", names(code),"\n", sapply(code, paste, collapse='\n')) -->
+
+<!-- writeLines(txt, con="/Users/johnm1/pkgs/PGRcode/inst/doc/ch7.R") -->
+
+<!-- } -->
+
+<!-- ``` -->

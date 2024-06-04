@@ -4,8 +4,8 @@ project:
 
 website:
   title: "Supplements"
-  repo-branch: main
   navbar:
+    pinned: true
     title: false
     left:
       - text: "Home"

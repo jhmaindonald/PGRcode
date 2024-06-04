@@ -6,6 +6,7 @@ website:
   title: "Supplements"
   repo-branch: main
   navbar:
+    title: false
     left:
       - text: "Home"
         href: index.qmd

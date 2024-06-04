@@ -7,16 +7,25 @@ website:
   repo-branch: main
   navbar:
     left:
-      - href: index.qmd
-        text: Home
-      - about.qmd
+      - text: "Home"
+        href: index.qmd
+      - text: "Practical Guide"
+        href: about.qmd
+      - text: "Blog"
+        href: blog.qmd
+      - text: "R code"
+        href: https://ten-z.github.io/PGRTestBook/
+        
     right: 
-      - href: afterword.qmd
-        text: Afterword
-      - href: RunningCode.qmd
-        text: 'Ways to Use Code'
-      - href: figFuns.qmd
-        text: 'Code for Selected Figures'
+      - text: "Resources"
+        menu:
+          - text: "Afterword"
+            href: afterword.qmd
+          - text: "Ways to Use Code"
+            href: RunningCode.qmd
+          - text: "Code for Selected Figures"
+            href: figFuns.qmd
+        
 
 format:
   html:

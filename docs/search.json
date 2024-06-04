@@ -1,45 +1,45 @@
 [
   {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "A Practical Guide – Supplementary Notes",
+    "objectID": "blog.html",
+    "href": "blog.html",
+    "title": "Blog",
     "section": "",
-    "text": "A brief summary of what the text covers\nChapter and appendix headings are:\n\nChapter 1: Learning from data, and tools for the task\nChapter 2: Generalizing from models\nChapter 3: Multiple linear regression\nChapter 4: Exploiting the linear model framework\nChapter 5: Generalized linear models and survival analysis\nChapter 6: Time series models\nChapter 7: Multilevel models, and repeated measures\nChapter 8: Tree-based Classification and Regression\nChapter 9: Multivariate data exploration and discrimination\nAppendix A: The R System – A Brief Overview\n\nChanges from the earlier text include:\n\nChapter 1 gives a broad overview of the questions, approaches, and tools that arise in statistical analysis. Where judged necessary, these are filled out in more detail in later chapters. Notes are included on reproducible reporting using R Markdown, and on project management.\nP-values get much more critical attention than in the earlier text. They are contrasted, in a classical hypothesis testing context, with Bayes Factors, calculated assuming a standard family of ‘uninformative’ priors used in the BayesFactor package that allows use of a numerical approximation. As the calculations do not involve simulation, it is straightforward to make comparisons with \\(p\\)-values for a range of sample sizes, effect sizes, and scale parameters for the prior.\nInformation statistics – primarily AIC, AICc, and BIC – are a further focus. Associated relative preference measures, with a role similar to that of Bayes Factors, are noted.\nThere is extended commentary on the insight that studies where a substantial number of published experimental results have been independently replicated offer on what p-values mean in practice. Selection effects that result from the use of a \\(p\\) &lt;= 0.05 criterion for publication have been a major contributor to effect size estimates that may on average be too large by a factor that may be 2.0 or more. A case is made for the publication in some form of all studies that meet minimum design and execution standards. Stricter experimental design criteria are called for, perhaps designing for \\(p \\leq 0.005\\) rather than the common \\(p \\leq 0.05\\),\nSimulation and resampling approaches get more extended use – as sources of insight, as devices for building intuition, and as mechanisms for obtaining sampling distributions when theoretical results are not available.\nAn important addition is the treatment of gene expression and other contexts where there may be hundreds or thousands of p-values.\nThe discussion on choosing models and checking model fits has been revised and extended.\nThe treatment of Generalized Additive Models has been rewritten and extended. There is new content on quantile regression with automatic choice of smoothing parameter, and on fitting monotonic increasing or decreasing response curves as specific forms of shape constrained additive response.\nThe treatment of models that allow for extra-binomial or extra-Poisson variation has been substantially extended.\nExponential time series (ETS) get greater attention, especially for their use in forecasting. Modeling of seasonal terms now gets attention.\nChanges in the lme4 package for fitting mixed-effects models, and the implementation of the Kenward-Roger approach that is now available in the afex package, have required substantial rewrites. There is a new section on “A mixed model with a betabinomial error.” The calculation of lethal time estimates and confidence intervals (primarily targeted at plant quarantine work) uses the first author’s qra (quantal response analysis) package.\nTree diagrams from tree-based regression have been finessed. There is now more attentio n to the handling of prior probabilities. The discussion introduces issues and ideas that are important for machine learning approaches more generally. The absence of coverage of machine learning methods more generally is an important omission.\nPrincipal component calculations now use the function prcomp(), which uses a singular value decomposition approach and is preferred to princomp(). A new section on “High dimensional data – RNA-Seq gene expression” demonstrates approaches now available for analysing data of this general type.\nA new section treats hierarchical and other forms of clustering.\nThe treatment of causal inference from observational data has been greatly extended, with extensive commentary on relevant R packages, and discussion of examples from the literature. Approaches to matching are a particular focus, with extensive references given. The use of directed acyclic graphs as a mechanism for making clear causal pathway assumptions is noted and references given, but not further discussed.\nThere is some limited attention to the use of multiple imputation to fill in missing values in data where some observations are incomplete, allowing use of those observations in a regression or other further analysis.\nAn appendix gives a brief overview of key features of the R system and notes technical issues that have particular relevance for users of the text.\nIn Chapter 2 and on, code is given only for those figures that are specifically targeted at the methodology under discussion. This site will be used as a first point of reference for R markdown scripts that have all the code from the book, and other supplementary materials.\nThe CRAN (Comprehensive R Archive Network) repository contains, at the time of writing, close to 20,000 packages. Further packages are available on other repositories, with Bioconductor perhaps the most important. Several others are listed upon typing setRepositories() at the command line. The 20,000 contrasts with the around 2,000 packages that were on CRAN prior to 2010 when the third edition of “Data Analysis and Graphics Using R” was in preparation. We have tried to keep up to date with new packages that supplement or extend what was available, but some will undoubtedly have been missed.\n\nReflections, looking back on the text in its published form, appear in “Afterword”."
+    "text": "Read more about Quarto blogs here.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPost With Code\n\n\n\n\n\n\n\n\n\n\n\nOct 25, 2022\n\n\nHarlow Malloc\n\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\n\n\n\n\n\nOct 22, 2022\n\n\nTristan O’Malley\n\n\n\n\n\n\nNo matching items"
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Supplements",
+    "objectID": "blog/welcome/index.html",
+    "href": "blog/welcome/index.html",
+    "title": "Welcome To My Blog",
     "section": "",
-    "text": "This is a Quarto website that I created for ‘A Practical Guide . . .’"
+    "text": "This is the first post in a Quarto blog. Welcome!\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
   },
   {
-    "objectID": "index.html#footnotes",
-    "href": "index.html#footnotes",
-    "title": "Supplements",
-    "section": "Footnotes",
-    "text": "Footnotes\n\n\nThe new text builds on “Data Analysis and Graphics Using R” (Maindonald and Braun, CUP, 3rd edn, 2010.)↩︎"
+    "objectID": "RunningCode.html#code-markup",
+    "href": "RunningCode.html#code-markup",
+    "title": "Use of Code Files",
+    "section": "Code markup",
+    "text": "Code markup\nThe following shows an approach to placing graphs side by side\n\nz &lt;- seq(-4,4,length=101)\nplot(z, dnorm(z), type=\"l\", ylab=\"Normal density\")\nplot(z, dt(z, df=5), type=\"l\", ylab=\"t-statistic density, 5 df\")"
   },
   {
-    "objectID": "figFuns.html",
-    "href": "figFuns.html",
-    "title": "Code for Selected Figures",
+    "objectID": "RunningCode.html#using-the-hmiscknitrset-function",
+    "href": "RunningCode.html#using-the-hmiscknitrset-function",
+    "title": "Use of Code Files",
+    "section": "Using the Hmisc::knitrSet() function",
+    "text": "Using the Hmisc::knitrSet() function\nThis function creates a setup where\n\nSpace around the graph can be adjusted by setting the chunk options bot, left, top, and rt;\nCommonly used base graphics parameters can be supplied as chunk options. These include lwd, mgp, las, tcl, axes, xpd, mfg.\nDefault settings can be supplied for a number of chunk options.\n\nSee ?Hmisc::knitrSet for details. With R markdown files, the setting fig.align=\"default\" is required. Either do not change from the default globally, or accompany fig.show=\"hold\" whenever used with fig.align=\"default\", thus:\n\nHmisc::knitrSet(basename=\"tmp\", lang='markdown', fig.path=\"figs/g\", w=6, h=6)\nz &lt;- seq(-4,4,length=101)\nplot(z, dnorm(z), type=\"l\", ylab=\"Normal density\")\nplot(z, dt(z, df=5), type=\"l\", ylab=\"t-statistic density, 5 df\")\n\n\nif(file.exists(\"/Users/johnm1/pkgs/PGRcode/inst/doc/\")){\ncode &lt;- knitr::knit_code$get()\ntxt &lt;- paste0(\"\\n## \", names(code),\"\\n\", sapply(code, paste, collapse='\\n'))\nwriteLines(txt, con=\"/Users/johnm1/pkgs/PGRcode/inst/doc/UsingCode.R\")\n}"
+  },
+  {
+    "objectID": "xtras.html",
+    "href": "xtras.html",
+    "title": "xtras",
     "section": "",
-    "text": "options(rmarkdown.html_vignette.check_title = FALSE)\n## xtras=TRUE    ## Set to TRUE to execute code 'extras'\nxtras &lt;- FALSE\nlibrary(knitr)\n## opts_chunk[['set']](results=\"asis\")\n## opts_chunk[['set']](eval=FALSE)   ## Set to TRUE to execute main part of code\nopts_chunk[['set']](eval=FALSE)\nFigures for which code appears here may in due course be made available for execution as functions."
+    "text": "Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see https://quarto.org.\n\n1 + 1\n\n[1] 2"
   },
   {
-    "objectID": "figFuns.html#figure-1.20",
-    "href": "figFuns.html#figure-1.20",
-    "title": "Code for Selected Figures",
-    "section": "Figure 1.20",
-    "text": "Figure 1.20\n\neff2stat &lt;- function(eff=c(.2,.4,.8,1.2), n=c(10,40), numreps=100,\n                     FUN=function(x,N)pt(sqrt(N)*mean(x)/sd(x), df=N-1, \n                                         lower.tail=FALSE)){\n  simStat &lt;- function(eff=c(.2,.4,.8,1.2), N=10, nrep=100, FUN){\n    num &lt;- N*nrep*length(eff)\n    array(rnorm(num, mean=eff), dim=c(length(eff),nrep,N)) |&gt;\n      apply(2:1, FUN, N=N) \n  }\n  mat &lt;- matrix(nrow=numreps*length(eff),ncol=length(n))\n  for(j in 1:length(n)) mat[,j] &lt;- \n    as.vector(simStat(eff, N=n[j], numreps, FUN=FUN))  ## length(eff)*numep\n  data.frame(effsize=rep(rep(eff, each=numreps), length(n)),\n             N=rep(n, each=numreps*length(eff)), stat=as.vector(mat))\n}\n\n\nset.seed(31)\ndf200 &lt;- eff2stat(eff=c(.2,.4,.8,1.2), n=c(10, 40), numreps=200)\nlabx &lt;- c(0.001,0.01,0.05,0.2,0.4,0.8)\ngph &lt;- bwplot(factor(effsize) ~ I(stat^0.25) | factor(N), data=df200, \n              layout=c(2,1), xlab=\"P-value\", ylab=\"Effect size\", \n              scales=list(x=list(at=labx^0.25, labels =labx)))\nupdate(gph+latticeExtra::layer(panel.abline(v=labx[1:3]^0.25, col='lightgray')),\n       strip=strip.custom(factor.levels=paste0(\"n=\",c(10,40))),\n       par.settings=DAAG::DAAGtheme(color=F, col.points=\"gray50\"))"
-  },
-  {
-    "objectID": "figFuns.html#figure-1.24",
-    "href": "figFuns.html#figure-1.24",
-    "title": "Code for Selected Figures",
-    "section": "Figure 1.24",
-    "text": "Figure 1.24\n\nt2bfInterval &lt;- function(t, n=10, rscale=\"medium\", mu=c(-.1,.1)){\n     null0 &lt;- BayesFactor::ttest.tstat(t=t, n1=n, nullInterval=mu,\n                                       rscale=rscale,simple=TRUE)\nalt0 &lt;- BayesFactor::ttest.tstat(t=t, n1=n, nullInterval=mu, rscale=rscale, \n                                 complement=TRUE, simple=TRUE)\nalt0/null0\n}\n\n\npval &lt;- c(0.05,0.01,0.001); nval &lt;- c(4,6,10,20,40,80,160)\nbfDF &lt;- expand.grid(p=pval, n=nval)\npcol &lt;- 1; ncol &lt;- 2; tcol &lt;- 3\nbfDF[,'t'] &lt;- apply(bfDF,1,function(x){qt(x[pcol]/2, df=x[ncol]-1,                                  lower.tail=FALSE)})\nother &lt;- apply(bfDF,1,function(x)\n    c(BayesFactor::ttest.tstat(t=x[tcol], n1=x[ncol], rscale=\"medium\",\n                               simple=TRUE),\n      BayesFactor::ttest.tstat(t=x[tcol], n1=x[ncol], rscale=\"wide\",\n                               simple=TRUE),\n## Now specify a null interval\n    t2bfInterval(t=x[tcol], n=x[ncol], mu=c(-0.1,0.1),rscale=\"medium\"),\n    t2bfInterval(t=x[tcol], n=x[ncol], mu=c(-0.1,0.1),rscale=\"wide\")\n  ))\nbfDF &lt;- setNames(cbind(bfDF, t(other)),\n    c('p','n','t','bf','bfInterval'))\n\nAn alternative way to do the calculations for Exercise 31 in Chapter 1 is:\n\ndoBF &lt;- function(pval=c(0.05,0.01,0.002), nval=c(10,40,160)){\nbfDF &lt;- cbind(expand.grid(p=pval, n=nval),\n              matrix(nrow=nrow(bfDF), ncol=5))\nnames(bfDF)[3:7] &lt;- c(\"t\",\"bf\",\"bfw\",\"bfInterval\",\"bfIntervalw\")\nij=0\nfor(n in nval)for(p in pval){\n  # Here, `nval` (last specified in `expand.grid()`) is placed first \nij &lt;- ij+1\nt &lt;- bfDF[ij,'t'] &lt;- qt(p/2, df=n-1, lower.tail=FALSE)\nbfDF[ij,'bf'] &lt;- t2BF(t, n, mu=0, rscale=\"medium\")\nbfDF[ij,'bfw'] &lt;- t2BF(t, n, mu=0, rscale=\"wide\")\nbfDF[ij,'bfInterval'] &lt;- t2BF(t, n, mu=c(-0.1,0.1), rscale=\"medium\")\nbfDF[ij,'bfIntervalw'] &lt;- t2BF(t, n, mu=c(-0.1,0.1),rscale=\"wide\")\n}\nbfDF\n}\n\n\nif(file.exists(\"/Users/johnm1/pkgs/PGRcode/inst/doc/\")){\ncode &lt;- knitr::knit_code$get()\ntxt &lt;- paste0(\"\\n## \", names(code),\"\\n\", sapply(code, paste, collapse='\\n'))\nwriteLines(txt, con=\"/Users/johnm1/pkgs/PGRcode/inst/doc/figFuns.R\")\n}"
+    "objectID": "xtras.html#quarto",
+    "href": "xtras.html#quarto",
+    "title": "xtras",
+    "section": "",
+    "text": "Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see https://quarto.org.\n\n1 + 1\n\n[1] 2"
   },
   {
     "objectID": "afterword.html",
@@ -84,31 +84,52 @@
     "text": "Footnotes\n\n\nKahneman, Daniel. Thinking, fast and slow. Macmillan, 2011.↩︎\nSee http://www.stat.washington.edu/research/reports/1999/tr347.pdf↩︎"
   },
   {
-    "objectID": "xtras.html",
-    "href": "xtras.html",
-    "title": "xtras",
+    "objectID": "figFuns.html",
+    "href": "figFuns.html",
+    "title": "Code for Selected Figures",
     "section": "",
-    "text": "Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see https://quarto.org.\n\n1 + 1\n\n[1] 2"
+    "text": "options(rmarkdown.html_vignette.check_title = FALSE)\n## xtras=TRUE    ## Set to TRUE to execute code 'extras'\nxtras &lt;- FALSE\nlibrary(knitr)\n## opts_chunk[['set']](results=\"asis\")\n## opts_chunk[['set']](eval=FALSE)   ## Set to TRUE to execute main part of code\nopts_chunk[['set']](eval=FALSE)\nFigures for which code appears here may in due course be made available for execution as functions."
   },
   {
-    "objectID": "xtras.html#quarto",
-    "href": "xtras.html#quarto",
-    "title": "xtras",
+    "objectID": "figFuns.html#figure-1.20",
+    "href": "figFuns.html#figure-1.20",
+    "title": "Code for Selected Figures",
+    "section": "Figure 1.20",
+    "text": "Figure 1.20\n\neff2stat &lt;- function(eff=c(.2,.4,.8,1.2), n=c(10,40), numreps=100,\n                     FUN=function(x,N)pt(sqrt(N)*mean(x)/sd(x), df=N-1, \n                                         lower.tail=FALSE)){\n  simStat &lt;- function(eff=c(.2,.4,.8,1.2), N=10, nrep=100, FUN){\n    num &lt;- N*nrep*length(eff)\n    array(rnorm(num, mean=eff), dim=c(length(eff),nrep,N)) |&gt;\n      apply(2:1, FUN, N=N) \n  }\n  mat &lt;- matrix(nrow=numreps*length(eff),ncol=length(n))\n  for(j in 1:length(n)) mat[,j] &lt;- \n    as.vector(simStat(eff, N=n[j], numreps, FUN=FUN))  ## length(eff)*numep\n  data.frame(effsize=rep(rep(eff, each=numreps), length(n)),\n             N=rep(n, each=numreps*length(eff)), stat=as.vector(mat))\n}\n\n\nset.seed(31)\ndf200 &lt;- eff2stat(eff=c(.2,.4,.8,1.2), n=c(10, 40), numreps=200)\nlabx &lt;- c(0.001,0.01,0.05,0.2,0.4,0.8)\ngph &lt;- bwplot(factor(effsize) ~ I(stat^0.25) | factor(N), data=df200, \n              layout=c(2,1), xlab=\"P-value\", ylab=\"Effect size\", \n              scales=list(x=list(at=labx^0.25, labels =labx)))\nupdate(gph+latticeExtra::layer(panel.abline(v=labx[1:3]^0.25, col='lightgray')),\n       strip=strip.custom(factor.levels=paste0(\"n=\",c(10,40))),\n       par.settings=DAAG::DAAGtheme(color=F, col.points=\"gray50\"))"
+  },
+  {
+    "objectID": "figFuns.html#figure-1.24",
+    "href": "figFuns.html#figure-1.24",
+    "title": "Code for Selected Figures",
+    "section": "Figure 1.24",
+    "text": "Figure 1.24\n\nt2bfInterval &lt;- function(t, n=10, rscale=\"medium\", mu=c(-.1,.1)){\n     null0 &lt;- BayesFactor::ttest.tstat(t=t, n1=n, nullInterval=mu,\n                                       rscale=rscale,simple=TRUE)\nalt0 &lt;- BayesFactor::ttest.tstat(t=t, n1=n, nullInterval=mu, rscale=rscale, \n                                 complement=TRUE, simple=TRUE)\nalt0/null0\n}\n\n\npval &lt;- c(0.05,0.01,0.001); nval &lt;- c(4,6,10,20,40,80,160)\nbfDF &lt;- expand.grid(p=pval, n=nval)\npcol &lt;- 1; ncol &lt;- 2; tcol &lt;- 3\nbfDF[,'t'] &lt;- apply(bfDF,1,function(x){qt(x[pcol]/2, df=x[ncol]-1,                                  lower.tail=FALSE)})\nother &lt;- apply(bfDF,1,function(x)\n    c(BayesFactor::ttest.tstat(t=x[tcol], n1=x[ncol], rscale=\"medium\",\n                               simple=TRUE),\n      BayesFactor::ttest.tstat(t=x[tcol], n1=x[ncol], rscale=\"wide\",\n                               simple=TRUE),\n## Now specify a null interval\n    t2bfInterval(t=x[tcol], n=x[ncol], mu=c(-0.1,0.1),rscale=\"medium\"),\n    t2bfInterval(t=x[tcol], n=x[ncol], mu=c(-0.1,0.1),rscale=\"wide\")\n  ))\nbfDF &lt;- setNames(cbind(bfDF, t(other)),\n    c('p','n','t','bf','bfInterval'))\n\nAn alternative way to do the calculations for Exercise 31 in Chapter 1 is:\n\ndoBF &lt;- function(pval=c(0.05,0.01,0.002), nval=c(10,40,160)){\nbfDF &lt;- cbind(expand.grid(p=pval, n=nval),\n              matrix(nrow=nrow(bfDF), ncol=5))\nnames(bfDF)[3:7] &lt;- c(\"t\",\"bf\",\"bfw\",\"bfInterval\",\"bfIntervalw\")\nij=0\nfor(n in nval)for(p in pval){\n  # Here, `nval` (last specified in `expand.grid()`) is placed first \nij &lt;- ij+1\nt &lt;- bfDF[ij,'t'] &lt;- qt(p/2, df=n-1, lower.tail=FALSE)\nbfDF[ij,'bf'] &lt;- t2BF(t, n, mu=0, rscale=\"medium\")\nbfDF[ij,'bfw'] &lt;- t2BF(t, n, mu=0, rscale=\"wide\")\nbfDF[ij,'bfInterval'] &lt;- t2BF(t, n, mu=c(-0.1,0.1), rscale=\"medium\")\nbfDF[ij,'bfIntervalw'] &lt;- t2BF(t, n, mu=c(-0.1,0.1),rscale=\"wide\")\n}\nbfDF\n}\n\n\nif(file.exists(\"/Users/johnm1/pkgs/PGRcode/inst/doc/\")){\ncode &lt;- knitr::knit_code$get()\ntxt &lt;- paste0(\"\\n## \", names(code),\"\\n\", sapply(code, paste, collapse='\\n'))\nwriteLines(txt, con=\"/Users/johnm1/pkgs/PGRcode/inst/doc/figFuns.R\")\n}"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Supplements",
     "section": "",
-    "text": "Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see https://quarto.org.\n\n1 + 1\n\n[1] 2"
+    "text": "This is a Quarto website that I created for ‘A Practical Guide . . .’"
   },
   {
-    "objectID": "RunningCode.html#code-markup",
-    "href": "RunningCode.html#code-markup",
-    "title": "Use of Code Files",
-    "section": "Code markup",
-    "text": "Code markup\nThe following shows an approach to placing graphs side by side\n\nz &lt;- seq(-4,4,length=101)\nplot(z, dnorm(z), type=\"l\", ylab=\"Normal density\")\nplot(z, dt(z, df=5), type=\"l\", ylab=\"t-statistic density, 5 df\")"
+    "objectID": "index.html#footnotes",
+    "href": "index.html#footnotes",
+    "title": "Supplements",
+    "section": "Footnotes",
+    "text": "Footnotes\n\n\nThe new text builds on “Data Analysis and Graphics Using R” (Maindonald and Braun, CUP, 3rd edn, 2010.)↩︎"
   },
   {
-    "objectID": "RunningCode.html#using-the-hmiscknitrset-function",
-    "href": "RunningCode.html#using-the-hmiscknitrset-function",
-    "title": "Use of Code Files",
-    "section": "Using the Hmisc::knitrSet() function",
-    "text": "Using the Hmisc::knitrSet() function\nThis function creates a setup where\n\nSpace around the graph can be adjusted by setting the chunk options bot, left, top, and rt;\nCommonly used base graphics parameters can be supplied as chunk options. These include lwd, mgp, las, tcl, axes, xpd, mfg.\nDefault settings can be supplied for a number of chunk options.\n\nSee ?Hmisc::knitrSet for details. With R markdown files, the setting fig.align=\"default\" is required. Either do not change from the default globally, or accompany fig.show=\"hold\" whenever used with fig.align=\"default\", thus:\n\nHmisc::knitrSet(basename=\"tmp\", lang='markdown', fig.path=\"figs/g\", w=6, h=6)\nz &lt;- seq(-4,4,length=101)\nplot(z, dnorm(z), type=\"l\", ylab=\"Normal density\")\nplot(z, dt(z, df=5), type=\"l\", ylab=\"t-statistic density, 5 df\")\n\n\nif(file.exists(\"/Users/johnm1/pkgs/PGRcode/inst/doc/\")){\ncode &lt;- knitr::knit_code$get()\ntxt &lt;- paste0(\"\\n## \", names(code),\"\\n\", sapply(code, paste, collapse='\\n'))\nwriteLines(txt, con=\"/Users/johnm1/pkgs/PGRcode/inst/doc/UsingCode.R\")\n}"
+    "objectID": "blog/post-with-code/index.html",
+    "href": "blog/post-with-code/index.html",
+    "title": "Post With Code",
+    "section": "",
+    "text": "This is a post with executable code.\n\n1 + 1\n\n[1] 2"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "A Practical Guide – Supplementary Notes",
+    "section": "",
+    "text": "A brief summary of what the text covers\nChapter and appendix headings are:\n\nChapter 1: Learning from data, and tools for the task\nChapter 2: Generalizing from models\nChapter 3: Multiple linear regression\nChapter 4: Exploiting the linear model framework\nChapter 5: Generalized linear models and survival analysis\nChapter 6: Time series models\nChapter 7: Multilevel models, and repeated measures\nChapter 8: Tree-based Classification and Regression\nChapter 9: Multivariate data exploration and discrimination\nAppendix A: The R System – A Brief Overview\n\nChanges from the earlier text include:\n\nChapter 1 gives a broad overview of the questions, approaches, and tools that arise in statistical analysis. Where judged necessary, these are filled out in more detail in later chapters. Notes are included on reproducible reporting using R Markdown, and on project management.\nP-values get much more critical attention than in the earlier text. They are contrasted, in a classical hypothesis testing context, with Bayes Factors, calculated assuming a standard family of ‘uninformative’ priors used in the BayesFactor package that allows use of a numerical approximation. As the calculations do not involve simulation, it is straightforward to make comparisons with \\(p\\)-values for a range of sample sizes, effect sizes, and scale parameters for the prior.\nInformation statistics – primarily AIC, AICc, and BIC – are a further focus. Associated relative preference measures, with a role similar to that of Bayes Factors, are noted.\nThere is extended commentary on the insight that studies where a substantial number of published experimental results have been independently replicated offer on what p-values mean in practice. Selection effects that result from the use of a \\(p\\) &lt;= 0.05 criterion for publication have been a major contributor to effect size estimates that may on average be too large by a factor that may be 2.0 or more. A case is made for the publication in some form of all studies that meet minimum design and execution standards. Stricter experimental design criteria are called for, perhaps designing for \\(p \\leq 0.005\\) rather than the common \\(p \\leq 0.05\\),\nSimulation and resampling approaches get more extended use – as sources of insight, as devices for building intuition, and as mechanisms for obtaining sampling distributions when theoretical results are not available.\nAn important addition is the treatment of gene expression and other contexts where there may be hundreds or thousands of p-values.\nThe discussion on choosing models and checking model fits has been revised and extended.\nThe treatment of Generalized Additive Models has been rewritten and extended. There is new content on quantile regression with automatic choice of smoothing parameter, and on fitting monotonic increasing or decreasing response curves as specific forms of shape constrained additive response.\nThe treatment of models that allow for extra-binomial or extra-Poisson variation has been substantially extended.\nExponential time series (ETS) get greater attention, especially for their use in forecasting. Modeling of seasonal terms now gets attention.\nChanges in the lme4 package for fitting mixed-effects models, and the implementation of the Kenward-Roger approach that is now available in the afex package, have required substantial rewrites. There is a new section on “A mixed model with a betabinomial error.” The calculation of lethal time estimates and confidence intervals (primarily targeted at plant quarantine work) uses the first author’s qra (quantal response analysis) package.\nTree diagrams from tree-based regression have been finessed. There is now more attentio n to the handling of prior probabilities. The discussion introduces issues and ideas that are important for machine learning approaches more generally. The absence of coverage of machine learning methods more generally is an important omission.\nPrincipal component calculations now use the function prcomp(), which uses a singular value decomposition approach and is preferred to princomp(). A new section on “High dimensional data – RNA-Seq gene expression” demonstrates approaches now available for analysing data of this general type.\nA new section treats hierarchical and other forms of clustering.\nThe treatment of causal inference from observational data has been greatly extended, with extensive commentary on relevant R packages, and discussion of examples from the literature. Approaches to matching are a particular focus, with extensive references given. The use of directed acyclic graphs as a mechanism for making clear causal pathway assumptions is noted and references given, but not further discussed.\nThere is some limited attention to the use of multiple imputation to fill in missing values in data where some observations are incomplete, allowing use of those observations in a regression or other further analysis.\nAn appendix gives a brief overview of key features of the R system and notes technical issues that have particular relevance for users of the text.\nIn Chapter 2 and on, code is given only for those figures that are specifically targeted at the methodology under discussion. This site will be used as a first point of reference for R markdown scripts that have all the code from the book, and other supplementary materials.\nThe CRAN (Comprehensive R Archive Network) repository contains, at the time of writing, close to 20,000 packages. Further packages are available on other repositories, with Bioconductor perhaps the most important. Several others are listed upon typing setRepositories() at the command line. The 20,000 contrasts with the around 2,000 packages that were on CRAN prior to 2010 when the third edition of “Data Analysis and Graphics Using R” was in preparation. We have tried to keep up to date with new packages that supplement or extend what was available, but some will undoubtedly have been missed.\n\nReflections, looking back on the text in its published form, appear in “Afterword”."
   }
 ]

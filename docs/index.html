@@ -82,10 +82,25 @@ ul.task-list li input[type="checkbox"] {
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
-  <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page"> 
-<span class="menu-text">Home</span></a>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-code-and-supplements" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Code and Supplements</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-code-and-supplements">    
+        <li>
+    <a class="dropdown-item" href="./index.html">
+ <span class="dropdown-text">Supplements</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="https://jhmaindonald.github.io/PGRselected/">
+ <span class="dropdown-text">Answers to selected exercises</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./afterword.html">
+ <span class="dropdown-text">Afterword</span></a>
+  </li>  
+    </ul>
+  </li>
   <li class="nav-item">
     <a class="nav-link" href="./about.html"> 
 <span class="menu-text">Practical Guide</span></a>
@@ -105,10 +120,6 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">Resources</span>
     </a>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-resources">    
-        <li>
-    <a class="dropdown-item" href="./afterword.html">
- <span class="dropdown-text">Afterword</span></a>
-  </li>  
         <li>
     <a class="dropdown-item" href="./RunningCode.html">
  <span class="dropdown-text">Ways to Use Code</span></a>
@@ -140,6 +151,7 @@ ul.task-list li input[type="checkbox"] {
   <ul class="collapse">
   <li><a href="#updated-version-of-early-2000s-booklet-on-r" id="toc-updated-version-of-early-2000s-booklet-on-r" class="nav-link" data-scroll-target="#updated-version-of-early-2000s-booklet-on-r">Updated version of early 2000s booklet on R</a></li>
   <li><a href="#what-does-the-data-say-traps-to-avoid" id="toc-what-does-the-data-say-traps-to-avoid" class="nav-link" data-scroll-target="#what-does-the-data-say-traps-to-avoid">What does the data say? – Traps to Avoid</a></li>
+  <li><a href="#answers-to-selected-exercises" id="toc-answers-to-selected-exercises" class="nav-link" data-scroll-target="#answers-to-selected-exercises">Answers to selected exercises</a></li>
   </ul></li>
   <li><a href="#corrections" id="toc-corrections" class="nav-link" data-scroll-target="#corrections">Corrections</a></li>
   <li><a href="#section" id="toc-section" class="nav-link" data-scroll-target="#section"></a></li>
@@ -190,6 +202,10 @@ by John H Maindonald, W John Braun, and Jeffrey L Andrews.<a href="#fn1" class="
 <p><a href="https://bookdown.org/jhmaindonald/datathoughts/">Examples that inform and educate</a></p>
 <p>Examples, from the media and from the published literature, are used to illustrate some of the ready traps to which those who analyze data can readily fall. The booklet is in the style of what Kahneman (2013), in his book <em>Thinking Fast and Slow</em>, calls “educating gossip”. Its examples may be used to supplement, or in a few cases offer a further perspective on, those in <em>A Practical Guide to R</em>. The source files are all available from</p>
 <p><a href="../dataThoughts/">Source files</a></p>
+</section>
+<section id="answers-to-selected-exercises" class="level3">
+<h3 class="anchored" data-anchor-id="answers-to-selected-exercises">Answers to selected exercises</h3>
+<p><a href="https://jhmaindonald.github.io/PGRselected/">https://jhmaindonald.github.io/PGRselected/</a></p>
 </section>
 </section>
 <section id="corrections" class="level1">
@@ -299,7 +315,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   });
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp("https:\/\/ten-z\.github\.io\/SupplementsTest\/");
+      var filterRegex = new RegExp('/' + window.location.host + '/');
     var isInternal = (href) => {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }

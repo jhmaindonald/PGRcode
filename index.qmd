@@ -18,7 +18,6 @@ The new text builds on "Data Analysis and Graphics Using R" (Maindonald and Brau
 
 [Solutions to selected exercises](https://jhmaindonald.github.io/PGRselected)
 
-
 # Links to further items that may be of interest
 
 ### Updated version of early 2000s booklet on R
@@ -34,6 +33,10 @@ This is now to a large extent superseded by tutorials that are available on the 
 Examples, from the media and from the published literature, are used to illustrate some of the ready traps to which those who analyze data can readily fall. The booklet is in the style of what Kahneman (2013), in his book *Thinking Fast and Slow*, calls "educating gossip". Its examples may be used to supplement, or in a few cases offer a further perspective on, those in *A Practical Guide to R*. The source files are all available from
 
 [Source files](../dataThoughts/)
+
+### Answers to selected exercises
+
+[https://jhmaindonald.github.io/PGRselected/](https://jhmaindonald.github.io/PGRselected/)
 
 # Corrections
 

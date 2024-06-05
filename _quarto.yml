@@ -8,8 +8,15 @@ website:
     pinned: true
     title: false
     left:
-      - text: "Home"
-        href: index.qmd
+      - text: "Code and Supplements"
+        menu: 
+          - text: "Supplements"
+            href: index.qmd
+          - text: "Answers to selected exercises"
+            href: https://jhmaindonald.github.io/PGRselected/
+          - text: "Afterword"
+            href: afterword.qmd
+            
       - text: "Practical Guide"
         href: about.qmd
       - text: "Blog"
@@ -20,8 +27,6 @@ website:
     right: 
       - text: "Resources"
         menu:
-          - text: "Afterword"
-            href: afterword.qmd
           - text: "Ways to Use Code"
             href: RunningCode.qmd
           - text: "Code for Selected Figures"

@@ -84,10 +84,25 @@ ul.task-list li input[type="checkbox"] {
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
-  <li class="nav-item">
-    <a class="nav-link" href="../../index.html"> 
-<span class="menu-text">Home</span></a>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-code-and-supplements" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Code and Supplements</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-code-and-supplements">    
+        <li>
+    <a class="dropdown-item" href="../../index.html">
+ <span class="dropdown-text">Supplements</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="https://jhmaindonald.github.io/PGRselected/">
+ <span class="dropdown-text">Answers to selected exercises</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../afterword.html">
+ <span class="dropdown-text">Afterword</span></a>
+  </li>  
+    </ul>
+  </li>
   <li class="nav-item">
     <a class="nav-link" href="../../about.html"> 
 <span class="menu-text">Practical Guide</span></a>
@@ -107,10 +122,6 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">Resources</span>
     </a>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-resources">    
-        <li>
-    <a class="dropdown-item" href="../../afterword.html">
- <span class="dropdown-text">Afterword</span></a>
-  </li>  
         <li>
     <a class="dropdown-item" href="../../RunningCode.html">
  <span class="dropdown-text">Ways to Use Code</span></a>
@@ -263,7 +274,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   });
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp("https:\/\/ten-z\.github\.io\/SupplementsTest\/");
+      var filterRegex = new RegExp('/' + window.location.host + '/');
     var isInternal = (href) => {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }

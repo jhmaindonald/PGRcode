@@ -26,8 +26,7 @@ website:
             href: RunningCode.qmd
           - text: "Code for Selected Figures"
             href: figFuns.qmd
-        
-
+            
 format:
   html:
     theme: cosmo

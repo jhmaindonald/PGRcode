@@ -10,4 +10,4 @@ listing:
   filter-ui: false
 ---
 
-Read more about Quarto blogs [here](https://quarto.org/docs/websites/website-blog.html). 
+Read more about Quarto blogs [here](https://quarto.org/docs/websites/website-blog.html).

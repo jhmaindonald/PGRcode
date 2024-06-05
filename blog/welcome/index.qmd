@@ -3,6 +3,10 @@ title: "Welcome To My Blog"
 author: "Tristan O'Malley"
 date: "2022-10-22"
 categories: [news]
+
+comments:
+    giscus:
+      repo: ten-z/SupplementsTest
 ---
 
 This is the first post in a Quarto blog. Welcome!
@@ -10,3 +14,21 @@ This is the first post in a Quarto blog. Welcome!
 ![](thumbnail.jpg)
 
 Since this post doesn't specify an explicit `image`, the first image in the post will be used in the listing page of posts.
+
+```{=html}
+<script src="https://giscus.app/client.js"
+        data-repo="ten-z/SupplementsTest"
+        data-repo-id="R_kgDOMEsjEQ"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOMEsjEc4Cf3pg"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="en"
+        crossorigin="anonymous"
+        async>
+</script>
+```

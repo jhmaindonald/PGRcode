@@ -1,13 +1,13 @@
 ---
 title: "Post With Code"
-author: "Harlow Malloc"
-date: "2022-10-25"
+author: "John Maindconald"
+date: "2024-06-08"
 categories: [news, code, analysis]
 image: "image.jpg"
 
 comments:
     giscus:
-      repo: ten-z/SupplementsTest
+      repo: jhmaindonald/PGRcode
 ---
 
 This is a post with executable code.
@@ -18,10 +18,10 @@ This is a post with executable code.
 
 ```{=html}
 <script src="https://giscus.app/client.js"
-        data-repo="ten-z/SupplementsTest"
-        data-repo-id="R_kgDOMEsjEQ"
-        data-category="Announcements"
-        data-category-id="DIC_kwDOMEsjEc4Cf3pg"
+        data-repo="jhmaindonald/PGRcode"
+        data-repo-id="R_kgDOMGKmJg"
+        data-category="General"
+        data-category-id="DIC_kwDOMGKmJs4Cf8LF"
         data-mapping="pathname"
         data-strict="0"
         data-reactions-enabled="1"

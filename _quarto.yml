@@ -3,12 +3,12 @@ project:
   output-dir: docs
 
 website:
-  title: "Supplements"
+  title: "Code and Supplements"
   navbar:
     pinned: true
     title: false
     left:
-      - text: "Code and Supplements"
+      - text: "Main"
         menu: 
           - text: "Supplements"
             href: index.qmd
@@ -22,7 +22,7 @@ website:
       - text: "Blog"
         href: blog.qmd
       - text: "R code"
-        href: https://ten-z.github.io/PGRTestBook/
+        href: https://jhmaindonald.github.io/Rcode/
         
     right: 
       - text: "Resources"

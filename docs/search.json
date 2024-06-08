@@ -4,7 +4,7 @@
     "href": "blog.html",
     "title": "Blog",
     "section": "",
-    "text": "Read more about Quarto blogs here.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPost With Code\n\n\n\n\n\n\n\n\n\n\n\nJun 8, 2024\n\n\nJohn Maindconald\n\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\n\n\n\n\n\nJun 8, 2024\n\n\nJohn Maindonald, W John Braun, Jeffrey Andrews\n\n\n\n\n\n\nNo matching items"
+    "text": "Read more about Quarto blogs here.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\n\n\n\n\n\nJun 8, 2024\n\n\nJohn Maindonald, W John Braun, Jeffrey Andrews\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "blog/welcome/index.html",
@@ -107,14 +107,14 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "Supplements",
+    "title": "Code and Supplements – A Practical Guide . . .",
     "section": "",
-    "text": "This is a Quarto website that I created for ‘A Practical Guide . . .’"
+    "text": "Code and other supplementary content that is provided here relates to the new Cambridge University Press text:\n“A Practical Guide to Data Analysis Using R – An Example-Based Approach”,\nby John H Maindonald, W John Braun, and Jeffrey L Andrews.1"
   },
   {
     "objectID": "index.html#footnotes",
     "href": "index.html#footnotes",
-    "title": "Supplements",
+    "title": "Code and Supplements – A Practical Guide . . .",
     "section": "Footnotes",
     "text": "Footnotes\n\n\nThe new text builds on “Data Analysis and Graphics Using R” (Maindonald and Braun, CUP, 3rd edn, 2010.)↩︎"
   },

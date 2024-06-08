@@ -10,7 +10,7 @@ website:
     left:
       - text: "Main"
         menu: 
-          - text: "Supplements"
+          - text: "Code and Supplements"
             href: index.qmd
           - text: "Answers to selected exercises"
             href: https://jhmaindonald.github.io/PGRselected/

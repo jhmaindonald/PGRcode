@@ -1,37 +1,40 @@
 ---
 title: "Code and Supplements -- A Practical Guide . . ."
 ---
-![](images/frontcover.png)
-Code and other supplementary content that is provided here relates to the new Cambridge University Press text:\
-"A Practical Guide to Data Analysis Using R -- An Example-Based Approach",\
-by John H Maindonald, W John Braun, and Jeffrey L Andrews.[^1]
 
-[^1]: The new text builds on "Data Analysis and Graphics Using R" (Maindonald and Braun, CUP, 3rd edn, 2010.)
+![](images/frontcover.png) 
 
-### Solutions to selected exercises (also available from menu)
-[Solutions to selected exercises](https://jhmaindonald.github.io/PGRselected)
+### Resources made available here primarily relate to:
+
+**A Practical Guide to Data Analysis Using R -- An Example-Based Approach**,\
+by John H Maindonald, W John Braun, and Jeffrey L Andrews[^1]    
+published by Cambridge University Press in 2024.
+
+[^1]: The text builds on "Data Analysis and Graphics Using R" (Maindonald and Braun, CUP, 3rd edn, 2010.)
+
+### Scroll down to see [Corrections]
+
+### [Solutions to selected exercises](https://jhmaindonald.github.io/PGRselected)
+(These can also be accessed from the menu)
+
+### [PDFs (drafts) for chapters 1 to three](https://jhmaindonald.github.io/PGRch123)
+
+These are made available with the permission of Cambridge University Press.
 
 # Items of Related interest
 
-### Updated version of early 2000s booklet on R
-
-[https://jhmaindonald.github.io/usingR-Booklet](../usingR-Booklet/)
+### [Updated version of early 2000s booklet on R](../usingR-Booklet/)
 
 This is now to a large extent superseded by tutorials that are available on the web. Beginning R users may nonetheless find it useful as an introductory document for learning about R.
 
-### What does the data say? -- Traps to Avoid
+### [What does the data say? -- Traps to Avoid](https://bookdown.org/jhmaindonald/datathoughts/)
 
-[Examples that inform and educate](https://bookdown.org/jhmaindonald/datathoughts/)
-
-Examples, from the media and from the published literature, are used to illustrate some of the ready traps to which those who analyze data can readily fall. The booklet is in the style of what Kahneman (2013), in his book *Thinking Fast and Slow*, calls "educating gossip". Its examples may be used to supplement, or in a few cases offer a further perspective on, those in *A Practical Guide to R*. The source files are all available from
+This collection of "examples that inform and educate", taken 
+from the media and from the published literature, are used to illustrate some of the ready traps to which data analysts can readily fall. The booklet is in the style of what Kahneman (2013), in his book *Thinking Fast and Slow*, calls "educating gossip". Its examples may be used to supplement, or in a few cases offer a further perspective on, those in *A Practical Guide to R*. The source files are all available from
 
 [Source files](../dataThoughts/)
 
-### Answers to selected exercises
-
-<https://jhmaindonald.github.io/PGRselected/>
-
-# Corrections
+### Corrections
 
 The following is designed to replace Exercise 3 in Chapter 8 from the published text, where the second sentence refers to a non-existent Chapter 3 model fit;
 
@@ -44,4 +47,5 @@ b.  Use tree-based regression to predict `tran78`, and check differences from no
 
 c.  Do a random forest fit to the transformed data, and compare the bootstrap error with then cross-validated error from the `rpart` fits.
 
-# 
+
+

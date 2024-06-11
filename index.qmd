@@ -30,7 +30,7 @@ This is now to a large extent superseded by tutorials that are available on the 
 ### [What does the data say? -- Traps to Avoid](https://bookdown.org/jhmaindonald/datathoughts/)
 
 This collection of "examples that inform and educate", taken 
-from the media and from the published literature, are used to illustrate some of the ready traps to which data analysts can readily fall. The booklet is in the style of what Kahneman (2013), in his book *Thinking Fast and Slow*, calls "educating gossip". Its examples may be used to supplement, or in a few cases offer a further perspective on, those in *A Practical Guide to R*. The source files are all available from
+from the media and from the published literature, is used to illustrate some of the ready traps to which data analysts can readily fall. The booklet is in the style of what Kahneman (2013), in his book *Thinking Fast and Slow*, calls "educating gossip". Its examples may be used to supplement, or in a few cases offer a further perspective on, those in *A Practical Guide to R*. The source files are all available from
 
 [Source files](../dataThoughts/)
 

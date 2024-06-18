@@ -36,7 +36,37 @@ from the media and from the published literature, is used to illustrate some of 
 
 ### Corrections
 
-The following is designed to replace Exercise 3 in Chapter 8 from the published text, where the second sentence refers to a non-existent Chapter 3 model fit;
+# Corrections
+### Page 63, lines -8 to -6
+
+The statement "which applies for a wide class of priors
+. . . with densities that tail off in much the same 
+manner as for the normal" is a mis-characterization.
+The assumptions on which the inequality depends do not,
+for commonly used families of priors, hold in general.
+The 'bound' is best treated as giving a useful rough 
+ballpark indication of what to expect when degrees of 
+freedom are 'small'.  As degrees of freedom increase, 
+a much smaller Bayes Factor can be expected.
+
+In line -6, ". . . $p$-value equal to 0" should be
+". . . $p$-value equal to 0.00283".
+
+### Page 132, first line in Subsection 2.9.2
+
+"The statement ". . . applying to a wide class of priors" 
+misses the point. Refer back to the page 63 correction.
+
+### Page 316, Exercise 6.10
+
+\_datasets\_ should of course be _datasets_.
+
+### Page 396, Exercise 8.3
+
+The second sentence refers to a non-existent Chapter 3 model
+fit.  The following is offered as a replacement for the
+complete exercise:
+
 
 > 8.3. Use `qqnorm()` to check differences from normality in `nsw74psid1::re78`. What do you notice? Use tree-based regression to predict `re78`, and check differences from normality in the distribution of residuals.\
 > What do you notice about the tails of the distribution?

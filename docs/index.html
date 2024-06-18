@@ -66,6 +66,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -156,6 +185,13 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#what-does-the-data-say-traps-to-avoid" id="toc-what-does-the-data-say-traps-to-avoid" class="nav-link" data-scroll-target="#what-does-the-data-say-traps-to-avoid">What does the data say? – Traps to Avoid</a></li>
   <li><a href="#corrections" id="toc-corrections" class="nav-link" data-scroll-target="#corrections">Corrections</a></li>
   </ul></li>
+  <li><a href="#corrections-1" id="toc-corrections-1" class="nav-link" data-scroll-target="#corrections-1">Corrections</a>
+  <ul class="collapse">
+  <li><a href="#page-63-lines--8-to--6" id="toc-page-63-lines--8-to--6" class="nav-link" data-scroll-target="#page-63-lines--8-to--6">Page 63, lines -8 to -6</a></li>
+  <li><a href="#page-132-first-line-in-subsection-2.9.2" id="toc-page-132-first-line-in-subsection-2.9.2" class="nav-link" data-scroll-target="#page-132-first-line-in-subsection-2.9.2">Page 132, first line in Subsection 2.9.2</a></li>
+  <li><a href="#page-316-exercise-6.10" id="toc-page-316-exercise-6.10" class="nav-link" data-scroll-target="#page-316-exercise-6.10">Page 316, Exercise 6.10</a></li>
+  <li><a href="#page-396-exercise-8.3" id="toc-page-396-exercise-8.3" class="nav-link" data-scroll-target="#page-396-exercise-8.3">Page 396, Exercise 8.3</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -212,7 +248,26 @@ published by Cambridge University Press in 2024.</p>
 </section>
 <section id="corrections" class="level3">
 <h3 class="anchored" data-anchor-id="corrections">Corrections</h3>
-<p>The following is designed to replace Exercise 3 in Chapter 8 from the published text, where the second&nbsp;sentence refers to a non-existent Chapter 3 model fit;</p>
+</section>
+</section>
+<section id="corrections-1" class="level1">
+<h1>Corrections</h1>
+<section id="page-63-lines--8-to--6" class="level3">
+<h3 class="anchored" data-anchor-id="page-63-lines--8-to--6">Page 63, lines -8 to -6</h3>
+<p>The statement “which applies for a wide class of priors . . . with densities that tail off in much the same manner as for the normal” is a mis-characterization. The assumptions on which the inequality depends do not, for commonly used families of priors, hold in general. The ‘bound’ is best treated as giving a useful rough ballpark indication of what to expect when degrees of freedom are ‘small’. As degrees of freedom increase, a much smaller Bayes Factor can be expected.</p>
+<p>In line -6, “. . . <span class="math inline">\(p\)</span>-value equal to 0” should be “. . . <span class="math inline">\(p\)</span>-value equal to 0.00283”.</p>
+</section>
+<section id="page-132-first-line-in-subsection-2.9.2" class="level3">
+<h3 class="anchored" data-anchor-id="page-132-first-line-in-subsection-2.9.2">Page 132, first line in Subsection 2.9.2</h3>
+<p>“The statement”. . . applying to a wide class of priors” misses the point. Refer back to the page 63 correction.</p>
+</section>
+<section id="page-316-exercise-6.10" class="level3">
+<h3 class="anchored" data-anchor-id="page-316-exercise-6.10">Page 316, Exercise 6.10</h3>
+<p>_datasets_ should of course be <em>datasets</em>.</p>
+</section>
+<section id="page-396-exercise-8.3" class="level3">
+<h3 class="anchored" data-anchor-id="page-396-exercise-8.3">Page 396, Exercise 8.3</h3>
+<p>The second&nbsp;sentence refers to a non-existent Chapter 3 model fit. The following is offered as a replacement for the complete exercise:</p>
 <blockquote class="blockquote">
 <p>8.3. Use <code>qqnorm()</code> to check differences from normality in <code>nsw74psid1::re78</code>. What do&nbsp;you notice? Use tree-based regression to predict <code>re78</code>, and check differences from normality in the distribution of residuals.<br>
 What do&nbsp;you notice about the tails of the distribution?</p>

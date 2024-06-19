@@ -17,7 +17,7 @@ published by Cambridge University Press in 2024.
 ### [Solutions to selected exercises](https://jhmaindonald.github.io/PGRselected)
 (These can also be accessed from the menu)
 
-### [PDFs (drafts) for chapters 1 to three](https://jhmaindonald.github.io/PGRch123)
+### [PDFs (drafts) for chapters 1, 2, and 3](https://jhmaindonald.github.io/PGRch123)
 
 These are made available with the permission of Cambridge University Press.
 

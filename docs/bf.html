@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.549">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="John Maindonald">
+<meta name="dcterms.date" content="2024-06-29">
+
+<title>Code and Supplements - Bayes Factors &amp; the BIC Statistic</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-main" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Main</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-main">    
+        <li>
+    <a class="dropdown-item" href="./index.html">
+ <span class="dropdown-text">Code and Supplements</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="https://jhmaindonald.github.io/PGRselected/">
+ <span class="dropdown-text">Answers to selected exercises</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./afterword.html">
+ <span class="dropdown-text">Afterword</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="./about.html"> 
+<span class="menu-text">Practical Guide</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./blog.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://jhmaindonald.github.io/Rcode/"> 
+<span class="menu-text">R code</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-resources" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Resources</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-resources">    
+        <li>
+    <a class="dropdown-item" href="./RunningCode.html">
+ <span class="dropdown-text">Ways to Use Code</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./figFuns.html">
+ <span class="dropdown-text">Code for Selected Figures</span></a>
+  </li>  
+        <li class="dropdown-header">Bayes Factors &amp; the BIC Statistic</li>
+    </ul>
+  </li>
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#all-summary-statistics-are-random-variables" id="toc-all-summary-statistics-are-random-variables" class="nav-link active" data-scroll-target="#all-summary-statistics-are-random-variables">All summary statistics are random variables</a></li>
+  <li><a href="#the-bic-and-aic-connection-to-bayes-factors" id="toc-the-bic-and-aic-connection-to-bayes-factors" class="nav-link" data-scroll-target="#the-bic-and-aic-connection-to-bayes-factors">The BIC and AIC connection to Bayes Factors</a></li>
+  <li><a href="#use-of-functions-from-the-bfpack-package" id="toc-use-of-functions-from-the-bfpack-package" class="nav-link" data-scroll-target="#use-of-functions-from-the-bfpack-package">Use of functions from the <em>BFpack</em> package</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="bf.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Bayes Factors &amp; the BIC Statistic</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>John Maindonald </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">June 29, 2024</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Kahneman (2011) makes the point that humans are poor intuitive statisticians. This is an especially serious issue for understanding and using <span class="math inline">\(p\)</span>-values, for the choice of priors for Bayesian analyses, and for the use of information statistics. Observing how these various statistics compare for simulated data, and how they relate to one another, is helpful for the development of intuition.</p>
+<p>Here, the focus will be on the Bayesian Information Criterion (BIC) and the Akaike Information Criterion (AIC), and on the connection that can be made, more directly for the BIC than for the AIC, to a form of Bayes Factor.</p>
+<p>For purposes of making a connection to the BIC and AIC, the focus will be on Bayes Factors as returned by functions in the <em>Bayesfactor</em> package and, by <code>BPpack::BF()</code>.</p>
+<section id="all-summary-statistics-are-random-variables" class="level3">
+<h3 class="anchored" data-anchor-id="all-summary-statistics-are-random-variables">All summary statistics are random variables</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-pval" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-pval-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="bf_files/figure-html/fig-pval-1.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pval-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Boxplots are for 200 simulated <span class="math inline">\(p\)</span>-values for a one-sided - one-sample <span class="math inline">\(t\)</span>-test, for the specified effect sizes <code>eff</code> and - sample sizes <code>n</code>. The <span class="math inline">\(p^{0.25}\)</span> scale on the <span class="math inline">\(x\)</span>-axis is used - to reduce the extreme asymmetry in the distributions.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Note first that all these statistics, as well as <span class="math inline">\(p\)</span>-values, are random variables. The randomness is a particular issue when sample sizes are small and/or effect sizes are small. <a href="#fig-pval" class="quarto-xref">Figure&nbsp;1</a> highlights this point. Code is:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>eff2stat <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">eff=</span><span class="fu">c</span>(.<span class="dv">2</span>,.<span class="dv">4</span>,.<span class="dv">8</span>,<span class="fl">1.2</span>), <span class="at">n=</span><span class="fu">c</span>(<span class="dv">40</span>,<span class="dv">160</span>), <span class="at">numreps=</span><span class="dv">200</span>,</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                     <span class="at">FUN=</span><span class="cf">function</span>(x,N)<span class="fu">pt</span>(<span class="fu">sqrt</span>(N)<span class="sc">*</span><span class="fu">mean</span>(x)<span class="sc">/</span><span class="fu">sd</span>(x), <span class="at">df=</span>N<span class="dv">-1</span>,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">lower.tail=</span><span class="cn">FALSE</span>)){</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  simStat <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">eff=</span><span class="fu">c</span>(.<span class="dv">2</span>,.<span class="dv">4</span>,.<span class="dv">8</span>,<span class="fl">1.2</span>), <span class="at">N=</span><span class="dv">10</span>, <span class="at">nrep=</span><span class="dv">200</span>, FUN){</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    num <span class="ot">&lt;-</span> N<span class="sc">*</span>nrep<span class="sc">*</span><span class="fu">length</span>(eff)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">array</span>(<span class="fu">rnorm</span>(num, <span class="at">mean=</span>eff), <span class="at">dim=</span><span class="fu">c</span>(<span class="fu">length</span>(eff),nrep,N)) <span class="sc">|&gt;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>      <span class="fu">apply</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">1</span>, FUN, <span class="at">N=</span>N)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  mat <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">nrow=</span>numreps<span class="sc">*</span><span class="fu">length</span>(eff),<span class="at">ncol=</span><span class="fu">length</span>(n))</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(n)) mat[,j] <span class="ot">&lt;-</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as.vector</span>(<span class="fu">simStat</span>(eff, <span class="at">N=</span>n[j], numreps, <span class="at">FUN=</span>FUN))  <span class="do">## length(eff)*numep</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">effsize=</span><span class="fu">rep</span>(<span class="fu">rep</span>(eff, <span class="at">each=</span>numreps), <span class="fu">length</span>(n)),</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>             <span class="at">N=</span><span class="fu">rep</span>(n, <span class="at">each=</span>numreps<span class="sc">*</span><span class="fu">length</span>(eff)), <span class="at">stat=</span><span class="fu">as.vector</span>(mat))</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lattice)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">31</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">c</span> (<span class="dv">40</span>,<span class="dv">80</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>df200 <span class="ot">&lt;-</span> <span class="fu">eff2stat</span>(<span class="at">eff=</span><span class="fu">c</span>(.<span class="dv">2</span>,.<span class="dv">4</span>,.<span class="dv">8</span>,<span class="fl">1.2</span>), <span class="at">n=</span>n, <span class="at">numreps=</span><span class="dv">200</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>labx <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.001</span>,<span class="fl">0.01</span>,<span class="fl">0.05</span>,<span class="fl">0.2</span>,<span class="fl">0.4</span>,<span class="fl">0.8</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>gph <span class="ot">&lt;-</span> <span class="fu">bwplot</span>(<span class="fu">factor</span>(effsize) <span class="sc">~</span> <span class="fu">I</span>(stat<span class="sc">^</span><span class="fl">0.25</span>) <span class="sc">|</span> <span class="fu">factor</span>(N), <span class="at">data=</span>df200,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">layout=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">1</span>), <span class="at">xlab=</span><span class="st">"P-value"</span>, <span class="at">ylab=</span><span class="st">"Effect size"</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">scales=</span><span class="fu">list</span>(<span class="at">x=</span><span class="fu">list</span>(<span class="at">at=</span>labx<span class="sc">^</span><span class="fl">0.25</span>, <span class="at">labels =</span>labx)))</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">update</span>(gph<span class="sc">+</span>latticeExtra<span class="sc">::</span><span class="fu">layer</span>(<span class="fu">panel.abline</span>(<span class="at">v=</span>labx[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]<span class="sc">^</span><span class="fl">0.25</span>, <span class="at">col=</span><span class="st">'lightgray'</span>)),</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">strip=</span><span class="fu">strip.custom</span>(<span class="at">factor.levels=</span><span class="fu">paste0</span>(<span class="st">"n="</span>, n)),</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">par.settings=</span>DAAG<span class="sc">::</span><span class="fu">DAAGtheme</span>(<span class="at">color=</span>F, <span class="at">col.points=</span><span class="st">"gray50"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="the-bic-and-aic-connection-to-bayes-factors" class="level3">
+<h3 class="anchored" data-anchor-id="the-bic-and-aic-connection-to-bayes-factors">The BIC and AIC connection to Bayes Factors</h3>
+<p>As a starting point, comparisons will be for a one-sample <span class="math inline">\(t\)</span>-statistic.</p>
+<p>Given two models with the same outcome variable, with respective BIC (Bayesian Information Criterion) statistics <span class="math inline">\(m_1\)</span> and <span class="math inline">\(m_2\)</span>, the quantity <span class="math display">\[
+b_{12} = exp((m_1-m_2)/2)
+\]</span> can be used as a relative preference statistic for <span class="math inline">\(m_2\)</span> as against <span class="math inline">\(m_1\)</span>. If model 1 is nested in model 2 this becomes, under the prior that has the name Jeffreys Unit Information (JUI) prior, with the prior centered on the maximum likelihood of the difference under the alternative, a Bayes Factor giving the probability of model 2 relative to model 1. In the case of a one-sample <span class="math inline">\(t\)</span>-statistic, the BIC-derived Bayes Factor is <span class="math display">\[
+\mbox{exp}(N*\log(1+\frac{t^2}{N-1})-\log(N))/2),
+\mbox{  where }N \mbox{ is the sample size}
+\]</span></p>
+<p>How does this compare with Bayes Factors that are obtained with other choices of prior? Specifically, because the calculations can then be handled without Markov Chain Monte Carlo simulation, we look at results from functions in the <em>Bayesfactor</em> and <em>BFpack</em> packages.</p>
+<section id="comparison-with-results-from-bayesfactorttestbf" class="level4">
+<h4 class="anchored" data-anchor-id="comparison-with-results-from-bayesfactorttestbf">Comparison with results from <code>BayesFactor::ttestBF()</code></h4>
+<p>Functions in the <em>BayesFactor</em> package assume a Jeffreys-Zellner-Siow (JSZ) prior, which has a reasonable claim to be used as a default prior. Numerical quadrature is used to calculate the Bayes Factor, avoiding the need for Markov Chain Monte Carlo simulation. A Cauchy prior is assumed for the effect size, with the argument <code>rscale</code> giving the scale factor. The Jeffreys distribution has a similar role for the variance of the normal distributions that are assumed both under the null and under the alternative.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Functions that calculate Bayes Factors or relative preferences  </span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>t2BF <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">p=</span><span class="fl">0.05</span>, N, <span class="at">xrs=</span><span class="dv">1</span><span class="sc">/</span><span class="fu">sqrt</span>(<span class="dv">2</span>)){</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  t <span class="ot">&lt;-</span> <span class="fu">qt</span>(p<span class="sc">/</span><span class="dv">2</span>, <span class="at">df=</span>N<span class="dv">-1</span>, <span class="at">lower.tail=</span><span class="cn">FALSE</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  BayesFactor<span class="sc">::</span><span class="fu">ttest.tstat</span>(<span class="at">t=</span>t, <span class="at">n1=</span>N, <span class="at">rscale=</span>xrs, <span class="at">simple=</span><span class="cn">TRUE</span>)}</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>t2BFbic <span class="ot">&lt;-</span> <span class="cf">function</span>(p,N){t <span class="ot">&lt;-</span> <span class="fu">qt</span>(p<span class="sc">/</span><span class="dv">2</span>, <span class="at">df=</span>N<span class="dv">-1</span>, <span class="at">lower.tail=</span><span class="cn">FALSE</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">exp</span>((N<span class="sc">*</span><span class="fu">log</span>(<span class="dv">1</span><span class="sc">+</span>t<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>(N<span class="dv">-1</span>))<span class="sc">-</span><span class="fu">log</span>(N))<span class="sc">/</span><span class="dv">2</span>)}</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>t2AIC <span class="ot">&lt;-</span> <span class="cf">function</span>(p,N){t <span class="ot">&lt;-</span> <span class="fu">qt</span>(p<span class="sc">/</span><span class="dv">2</span>, <span class="at">df=</span>N<span class="dv">-1</span>, <span class="at">lower.tail=</span><span class="cn">FALSE</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">exp</span>((N<span class="sc">*</span><span class="fu">log</span>(<span class="dv">1</span><span class="sc">+</span>t<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>(N<span class="dv">-1</span>))<span class="sc">-</span><span class="dv">2</span>)<span class="sc">/</span><span class="dv">2</span>)}</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>t2AICc <span class="ot">&lt;-</span> <span class="cf">function</span>(p,N){t <span class="ot">&lt;-</span> <span class="fu">qt</span>(p<span class="sc">/</span><span class="dv">2</span>, <span class="at">df=</span>N<span class="dv">-1</span>, <span class="at">lower.tail=</span><span class="cn">FALSE</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">exp</span>((N<span class="sc">*</span><span class="fu">log</span>(<span class="dv">1</span><span class="sc">+</span>t<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>(N<span class="dv">-1</span>))<span class="sc">-</span><span class="dv">12</span><span class="sc">/</span>(N<span class="dv">-3</span>)<span class="sc">+</span><span class="dv">4</span><span class="sc">/</span>(N<span class="dv">-2</span>)<span class="sc">-</span><span class="dv">2</span>)<span class="sc">/</span><span class="dv">2</span>)}  <span class="do">## Requires N &gt; 6</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>t2eff <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">p=</span><span class="fl">0.05</span>, N)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  eff <span class="ot">&lt;-</span> <span class="fu">qt</span>(p<span class="sc">/</span><span class="dv">2</span>, <span class="at">df=</span>N<span class="dv">-1</span>, <span class="at">lower.tail=</span><span class="cn">FALSE</span>)<span class="sc">/</span><span class="fu">sqrt</span>(N)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>pval <span class="ot">&lt;-</span> <span class="fu">c</span>(.<span class="dv">05</span>,.<span class="dv">01</span>,.<span class="dv">001</span>); np <span class="ot">&lt;-</span> <span class="fu">length</span>(pval)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>Nval <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">10</span>,<span class="dv">20</span>,<span class="dv">40</span>,<span class="dv">80</span>,<span class="dv">160</span>,<span class="dv">360</span>); nlen <span class="ot">&lt;-</span> <span class="fu">length</span>(Nval)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Bayes Factors, using BayesFactor::ttest.tstat()</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>rs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">/</span><span class="fu">sqrt</span>(<span class="dv">2</span>), <span class="fu">sqrt</span>(<span class="dv">2</span>))</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>bf <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">nrow=</span><span class="fu">length</span>(rs)<span class="sc">+</span><span class="dv">2</span>,<span class="at">ncol=</span><span class="fu">length</span>(Nval))</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(bf) <span class="ot">&lt;-</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">'rscale=1/sqrt(2)'</span>, <span class="st">'       sqrt(2)'</span>, <span class="st">'BIC'</span>,<span class="st">'Effect size'</span>),</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>       <span class="fu">paste0</span>(<span class="fu">c</span>(<span class="st">"n="</span>,<span class="fu">rep</span>(<span class="st">""</span>,<span class="fu">length</span>(Nval)<span class="sc">-</span><span class="dv">1</span>)),Nval))</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>bfVal <span class="ot">&lt;-</span> <span class="fu">setNames</span>(<span class="fu">rep</span>(<span class="fu">list</span>(bf),<span class="fu">length</span>(pval)),</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">paste0</span>(<span class="st">'p'</span>, <span class="fu">substring</span>(<span class="fu">paste</span>(pval),<span class="dv">2</span>)))</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(k <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(pval)){</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> pval[k]</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(rs))<span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>nlen)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  bfVal[[k]][i,j] <span class="ot">&lt;-</span> <span class="fu">t2BF</span>(<span class="at">p=</span>p, <span class="at">N=</span>Nval[j], <span class="at">xrs=</span>rs[i])</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>bfVal[[k]][<span class="fu">length</span>(rs)<span class="sc">+</span><span class="dv">1</span>,] <span class="ot">&lt;-</span> <span class="fu">outer</span>(p, Nval, t2BFbic)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>bfVal[[k]][<span class="fu">length</span>(rs)<span class="sc">+</span><span class="dv">2</span>,] <span class="ot">&lt;-</span> <span class="fu">outer</span>(p, Nval, t2eff)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="fu">lapply</span>(bfVal, <span class="cf">function</span>(x)<span class="fu">signif</span>(x,<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>$p.05
+                  n=3   4   5   10   20   40   80  160  360
+rscale=1/sqrt(2)  2.6 2.4 2.2 1.80 1.40 1.10 0.80 0.59 0.40
+       sqrt(2)    3.0 2.5 2.1 1.30 0.89 0.62 0.43 0.31 0.20
+BIC              19.0 9.6 6.6 3.00 1.80 1.20 0.79 0.55 0.36
+Effect size       2.5 1.6 1.2 0.72 0.47 0.32 0.22 0.16 0.10
+
+$p.01
+                   n=3    4    5   10   20   40  80  160  360
+rscale=1/sqrt(2)   6.4  7.0  7.0  6.2 5.10 4.10 3.1 2.30 1.60
+       sqrt(2)     9.8  9.6  8.7  5.6 3.70 2.50 1.8 1.20 0.82
+BIC              210.0 77.0 45.0 15.0 8.00 5.00 3.3 2.30 1.50
+Effect size        5.7  2.9  2.1  1.0 0.64 0.43 0.3 0.21 0.14
+
+$p.001
+                  n=3      4     5    10    20    40    80   160   360
+rscale=1/sqrt(2)   21   32.0  38.0  41.0 37.00 31.00 24.00 18.00 13.00
+       sqrt(2)     39   56.0  60.0  47.0 31.00 21.00 15.00 10.00  6.70
+BIC              6500 1600.0 750.0 180.0 77.00 44.00 28.00 19.00 12.00
+Effect size        18    6.5   3.9   1.5  0.87  0.56  0.38  0.27  0.17</code></pre>
+</div>
+</div>
+<p>Note several points:<br>
+- The BIC-based ‘Bayes Factor’ gives unreasonably large factors for small values of <span class="math inline">\(n\)</span>. Not until <span class="math inline">\(n\)</span>=80 is the value in much the same ballpark as the Bayes Factor generated by the <em>BayesFactor</em> function. The BIC statistic really is designed for use in a “large sample” context.<br>
+- For large enough values of <span class="math inline">\(n\)</span>, the BIC-based values lie between the Bayes Factor with for an <code>rscale</code> of <span class="math inline">\(1/\sqrt{2}\)</span> and that for an <code>rscale</code> of <span class="math inline">\(\sqrt{2}\)</span>.<br>
+- As <span class="math inline">\(n\)</span> increases, the estimated effect size to which the Bayes Factor corresponds becomes ever smaller.</p>
+<p>Note then that <code>BayesFactor::ttestBF()</code> with the default setting of <code>rscale</code>, and the BIC-based Bayes Factor, are both using a prior whose scale is large relative to an ever smaller effect size.</p>
+</section>
+<section id="matching-the-setting-of-rscale-to-the-effect-size" class="level4">
+<h4 class="anchored" data-anchor-id="matching-the-setting-of-rscale-to-the-effect-size">Matching the setting of <code>rscale</code> to the effect size</h4>
+<p>Observe then the result from matching the scale for the prior to the effect size. The following checks this for <span class="math inline">\(p\)</span>=0.05, making at the same time a comparison with AIC-based and BIC-based relative ‘preferences’.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>rs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.5</span>,<span class="dv">1</span>,<span class="dv">4</span>,<span class="dv">16</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>pval <span class="ot">&lt;-</span> <span class="fl">0.05</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>BFrs <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">nrow=</span><span class="fu">length</span>(rs)<span class="sc">+</span><span class="dv">3</span>, <span class="at">ncol=</span>nlen)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(BFrs) <span class="ot">&lt;-</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="fu">c</span>(<span class="fu">paste0</span>(<span class="fu">c</span>(<span class="st">"rscale="</span>,<span class="fu">rep</span>(<span class="st">"       "</span>,<span class="dv">3</span>)),rs,<span class="st">"/sqrt(n)"</span>),</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>         <span class="st">"rscale=1/sqrt(2)"</span>,<span class="st">"BIC-based"</span>,<span class="st">"AIC-based"</span>), </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>       <span class="fu">paste0</span>(<span class="fu">c</span>(<span class="st">"n="</span>,<span class="fu">rep</span>(<span class="st">""</span>,nlen<span class="dv">-1</span>)),Nval))</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>nlen){</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(rs))</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>     BFrs[i,j] <span class="ot">&lt;-</span> <span class="fu">t2BF</span>(<span class="at">p=</span>pval, <span class="at">N=</span>Nval[j], <span class="at">xrs=</span>rs[i]<span class="sc">/</span><span class="fu">sqrt</span>(Nval[j]))</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  BFrs[<span class="fu">length</span>(rs)<span class="sc">+</span><span class="dv">1</span>, j] <span class="ot">&lt;-</span> <span class="fu">t2BF</span>(<span class="at">p=</span>pval, <span class="at">N=</span>Nval[j], <span class="at">xrs=</span><span class="dv">1</span><span class="sc">/</span><span class="fu">sqrt</span>(<span class="dv">2</span>))</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  BFrs[<span class="fu">length</span>(rs)<span class="sc">+</span><span class="dv">2</span>, j] <span class="ot">&lt;-</span> <span class="fu">t2BFbic</span>(<span class="at">p=</span>pval, <span class="at">N=</span>Nval[j])</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  BFrs[<span class="fu">length</span>(rs)<span class="sc">+</span><span class="dv">3</span>, j] <span class="ot">&lt;-</span> <span class="fu">t2AIC</span>(<span class="at">p=</span>pval, <span class="at">N=</span>Nval[j])</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">setNames</span>(<span class="st">"p=0.05"</span>,<span class="st">""</span>), <span class="at">quote=</span>F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>       
+p=0.05 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(BFrs,<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                     n=3    4    5   10   20   40   80  160  360
+rscale=0.5/sqrt(n)  1.84 1.77 1.71 1.59 1.53 1.50 1.48 1.48 1.47
+       1/sqrt(n)    2.38 2.19 2.06 1.81 1.70 1.65 1.62 1.61 1.60
+       4/sqrt(n)    3.02 2.28 1.92 1.41 1.22 1.15 1.11 1.10 1.09
+       16/sqrt(n)   1.48 0.91 0.70 0.46 0.39 0.36 0.35 0.34 0.34
+rscale=1/sqrt(2)    2.56 2.38 2.22 1.76 1.39 1.07 0.80 0.59 0.40
+BIC-based          18.96 9.57 6.56 3.00 1.78 1.16 0.79 0.55 0.36
+AIC-based          12.08 7.04 5.39 3.49 2.93 2.71 2.60 2.56 2.53</code></pre>
+</div>
+</div>
+<p>Thus, the BIC is designed to look for effect sizes that are around one. If a small effect size is expected in a large sample context, use of <code>ttestBF()</code> or <code>ttest.tstat()</code> with a setting of <code>rscale</code> that matches the expected effect size, makes better sense than use of <code>BIC()</code>.</p>
+<p>There is a choice of prior that allows the AIC-based preference measure to be interpreted as a Bayes Factor. See Burnham &amp; Anderson (2004). Relative preference values that are larger than from the <em>BayesFactor</em> functions at all settings of <code>rscale</code> suggests a tendency to choose an overly complex model.</p>
+<p>For <span class="math inline">\(p\)</span>=0.01 we find:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>rs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.5</span>,<span class="dv">1</span>,<span class="dv">4</span>,<span class="dv">16</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>pval <span class="ot">&lt;-</span> <span class="fl">0.01</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>BFrs <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">nrow=</span><span class="fu">length</span>(rs)<span class="sc">+</span><span class="dv">3</span>, <span class="at">ncol=</span>nlen)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(BFrs) <span class="ot">&lt;-</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="fu">c</span>(<span class="fu">paste0</span>(<span class="fu">c</span>(<span class="st">"rscale="</span>,<span class="fu">rep</span>(<span class="st">"       "</span>,<span class="dv">3</span>)),rs,<span class="st">"/sqrt(n)"</span>),<span class="st">"rscale=1/sqrt(2)"</span>,<span class="st">"BIC-based"</span>,<span class="st">"AIC-based"</span>), <span class="fu">paste0</span>(<span class="fu">c</span>(<span class="st">"n="</span>,<span class="fu">rep</span>(<span class="st">""</span>,nlen<span class="dv">-1</span>)),Nval))</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>nlen){</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(rs))</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>     BFrs[i,j] <span class="ot">&lt;-</span> <span class="fu">t2BF</span>(<span class="at">p=</span>pval, <span class="at">N=</span>Nval[j], <span class="at">xrs=</span>rs[i]<span class="sc">/</span><span class="fu">sqrt</span>(Nval[j]))</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  BFrs[<span class="fu">length</span>(rs)<span class="sc">+</span><span class="dv">1</span>, j] <span class="ot">&lt;-</span> <span class="fu">t2BF</span>(<span class="at">p=</span>pval, <span class="at">N=</span>Nval[j], <span class="at">xrs=</span><span class="dv">1</span><span class="sc">/</span><span class="fu">sqrt</span>(<span class="dv">2</span>))</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  BFrs[<span class="fu">length</span>(rs)<span class="sc">+</span><span class="dv">2</span>, j] <span class="ot">&lt;-</span> <span class="fu">t2BFbic</span>(<span class="at">p=</span>pval, <span class="at">N=</span>Nval[j])</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  BFrs[<span class="fu">length</span>(rs)<span class="sc">+</span><span class="dv">3</span>, j] <span class="ot">&lt;-</span> <span class="fu">t2AIC</span>(<span class="at">p=</span>pval, <span class="at">N=</span>Nval[j])</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">setNames</span>(<span class="st">"p=0.01"</span>,<span class="st">""</span>), <span class="at">quote=</span>F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>       
+p=0.01 </code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(BFrs,<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                      n=3     4     5    10    20    40    80   160   360
+rscale=0.5/sqrt(n)   3.49  3.65  3.62  3.38  3.22  3.13  3.09  3.07  3.06
+       1/sqrt(n)     5.56  5.71  5.54  4.87  4.48  4.28  4.19  4.14  4.12
+       4/sqrt(n)    12.32 10.39  8.77  5.85  4.75  4.30  4.09  3.99  3.94
+       16/sqrt(n)   12.09  6.54  4.51  2.31  1.73  1.51  1.42  1.38  1.35
+rscale=1/sqrt(2)     6.38  7.03  7.05  6.20  5.12  4.08  3.12  2.32  1.60
+BIC-based          205.66 76.53 44.54 15.34  8.04  4.96  3.29  2.25  1.47
+AIC-based          131.05 56.31 36.64 17.84 13.23 11.54 10.81 10.47 10.29</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="use-of-functions-from-the-bfpack-package" class="level3">
+<h3 class="anchored" data-anchor-id="use-of-functions-from-the-bfpack-package">Use of functions from the <em>BFpack</em> package</h3>
+<p>We investigate the Bayes Factors that are calculated using the Fractional Bayes Factor Approach. The details are not easy to describe simply. However the effect is that allowance must be made for the use of a fraction of the information in the data to determine the null. See Mulder et al (2021).</p>
+<p>We compare</p>
+<ul>
+<li>Bayes Factor with Jeffreys-Zellner-Siow prior centered on NULL</li>
+<li>Fractional Bayes Factor from <em>BFpack</em> (<code>BF.type=1</code>), i.e., the prior is centered on the NULL</li>
+<li>Fractional Bayes Factor from <em>BFpack</em> (<code>BF.type=2</code>), i.e., the prior is centered on the maximum likelihood estimate under the alternative.</li>
+<li>Alternative versus NULL, based on Bayesian Information Criterion (BIC)</li>
+</ul>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(BayesFactor))</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(BFpack))</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(metRology))</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>pval <span class="ot">&lt;-</span> <span class="fu">c</span>(.<span class="dv">05</span>,.<span class="dv">01</span>,.<span class="dv">001</span>); np <span class="ot">&lt;-</span> <span class="fu">length</span>(pval)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>Nval <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">3</span><span class="sc">:</span><span class="dv">5</span>,<span class="dv">10</span>,<span class="dv">20</span>,<span class="dv">40</span>,<span class="dv">80</span>,<span class="dv">160</span>,<span class="dv">320</span>); nlen <span class="ot">&lt;-</span> <span class="fu">length</span>(Nval)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>bicVal <span class="ot">&lt;-</span> <span class="fu">outer</span>(pval, Nval, t2BFbic)</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co"># t2BF &lt;- function(p, N){t &lt;- qt(p/2, df=N-1, lower.tail=FALSE)</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co">#                       BayesFactor::ttest.tstat(t=t, n1=N, simple=TRUE)}</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>BFval <span class="ot">&lt;-</span> packValNull <span class="ot">&lt;-</span> packValAlt <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">nrow=</span>np,<span class="at">ncol=</span>nlen)</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(packValNull) <span class="ot">&lt;-</span> <span class="fu">dimnames</span>(packValAlt) <span class="ot">&lt;-</span> <span class="fu">dimnames</span>(bicVal) <span class="ot">&lt;-</span> </span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dimnames</span>(BFval) <span class="ot">&lt;-</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="fu">paste</span>(pval), <span class="fu">paste0</span>(<span class="fu">c</span>(<span class="st">"n="</span>,<span class="fu">rep</span>(<span class="st">""</span>,nlen<span class="dv">-1</span>)),Nval))</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>np)<span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>nlen){</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>  t <span class="ot">&lt;-</span> <span class="fu">qt</span>(pval[i]<span class="sc">/</span><span class="dv">2</span>,Nval[j]<span class="sc">-</span><span class="dv">1</span>,<span class="at">lower.tail=</span>F)</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>  d <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(Nval[j])</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>  d <span class="ot">&lt;-</span> d<span class="sc">-</span><span class="fu">mean</span>(d)<span class="sc">+</span>t<span class="sc">*</span><span class="fu">sd</span>(d)<span class="sc">/</span><span class="fu">sqrt</span>(Nval[j])</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>  tt <span class="ot">&lt;-</span> bain<span class="sc">::</span><span class="fu">t_test</span>(d)</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>  packValNull[i,j] <span class="ot">&lt;-</span> <span class="fu">BF</span>(tt,  <span class="at">hypothesis=</span><span class="st">'mu=0'</span>,  </span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">BF.type=</span><span class="dv">1</span>)[[<span class="st">'BFmatrix_confirmatory'</span>]][<span class="st">'complement'</span>, <span class="st">'mu=0'</span>]</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>  packValAlt[i,j] <span class="ot">&lt;-</span> <span class="fu">BF</span>(tt,  <span class="at">hypothesis=</span><span class="st">'mu=0'</span>,  </span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">BF.type=</span><span class="dv">2</span>)[[<span class="st">'BFmatrix_confirmatory'</span>]][<span class="st">'complement'</span>, <span class="st">'mu=0'</span>]</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>  BFval[i,j] <span class="ot">&lt;-</span> <span class="fu">t2BF</span>(pval[i], Nval[j])}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Fractional Bayes factor, center on point null</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">setNames</span>(<span class="st">"Fractional Bayes Factor, center prior on null"</span>,<span class="st">""</span>), <span class="at">quote=</span>F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                              
+Fractional Bayes Factor, center prior on null </code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(packValNull, <span class="at">digits=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>        n=3     4     5    10    20     40     80   160   320
+0.05   2.04  2.19  2.13  1.66  1.20  0.856  0.607  0.43 0.304
+0.01   4.51  6.19  6.71  6.10  4.66  3.395  2.432  1.73 1.227
+0.001 14.24 28.34 36.64 42.93 35.65 26.849 19.520 13.98 9.951</code></pre>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Bayes Factor (Cauchy prior, `rscale="medium")`</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">setNames</span>(<span class="st">"From `BayesFactor::ttestBF()`, center prior on null"</span>,<span class="st">""</span>), <span class="at">quote=</span>F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                                    
+From `BayesFactor::ttestBF()`, center prior on null </code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(BFval, <span class="at">digits=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>        n=3     4     5    10    20    40    80    160    320
+0.05   2.56  2.38  2.22  1.76  1.39  1.07  0.80  0.585  0.422
+0.01   6.38  7.03  7.05  6.20  5.12  4.08  3.12  2.321  1.688
+0.001 21.44 32.35 37.65 40.86 36.57 30.53 24.19 18.364 13.527</code></pre>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="do">## BIC-based to BFpack::BF() ratio</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">setNames</span>(<span class="st">"FBF, center prior on null: Ratio to BayesFactor result"</span>,<span class="st">""</span>), <span class="at">quote=</span>F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                                       
+FBF, center prior on null: Ratio to BayesFactor result </code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(packValNull<span class="sc">/</span>BFval, <span class="at">digits=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>        n=3     4     5    10    20    40    80   160   320
+0.05  0.797 0.919 0.958 0.939 0.864 0.800 0.759 0.734 0.721
+0.01  0.708 0.880 0.952 0.984 0.910 0.833 0.778 0.745 0.727
+0.001 0.664 0.876 0.973 1.050 0.975 0.879 0.807 0.761 0.736</code></pre>
+</div>
+</div>
+<section id="bfpackbf-with-bf.type2-vs-derived-from-bic" class="level4">
+<h4 class="anchored" data-anchor-id="bfpackbf-with-bf.type2-vs-derived-from-bic"><code>BFpack::BF()</code> with BF.type=2 vs derived from BIC</h4>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fractional Bayes factor, center on estimate under alternative</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">setNames</span>(<span class="st">"FBF, center on estimate under alternative"</span>,<span class="st">""</span>), <span class="at">quote=</span>F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                          
+FBF, center on estimate under alternative </code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(packValAlt, <span class="at">digits=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>         n=3       4      5    10    20     40     80    160    320
+0.05    20.9    9.57   6.22   2.6  1.48  0.946  0.638  0.441  0.308
+0.01   226.8   76.53  42.27  13.3  6.67  4.033  2.647  1.804  1.253
+0.001 7123.0 1606.11 715.79 151.9 63.95 35.565 22.407 14.973 10.295</code></pre>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="do">## From BIC</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">setNames</span>(<span class="st">"Derived from BIC"</span>,<span class="st">""</span>), <span class="at">quote=</span>F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                 
+Derived from BIC </code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(bicVal, <span class="at">digits=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>       n=3       4      5    10    20    40     80   160    320
+0.05    19    9.57   6.56   3.0  1.78  1.16  0.792  0.55  0.385
+0.01   206   76.53  44.54  15.3  8.04  4.96  3.286  2.25  1.567
+0.001 6460 1606.11 754.24 175.7 77.10 43.73 27.819 18.68 12.872</code></pre>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="do">## BIC-based to BFpack::BF() ratio</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">setNames</span>(<span class="st">"FBF, center prior on alternative: Ratio to BIC"</span>,<span class="st">""</span>), <span class="at">quote=</span>F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                               
+FBF, center prior on alternative: Ratio to BIC </code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(packValAlt<span class="sc">/</span>bicVal, <span class="at">digits=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>      n=3 4     5    10    20    40    80   160 320
+0.05  1.1 1 0.949 0.865 0.829 0.813 0.805 0.802 0.8
+0.01  1.1 1 0.949 0.865 0.829 0.813 0.805 0.802 0.8
+0.001 1.1 1 0.949 0.865 0.829 0.813 0.805 0.802 0.8</code></pre>
+</div>
+</div>
+<p>The function <code>BFpack::BF()</code> is making allowance for the use of a fraction of the information in the data used to&nbsp;specify the prior distribution. The BIC based calculations do not make such an adjustment.</p>
+<p>As for the use of the BIC to choose between a simpler and a more complex model, the calculated Bayes Factors are unreasonably large for small samples, while in larger samples the prior is tuned to detect effect sizes that are of similar (or larger) magnitude than the standard deviation.</p>
+<p><a href="#fig-compare" class="quarto-xref">Figure&nbsp;2</a> summarizes the comparisons made</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-compare" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-compare-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="bf_files/figure-html/fig-compare-1.png" class="img-fluid figure-img" style="width:100.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-compare-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Results from different ways to calculate the Bayes Factor - for a result from a one-sample two-sided <span class="math inline">\(t\)</span>-test where <span class="math inline">\(p\)</span>=0.05
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Code is:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lattice)</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>allVal <span class="ot">&lt;-</span> <span class="fu">rbind</span>(BFval, packValNull, bicVal, packValAlt)</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(allVal) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">'BayesFactor'</span>, <span class="st">'packValNull'</span>, <span class="st">'BIC'</span>, <span class="st">'packValAlt'</span>), <span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">3</span>)),</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">".05"</span>,<span class="st">".01"</span>,<span class="st">".001"</span>), <span class="dv">4</span>))</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>tdf <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">t</span>(allVal))</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>tdf<span class="sc">$</span>n <span class="ot">&lt;-</span> Nval</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>labs <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">c</span>(<span class="dv">2</span><span class="sc">^</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">6</span>),<span class="dv">2</span><span class="sc">^</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">6</span>)<span class="sc">*</span><span class="fl">1.5</span>))</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a><span class="fu">xyplot</span>(BayesFactor<span class="fl">.05</span><span class="sc">+</span>packValNull<span class="fl">.05</span><span class="sc">+</span>BIC<span class="fl">.05</span><span class="sc">+</span>packValAlt<span class="fl">.05</span> <span class="sc">~</span> n,</span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">data=</span>tdf, <span class="at">type=</span><span class="st">'l'</span>, <span class="at">auto.key=</span><span class="fu">list</span>(<span class="at">columns=</span><span class="dv">2</span>),</span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">xlab=</span><span class="st">"Sample size $n$"</span>,</span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">ylab=</span><span class="st">"Bayes Factor (Choice of 4 possibilities)"</span>,</span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">scales=</span><span class="fu">list</span>(<span class="at">x=</span><span class="fu">list</span>(<span class="at">at=</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">8</span>)<span class="sc">*</span><span class="dv">40</span>),</span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a>         <span class="at">y=</span><span class="fu">list</span>(<span class="at">log=</span>T, <span class="at">at=</span>labs, <span class="at">labels=</span><span class="fu">paste</span>(labs))),</span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a> <span class="at">par.settings=</span><span class="fu">simpleTheme</span>(<span class="at">lty=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>), <span class="at">lwd=</span><span class="dv">2</span>, <span class="at">col=</span><span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">'gray'</span>,<span class="st">'black'</span>), <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="bayes-factors-for-regression-coefficients." class="level4">
+<h4 class="anchored" data-anchor-id="bayes-factors-for-regression-coefficients.">Bayes Factors for regression coefficients.</h4>
+<p>We will use the following function to simulate data, with two explanatory variables, for use in regression calculations:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>simDat <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">x1=</span><span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>,<span class="dv">4</span>)<span class="sc">/</span><span class="dv">5</span>, <span class="at">x2=</span><span class="fu">sample</span>(<span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>,<span class="dv">4</span>)<span class="sc">/</span><span class="dv">5</span>), </span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">b1=</span><span class="fl">1.2</span>, <span class="at">b2=</span><span class="fl">1.5</span>, <span class="at">sd=</span><span class="dv">8</span>){</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">length</span>(x1)</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">x1=</span>x1, <span class="at">x2=</span>x2, <span class="at">y=</span>b1<span class="sc">*</span>x1<span class="sc">+</span>b2<span class="sc">*</span>x2<span class="sc">+</span><span class="fu">rnorm</span>(n,<span class="at">sd=</span>sd))</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="one-data-generating-mechanism-large-dataset-to-dataset-variation" class="level5">
+<h5 class="anchored" data-anchor-id="one-data-generating-mechanism-large-dataset-to-dataset-variation">One data generating mechanism – large dataset to dataset variation</h5>
+<p>Note first that with the default settings, the simulated data and <span class="math inline">\(p\)</span>-values in the fitted model show large variation from one simulation to the next. The following shows relatively extreme differences:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">17</span>)</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">simDat</span>()</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>y.lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(y<span class="sc">~</span>x1<span class="sc">+</span>x2, <span class="at">data=</span>dat); bf12 <span class="ot">&lt;-</span> <span class="fu">lmBF</span>(y <span class="sc">~</span> x1<span class="sc">+</span>x2, <span class="at">data=</span>dat)</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="do">## Repeat simulation of data</span></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">simDat</span>()</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>yy.lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(y<span class="sc">~</span>x1<span class="sc">+</span>x2, <span class="at">data=</span>dat); bf12 <span class="ot">&lt;-</span> <span class="fu">lmBF</span>(y <span class="sc">~</span> x1<span class="sc">+</span>x2, <span class="at">data=</span>dat)</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a><span class="fu">cbind</span>(<span class="fu">coef</span>(<span class="fu">summary</span>(y.lm))[,<span class="sc">-</span><span class="dv">2</span>], <span class="fu">coef</span>(<span class="fu">summary</span>(yy.lm))[,<span class="sc">-</span><span class="dv">2</span>]) <span class="sc">|&gt;</span> <span class="fu">signif</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>            Estimate t value Pr(&gt;|t|) Estimate t value Pr(&gt;|t|)
+(Intercept)     -2.4    -1.0   0.3200     1.40    0.63    0.530
+x1               1.7     2.3   0.0250     1.80    2.40    0.018
+x2               2.0     2.7   0.0076     0.74    1.00    0.310</code></pre>
+</div>
+</div>
+<p>P-values from nine simulations are:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>multSims <span class="ot">&lt;-</span> <span class="cf">function</span>(sd, <span class="at">nsims=</span><span class="dv">9</span>, <span class="at">rnam=</span><span class="fu">c</span>(<span class="st">"(Intercept)"</span>,<span class="st">"x1"</span>,<span class="st">"x2"</span>)){</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>pvals <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">nrow=</span><span class="dv">3</span>, <span class="at">ncol=</span>nsims, <span class="at">dimnames=</span><span class="fu">list</span>(rnam,</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>                <span class="fu">paste0</span>(<span class="st">'pval'</span>, <span class="dv">1</span><span class="sc">:</span>nsims)))</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>nsims){dat <span class="ot">&lt;-</span> <span class="fu">simDat</span>(<span class="at">sd=</span>sd)</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>  dat.lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(y<span class="sc">~</span>x1<span class="sc">+</span>x2, <span class="at">data=</span>dat); bf12 <span class="ot">&lt;-</span> <span class="fu">lmBF</span>(y <span class="sc">~</span> x1<span class="sc">+</span>x2, <span class="at">data=</span>dat)</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>  pvals[,i] <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">summary</span>(dat.lm))[,<span class="dv">4</span>]</span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>pvals</span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a><span class="fu">multSims</span>(<span class="at">sd=</span><span class="dv">8</span>) <span class="sc">|&gt;</span> <span class="fu">signif</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>            pval1 pval2 pval3  pval4  pval5 pval6  pval7 pval8 pval9
+(Intercept)  0.40 0.690 0.590 0.2000 0.3500 0.850 0.7800 0.790 0.910
+x1           0.49 0.081 0.250 0.0460 0.0380 0.089 0.2500 0.390 0.025
+x2           0.44 0.020 0.037 0.0012 0.0064 0.190 0.0024 0.022 0.380</code></pre>
+</div>
+</div>
+<p>Now try with <code>sd=5</code>:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">multSims</span>(<span class="at">sd=</span><span class="dv">5</span>) <span class="sc">|&gt;</span> <span class="fu">signif</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>              pval1  pval2  pval3   pval4   pval5   pval6  pval7   pval8  pval9
+(Intercept) 5.7e-01 0.8600 0.6000 0.77000 0.73000 2.2e-01 0.1800 0.09900 0.4200
+x1          1.6e-01 0.0510 0.0015 0.16000 0.01700 7.4e-05 0.4800 0.00089 0.0042
+x2          3.5e-06 0.0023 0.0150 0.00033 0.00025 6.2e-03 0.0001 0.00004 0.0460</code></pre>
+</div>
+</div>
+<p>The <span class="math inline">\(p\)</span>-values are more consistently small.</p>
+</section>
+<section id="bayes-factors-and-bic-statistics" class="level5">
+<h5 class="anchored" data-anchor-id="bayes-factors-and-bic-statistics">Bayes Factors and BIC statistics</h5>
+<p>Now create a simulated dataset, and calculate Bayes Factors for the coefficients (1) using <em>Bayesfactor</em> functions, and (2) derived from BIC statistics:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">31</span>)</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>dat31 <span class="ot">&lt;-</span> <span class="fu">simDat</span>()</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>y.lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(y<span class="sc">~</span>x1<span class="sc">+</span>x2, <span class="at">data=</span>dat31); bf12 <span class="ot">&lt;-</span> <span class="fu">lmBF</span>(y <span class="sc">~</span> x1<span class="sc">+</span>x2, <span class="at">data=</span>dat31)</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>y2.lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(y<span class="sc">~</span>x2, <span class="at">data=</span>dat31); bf2 <span class="ot">&lt;-</span> <span class="fu">lmBF</span>(y <span class="sc">~</span> x2, <span class="at">data=</span>dat31)</span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>y1.lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(y<span class="sc">~</span>x1, <span class="at">data=</span>dat31); bf1 <span class="ot">&lt;-</span> <span class="fu">lmBF</span>(y <span class="sc">~</span> x1, <span class="at">data=</span>dat31)</span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a><span class="do">## Regression summary</span></span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">summary</span>(y.lm)) <span class="sc">|&gt;</span> <span class="fu">signif</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>            Estimate Std. Error t value Pr(&gt;|t|)
+(Intercept)     1.20        2.2    0.55    0.590
+x1              0.99        0.7    1.40    0.160
+x2              1.80        0.7    2.50    0.014</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Bayes Factors for x1 and x2, using functions from _Bayesfactor_</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="fu">extractBF</span>(bf12<span class="sc">/</span>bf2)<span class="sc">$</span>bf, <span class="fu">extractBF</span>(bf12<span class="sc">/</span>bf1)<span class="sc">$</span>bf) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.70 4.45</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Bayes Factors for x1 and x2, derived from BIC statistics</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="fu">exp</span>((<span class="fu">BIC</span>(y2.lm)<span class="sc">-</span><span class="fu">BIC</span>(y.lm))<span class="sc">/</span><span class="dv">2</span>), <span class="fu">exp</span>((<span class="fu">BIC</span>(y1.lm)<span class="sc">-</span><span class="fu">BIC</span>(y.lm))<span class="sc">/</span><span class="dv">2</span>)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.31 2.65</code></pre>
+</div>
+</div>
+<p>Both are substantially smaller than those derived from calculations using <code>BayesFactor::lmBF()</code>.</p>
+</section>
+<section id="matching-the-bayes-factor-to-the-ses-of-the-coefficients" class="level5">
+<h5 class="anchored" data-anchor-id="matching-the-bayes-factor-to-the-ses-of-the-coefficients">Matching the Bayes Factor to the SEs of the coefficients</h5>
+<p>Check also the difference made to the Bayes Factors by setting the scale parameter (here <code>rscaleCont</code>) to a value that is matched to the standard error of the coefficient estimates. A standard error that is just under 0.7 is the same for both coefficients. We standardise this by dividing by a standard deviation of just under 7.2, multiply by the default <code>rscale</code> that equals <span class="math inline">\(\sqrt(2)/4\)</span>, and use this as the value for <code>rscaleCont</code>.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>rs <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">*</span><span class="fl">0.75</span><span class="sc">/</span><span class="fl">7.2</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>  bf12 <span class="ot">&lt;-</span> <span class="fu">lmBF</span>(y <span class="sc">~</span> x1<span class="sc">+</span>x2, <span class="at">data=</span>dat31, <span class="at">rscaleCont=</span>rs)</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>  bf2 <span class="ot">&lt;-</span> <span class="fu">lmBF</span>(y <span class="sc">~</span> x2, <span class="at">data=</span>dat31, <span class="at">rscaleCont=</span>rs)</span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>  bf1 <span class="ot">&lt;-</span> <span class="fu">lmBF</span>(y <span class="sc">~</span> x1, <span class="at">data=</span>dat31, <span class="at">rscaleCont=</span>rs)</span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="fu">extractBF</span>(bf12<span class="sc">/</span>bf2)<span class="sc">$</span>bf, <span class="fu">extractBF</span>(bf12<span class="sc">/</span>bf1)<span class="sc">$</span>bf) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.84 4.33</code></pre>
+</div>
+</div>
+<p>In this context, the smaller Bayes Factor is modestly increased, with the larger Bayes Factor slightly reduced.</p>
+</section>
+</section>
+<section id="different-statistics-offer-different-perspectives" class="level4">
+<h4 class="anchored" data-anchor-id="different-statistics-offer-different-perspectives">Different statistics offer different perspectives</h4>
+<p>In addition to the choice between different prior families, one has to choose a scale for the prior, if this is not done automatically. Different choices can lead to quite different Bayes Factors. Be aware that Bayes Factors are at best a rough measure of model preference. Use them along with other measures of model preference. Keep in mind that when samples are small, different samples from the same population, if available, would give widely varying results. Refer back to <a href="#fig-pval" class="quarto-xref">Figure&nbsp;1</a>, which showed what could be expected for <span class="math inline">\(p\)</span>-values.</p>
+<p>The comparisons could usefully be extended to consider other choices of prior.</p>
+</section>
+<section id="references" class="level4">
+<h4 class="anchored" data-anchor-id="references">References</h4>
+<p>Burnham, K. P., &amp; Anderson, D. R. (2004). Multimodel inference: understanding AIC and BIC in model selection. Sociological methods &amp; research, 33(2), 261-304.</p>
+<p>Kahneman, D. (2011). Thinking, fast and slow. Macmillan.</p>
+<p>Mulder, J., Williams, D. R., Gu, X., Tomarken, A., Böing-Messing, F., Olsson-Collentine, A., Meijerink-Bosman, M., Menke, J., van Aert, R., Fox, J.-P., Hoijtink, H., Rosseel, Y., Wagenmakers, E.-J., &amp; van Lissa, C. (2021). BFpack: Flexible Bayes Factor Testing of Scientific Theories in R. Journal of Statistical Software, 100(18), 1–63. https://doi.org/10.18637/jss.v100.i18</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

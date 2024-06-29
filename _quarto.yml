@@ -31,6 +31,7 @@ website:
             href: RunningCode.qmd
           - text: "Code for Selected Figures"
             href: figFuns.qmd
+          - text: "Bayes Factors & the BIC Statistic"
             
 format:
   html:

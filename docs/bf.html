@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="John Maindonald">
-<meta name="dcterms.date" content="2024-06-29">
+<meta name="dcterms.date" content="2024-07-15">
 
-<title>Code and Supplements - Bayes Factors &amp; the BIC Statistic</title>
+<title>Code and Supplements - Bayes Factors and Information Statistics</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -214,7 +214,9 @@ window.Quarto = {
   <ul>
   <li><a href="#all-summary-statistics-are-random-variables" id="toc-all-summary-statistics-are-random-variables" class="nav-link active" data-scroll-target="#all-summary-statistics-are-random-variables">All summary statistics are random variables</a></li>
   <li><a href="#the-bic-and-aic-connection-to-bayes-factors" id="toc-the-bic-and-aic-connection-to-bayes-factors" class="nav-link" data-scroll-target="#the-bic-and-aic-connection-to-bayes-factors">The BIC and AIC connection to Bayes Factors</a></li>
+  <li><a href="#aic-and-bic-what-p-value-corresponds-to-a-zero-bifference" id="toc-aic-and-bic-what-p-value-corresponds-to-a-zero-bifference" class="nav-link" data-scroll-target="#aic-and-bic-what-p-value-corresponds-to-a-zero-bifference">AIC and BIC – What <span class="math inline">\(P\)</span>-value Corresponds to a Zero Bifference?</a></li>
   <li><a href="#use-of-functions-from-the-bfpack-package" id="toc-use-of-functions-from-the-bfpack-package" class="nav-link" data-scroll-target="#use-of-functions-from-the-bfpack-package">Use of functions from the <em>BFpack</em> package</a></li>
+  <li><a href="#bayes-factors-for-regression-coefficients." id="toc-bayes-factors-for-regression-coefficients." class="nav-link" data-scroll-target="#bayes-factors-for-regression-coefficients.">Bayes Factors for regression coefficients.</a></li>
   </ul>
 <div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="bf.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
     </div>
@@ -223,7 +225,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Bayes Factors &amp; the BIC Statistic</h1>
+<h1 class="title">Bayes Factors and Information Statistics</h1>
 </div>
 
 
@@ -240,7 +242,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">June 29, 2024</p>
+      <p class="date">July 15, 2024</p>
     </div>
   </div>
   
@@ -252,9 +254,9 @@ window.Quarto = {
 </header>
 
 
-<p>Kahneman (2011) makes the point that humans are poor intuitive statisticians. This is an especially serious issue for understanding and using <span class="math inline">\(p\)</span>-values, for the choice of priors for Bayesian analyses, and for the use of information statistics. Observing how these various statistics compare for simulated data, and how they relate to one another, is helpful for the development of intuition.</p>
-<p>Here, the focus will be on the Bayesian Information Criterion (BIC) and the Akaike Information Criterion (AIC), and on the connection that can be made, more directly for the BIC than for the AIC, to a form of Bayes Factor.</p>
-<p>For purposes of making a connection to the BIC and AIC, the focus will be on Bayes Factors as returned by functions in the <em>Bayesfactor</em> package and, by <code>BPpack::BF()</code>.</p>
+<p>Bayes Factors give a data analysis perspective that is different to that given by <span class="math inline">\(p\)</span>-values, one that is in most cases closer to what the analyst would like to know. The value obtained depends, inevitably, on the choice of prior. But, what choice of prior makes good sense? Intuition, if it is to help, requires training. How do Bayes Factors with common choices of prior, stack up against the use of the information statistics BIC (Bayes Information Criterion) and AIC (Akaike Information Criterion) for use in model choice? Intuition, if it is to be useful at all, requires training. The discussion that follows may be helpful to this end.</p>
+<p>For purposes of making a connection to the BIC and AIC, the focus will be on Bayes Factors as returned by functions in the <em>BayesFactor</em> package and, by <code>BPpack::BF()</code>. The BIC, in the large sample context for which it was developed, has a direct connection to a form of Bayes Factor. For the AIC, or the AICc that should replace it for use when the ratio of sample size to number of parameters estimated is less than perhaps 40, a more tenuous connection can be made. See Bayarri et al (2012) for commentary on the rational for the Jeffreys-Zellner-Siow family of priors that is used by <em>BayesFactor</em> functions.</p>
+<p>The AIC penalty term is designed so that, in the large sample limit, the statistic will select the model with the lowest prediction error. The BIC penalty term is designed, in the large sample limit, to select the correct model. In practical use, this distinction may be somewhat artificial.</p>
 <section id="all-summary-statistics-are-random-variables" class="level3">
 <h3 class="anchored" data-anchor-id="all-summary-statistics-are-random-variables">All summary statistics are random variables</h3>
 <div class="cell">
@@ -313,7 +315,7 @@ Figure&nbsp;1: Boxplots are for 200 simulated <span class="math inline">\(p\)</s
 <p>As a starting point, comparisons will be for a one-sample <span class="math inline">\(t\)</span>-statistic.</p>
 <p>Given two models with the same outcome variable, with respective BIC (Bayesian Information Criterion) statistics <span class="math inline">\(m_1\)</span> and <span class="math inline">\(m_2\)</span>, the quantity <span class="math display">\[
 b_{12} = exp((m_1-m_2)/2)
-\]</span> can be used as a relative preference statistic for <span class="math inline">\(m_2\)</span> as against <span class="math inline">\(m_1\)</span>. If model 1 is nested in model 2 this becomes, under the prior that has the name Jeffreys Unit Information (JUI) prior, with the prior centered on the maximum likelihood of the difference under the alternative, a Bayes Factor giving the probability of model 2 relative to model 1. In the case of a one-sample <span class="math inline">\(t\)</span>-statistic, the BIC-derived Bayes Factor is <span class="math display">\[
+\]</span> can be used as a relative preference statistic for <span class="math inline">\(m_2\)</span> as against <span class="math inline">\(m_1\)</span>. If model 1 is nested in model 2 this becomes, under what is known as a Jeffreys Unit Information (JUI) prior that is centered on the maximum likelihood of the difference under the alternative, a Bayes Factor giving the probability of model 2 relative to model 1. In the case of a one-sample <span class="math inline">\(t\)</span>-statistic, the BIC-derived Bayes Factor is <span class="math display">\[
 \mbox{exp}(N*\log(1+\frac{t^2}{N-1})-\log(N))/2),
 \mbox{  where }N \mbox{ is the sample size}
 \]</span></p>
@@ -351,14 +353,13 @@ b_{12} = exp((m_1-m_2)/2)
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>       <span class="fu">paste0</span>(<span class="fu">c</span>(<span class="st">"n="</span>,<span class="fu">rep</span>(<span class="st">""</span>,<span class="fu">length</span>(Nval)<span class="sc">-</span><span class="dv">1</span>)),Nval))</span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>bfVal <span class="ot">&lt;-</span> <span class="fu">setNames</span>(<span class="fu">rep</span>(<span class="fu">list</span>(bf),<span class="fu">length</span>(pval)),</span>
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">paste0</span>(<span class="st">'p'</span>, <span class="fu">substring</span>(<span class="fu">paste</span>(pval),<span class="dv">2</span>)))</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(k <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(pval)){</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> pval[k]</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(rs))<span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>nlen)</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  bfVal[[k]][i,j] <span class="ot">&lt;-</span> <span class="fu">t2BF</span>(<span class="at">p=</span>p, <span class="at">N=</span>Nval[j], <span class="at">xrs=</span>rs[i])</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>bfVal[[k]][<span class="fu">length</span>(rs)<span class="sc">+</span><span class="dv">1</span>,] <span class="ot">&lt;-</span> <span class="fu">outer</span>(p, Nval, t2BFbic)</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>bfVal[[k]][<span class="fu">length</span>(rs)<span class="sc">+</span><span class="dv">2</span>,] <span class="ot">&lt;-</span> <span class="fu">outer</span>(p, Nval, t2eff)</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="fu">lapply</span>(bfVal, <span class="cf">function</span>(x)<span class="fu">signif</span>(x,<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(k <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(pval)){p <span class="ot">&lt;-</span> pval[k]</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(rs))<span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>nlen)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    bfVal[[k]][i,j] <span class="ot">&lt;-</span> <span class="fu">t2BF</span>(<span class="at">p=</span>p, <span class="at">N=</span>Nval[j], <span class="at">xrs=</span>rs[i])</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  bfVal[[k]][<span class="fu">length</span>(rs)<span class="sc">+</span><span class="dv">1</span>,] <span class="ot">&lt;-</span> <span class="fu">outer</span>(p, Nval, t2BFbic)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  bfVal[[k]][<span class="fu">length</span>(rs)<span class="sc">+</span><span class="dv">2</span>,] <span class="ot">&lt;-</span> <span class="fu">outer</span>(p, Nval, t2eff)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="fu">lapply</span>(bfVal, <span class="cf">function</span>(x)<span class="fu">signif</span>(x,<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>$p.05
@@ -383,9 +384,8 @@ BIC              6500 1600.0 750.0 180.0 77.00 44.00 28.00 19.00 12.00
 Effect size        18    6.5   3.9   1.5  0.87  0.56  0.38  0.27  0.17</code></pre>
 </div>
 </div>
-<p>Note several points:<br>
-- The BIC-based ‘Bayes Factor’ gives unreasonably large factors for small values of <span class="math inline">\(n\)</span>. Not until <span class="math inline">\(n\)</span>=80 is the value in much the same ballpark as the Bayes Factor generated by the <em>BayesFactor</em> function. The BIC statistic really is designed for use in a “large sample” context.<br>
-- For large enough values of <span class="math inline">\(n\)</span>, the BIC-based values lie between the Bayes Factor with for an <code>rscale</code> of <span class="math inline">\(1/\sqrt{2}\)</span> and that for an <code>rscale</code> of <span class="math inline">\(\sqrt{2}\)</span>.<br>
+<p>Note two points:<br>
+- Not until <span class="math inline">\(n\)</span>=80 is the BIC-based Bayes Factor in much the same ballpark as the that generated by the <em>BayesFactor</em> function. For smaller values of <span class="math inline">\(n\)</span>, it is overly large. The BIC statistic really is designed for use in a “large sample” context.<br>
 - As <span class="math inline">\(n\)</span> increases, the estimated effect size to which the Bayes Factor corresponds becomes ever smaller.</p>
 <p>Note then that <code>BayesFactor::ttestBF()</code> with the default setting of <code>rscale</code>, and the BIC-based Bayes Factor, are both using a prior whose scale is large relative to an ever smaller effect size.</p>
 </section>
@@ -430,7 +430,7 @@ BIC-based          18.96 9.57 6.56 3.00 1.78 1.16 0.79 0.55 0.36
 AIC-based          12.08 7.04 5.39 3.49 2.93 2.71 2.60 2.56 2.53</code></pre>
 </div>
 </div>
-<p>Thus, the BIC is designed to look for effect sizes that are around one. If a small effect size is expected in a large sample context, use of <code>ttestBF()</code> or <code>ttest.tstat()</code> with a setting of <code>rscale</code> that matches the expected effect size, makes better sense than use of <code>BIC()</code>.</p>
+<p>The BIC is designed, in effect, to look for effect sizes that are around one. If a small effect size is expected in a large sample context, use of <code>ttestBF()</code> or <code>ttest.tstat()</code> with a setting of <code>rscale</code> that matches the expected effect size, makes better sense than use of <code>BIC()</code>.</p>
 <p>There is a choice of prior that allows the AIC-based preference measure to be interpreted as a Bayes Factor. See Burnham &amp; Anderson (2004). Relative preference values that are larger than from the <em>BayesFactor</em> functions at all settings of <code>rscale</code> suggests a tendency to choose an overly complex model.</p>
 <p>For <span class="math inline">\(p\)</span>=0.01 we find:</p>
 <div class="cell">
@@ -476,6 +476,28 @@ AIC-based          131.05 56.31 36.64 17.84 13.23 11.54 10.81 10.47 10.29</code>
 </div>
 </section>
 </section>
+<section id="aic-and-bic-what-p-value-corresponds-to-a-zero-bifference" class="level3">
+<h3 class="anchored" data-anchor-id="aic-and-bic-what-p-value-corresponds-to-a-zero-bifference">AIC and BIC – What <span class="math inline">\(P\)</span>-value Corresponds to a Zero Bifference?</h3>
+<p>We ask “For what <span class="math inline">\(p\)</span>-value does the statistic, in either case, rate the simpler model and the more complex model equally?”</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>eqAIC2p <span class="ot">&lt;-</span> <span class="cf">function</span>(n)<span class="dv">2</span><span class="sc">*</span><span class="fu">pt</span>(<span class="fu">sqrt</span>((n<span class="dv">-1</span>)<span class="sc">*</span>(<span class="fu">exp</span>(<span class="dv">2</span><span class="sc">/</span>n)<span class="sc">-</span><span class="dv">1</span>)),<span class="at">lower.tail=</span>F,<span class="at">df=</span>n<span class="dv">-1</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>eqBIC2p <span class="ot">&lt;-</span> <span class="cf">function</span>(n)<span class="dv">2</span><span class="sc">*</span><span class="fu">pt</span>(<span class="fu">sqrt</span>((n<span class="dv">-1</span>)<span class="sc">*</span>(<span class="fu">exp</span>(<span class="fu">log</span>(n)<span class="sc">/</span>n)<span class="sc">-</span><span class="dv">1</span>)),<span class="at">lower.tail=</span>F,<span class="at">df=</span>n<span class="dv">-1</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>eqAICc2p <span class="ot">&lt;-</span> <span class="cf">function</span>(n){penalty <span class="ot">&lt;-</span> <span class="dv">12</span><span class="sc">/</span>(n<span class="dv">-3</span>)<span class="sc">-</span><span class="dv">4</span><span class="sc">/</span>(n<span class="dv">-2</span>)<span class="sc">+</span><span class="dv">2</span>;</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="dv">2</span><span class="sc">*</span><span class="fu">pt</span>(<span class="fu">sqrt</span>((n<span class="dv">-1</span>)<span class="sc">*</span>(<span class="fu">exp</span>(penalty<span class="sc">/</span>n)<span class="sc">-</span><span class="dv">1</span>)),<span class="at">lower.tail=</span>F,<span class="at">df=</span>n<span class="dv">-1</span>)}</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>eq2p <span class="ot">&lt;-</span> <span class="fu">rbind</span>(<span class="at">BIC=</span><span class="fu">setNames</span>(<span class="fu">eqBIC2p</span>(Nval[<span class="sc">-</span><span class="dv">1</span>]), <span class="fu">paste</span>(Nval[<span class="sc">-</span><span class="dv">1</span>])), </span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">AIC=</span><span class="fu">eqAIC2p</span>(Nval[<span class="sc">-</span><span class="dv">1</span>]), <span class="at">AICc=</span><span class="fu">eqAICc2p</span>(Nval[<span class="sc">-</span><span class="dv">1</span>])) </span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="fu">signif</span>(eq2p,<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>          4     5    10    20   40    80   160   360
+BIC  0.3500 0.290 0.160 0.096 0.06 0.038 0.025 0.015
+AIC  0.2600 0.230 0.190 0.170 0.17 0.160 0.160 0.160
+AICc 0.0048 0.029 0.098 0.130 0.14 0.150 0.150 0.160</code></pre>
+</div>
+</div>
+</section>
 <section id="use-of-functions-from-the-bfpack-package" class="level3">
 <h3 class="anchored" data-anchor-id="use-of-functions-from-the-bfpack-package">Use of functions from the <em>BFpack</em> package</h3>
 <p>We investigate the Bayes Factors that are calculated using the Fractional Bayes Factor Approach. The details are not easy to describe simply. However the effect is that allowance must be made for the use of a fraction of the information in the data to determine the null. See Mulder et al (2021).</p>
@@ -489,35 +511,35 @@ AIC-based          131.05 56.31 36.64 17.84 13.23 11.54 10.81 10.47 10.29</code>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(BayesFactor))</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(BFpack))</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(metRology))</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>pval <span class="ot">&lt;-</span> <span class="fu">c</span>(.<span class="dv">05</span>,.<span class="dv">01</span>,.<span class="dv">001</span>); np <span class="ot">&lt;-</span> <span class="fu">length</span>(pval)</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>Nval <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">3</span><span class="sc">:</span><span class="dv">5</span>,<span class="dv">10</span>,<span class="dv">20</span>,<span class="dv">40</span>,<span class="dv">80</span>,<span class="dv">160</span>,<span class="dv">320</span>); nlen <span class="ot">&lt;-</span> <span class="fu">length</span>(Nval)</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>bicVal <span class="ot">&lt;-</span> <span class="fu">outer</span>(pval, Nval, t2BFbic)</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co"># t2BF &lt;- function(p, N){t &lt;- qt(p/2, df=N-1, lower.tail=FALSE)</span></span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co">#                       BayesFactor::ttest.tstat(t=t, n1=N, simple=TRUE)}</span></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>BFval <span class="ot">&lt;-</span> packValNull <span class="ot">&lt;-</span> packValAlt <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">nrow=</span>np,<span class="at">ncol=</span>nlen)</span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(packValNull) <span class="ot">&lt;-</span> <span class="fu">dimnames</span>(packValAlt) <span class="ot">&lt;-</span> <span class="fu">dimnames</span>(bicVal) <span class="ot">&lt;-</span> </span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dimnames</span>(BFval) <span class="ot">&lt;-</span></span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="fu">paste</span>(pval), <span class="fu">paste0</span>(<span class="fu">c</span>(<span class="st">"n="</span>,<span class="fu">rep</span>(<span class="st">""</span>,nlen<span class="dv">-1</span>)),Nval))</span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>np)<span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>nlen){</span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>  t <span class="ot">&lt;-</span> <span class="fu">qt</span>(pval[i]<span class="sc">/</span><span class="dv">2</span>,Nval[j]<span class="sc">-</span><span class="dv">1</span>,<span class="at">lower.tail=</span>F)</span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>  d <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(Nval[j])</span>
-<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>  d <span class="ot">&lt;-</span> d<span class="sc">-</span><span class="fu">mean</span>(d)<span class="sc">+</span>t<span class="sc">*</span><span class="fu">sd</span>(d)<span class="sc">/</span><span class="fu">sqrt</span>(Nval[j])</span>
-<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>  tt <span class="ot">&lt;-</span> bain<span class="sc">::</span><span class="fu">t_test</span>(d)</span>
-<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>  packValNull[i,j] <span class="ot">&lt;-</span> <span class="fu">BF</span>(tt,  <span class="at">hypothesis=</span><span class="st">'mu=0'</span>,  </span>
-<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">BF.type=</span><span class="dv">1</span>)[[<span class="st">'BFmatrix_confirmatory'</span>]][<span class="st">'complement'</span>, <span class="st">'mu=0'</span>]</span>
-<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>  packValAlt[i,j] <span class="ot">&lt;-</span> <span class="fu">BF</span>(tt,  <span class="at">hypothesis=</span><span class="st">'mu=0'</span>,  </span>
-<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">BF.type=</span><span class="dv">2</span>)[[<span class="st">'BFmatrix_confirmatory'</span>]][<span class="st">'complement'</span>, <span class="st">'mu=0'</span>]</span>
-<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>  BFval[i,j] <span class="ot">&lt;-</span> <span class="fu">t2BF</span>(pval[i], Nval[j])}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(BayesFactor))</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(BFpack))</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(metRology))</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>pval <span class="ot">&lt;-</span> <span class="fu">c</span>(.<span class="dv">05</span>,.<span class="dv">01</span>,.<span class="dv">001</span>); np <span class="ot">&lt;-</span> <span class="fu">length</span>(pval)</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>Nval <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">3</span><span class="sc">:</span><span class="dv">5</span>,<span class="dv">10</span>,<span class="dv">20</span>,<span class="dv">40</span>,<span class="dv">80</span>,<span class="dv">160</span>,<span class="dv">320</span>); nlen <span class="ot">&lt;-</span> <span class="fu">length</span>(Nval)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>bicVal <span class="ot">&lt;-</span> <span class="fu">outer</span>(pval, Nval, t2BFbic)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co"># t2BF &lt;- function(p, N){t &lt;- qt(p/2, df=N-1, lower.tail=FALSE)</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="co">#                       BayesFactor::ttest.tstat(t=t, n1=N, simple=TRUE)}</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>BFval <span class="ot">&lt;-</span> packValNull <span class="ot">&lt;-</span> packValAlt <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">nrow=</span>np,<span class="at">ncol=</span>nlen)</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(packValNull) <span class="ot">&lt;-</span> <span class="fu">dimnames</span>(packValAlt) <span class="ot">&lt;-</span> <span class="fu">dimnames</span>(bicVal) <span class="ot">&lt;-</span> </span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dimnames</span>(BFval) <span class="ot">&lt;-</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="fu">paste</span>(pval), <span class="fu">paste0</span>(<span class="fu">c</span>(<span class="st">"n="</span>,<span class="fu">rep</span>(<span class="st">""</span>,nlen<span class="dv">-1</span>)),Nval))</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>np)<span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>nlen){</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>  t <span class="ot">&lt;-</span> <span class="fu">qt</span>(pval[i]<span class="sc">/</span><span class="dv">2</span>,Nval[j]<span class="sc">-</span><span class="dv">1</span>,<span class="at">lower.tail=</span>F)</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>  d <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(Nval[j])</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>  d <span class="ot">&lt;-</span> d<span class="sc">-</span><span class="fu">mean</span>(d)<span class="sc">+</span>t<span class="sc">*</span><span class="fu">sd</span>(d)<span class="sc">/</span><span class="fu">sqrt</span>(Nval[j])</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>  tt <span class="ot">&lt;-</span> bain<span class="sc">::</span><span class="fu">t_test</span>(d)</span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>  packValNull[i,j] <span class="ot">&lt;-</span> <span class="fu">BF</span>(tt,  <span class="at">hypothesis=</span><span class="st">'mu=0'</span>,  </span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">BF.type=</span><span class="dv">1</span>)[[<span class="st">'BFmatrix_confirmatory'</span>]][<span class="st">'complement'</span>, <span class="st">'mu=0'</span>]</span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>  packValAlt[i,j] <span class="ot">&lt;-</span> <span class="fu">BF</span>(tt,  <span class="at">hypothesis=</span><span class="st">'mu=0'</span>,  </span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">BF.type=</span><span class="dv">2</span>)[[<span class="st">'BFmatrix_confirmatory'</span>]][<span class="st">'complement'</span>, <span class="st">'mu=0'</span>]</span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>  BFval[i,j] <span class="ot">&lt;-</span> <span class="fu">t2BF</span>(pval[i], Nval[j])}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Fractional Bayes factor, center on point null</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">setNames</span>(<span class="st">"Fractional Bayes Factor, center prior on null"</span>,<span class="st">""</span>), <span class="at">quote=</span>F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Fractional Bayes factor, center on point null</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">setNames</span>(<span class="st">"Fractional Bayes Factor, center prior on null"</span>,<span class="st">""</span>), <span class="at">quote=</span>F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>                                              
@@ -525,7 +547,7 @@ Fractional Bayes Factor, center prior on null </code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(packValNull, <span class="at">digits=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(packValNull, <span class="at">digits=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>        n=3     4     5    10    20     40     80   160   320
@@ -537,8 +559,8 @@ Fractional Bayes Factor, center prior on null </code></pre>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Bayes Factor (Cauchy prior, `rscale="medium")`</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">setNames</span>(<span class="st">"From `BayesFactor::ttestBF()`, center prior on null"</span>,<span class="st">""</span>), <span class="at">quote=</span>F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Bayes Factor (Cauchy prior, `rscale="medium")`</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">setNames</span>(<span class="st">"From `BayesFactor::ttestBF()`, center prior on null"</span>,<span class="st">""</span>), <span class="at">quote=</span>F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>                                                    
@@ -546,7 +568,7 @@ From `BayesFactor::ttestBF()`, center prior on null </code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(BFval, <span class="at">digits=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(BFval, <span class="at">digits=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>        n=3     4     5    10    20    40    80    160    320
@@ -558,8 +580,8 @@ From `BayesFactor::ttestBF()`, center prior on null </code></pre>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="do">## BIC-based to BFpack::BF() ratio</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">setNames</span>(<span class="st">"FBF, center prior on null: Ratio to BayesFactor result"</span>,<span class="st">""</span>), <span class="at">quote=</span>F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="do">## BIC-based to BFpack::BF() ratio</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">setNames</span>(<span class="st">"FBF, center prior on null: Ratio to BayesFactor result"</span>,<span class="st">""</span>), <span class="at">quote=</span>F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>                                                       
@@ -567,7 +589,7 @@ FBF, center prior on null: Ratio to BayesFactor result </code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(packValNull<span class="sc">/</span>BFval, <span class="at">digits=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(packValNull<span class="sc">/</span>BFval, <span class="at">digits=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>        n=3     4     5    10    20    40    80   160   320
@@ -581,8 +603,8 @@ FBF, center prior on null: Ratio to BayesFactor result </code></pre>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fractional Bayes factor, center on estimate under alternative</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">setNames</span>(<span class="st">"FBF, center on estimate under alternative"</span>,<span class="st">""</span>), <span class="at">quote=</span>F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fractional Bayes factor, center on estimate under alternative</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">setNames</span>(<span class="st">"FBF, center on estimate under alternative"</span>,<span class="st">""</span>), <span class="at">quote=</span>F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>                                          
@@ -590,7 +612,7 @@ FBF, center on estimate under alternative </code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(packValAlt, <span class="at">digits=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(packValAlt, <span class="at">digits=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>         n=3       4      5    10    20     40     80    160    320
@@ -602,8 +624,8 @@ FBF, center on estimate under alternative </code></pre>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="do">## From BIC</span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">setNames</span>(<span class="st">"Derived from BIC"</span>,<span class="st">""</span>), <span class="at">quote=</span>F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="do">## From BIC</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">setNames</span>(<span class="st">"Derived from BIC"</span>,<span class="st">""</span>), <span class="at">quote=</span>F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>                 
@@ -611,7 +633,7 @@ Derived from BIC </code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(bicVal, <span class="at">digits=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(bicVal, <span class="at">digits=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>       n=3       4      5    10    20    40     80   160    320
@@ -623,8 +645,8 @@ Derived from BIC </code></pre>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="do">## BIC-based to BFpack::BF() ratio</span></span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">setNames</span>(<span class="st">"FBF, center prior on alternative: Ratio to BIC"</span>,<span class="st">""</span>), <span class="at">quote=</span>F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="do">## BIC-based to BFpack::BF() ratio</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">setNames</span>(<span class="st">"FBF, center prior on alternative: Ratio to BIC"</span>,<span class="st">""</span>), <span class="at">quote=</span>F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>                                               
@@ -632,7 +654,7 @@ FBF, center prior on alternative: Ratio to BIC </code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(packValAlt<span class="sc">/</span>bicVal, <span class="at">digits=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(packValAlt<span class="sc">/</span>bicVal, <span class="at">digits=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>      n=3 4     5    10    20    40    80   160 320
@@ -662,108 +684,218 @@ Figure&nbsp;2: Results from different ways to calculate the Bayes Factor - for a
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lattice)</span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>allVal <span class="ot">&lt;-</span> <span class="fu">rbind</span>(BFval, packValNull, bicVal, packValAlt)</span>
-<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(allVal) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(</span>
-<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">'BayesFactor'</span>, <span class="st">'packValNull'</span>, <span class="st">'BIC'</span>, <span class="st">'packValAlt'</span>), <span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">3</span>)),</span>
-<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">".05"</span>,<span class="st">".01"</span>,<span class="st">".001"</span>), <span class="dv">4</span>))</span>
-<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>tdf <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">t</span>(allVal))</span>
-<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>tdf<span class="sc">$</span>n <span class="ot">&lt;-</span> Nval</span>
-<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>labs <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">c</span>(<span class="dv">2</span><span class="sc">^</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">6</span>),<span class="dv">2</span><span class="sc">^</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">6</span>)<span class="sc">*</span><span class="fl">1.5</span>))</span>
-<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a><span class="fu">xyplot</span>(BayesFactor<span class="fl">.05</span><span class="sc">+</span>packValNull<span class="fl">.05</span><span class="sc">+</span>BIC<span class="fl">.05</span><span class="sc">+</span>packValAlt<span class="fl">.05</span> <span class="sc">~</span> n,</span>
-<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">data=</span>tdf, <span class="at">type=</span><span class="st">'l'</span>, <span class="at">auto.key=</span><span class="fu">list</span>(<span class="at">columns=</span><span class="dv">2</span>),</span>
-<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">xlab=</span><span class="st">"Sample size $n$"</span>,</span>
-<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">ylab=</span><span class="st">"Bayes Factor (Choice of 4 possibilities)"</span>,</span>
-<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">scales=</span><span class="fu">list</span>(<span class="at">x=</span><span class="fu">list</span>(<span class="at">at=</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">8</span>)<span class="sc">*</span><span class="dv">40</span>),</span>
-<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a>         <span class="at">y=</span><span class="fu">list</span>(<span class="at">log=</span>T, <span class="at">at=</span>labs, <span class="at">labels=</span><span class="fu">paste</span>(labs))),</span>
-<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a> <span class="at">par.settings=</span><span class="fu">simpleTheme</span>(<span class="at">lty=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>), <span class="at">lwd=</span><span class="dv">2</span>, <span class="at">col=</span><span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">'gray'</span>,<span class="st">'black'</span>), <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lattice)</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>allVal <span class="ot">&lt;-</span> <span class="fu">rbind</span>(BFval, packValNull, bicVal, packValAlt)</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(allVal) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">'BayesFactor'</span>, <span class="st">'packValNull'</span>, <span class="st">'BIC'</span>, <span class="st">'packValAlt'</span>), <span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">3</span>)),</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">".05"</span>,<span class="st">".01"</span>,<span class="st">".001"</span>), <span class="dv">4</span>))</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>tdf <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">t</span>(allVal))</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>tdf<span class="sc">$</span>n <span class="ot">&lt;-</span> Nval</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>labs <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">c</span>(<span class="dv">2</span><span class="sc">^</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">6</span>),<span class="dv">2</span><span class="sc">^</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">6</span>)<span class="sc">*</span><span class="fl">1.5</span>))</span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a><span class="fu">xyplot</span>(BayesFactor<span class="fl">.05</span><span class="sc">+</span>packValNull<span class="fl">.05</span><span class="sc">+</span>BIC<span class="fl">.05</span><span class="sc">+</span>packValAlt<span class="fl">.05</span> <span class="sc">~</span> n,</span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">data=</span>tdf, <span class="at">type=</span><span class="st">'l'</span>, <span class="at">auto.key=</span><span class="fu">list</span>(<span class="at">columns=</span><span class="dv">2</span>),</span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">xlab=</span><span class="st">"Sample size $n$"</span>,</span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">ylab=</span><span class="st">"Bayes Factor (Choice of 4 possibilities)"</span>,</span>
+<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">scales=</span><span class="fu">list</span>(<span class="at">x=</span><span class="fu">list</span>(<span class="at">at=</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">8</span>)<span class="sc">*</span><span class="dv">40</span>),</span>
+<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a>         <span class="at">y=</span><span class="fu">list</span>(<span class="at">log=</span>T, <span class="at">at=</span>labs, <span class="at">labels=</span><span class="fu">paste</span>(labs))),</span>
+<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a> <span class="at">par.settings=</span><span class="fu">simpleTheme</span>(<span class="at">lty=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>), <span class="at">lwd=</span><span class="dv">2</span>, <span class="at">col=</span><span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">'gray'</span>,<span class="st">'black'</span>), <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
-<section id="bayes-factors-for-regression-coefficients." class="level4">
-<h4 class="anchored" data-anchor-id="bayes-factors-for-regression-coefficients.">Bayes Factors for regression coefficients.</h4>
-<p>We will use the following function to simulate data, with two explanatory variables, for use in regression calculations:</p>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>simDat <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">x1=</span><span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>,<span class="dv">4</span>)<span class="sc">/</span><span class="dv">5</span>, <span class="at">x2=</span><span class="fu">sample</span>(<span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>,<span class="dv">4</span>)<span class="sc">/</span><span class="dv">5</span>), </span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">b1=</span><span class="fl">1.2</span>, <span class="at">b2=</span><span class="fl">1.5</span>, <span class="at">sd=</span><span class="dv">8</span>){</span>
-<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">length</span>(x1)</span>
-<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">x1=</span>x1, <span class="at">x2=</span>x2, <span class="at">y=</span>b1<span class="sc">*</span>x1<span class="sc">+</span>b2<span class="sc">*</span>x2<span class="sc">+</span><span class="fu">rnorm</span>(n,<span class="at">sd=</span>sd))</span>
-<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<section id="one-data-generating-mechanism-large-dataset-to-dataset-variation" class="level5">
-<h5 class="anchored" data-anchor-id="one-data-generating-mechanism-large-dataset-to-dataset-variation">One data generating mechanism – large dataset to dataset variation</h5>
-<p>Note first that with the default settings, the simulated data and <span class="math inline">\(p\)</span>-values in the fitted model show large variation from one simulation to the next. The following shows relatively extreme differences:</p>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">17</span>)</span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">simDat</span>()</span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>y.lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(y<span class="sc">~</span>x1<span class="sc">+</span>x2, <span class="at">data=</span>dat); bf12 <span class="ot">&lt;-</span> <span class="fu">lmBF</span>(y <span class="sc">~</span> x1<span class="sc">+</span>x2, <span class="at">data=</span>dat)</span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="do">## Repeat simulation of data</span></span>
-<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">simDat</span>()</span>
-<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>yy.lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(y<span class="sc">~</span>x1<span class="sc">+</span>x2, <span class="at">data=</span>dat); bf12 <span class="ot">&lt;-</span> <span class="fu">lmBF</span>(y <span class="sc">~</span> x1<span class="sc">+</span>x2, <span class="at">data=</span>dat)</span>
-<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a><span class="fu">cbind</span>(<span class="fu">coef</span>(<span class="fu">summary</span>(y.lm))[,<span class="sc">-</span><span class="dv">2</span>], <span class="fu">coef</span>(<span class="fu">summary</span>(yy.lm))[,<span class="sc">-</span><span class="dv">2</span>]) <span class="sc">|&gt;</span> <span class="fu">signif</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>            Estimate t value Pr(&gt;|t|) Estimate t value Pr(&gt;|t|)
-(Intercept)     -2.4    -1.0   0.3200     1.40    0.63    0.530
-x1               1.7     2.3   0.0250     1.80    2.40    0.018
-x2               2.0     2.7   0.0076     0.74    1.00    0.310</code></pre>
-</div>
-</div>
-<p>P-values from nine simulations are:</p>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>multSims <span class="ot">&lt;-</span> <span class="cf">function</span>(sd, <span class="at">nsims=</span><span class="dv">9</span>, <span class="at">rnam=</span><span class="fu">c</span>(<span class="st">"(Intercept)"</span>,<span class="st">"x1"</span>,<span class="st">"x2"</span>)){</span>
-<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>pvals <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">nrow=</span><span class="dv">3</span>, <span class="at">ncol=</span>nsims, <span class="at">dimnames=</span><span class="fu">list</span>(rnam,</span>
-<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>                <span class="fu">paste0</span>(<span class="st">'pval'</span>, <span class="dv">1</span><span class="sc">:</span>nsims)))</span>
-<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>nsims){dat <span class="ot">&lt;-</span> <span class="fu">simDat</span>(<span class="at">sd=</span>sd)</span>
-<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>  dat.lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(y<span class="sc">~</span>x1<span class="sc">+</span>x2, <span class="at">data=</span>dat); bf12 <span class="ot">&lt;-</span> <span class="fu">lmBF</span>(y <span class="sc">~</span> x1<span class="sc">+</span>x2, <span class="at">data=</span>dat)</span>
-<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>  pvals[,i] <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">summary</span>(dat.lm))[,<span class="dv">4</span>]</span>
-<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>pvals</span>
-<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a><span class="fu">multSims</span>(<span class="at">sd=</span><span class="dv">8</span>) <span class="sc">|&gt;</span> <span class="fu">signif</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>            pval1 pval2 pval3  pval4  pval5 pval6  pval7 pval8 pval9
-(Intercept)  0.40 0.690 0.590 0.2000 0.3500 0.850 0.7800 0.790 0.910
-x1           0.49 0.081 0.250 0.0460 0.0380 0.089 0.2500 0.390 0.025
-x2           0.44 0.020 0.037 0.0012 0.0064 0.190 0.0024 0.022 0.380</code></pre>
-</div>
-</div>
-<p>Now try with <code>sd=5</code>:</p>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">multSims</span>(<span class="at">sd=</span><span class="dv">5</span>) <span class="sc">|&gt;</span> <span class="fu">signif</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>              pval1  pval2  pval3   pval4   pval5   pval6  pval7   pval8  pval9
-(Intercept) 5.7e-01 0.8600 0.6000 0.77000 0.73000 2.2e-01 0.1800 0.09900 0.4200
-x1          1.6e-01 0.0510 0.0015 0.16000 0.01700 7.4e-05 0.4800 0.00089 0.0042
-x2          3.5e-06 0.0023 0.0150 0.00033 0.00025 6.2e-03 0.0001 0.00004 0.0460</code></pre>
-</div>
-</div>
-<p>The <span class="math inline">\(p\)</span>-values are more consistently small.</p>
 </section>
-<section id="bayes-factors-and-bic-statistics" class="level5">
-<h5 class="anchored" data-anchor-id="bayes-factors-and-bic-statistics">Bayes Factors and BIC statistics</h5>
+<section id="bayes-factors-for-regression-coefficients." class="level3">
+<h3 class="anchored" data-anchor-id="bayes-factors-for-regression-coefficients.">Bayes Factors for regression coefficients.</h3>
+<p>We will work with data simulated from a model of the form</p>
+<p><span class="math display">\[
+y = a_1 x_1 + a_2 x_2 + \epsilon,
+\]</span> where <span class="math inline">\(\epsilon\)</span> is normally distributed with mean 0 and variance <span class="math inline">\(\sigma^2\)</span>.</p>
+<p>The following function creates simulated data:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>simReg <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">N=</span><span class="dv">160</span>, <span class="at">b1=</span><span class="fl">1.2</span>, <span class="at">b2=</span><span class="fl">1.25</span>, <span class="at">sd=</span><span class="dv">40</span>, <span class="at">num=</span><span class="dv">20</span>){</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>    x1 <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="at">from=</span><span class="dv">1</span>, <span class="at">to=</span><span class="fu">min</span>(num,N), <span class="at">length.out=</span>N)</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>    x2 <span class="ot">&lt;-</span> <span class="fu">sample</span>(x1)</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>    df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x1=</span>x1, <span class="at">x2=</span>x2, <span class="at">y=</span>b1<span class="sc">*</span>x1<span class="sc">+</span>b2<span class="sc">*</span>x2<span class="sc">+</span><span class="fu">rnorm</span>(<span class="fu">min</span>(num,N),<span class="at">sd=</span>sd))</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>It can suitably be used thus:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">19</span>)</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">simReg</span>(<span class="at">N =</span> <span class="dv">160</span>, <span class="at">b1 =</span> <span class="fl">1.2</span>, <span class="at">b2 =</span> <span class="fl">1.25</span>, <span class="at">sd =</span> <span class="dv">40</span>, <span class="at">num =</span> <span class="dv">20</span>)</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>y.lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> x1<span class="sc">+</span>x2, <span class="at">data=</span>dat)</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="do">## Check least squares fit</span></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">summary</span>(y.lm))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>             Estimate Std. Error    t value    Pr(&gt;|t|)
+(Intercept) -8.553311  9.8363109 -0.8695649 0.385865705
+x1           1.214061  0.6201538  1.9576765 0.052040933
+x2           1.863687  0.6201538  3.0052006 0.003090532</code></pre>
+</div>
+</div>
+<section id="fit-bayesfactor-model-using-lmbf" class="level5">
+<h5 class="anchored" data-anchor-id="fit-bayesfactor-model-using-lmbf">Fit <em>BayesFactor</em> model using <code>lmBF()</code></h5>
+<p>This function returns the Bayes Factors for individual linear models against the intercept only model as the null. A comparison other than against the intercept only model require one call to <code>lmBF()</code> for each model, then using the ratio of the two Bayes Factors to compare the models. For obtaining multiple Bayes Factors that relate to the one model, the function <code>regressionBF()</code> that is demonstrated below may be preferred.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>y.lmBF12 <span class="ot">&lt;-</span> <span class="fu">lmBF</span>(y <span class="sc">~</span> x1<span class="sc">+</span>x2, <span class="at">data=</span>dat, <span class="at">progress=</span><span class="cn">FALSE</span>)</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>y.lmBF1 <span class="ot">&lt;-</span> <span class="fu">lmBF</span>(y <span class="sc">~</span> x1, <span class="at">data=</span>dat, <span class="at">progress=</span><span class="cn">FALSE</span>)</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>y.lmBF2 <span class="ot">&lt;-</span> <span class="fu">lmBF</span>(y <span class="sc">~</span> x2, <span class="at">data=</span>dat, <span class="at">progress=</span><span class="cn">FALSE</span>)</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a><span class="fu">extractBF</span>(y.lmBF1<span class="sc">/</span>y.lmBF12)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>           bf        error                     time          code
+x1 0.07403776 3.405148e-05 Tue Jul 23 20:40:55 2024 12eaa77496bec</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>  <span class="do">## `extractBF(y.lmBF1/y.lmBF12)[1,1]` gives just the Bayes Factor.</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="do">## `y.lmBF1/y.lmBF12` gives greater detail</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Note that in terms such as <code>y.lmBF1/y.lmBF12</code>, the ‘full’ model has to appear as the denominator. To obtain the Bayes Factors for <code>y~x1+x2</code> against <code>y~x1</code> (i.e.&nbsp;‘Omit <code>x2</code>’), which is the Bayes Factor for <code>x2</code> given <code>x1</code>, use the construction:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">/</span><span class="fu">extractBF</span>(y.lmBF1<span class="sc">/</span>y.lmBF12)[<span class="dv">1</span>,<span class="dv">1</span>]  <span class="do">## Or, `1/(y.lmBF1/y.lmBF12)` </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 13.50662</code></pre>
+</div>
+</div>
+<p>The following shows the two Bayes Factors, for <code>x2</code> given <code>x1</code>, and for <code>x1</code> given <code>x2</code>, side by side:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sapply</span>(<span class="fu">list</span>(<span class="st">'x2|x1'</span><span class="ot">=</span>y.lmBF1<span class="sc">/</span>y.lmBF12, <span class="st">'x1|x2'</span><span class="ot">=</span>y.lmBF2<span class="sc">/</span>y.lmBF12),</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>       <span class="cf">function</span>(x)<span class="dv">1</span><span class="sc">/</span><span class="fu">extractBF</span>(x)[<span class="dv">1</span>,<span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>    x2|x1     x1|x2 
+13.506622  1.286492 </code></pre>
+</div>
+</div>
+</section>
+<section id="the-function-regressionbf" class="level5">
+<h5 class="anchored" data-anchor-id="the-function-regressionbf">The function <code>regressionBF()</code></h5>
+<p>The function <code>regressionBF()</code> calculates Bayes Factors, either for all model terms (specify <code>whichModels='all'</code>) or for all single term deletions (specify <code>whichModels='top'</code>), in either case against the intercept only model as the null. Again use <code>extractBF()</code> to get output in terse summary form:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>y.regBF <span class="ot">&lt;-</span> <span class="fu">regressionBF</span>(y <span class="sc">~</span> x1<span class="sc">+</span>x2, <span class="at">data=</span>dat, <span class="at">progress=</span><span class="cn">FALSE</span>)</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="fu">extractBF</span>(y.regBF)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>               bf        error                     time          code
+x1       0.896133 3.379620e-05 Tue Jul 23 20:40:55 2024  12eaa908962c
+x2       9.408323 2.142530e-05 Tue Jul 23 20:40:55 2024 12eaa12bb2756
+x1 + x2 12.103729 4.161742e-06 Tue Jul 23 20:40:55 2024 12eaa3d1388b5</code></pre>
+</div>
+</div>
+<p>Now use <code>regressionBF()</code> with the argument <code>whichModels='top'</code>. Use <code>extractBF()</code> to omit the final line that shows 1.0 as the Bayes Factor for the full model against itself:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>top.regBF <span class="ot">&lt;-</span> <span class="fu">regressionBF</span>(y <span class="sc">~</span> x1<span class="sc">+</span>x2, <span class="at">data=</span>dat, <span class="at">progress=</span><span class="cn">FALSE</span>, </span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">whichModels=</span><span class="st">'top'</span>)</span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>  <span class="do">## Type `top.regBF` to get detailed output</span></span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a><span class="fu">extractBF</span>(top.regBF)  <span class="do">## Summary output</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>           bf        error                     time          code
+x1 0.07403776 3.405148e-05 Tue Jul 23 20:40:55 2024 12eaa59d3e894
+x2 0.77730783 2.182576e-05 Tue Jul 23 20:40:55 2024 12eaa674a7a9e</code></pre>
+</div>
+</div>
+<p>It may seem more natural to work for the inverses of the Bayes Factors that are shown. These can be obtained in either of the following ways:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">/</span><span class="fu">extractBF</span>(top.regBF)[,<span class="dv">1</span>]  <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 14.285714  1.282051</code></pre>
+</div>
+</div>
+<p>returned, here obtaining the Bayes Factors for <code>x2</code> given <code>x1</code>, and for <code>x1</code> given <code>x2</code>, as against the model <code>y~x1+x2</code>. This does however give very large Bayes Factors when <span class="math inline">\(p\)</span>-values are very small. The very small Bayes Factors that are their inverses may be easier to work with.</p>
+</section>
+<section id="dataset-to-dataset-variation-with-the-one-data-generation-mechanism" class="level4">
+<h4 class="anchored" data-anchor-id="dataset-to-dataset-variation-with-the-one-data-generation-mechanism">Dataset to dataset variation with the one data generation mechanism</h4>
+<p>With the default settings, the simulated data and statistics in the fitted model show, even in medium size datasets such as here with <span class="math inline">\(n\)</span>=80, large variation from one simulation to the next:</p>
+<p>Ten simulations give <span class="math inline">\(p\)</span>-values, estimated coefficients (expected values are <code>b1</code>=1.2 and <code>b2</code>=1.5), and Bayes Factors against the model that includes both <code>x1</code> and <code>x2</code>, thus:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>multsim <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">N=</span><span class="dv">80</span>, <span class="at">b1=</span><span class="fl">1.25</span>, <span class="at">b2=</span><span class="fl">1.2</span>, <span class="at">sd=</span><span class="dv">4</span>, <span class="at">num=</span><span class="dv">20</span>, <span class="at">nsim=</span><span class="dv">10</span>){</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>    x1 <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="at">from=</span><span class="dv">1</span>, <span class="at">to=</span><span class="fu">min</span>(num,N), <span class="at">length.out=</span>N)<span class="sc">/</span><span class="dv">5</span></span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>    x2 <span class="ot">&lt;-</span> <span class="fu">sample</span>(x1)</span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>stats <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">nrow=</span><span class="dv">8</span>, <span class="at">ncol=</span>nsim)</span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>nsim){</span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">length</span>(x1)</span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a>  dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x1=</span>x1, <span class="at">x2=</span>x2, <span class="at">y=</span>b1<span class="sc">*</span>x1<span class="sc">+</span>b2<span class="sc">*</span>x2<span class="sc">+</span><span class="fu">rnorm</span>(n,<span class="at">sd=</span>sd))</span>
+<span id="cb59-8"><a href="#cb59-8" aria-hidden="true" tabindex="-1"></a>  y.lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(y<span class="sc">~</span>x1<span class="sc">+</span>x2, <span class="at">data=</span>dat)</span>
+<span id="cb59-9"><a href="#cb59-9" aria-hidden="true" tabindex="-1"></a>  c1c4 <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">summary</span>(y.lm))[<span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>, <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">4</span>)]</span>
+<span id="cb59-10"><a href="#cb59-10" aria-hidden="true" tabindex="-1"></a>  lm1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(y<span class="sc">~</span>x1, <span class="at">data=</span>dat)</span>
+<span id="cb59-11"><a href="#cb59-11" aria-hidden="true" tabindex="-1"></a>  lm2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(y<span class="sc">~</span>x2, <span class="at">data=</span>dat)</span>
+<span id="cb59-12"><a href="#cb59-12" aria-hidden="true" tabindex="-1"></a>  lm12 <span class="ot">&lt;-</span> <span class="fu">lm</span>(y<span class="sc">~</span>x1<span class="sc">+</span>x2, <span class="at">data=</span>dat)</span>
+<span id="cb59-13"><a href="#cb59-13" aria-hidden="true" tabindex="-1"></a>stats[<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>, i] <span class="ot">&lt;-</span> <span class="fu">c</span>(c1c4[,<span class="dv">1</span>], c1c4[,<span class="dv">2</span>], </span>
+<span id="cb59-14"><a href="#cb59-14" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span><span class="sc">/</span><span class="fu">extractBF</span>(<span class="fu">regressionBF</span>(y <span class="sc">~</span> x1<span class="sc">+</span>x2, <span class="at">data=</span>dat, <span class="at">whichModels=</span><span class="st">'top'</span>))<span class="sc">$</span>bf[<span class="dv">2</span><span class="sc">:</span><span class="dv">1</span>])</span>
+<span id="cb59-15"><a href="#cb59-15" aria-hidden="true" tabindex="-1"></a>  stats[<span class="dv">7</span><span class="sc">:</span><span class="dv">8</span>,i] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">exp</span>((<span class="fu">BIC</span>(lm2)<span class="sc">-</span><span class="fu">BIC</span>(lm12))<span class="sc">/</span><span class="dv">2</span>), <span class="fu">exp</span>((<span class="fu">BIC</span>(lm1)<span class="sc">-</span><span class="fu">BIC</span>(lm12))<span class="sc">/</span><span class="dv">2</span>))</span>
+<span id="cb59-16"><a href="#cb59-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb59-17"><a href="#cb59-17" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(stats) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">'b1'</span>,<span class="st">'b2'</span>,<span class="st">'p1'</span>,<span class="st">'p2'</span>, <span class="st">'bf1'</span>,<span class="st">'bf2'</span>, <span class="st">'bf1-BIC'</span>,<span class="st">'bf2-BIC'</span>)</span>
+<span id="cb59-18"><a href="#cb59-18" aria-hidden="true" tabindex="-1"></a>stats</span>
+<span id="cb59-19"><a href="#cb59-19" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb59-20"><a href="#cb59-20" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">17</span>)</span>
+<span id="cb59-21"><a href="#cb59-21" aria-hidden="true" tabindex="-1"></a>stats <span class="ot">&lt;-</span> <span class="fu">multsim</span>()</span>
+<span id="cb59-22"><a href="#cb59-22" aria-hidden="true" tabindex="-1"></a>stats <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>          [,1]   [,2]   [,3]   [,4]    [,5]   [,6]    [,7]  [,8]   [,9]   [,10]
+b1       1.321  1.455  1.485  1.614   0.823  0.858   1.819 1.138  1.151   1.685
+b2       0.575  1.096  0.893  1.220   1.593  1.397   0.338 1.103  1.046   0.340
+p1       0.001  0.000  0.001  0.001   0.043  0.067   0.000 0.005  0.004   0.000
+p2       0.150  0.006  0.043  0.014   0.000  0.003   0.450 0.006  0.009   0.409
+bf1     29.247 92.644 35.210 27.357   1.473  1.162 244.210 9.637 10.350 270.895
+bf2      0.632  7.514  1.541  3.764 181.749 13.297   0.297 7.753  5.506   0.311
+bf1-BIC 24.894 95.848 31.273 23.816   0.955  0.649 285.874 7.356  7.907 321.521
+bf2-BIC  0.330  5.945  0.942  2.608 202.431 10.120   0.151 5.770  3.905   0.160</code></pre>
+</div>
+</div>
+<p>Observe that the BIC-based factors are in most cases substantially less favorable than the Bayes Factors from <code>regressionBF()</code> to the model that has both of the explanatory variables. This remains the case even for a much larger sample size. Thus, try:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>stats <span class="ot">&lt;-</span> <span class="fu">multsim</span>(<span class="at">N=</span><span class="dv">360</span>, <span class="at">sd=</span><span class="dv">8</span>)  <span class="co"># Increase sd to avoid overly small p-values</span></span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>stats <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="relative-preference-statistics-from-aic-and-aicc" class="level4">
+<h4 class="anchored" data-anchor-id="relative-preference-statistics-from-aic-and-aicc">Relative preference statistics from AIC and AICc</h4>
 <p>Now create a simulated dataset, and calculate Bayes Factors for the coefficients (1) using <em>Bayesfactor</em> functions, and (2) derived from BIC statistics:</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">31</span>)</span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>dat31 <span class="ot">&lt;-</span> <span class="fu">simDat</span>()</span>
-<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>y.lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(y<span class="sc">~</span>x1<span class="sc">+</span>x2, <span class="at">data=</span>dat31); bf12 <span class="ot">&lt;-</span> <span class="fu">lmBF</span>(y <span class="sc">~</span> x1<span class="sc">+</span>x2, <span class="at">data=</span>dat31)</span>
-<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>y2.lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(y<span class="sc">~</span>x2, <span class="at">data=</span>dat31); bf2 <span class="ot">&lt;-</span> <span class="fu">lmBF</span>(y <span class="sc">~</span> x2, <span class="at">data=</span>dat31)</span>
-<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>y1.lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(y<span class="sc">~</span>x1, <span class="at">data=</span>dat31); bf1 <span class="ot">&lt;-</span> <span class="fu">lmBF</span>(y <span class="sc">~</span> x1, <span class="at">data=</span>dat31)</span>
-<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a><span class="do">## Regression summary</span></span>
-<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">summary</span>(y.lm)) <span class="sc">|&gt;</span> <span class="fu">signif</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>simDat <span class="ot">&lt;-</span></span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a><span class="cf">function</span>(<span class="at">x1=</span><span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>,<span class="dv">4</span>)<span class="sc">/</span><span class="dv">5</span>, <span class="at">x2=</span><span class="fu">sample</span>(<span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>,<span class="dv">4</span>)<span class="sc">/</span><span class="dv">5</span>), </span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">b1=</span><span class="fl">1.2</span>, <span class="at">b2=</span><span class="fl">1.5</span>, <span class="at">sd=</span><span class="dv">8</span>){</span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a>    n <span class="ot">&lt;-</span> <span class="fu">length</span>(x1)</span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">data.frame</span>(<span class="at">x1=</span>x1, <span class="at">x2=</span>x2, <span class="at">y=</span>b1<span class="sc">*</span>x1<span class="sc">+</span>b2<span class="sc">*</span>x2<span class="sc">+</span><span class="fu">rnorm</span>(n,<span class="at">sd=</span>sd))</span>
+<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(AICcmodavg)</span>
+<span id="cb62-8"><a href="#cb62-8" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">31</span>)</span>
+<span id="cb62-9"><a href="#cb62-9" aria-hidden="true" tabindex="-1"></a>dat31 <span class="ot">&lt;-</span> <span class="fu">simDat</span>()</span>
+<span id="cb62-10"><a href="#cb62-10" aria-hidden="true" tabindex="-1"></a>y0.lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(y<span class="sc">~</span><span class="dv">0</span>, <span class="at">data=</span>dat31)</span>
+<span id="cb62-11"><a href="#cb62-11" aria-hidden="true" tabindex="-1"></a>y.lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(y<span class="sc">~</span>x1<span class="sc">+</span>x2, <span class="at">data=</span>dat31); bf12 <span class="ot">&lt;-</span> <span class="fu">lmBF</span>(y <span class="sc">~</span> x1<span class="sc">+</span>x2, <span class="at">data=</span>dat31)</span>
+<span id="cb62-12"><a href="#cb62-12" aria-hidden="true" tabindex="-1"></a>y2.lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(y<span class="sc">~</span>x2, <span class="at">data=</span>dat31); bf2 <span class="ot">&lt;-</span> <span class="fu">lmBF</span>(y <span class="sc">~</span> x2, <span class="at">data=</span>dat31)</span>
+<span id="cb62-13"><a href="#cb62-13" aria-hidden="true" tabindex="-1"></a>y1.lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(y<span class="sc">~</span>x1, <span class="at">data=</span>dat31); bf1 <span class="ot">&lt;-</span> <span class="fu">lmBF</span>(y <span class="sc">~</span> x1, <span class="at">data=</span>dat31)</span>
+<span id="cb62-14"><a href="#cb62-14" aria-hidden="true" tabindex="-1"></a><span class="do">## Regression summary</span></span>
+<span id="cb62-15"><a href="#cb62-15" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">summary</span>(y.lm)) <span class="sc">|&gt;</span> <span class="fu">signif</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>            Estimate Std. Error t value Pr(&gt;|t|)
@@ -773,51 +905,133 @@ x2              1.80        0.7    2.50    0.014</code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Bayes Factors for x1 and x2, using functions from _Bayesfactor_</span></span>
-<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="fu">extractBF</span>(bf12<span class="sc">/</span>bf2)<span class="sc">$</span>bf, <span class="fu">extractBF</span>(bf12<span class="sc">/</span>bf1)<span class="sc">$</span>bf) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Bayes Factors for x1 and x2, using functions from _Bayesfactor_</span></span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>BF <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">extractBF</span>(bf12<span class="sc">/</span>bf2)<span class="sc">$</span>bf, <span class="fu">extractBF</span>(bf12<span class="sc">/</span>bf1)<span class="sc">$</span>bf)</span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Bayes Factors for x1 and x2, derived from BIC statistics</span></span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a>BICbf <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">exp</span>((<span class="fu">BIC</span>(y2.lm)<span class="sc">-</span><span class="fu">BIC</span>(y.lm))<span class="sc">/</span><span class="dv">2</span>), <span class="fu">exp</span>((<span class="fu">BIC</span>(y1.lm)<span class="sc">-</span><span class="fu">BIC</span>(y.lm))<span class="sc">/</span><span class="dv">2</span>))</span>
+<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Bayes Factors for x1 and x2, derived from AIC statistics</span></span>
+<span id="cb64-6"><a href="#cb64-6" aria-hidden="true" tabindex="-1"></a>AICrp <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">exp</span>((<span class="fu">AIC</span>(y2.lm)<span class="sc">-</span><span class="fu">AIC</span>(y.lm))<span class="sc">/</span><span class="dv">2</span>), <span class="fu">exp</span>((<span class="fu">AIC</span>(y1.lm)<span class="sc">-</span><span class="fu">AIC</span>(y.lm))<span class="sc">/</span><span class="dv">2</span>))</span>
+<span id="cb64-7"><a href="#cb64-7" aria-hidden="true" tabindex="-1"></a><span class="do">## Bayes Factors for x1 and x2, derived from AICc statistics</span></span>
+<span id="cb64-8"><a href="#cb64-8" aria-hidden="true" tabindex="-1"></a>AICcRP <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">exp</span>((<span class="fu">AICc</span>(y2.lm)<span class="sc">-</span><span class="fu">AICc</span>(y.lm))<span class="sc">/</span><span class="dv">2</span>), <span class="fu">exp</span>((<span class="fu">AICc</span>(y1.lm)<span class="sc">-</span><span class="fu">AICc</span>(y.lm))<span class="sc">/</span><span class="dv">2</span>)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span>
+<span id="cb64-9"><a href="#cb64-9" aria-hidden="true" tabindex="-1"></a><span class="do">## Bayes Factors for x1 and x2, derived from BIC ratio of ratios to null model</span></span>
+<span id="cb64-10"><a href="#cb64-10" aria-hidden="true" tabindex="-1"></a>stats <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="at">BF=</span>BF, <span class="at">BICbf=</span>BICbf, <span class="at">AICrp=</span>AICrp, <span class="at">AICcRP=</span>AICcRP)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.70 4.45</code></pre>
 </div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Bayes Factors for x1 and x2, derived from BIC statistics</span></span>
-<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="fu">exp</span>((<span class="fu">BIC</span>(y2.lm)<span class="sc">-</span><span class="fu">BIC</span>(y.lm))<span class="sc">/</span><span class="dv">2</span>), <span class="fu">exp</span>((<span class="fu">BIC</span>(y1.lm)<span class="sc">-</span><span class="fu">BIC</span>(y.lm))<span class="sc">/</span><span class="dv">2</span>)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.31 2.65</code></pre>
-</div>
-</div>
-<p>Both are substantially smaller than those derived from calculations using <code>BayesFactor::lmBF()</code>.</p>
-</section>
-<section id="matching-the-bayes-factor-to-the-ses-of-the-coefficients" class="level5">
-<h5 class="anchored" data-anchor-id="matching-the-bayes-factor-to-the-ses-of-the-coefficients">Matching the Bayes Factor to the SEs of the coefficients</h5>
-<p>Check also the difference made to the Bayes Factors by setting the scale parameter (here <code>rscaleCont</code>) to a value that is matched to the standard error of the coefficient estimates. A standard error that is just under 0.7 is the same for both coefficients. We standardise this by dividing by a standard deviation of just under 7.2, multiply by the default <code>rscale</code> that equals <span class="math inline">\(\sqrt(2)/4\)</span>, and use this as the value for <code>rscaleCont</code>.</p>
+<p>Relative preference statistics in favor of including both <code>x1</code> and <code>x2</code>, are:</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>rs <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">*</span><span class="fl">0.75</span><span class="sc">/</span><span class="fl">7.2</span></span>
-<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>  bf12 <span class="ot">&lt;-</span> <span class="fu">lmBF</span>(y <span class="sc">~</span> x1<span class="sc">+</span>x2, <span class="at">data=</span>dat31, <span class="at">rscaleCont=</span>rs)</span>
-<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>  bf2 <span class="ot">&lt;-</span> <span class="fu">lmBF</span>(y <span class="sc">~</span> x2, <span class="at">data=</span>dat31, <span class="at">rscaleCont=</span>rs)</span>
-<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>  bf1 <span class="ot">&lt;-</span> <span class="fu">lmBF</span>(y <span class="sc">~</span> x1, <span class="at">data=</span>dat31, <span class="at">rscaleCont=</span>rs)</span>
-<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="fu">extractBF</span>(bf12<span class="sc">/</span>bf2)<span class="sc">$</span>bf, <span class="fu">extractBF</span>(bf12<span class="sc">/</span>bf1)<span class="sc">$</span>bf) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>stats <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.84 4.33</code></pre>
+<pre><code>       BF BICbf AICrp AICcRP
+[1,] 0.70  0.31  1.04   0.93
+[2,] 4.45  2.65  8.73   7.83</code></pre>
 </div>
 </div>
-<p>In this context, the smaller Bayes Factor is modestly increased, with the larger Bayes Factor slightly reduced.</p>
+<p>The BIC-based statistics are substantially smaller, and the AIC and AICc-based statistics substantially larger, than those derived from calculations using <code>BayesFactor::lmBF()</code>.</p>
 </section>
+<section id="change-in-bayes-factors-with-varying-rscalecont" class="level4">
+<h4 class="anchored" data-anchor-id="change-in-bayes-factors-with-varying-rscalecont">Change in Bayes Factors with varying <code>rscaleCont</code></h4>
+<p>The following code will be used for the calculations:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>simReg <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">N=</span><span class="dv">160</span>, <span class="at">b1=</span><span class="fl">1.2</span>, <span class="at">b2=</span><span class="fl">1.25</span>, <span class="at">sd=</span><span class="dv">40</span>, <span class="at">num=</span><span class="dv">20</span>){</span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>    x1 <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="at">from=</span><span class="dv">1</span>, <span class="at">to=</span><span class="fu">min</span>(num,N), <span class="at">length.out=</span>N)</span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>    x2 <span class="ot">&lt;-</span> <span class="fu">sample</span>(x1)</span>
+<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a>    df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x1=</span>x1, <span class="at">x2=</span>x2, <span class="at">y=</span>b1<span class="sc">*</span>x1<span class="sc">+</span>b2<span class="sc">*</span>x2<span class="sc">+</span><span class="fu">rnorm</span>(<span class="fu">min</span>(num,N),<span class="at">sd=</span>sd))</span>
+<span id="cb67-5"><a href="#cb67-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb67-6"><a href="#cb67-6" aria-hidden="true" tabindex="-1"></a>tuneReg <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">p=</span><span class="fl">0.01</span>, data){</span>
+<span id="cb67-7"><a href="#cb67-7" aria-hidden="true" tabindex="-1"></a>    reg <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> x1<span class="sc">+</span>x2, <span class="at">data=</span>data)</span>
+<span id="cb67-8"><a href="#cb67-8" aria-hidden="true" tabindex="-1"></a>    N <span class="ot">&lt;-</span> <span class="fu">nrow</span>(data)</span>
+<span id="cb67-9"><a href="#cb67-9" aria-hidden="true" tabindex="-1"></a>    tstats <span class="ot">&lt;-</span> <span class="fu">coef</span>(<span class="fu">summary</span>(reg))[,<span class="st">'t value'</span>]</span>
+<span id="cb67-10"><a href="#cb67-10" aria-hidden="true" tabindex="-1"></a>    tfix <span class="ot">&lt;-</span> <span class="fu">qt</span>(<span class="dv">1</span><span class="sc">-</span>p<span class="sc">/</span><span class="dv">2</span>, <span class="at">df=</span>N<span class="dv">-3</span>, <span class="at">lower.tail=</span>F)</span>
+<span id="cb67-11"><a href="#cb67-11" aria-hidden="true" tabindex="-1"></a>    y1 <span class="ot">&lt;-</span> <span class="fu">fitted</span>(reg)<span class="sc">+</span><span class="fu">resid</span>(reg)<span class="sc">*</span>tstats[<span class="dv">2</span>]<span class="sc">/</span>tfix</span>
+<span id="cb67-12"><a href="#cb67-12" aria-hidden="true" tabindex="-1"></a>    y2 <span class="ot">&lt;-</span> <span class="fu">fitted</span>(reg)<span class="sc">+</span><span class="fu">resid</span>(reg)<span class="sc">*</span>tstats[<span class="dv">3</span>]<span class="sc">/</span>tfix</span>
+<span id="cb67-13"><a href="#cb67-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cbind</span>(dat, <span class="at">y1=</span>y1, <span class="at">y2=</span>y2)</span>
+<span id="cb67-14"><a href="#cb67-14" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>rscaleCF <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">data=</span>dat, <span class="at">rs=</span><span class="fu">seq</span>(<span class="at">from=</span><span class="fl">0.04</span>, <span class="at">to=</span><span class="fl">0.16</span>, <span class="at">by=</span><span class="fl">0.05</span>)){</span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>  colnam <span class="ot">&lt;-</span> <span class="fu">as.character</span>(<span class="fu">substitute</span>(rs))</span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(colnam[<span class="dv">1</span>]<span class="sc">==</span><span class="st">"c"</span>)colnam <span class="ot">&lt;-</span> colnam[<span class="sc">-</span><span class="dv">1</span>] <span class="cf">else</span> colnam <span class="ot">&lt;-</span> <span class="fu">paste</span>(rs)</span>
+<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a>  bfVal <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">nrow=</span><span class="dv">3</span>, <span class="at">ncol=</span><span class="fu">length</span>(colnam))</span>
+<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dimnames</span>(bfVal) <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="st">"BFvsInterceptOnly"</span><span class="ot">=</span><span class="fu">c</span>(<span class="st">'x1'</span>,<span class="st">'x2'</span>,<span class="st">'x1+x2'</span>), </span>
+<span id="cb68-6"><a href="#cb68-6" aria-hidden="true" tabindex="-1"></a>                          <span class="at">rscaleCont=</span>colnam)</span>
+<span id="cb68-7"><a href="#cb68-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(rs)){</span>
+<span id="cb68-8"><a href="#cb68-8" aria-hidden="true" tabindex="-1"></a>  reg <span class="ot">&lt;-</span> <span class="fu">regressionBF</span>(y1<span class="sc">~</span>x1<span class="sc">+</span>x2, <span class="at">data=</span>data, <span class="at">rscaleCont=</span>rs[i])</span>
+<span id="cb68-9"><a href="#cb68-9" aria-hidden="true" tabindex="-1"></a>  bfVal[,i] <span class="ot">&lt;-</span> <span class="fu">extractBF</span>(reg)<span class="sc">$</span>bf</span>
+<span id="cb68-10"><a href="#cb68-10" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb68-11"><a href="#cb68-11" aria-hidden="true" tabindex="-1"></a>bfVal</span>
+<span id="cb68-12"><a href="#cb68-12" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">53</span>)</span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">simReg</span>(<span class="at">N=</span><span class="dv">80</span>, <span class="at">sd=</span><span class="dv">28</span>)</span>
+<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a>dat80 <span class="ot">&lt;-</span> <span class="fu">tuneReg</span>(<span class="at">p=</span><span class="fl">0.01</span>, <span class="at">data=</span>dat)</span>
+<span id="cb69-4"><a href="#cb69-4" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">summary</span>(<span class="fu">lm</span>(y1<span class="sc">~</span>x1<span class="sc">+</span>x2, <span class="at">data=</span>dat80)))[<span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>,<span class="dv">4</span>, drop<span class="ot">=</span>F] <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span>
+<span id="cb69-5"><a href="#cb69-5" aria-hidden="true" tabindex="-1"></a>bfVal80a <span class="ot">&lt;-</span> <span class="fu">rscaleCF</span>(<span class="at">data=</span>dat80, <span class="at">rs=</span><span class="fu">c</span>(.<span class="dv">22</span>, .<span class="dv">31</span>, <span class="fu">sqrt</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">4</span>))</span>
+<span id="cb69-6"><a href="#cb69-6" aria-hidden="true" tabindex="-1"></a>bfVal80omit <span class="ot">&lt;-</span> <span class="fu">apply</span>(bfVal80a, <span class="dv">2</span>, <span class="cf">function</span>(x)x[<span class="dv">3</span>]<span class="sc">/</span>x[<span class="sc">-</span><span class="dv">3</span>])</span>
+<span id="cb69-7"><a href="#cb69-7" aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(bfVal80omit) <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="st">'x1+x2 vs'</span><span class="ot">=</span><span class="fu">c</span>(<span class="st">'Omit x2'</span>,<span class="st">'Omit x1'</span>),</span>
+<span id="cb69-8"><a href="#cb69-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">rscaleCont=</span><span class="fu">dimnames</span>(bfVal80a)[[<span class="dv">2</span>]])</span>
+<span id="cb69-9"><a href="#cb69-9" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">53</span>)</span>
+<span id="cb69-10"><a href="#cb69-10" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">simReg</span>(<span class="at">N=</span><span class="dv">160</span>, <span class="at">sd=</span><span class="dv">40</span>)</span>
+<span id="cb69-11"><a href="#cb69-11" aria-hidden="true" tabindex="-1"></a>dat160 <span class="ot">&lt;-</span> <span class="fu">tuneReg</span>(<span class="at">p=</span><span class="fl">0.01</span>, <span class="at">data=</span>dat)</span>
+<span id="cb69-12"><a href="#cb69-12" aria-hidden="true" tabindex="-1"></a>bfVal160a<span class="ot">&lt;-</span> <span class="fu">rscaleCF</span>(<span class="at">data=</span>dat160, <span class="at">rs=</span><span class="fu">c</span>(.<span class="dv">26</span>,.<span class="dv">154</span>,<span class="fu">sqrt</span>(<span class="dv">2</span>)<span class="sc">/</span><span class="dv">4</span>))</span>
+<span id="cb69-13"><a href="#cb69-13" aria-hidden="true" tabindex="-1"></a>bfVal160omit <span class="ot">&lt;-</span> <span class="fu">apply</span>(bfVal160a, <span class="dv">2</span>, <span class="cf">function</span>(x)x[<span class="dv">3</span>]<span class="sc">/</span>x[<span class="sc">-</span><span class="dv">3</span>])</span>
+<span id="cb69-14"><a href="#cb69-14" aria-hidden="true" tabindex="-1"></a><span class="fu">dimnames</span>(bfVal160omit) <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="st">'x1+x2 vs'</span><span class="ot">=</span><span class="fu">c</span>(<span class="st">'Omit x2'</span>,<span class="st">'Omit x1'</span>),</span>
+<span id="cb69-15"><a href="#cb69-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">rscaleCont=</span><span class="fu">dimnames</span>(bfVal160a)[[<span class="dv">2</span>]])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>In the following, the first column shows the value of <code>rscaleCont</code> for the maximum Bayes Factor when <code>x2</code> is omitted (i.e., only <code>x1</code> left), and the second column when <code>x1</code> is omitted.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>bfVal80omit <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>         rscaleCont
+x1+x2 vs   0.22  0.31 sqrt(2)/4
+  Omit x2 2.980 2.922     2.857
+  Omit x1 5.516 5.693     5.662</code></pre>
+</div>
+</div>
+<p>For `dat160’, we see</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>bfVal160omit <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>         rscaleCont
+x1+x2 vs    0.26  0.154 sqrt(2)/4
+  Omit x2 24.741 22.994    24.242
+  Omit x1  5.136  5.329     4.772</code></pre>
+</div>
+</div>
+<p>Notice that, in both cases, the Bayes Factors for the default setting of <code>rscaleCont</code> lie, for both variables, between that for the ‘Omit x2’ maximum and that for the ‘Omit x1’ maximum.</p>
+<p>In this context, the smaller Bayes Factor is modestly increased, with the larger Bayes Factor slightly reduced. The full model (<code>y1 ~ x1+x2</code>) and the models obtained by leaving out <code>x2</code> (<code>x1</code> is retained) or <code>x1</code> (<code>x2</code> is retained), are both affected in much the same way by changes in <code>rscaleConf</code>.</p>
 </section>
 <section id="different-statistics-offer-different-perspectives" class="level4">
 <h4 class="anchored" data-anchor-id="different-statistics-offer-different-perspectives">Different statistics offer different perspectives</h4>
-<p>In addition to the choice between different prior families, one has to choose a scale for the prior, if this is not done automatically. Different choices can lead to quite different Bayes Factors. Be aware that Bayes Factors are at best a rough measure of model preference. Use them along with other measures of model preference. Keep in mind that when samples are small, different samples from the same population, if available, would give widely varying results. Refer back to <a href="#fig-pval" class="quarto-xref">Figure&nbsp;1</a>, which showed what could be expected for <span class="math inline">\(p\)</span>-values.</p>
+<p>Bayes Factors are at best a rough measure of model preference, to be used alongside other measures of model preference. The value obtained depends both on the choice of prior on where the prior is centered, and on the choice of scale for the prior. Different choices can lead to quite different Bayes Factors.</p>
+<p>Note also that when samples are small, different samples from the same population, if available, will give widely varying summary statistics. Refer back to <a href="#fig-pval" class="quarto-xref">Figure&nbsp;1</a>, which showed what could be expected for <span class="math inline">\(p\)</span>-values.</p>
 <p>The comparisons could usefully be extended to consider other choices of prior.</p>
+</section>
+<section id="note-finding-rscaleconf-value-that-makes-bayes-factor-a-maximum" class="level4">
+<h4 class="anchored" data-anchor-id="note-finding-rscaleconf-value-that-makes-bayes-factor-a-maximum">Note – Finding <code>rscaleConf</code> value that makes Bayes Factor a maximum</h4>
 </section>
 <section id="references" class="level4">
 <h4 class="anchored" data-anchor-id="references">References</h4>
+<p>Bayarri, M. J., Berger, J. O., Forte, A., &amp; García-Donato, G. (2012). Criteria for Bayesian model choice with application to variable selection.</p>
 <p>Burnham, K. P., &amp; Anderson, D. R. (2004). Multimodel inference: understanding AIC and BIC in model selection. Sociological methods &amp; research, 33(2), 261-304.</p>
-<p>Kahneman, D. (2011). Thinking, fast and slow. Macmillan.</p>
 <p>Mulder, J., Williams, D. R., Gu, X., Tomarken, A., Böing-Messing, F., Olsson-Collentine, A., Meijerink-Bosman, M., Menke, J., van Aert, R., Fox, J.-P., Hoijtink, H., Rosseel, Y., Wagenmakers, E.-J., &amp; van Lissa, C. (2021). BFpack: Flexible Bayes Factor Testing of Scientific Theories in R. Journal of Statistical Software, 100(18), 1–63. https://doi.org/10.18637/jss.v100.i18</p>
 
 

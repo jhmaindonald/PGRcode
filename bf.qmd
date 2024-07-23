@@ -1,8 +1,8 @@
 ---
-title: "Bayes Factors & the BIC Statistic"
+title: "Bayes Factors and Information Statistics"
 subtitle: ""
 author: "John Maindonald"
-date: "2024-06-29"
+date: "2024-07-15"
 execute:
   echo: true
 format:
@@ -21,11 +21,14 @@ knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_chunk[["set"]](cache=FALSE, comment=NA)
 ```
 
-Kahneman (2011) makes the point that humans are poor intuitive statisticians. This is an especially serious issue for understanding and using $p$-values, for the choice of priors for Bayesian analyses, and for the use of information statistics. Observing how these various statistics compare for simulated data, and how they relate to one another, is helpful for the development of intuition.
+Bayes Factors give a data analysis perspective that is different to that given by $p$-values, one that is in most cases closer to what the analyst would like to know. The value obtained depends, inevitably, on the choice of prior. But, what choice of prior makes good sense? Intuition, if it is to help, requires training. How do Bayes Factors with common choices of prior, stack up against the use of the information statistics BIC (Bayes Information Criterion) and AIC (Akaike Information Criterion) for use in model choice? Intuition, if it is to be useful at all, requires training. The discussion that follows may be helpful to this end.
 
-Here, the focus will be on the Bayesian Information Criterion (BIC) and the Akaike Information Criterion (AIC), and on the connection that can be made, more directly for the BIC than for the AIC, to a form of Bayes Factor.
+For purposes of making a connection to the BIC and AIC, the focus will be on Bayes Factors as returned by functions in the *BayesFactor* package and, by `BPpack::BF()`. The BIC, in the large sample context for which it was developed, has a direct connection to a form of Bayes Factor. For the AIC, or the AICc that should replace it for use when the ratio of sample size to number of parameters estimated is less than perhaps 40, a more tenuous connection can be made.
+See Bayarri et al (2012) for commentary on the rational for the
+Jeffreys-Zellner-Siow family of priors that is used by *BayesFactor*
+functions.
 
-For purposes of making a connection to the BIC and AIC, the focus will be on Bayes Factors as returned by functions in the *Bayesfactor* package and, by `BPpack::BF()`.
+The AIC penalty term is designed so that, in the large sample limit, the statistic will select the model with the lowest prediction error. The BIC penalty term is designed, in the large sample limit, to select the correct model. In practical use, this distinction may be somewhat artificial.
 
 # All summary statistics are random variables
 
@@ -82,9 +85,11 @@ Note first that all these statistics, as well as $p$-values, are random variable
 
 As a starting point, comparisons will be for a one-sample $t$-statistic.
 
-Given two models with the same outcome variable, with respective BIC (Bayesian Information Criterion) statistics $m_1$ and $m_2$, the quantity $$
+Given two models with the same outcome variable, with respective BIC (Bayesian Information Criterion) statistics $m_1$ and $m_2$, the quantity 
+$$
 b_{12} = exp((m_1-m_2)/2)
-$$ can be used as a relative preference statistic for $m_2$ as against $m_1$. If model 1 is nested in model 2 this becomes, under the prior that has the name Jeffreys Unit Information (JUI) prior, with the prior centered on the maximum likelihood of the difference under the alternative, a Bayes Factor giving the probability of model 2 relative to model 1. In the case of a one-sample $t$-statistic, the BIC-derived Bayes Factor is $$
+$$ 
+can be used as a relative preference statistic for $m_2$ as against $m_1$. If model 1 is nested in model 2 this becomes, under what is known as a Jeffreys Unit Information (JUI) prior that is centered on the maximum likelihood of the difference under the alternative, a Bayes Factor giving the probability of model 2 relative to model 1. In the case of a one-sample $t$-statistic, the BIC-derived Bayes Factor is $$
 \mbox{exp}(N*\log(1+\frac{t^2}{N-1})-\log(N))/2), 
 \mbox{  where }N \mbox{ is the sample size}
 $$
@@ -121,19 +126,17 @@ dimnames(bf) <-
        paste0(c("n=",rep("",length(Nval)-1)),Nval))
 bfVal <- setNames(rep(list(bf),length(pval)),
                   paste0('p', substring(paste(pval),2)))
-for(k in 1:length(pval)){
-  p <- pval[k]
-for(i in 1:length(rs))for(j in 1:nlen)
-  bfVal[[k]][i,j] <- t2BF(p=p, N=Nval[j], xrs=rs[i])
-bfVal[[k]][length(rs)+1,] <- outer(p, Nval, t2BFbic)
-bfVal[[k]][length(rs)+2,] <- outer(p, Nval, t2eff)
-}
+for(k in 1:length(pval)){p <- pval[k]
+  for(i in 1:length(rs))for(j in 1:nlen)
+    bfVal[[k]][i,j] <- t2BF(p=p, N=Nval[j], xrs=rs[i])
+  bfVal[[k]][length(rs)+1,] <- outer(p, Nval, t2BFbic)
+  bfVal[[k]][length(rs)+2,] <- outer(p, Nval, t2eff)
+  }
 lapply(bfVal, function(x)signif(x,2))
 ```
 
-Note several points:\
-- The BIC-based 'Bayes Factor' gives unreasonably large factors for small values of $n$. Not until $n$=80 is the value in much the same ballpark as the Bayes Factor generated by the *BayesFactor* function. The BIC statistic really is designed for use in a "large sample" context.\
-- For large enough values of $n$, the BIC-based values lie between the Bayes Factor with for an `rscale` of $1/\sqrt{2}$ and that for an `rscale` of $\sqrt{2}$.\
+Note two points:\
+- Not until $n$=80 is the BIC-based Bayes Factor in much the same ballpark as the that generated by the *BayesFactor* function. For smaller values of $n$, it is overly large. The BIC statistic really is designed for use in a "large sample" context.\
 - As $n$ increases, the estimated effect size to which the Bayes Factor corresponds becomes ever smaller.
 
 Note then that `BayesFactor::ttestBF()` with the default setting of `rscale`, and the BIC-based Bayes Factor, are both using a prior whose scale is large relative to an ever smaller effect size.
@@ -161,7 +164,7 @@ print(setNames("p=0.05",""), quote=F)
 round(BFrs,2)
 ```
 
-Thus, the BIC is designed to look for effect sizes that are around one. If a small effect size is expected in a large sample context, use of `ttestBF()` or `ttest.tstat()` with a setting of `rscale` that matches the expected effect size, makes better sense than use of `BIC()`.
+The BIC is designed, in effect, to look for effect sizes that are around one. If a small effect size is expected in a large sample context, use of `ttestBF()` or `ttest.tstat()` with a setting of `rscale` that matches the expected effect size, makes better sense than use of `BIC()`.
 
 There is a choice of prior that allows the AIC-based preference measure to be interpreted as a Bayes Factor. See Burnham & Anderson (2004). Relative preference values that are larger than from the *BayesFactor* functions at all settings of `rscale` suggests a tendency to choose an overly complex model.
 
@@ -185,6 +188,20 @@ for(j in 1:nlen){
 ```{r, echo=T}
 print(setNames("p=0.01",""), quote=F)
 round(BFrs,2)
+```
+
+# AIC and BIC -- What $P$-value Corresponds to a Zero Bifference?
+
+We ask "For what $p$-value does the statistic, in either case, rate the simpler model and the more complex model equally?"
+
+```{r}
+eqAIC2p <- function(n)2*pt(sqrt((n-1)*(exp(2/n)-1)),lower.tail=F,df=n-1)
+eqBIC2p <- function(n)2*pt(sqrt((n-1)*(exp(log(n)/n)-1)),lower.tail=F,df=n-1)
+eqAICc2p <- function(n){penalty <- 12/(n-3)-4/(n-2)+2;
+  2*pt(sqrt((n-1)*(exp(penalty/n)-1)),lower.tail=F,df=n-1)}
+eq2p <- rbind(BIC=setNames(eqBIC2p(Nval[-1]), paste(Nval[-1])), 
+              AIC=eqAIC2p(Nval[-1]), AICc=eqAICc2p(Nval[-1])) 
+signif(eq2p,2)
 ```
 
 # Use of functions from the *BFpack* package
@@ -295,99 +312,284 @@ Code is:
 #| label: fig-compare
 ```
 
-## Bayes Factors for regression coefficients.
+# Bayes Factors for regression coefficients.
 
-We will use the following function to simulate data, with two explanatory variables, for use in regression calculations:
+We will work with data simulated from a model of the form
+
+$$
+y = a_1 x_1 + a_2 x_2 + \epsilon,
+$$ where $\epsilon$ is normally distributed with mean 0 and variance $\sigma^2$.
+
+The following function creates simulated data:
+```{r}
+simReg <- function(N=160, b1=1.2, b2=1.25, sd=40, num=20){
+    x1 <- seq(from=1, to=min(num,N), length.out=N)
+    x2 <- sample(x1)
+    df <- data.frame(x1=x1, x2=x2, y=b1*x1+b2*x2+rnorm(min(num,N),sd=sd))
+}
+```
+
+It can suitably be used thus:
+```{r}
+set.seed(19)
+dat <- simReg(N = 160, b1 = 1.2, b2 = 1.25, sd = 40, num = 20)
+y.lm <- lm(y ~ x1+x2, data=dat)
+## Check least squares fit
+coef(summary(y.lm))
+```
+
+### Fit *BayesFactor* model using `lmBF()`
+
+This function returns the Bayes Factors for individual
+linear models against the intercept only model as the null.
+A comparison other than against the intercept only model
+require one call to `lmBF()` for each model, then using
+the ratio of the two Bayes Factors to compare the models.
+For obtaining multiple Bayes Factors that relate to the
+one model, the function `regressionBF()` that is 
+demonstrated below may be preferred.
 
 ```{r}
-simDat <- function(x1=rep(1:20,4)/5, x2=sample(rep(1:20,4)/5), 
-                   b1=1.2, b2=1.5, sd=8){
+y.lmBF12 <- lmBF(y ~ x1+x2, data=dat, progress=FALSE)
+y.lmBF1 <- lmBF(y ~ x1, data=dat, progress=FALSE)
+y.lmBF2 <- lmBF(y ~ x2, data=dat, progress=FALSE)
+extractBF(y.lmBF1/y.lmBF12)  
+  ## `extractBF(y.lmBF1/y.lmBF12)[1,1]` gives just the Bayes Factor.
+  ## `y.lmBF1/y.lmBF12` gives greater detail
+```
+
+Note that in terms such as `y.lmBF1/y.lmBF12`, the 'full' model
+has to appear as the denominator.  To obtain the Bayes Factors
+for `y~x1+x2` against `y~x1` (i.e. 'Omit `x2`'), which is the 
+Bayes Factor for `x2` given `x1`, use the construction:
+```{r}
+1/extractBF(y.lmBF1/y.lmBF12)[1,1]  ## Or, `1/(y.lmBF1/y.lmBF12)` 
+```
+
+The following shows the two Bayes Factors, for `x2` given `x1`,
+and for `x1` given `x2`, side by side:
+```{r}
+sapply(list('x2|x1'=y.lmBF1/y.lmBF12, 'x1|x2'=y.lmBF2/y.lmBF12),
+       function(x)1/extractBF(x)[1,1])
+```
+
+### The function `regressionBF()` 
+
+The function `regressionBF()` calculates Bayes Factors, either for all
+model terms (specify `whichModels='all'`) or for all single term
+deletions (specify `whichModels='top'`), in either case against the 
+intercept only model as the null.
+Again use `extractBF()` to get output in terse summary form:
+```{r}
+y.regBF <- regressionBF(y ~ x1+x2, data=dat, progress=FALSE)
+extractBF(y.regBF)
+```
+
+Now use `regressionBF()` with the argument `whichModels='top'`.
+Use `extractBF()` to omit the final line that shows 1.0 as the 
+Bayes Factor for the full model against itself:
+```{r}
+top.regBF <- regressionBF(y ~ x1+x2, data=dat, progress=FALSE, 
+  whichModels='top')
+  ## Type `top.regBF` to get detailed output
+extractBF(top.regBF)  ## Summary output
+```
+
+It may seem more natural to work for the inverses of the Bayes Factors
+that are shown.  These can be obtained in either of the following
+ways:
+```{r}
+1/extractBF(top.regBF)[,1]  |> round(2)
+
+```
+returned, here obtaining the Bayes Factors for `x2` given `x1`,
+and for `x1` given `x2`, as against the model `y~x1+x2`.  This does
+however give very large Bayes Factors when $p$-values are very small.
+The very small Bayes Factors that are their inverses may be easier 
+to work with.
+
+## Dataset to dataset variation with the one data generation mechanism
+
+With the default settings, the simulated data and statistics in the 
+fitted model show, even in medium size datasets such as here with 
+$n$=80, large variation from one simulation to the next:
+
+Ten simulations give $p$-values, estimated coefficients (expected values are `b1`=1.2 and `b2`=1.5), and Bayes Factors against the model that includes both `x1` and `x2`, thus:
+
+```{r}
+multsim <- function(N=80, b1=1.25, b2=1.2, sd=4, num=20, nsim=10){
+    x1 <- seq(from=1, to=min(num,N), length.out=N)/5
+    x2 <- sample(x1)
+stats <- matrix(nrow=8, ncol=nsim)
+for(i in 1:nsim){
   n <- length(x1)
-  data.frame(x1=x1, x2=x2, y=b1*x1+b2*x2+rnorm(n,sd=sd))
+  dat <- data.frame(x1=x1, x2=x2, y=b1*x1+b2*x2+rnorm(n,sd=sd))
+  y.lm <- lm(y~x1+x2, data=dat)
+  c1c4 <- coef(summary(y.lm))[2:3, c(1,4)]
+  lm1 <- lm(y~x1, data=dat)
+  lm2 <- lm(y~x2, data=dat)
+  lm12 <- lm(y~x1+x2, data=dat)
+stats[1:6, i] <- c(c1c4[,1], c1c4[,2], 
+    1/extractBF(regressionBF(y ~ x1+x2, data=dat, whichModels='top'))$bf[2:1])
+  stats[7:8,i] <- c(exp((BIC(lm2)-BIC(lm12))/2), exp((BIC(lm1)-BIC(lm12))/2))
 }
-```
-
-### One data generating mechanism -- large dataset to dataset variation
-
-Note first that with the default settings, the simulated data and $p$-values in the fitted model show large variation from one simulation to the next. The following shows relatively extreme differences:
-
-```{r}
+rownames(stats) <- c('b1','b2','p1','p2', 'bf1','bf2', 'bf1-BIC','bf2-BIC')
+stats
+}
 set.seed(17)
-dat <- simDat()
-y.lm <- lm(y~x1+x2, data=dat); bf12 <- lmBF(y ~ x1+x2, data=dat)
-## Repeat simulation of data
-dat <- simDat()
-yy.lm <- lm(y~x1+x2, data=dat); bf12 <- lmBF(y ~ x1+x2, data=dat)
-cbind(coef(summary(y.lm))[,-2], coef(summary(yy.lm))[,-2]) |> signif(2)
+stats <- multsim()
+stats |> round(3)
+```
+Observe that the BIC-based factors are in most cases substantially less favorable than the Bayes Factors from `regressionBF()` to the model that has both of the explanatory variables. This remains the case even for a much larger sample size. Thus, try:
+
+```{r, eval=F}
+stats <- multsim(N=360, sd=8)  # Increase sd to avoid overly small p-values
+stats |> round(3)
 ```
 
-P-values from nine simulations are:
-
-```{r}
-multSims <- function(sd, nsims=9, rnam=c("(Intercept)","x1","x2")){
-pvals <- matrix(nrow=3, ncol=nsims, dimnames=list(rnam,
-                paste0('pval', 1:nsims)))
-for(i in 1:nsims){dat <- simDat(sd=sd)
-  dat.lm <- lm(y~x1+x2, data=dat); bf12 <- lmBF(y ~ x1+x2, data=dat)
-  pvals[,i] <- coef(summary(dat.lm))[,4]
-}
-pvals
-}
-multSims(sd=8) |> signif(2)
-```
-
-Now try with `sd=5`:
-
-```{r}
-multSims(sd=5) |> signif(2)
-```
-
-The $p$-values are more consistently small.
-
-### Bayes Factors and BIC statistics
+## Relative preference statistics from AIC and AICc
 
 Now create a simulated dataset, and calculate Bayes Factors for the coefficients (1) using *Bayesfactor* functions, and (2) derived from BIC statistics:
 
 ```{r}
+simDat <-
+function(x1=rep(1:20,4)/5, x2=sample(rep(1:20,4)/5), 
+                   b1=1.2, b2=1.5, sd=8){
+    n <- length(x1)
+    data.frame(x1=x1, x2=x2, y=b1*x1+b2*x2+rnorm(n,sd=sd))
+}
+library(AICcmodavg)
 set.seed(31)
 dat31 <- simDat()
+y0.lm <- lm(y~0, data=dat31)
 y.lm <- lm(y~x1+x2, data=dat31); bf12 <- lmBF(y ~ x1+x2, data=dat31)
 y2.lm <- lm(y~x2, data=dat31); bf2 <- lmBF(y ~ x2, data=dat31)
 y1.lm <- lm(y~x1, data=dat31); bf1 <- lmBF(y ~ x1, data=dat31)
 ## Regression summary
 coef(summary(y.lm)) |> signif(2)
 ## Bayes Factors for x1 and x2, using functions from _Bayesfactor_
-c(extractBF(bf12/bf2)$bf, extractBF(bf12/bf1)$bf) |> round(2)
+BF <- c(extractBF(bf12/bf2)$bf, extractBF(bf12/bf1)$bf)
 ## Bayes Factors for x1 and x2, derived from BIC statistics
-c(exp((BIC(y2.lm)-BIC(y.lm))/2), exp((BIC(y1.lm)-BIC(y.lm))/2)) |> round(2)
+BICbf <- c(exp((BIC(y2.lm)-BIC(y.lm))/2), exp((BIC(y1.lm)-BIC(y.lm))/2))
+## Bayes Factors for x1 and x2, derived from AIC statistics
+AICrp <- c(exp((AIC(y2.lm)-AIC(y.lm))/2), exp((AIC(y1.lm)-AIC(y.lm))/2))
+## Bayes Factors for x1 and x2, derived from AICc statistics
+AICcRP <- c(exp((AICc(y2.lm)-AICc(y.lm))/2), exp((AICc(y1.lm)-AICc(y.lm))/2)) |> round(2)
+## Bayes Factors for x1 and x2, derived from BIC ratio of ratios to null model
+stats <- cbind(BF=BF, BICbf=BICbf, AICrp=AICrp, AICcRP=AICcRP)
 ```
 
-Both are substantially smaller than those derived from calculations using `BayesFactor::lmBF()`.
-
-### Matching the Bayes Factor to the SEs of the coefficients
-
-Check also the difference made to the Bayes Factors by setting the scale parameter (here `rscaleCont`) to a value that is matched to the standard error of the coefficient estimates. A standard error that is just under 0.7 is the same for both coefficients. We standardise this by dividing by a standard deviation of just under 7.2, multiply by the default `rscale` that equals $\sqrt(2)/4$, and use this as the value for `rscaleCont`.
+Relative preference statistics in favor of including both `x1` and `x2`, are:
 
 ```{r}
-rs <- 2*0.75/7.2
-  bf12 <- lmBF(y ~ x1+x2, data=dat31, rscaleCont=rs)
-  bf2 <- lmBF(y ~ x2, data=dat31, rscaleCont=rs)
-  bf1 <- lmBF(y ~ x1, data=dat31, rscaleCont=rs)
-  c(extractBF(bf12/bf2)$bf, extractBF(bf12/bf1)$bf) |> round(2)
+stats |> round(2)
 ```
 
-In this context, the smaller Bayes Factor is modestly increased, with the larger Bayes Factor slightly reduced.
+The BIC-based statistics are substantially smaller, and the AIC and AICc-based statistics substantially larger, than those derived from calculations using `BayesFactor::lmBF()`.
+
+## Change in Bayes Factors with varying `rscaleCont`
+
+The following code will be used for the calculations:
+
+```{r}
+simReg <- function(N=160, b1=1.2, b2=1.25, sd=40, num=20){
+    x1 <- seq(from=1, to=min(num,N), length.out=N)
+    x2 <- sample(x1)
+    df <- data.frame(x1=x1, x2=x2, y=b1*x1+b2*x2+rnorm(min(num,N),sd=sd))
+}
+tuneReg <- function(p=0.01, data){
+    reg <- lm(y ~ x1+x2, data=data)
+    N <- nrow(data)
+    tstats <- coef(summary(reg))[,'t value']
+    tfix <- qt(1-p/2, df=N-3, lower.tail=F)
+    y1 <- fitted(reg)+resid(reg)*tstats[2]/tfix
+    y2 <- fitted(reg)+resid(reg)*tstats[3]/tfix
+    cbind(dat, y1=y1, y2=y2)
+}
+```
+
+```{r}
+rscaleCF <- function(data=dat, rs=seq(from=0.04, to=0.16, by=0.05)){
+  colnam <- as.character(substitute(rs))
+  if(colnam[1]=="c")colnam <- colnam[-1] else colnam <- paste(rs)
+  bfVal <- matrix(nrow=3, ncol=length(colnam))
+  dimnames(bfVal) <- list("BFvsInterceptOnly"=c('x1','x2','x1+x2'), 
+                          rscaleCont=colnam)
+  for(i in 1:length(rs)){
+  reg <- regressionBF(y1~x1+x2, data=data, rscaleCont=rs[i])
+  bfVal[,i] <- extractBF(reg)$bf
+  }
+bfVal
+}
+```
+
+```{r, results='hide'}
+set.seed(53)
+dat <- simReg(N=80, sd=28)
+dat80 <- tuneReg(p=0.01, data=dat)
+coef(summary(lm(y1~x1+x2, data=dat80)))[2:3,4, drop=F] |> round(3)
+bfVal80a <- rscaleCF(data=dat80, rs=c(.22, .31, sqrt(2)/4))
+bfVal80omit <- apply(bfVal80a, 2, function(x)x[3]/x[-3])
+dimnames(bfVal80omit) <- list('x1+x2 vs'=c('Omit x2','Omit x1'),
+  rscaleCont=dimnames(bfVal80a)[[2]])
+set.seed(53)
+dat <- simReg(N=160, sd=40)
+dat160 <- tuneReg(p=0.01, data=dat)
+bfVal160a<- rscaleCF(data=dat160, rs=c(.26,.154,sqrt(2)/4))
+bfVal160omit <- apply(bfVal160a, 2, function(x)x[3]/x[-3])
+dimnames(bfVal160omit) <- list('x1+x2 vs'=c('Omit x2','Omit x1'),
+  rscaleCont=dimnames(bfVal160a)[[2]])
+```
+
+In the following, the first column shows the value of `rscaleCont` for the maximum Bayes Factor when `x2` is omitted (i.e., only `x1` left), and the second column when `x1` is omitted.
+
+```{r}
+bfVal80omit |> round(3)
+```
+
+For \`dat160', we see
+
+```{r}
+bfVal160omit |> round(3)
+```
+
+Notice that, in both cases, the Bayes Factors for the default setting of `rscaleCont` lie, for both variables, between that for the 'Omit x2' maximum and that for the 'Omit x1' maximum.
+
+In this context, the smaller Bayes Factor is modestly increased, with the larger Bayes Factor slightly reduced.  The full model (`y1 ~ x1+x2`) and the models
+obtained by leaving out `x2` (`x1` is retained) or `x1` (`x2` is retained),
+are both affected in much the same way by changes in `rscaleConf`.
 
 ## Different statistics offer different perspectives
 
-In addition to the choice between different prior families, one has to choose a scale for the prior, if this is not done automatically. Different choices can lead to quite different Bayes Factors. Be aware that Bayes Factors are at best a rough measure of model preference. Use them along with other measures of model preference. Keep in mind that when samples are small, different samples from the same population, if available, would give widely varying results. Refer back to @fig-pval, which showed what could be expected for $p$-values.
+Bayes Factors are at best a rough measure of model preference, to be used alongside other measures of model preference. The value obtained depends both on the choice of prior on where the prior is centered, and on the choice of scale for the prior. Different choices can lead to quite different Bayes Factors.
+
+Note also that when samples are small, different samples from the same population, if available, will give widely varying summary statistics. Refer back to @fig-pval, which showed what could be expected for $p$-values.
 
 The comparisons could usefully be extended to consider other choices of prior.
 
+## Note -- Finding `rscaleConf` value that makes Bayes Factor a maximum
+
+```{r, echo=FALSE, eval=FALSE}
+opt <- function(mat=bfVal80, row=1, maximum=F){
+x <- as.numeric(colnames(mat))
+y <- mat[row,]
+interval <- range(x)
+minmax <- c('minimum','maximum')[as.numeric(maximum)+1]
+opt.gam <- mgcv::gam(y ~ s(x))
+out <- optimize(function(x)predict(opt.gam, data.frame(x=x)), 
+  interval=interval, maximum=maximum)
+setNames(c(out[[minmax]], out$objective, interval[1], interval[2]),
+c(minmax, "Value", "range from","range to"))
+}
+## Examples of use
+opt(mat=bfVal80, row=1, maximum=T)
+opt(mat=bfVal80, row=2, maximum=T)
+```
+
 ## References
 
-Burnham, K. P., & Anderson, D. R. (2004). Multimodel inference: understanding AIC and BIC in model selection. Sociological methods & research, 33(2), 261-304.
+Bayarri, M. J., Berger, J. O., Forte, A., & García-Donato, G. (2012). Criteria for Bayesian model choice with application to variable selection.
 
-Kahneman, D. (2011). Thinking, fast and slow. Macmillan.
+Burnham, K. P., & Anderson, D. R. (2004). Multimodel inference: understanding AIC and BIC in model selection. Sociological methods & research, 33(2), 261-304.
 
 Mulder, J., Williams, D. R., Gu, X., Tomarken, A., Böing-Messing, F., Olsson-Collentine, A., Meijerink-Bosman, M., Menke, J., van Aert, R., Fox, J.-P., Hoijtink, H., Rosseel, Y., Wagenmakers, E.-J., & van Lissa, C. (2021). BFpack: Flexible Bayes Factor Testing of Scientific Theories in R. Journal of Statistical Software, 100(18), 1–63. https://doi.org/10.18637/jss.v100.i18

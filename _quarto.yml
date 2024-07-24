@@ -8,10 +8,9 @@ website:
     pinned: true
     title: false
     left:
-      - text: "Main"
+      - text: "Overview"
+        href: index.qmd
         menu: 
-          - text: "Overview"
-            href: index.qmd
           - text: "Chapter contents -- Summary"
             href: about.qmd
           - text: "Afterword"

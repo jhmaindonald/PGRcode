@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Code and Supplements - Code and Supplements – A Practical Guide . . .</title>
+<title>A Practical Guide . . . – Code and Supplements</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -66,35 +66,6 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -118,37 +89,31 @@ window.Quarto = {
     <ul class="dropdown-menu" aria-labelledby="nav-menu-main">    
         <li>
     <a class="dropdown-item" href="./index.html">
- <span class="dropdown-text">Code and Supplements</span></a>
+ <span class="dropdown-text">Overview</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="https://jhmaindonald.github.io/PGRselected/">
- <span class="dropdown-text">Answers to selected exercises</span></a>
+    <a class="dropdown-item" href="./about.html">
+ <span class="dropdown-text">Chapter contents – Summary</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="./afterword.html">
  <span class="dropdown-text">Afterword</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="./corrections.html">
+ <span class="dropdown-text">Corrections</span></a>
+  </li>  
     </ul>
   </li>
-  <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
-<span class="menu-text">Practical Guide</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./blog.html"> 
-<span class="menu-text">Blog</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="https://jhmaindonald.github.io/Rcode/"> 
-<span class="menu-text">R code</span></a>
-  </li>  
-</ul>
-            <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-resources" role="button" data-bs-toggle="dropdown" aria-expanded="false">
- <span class="menu-text">Resources</span>
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-r-code" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">R Code</span>
     </a>
-    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-resources">    
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-r-code">    
+        <li>
+    <a class="dropdown-item" href="https://jhmaindonald.github.io/Rcode/">
+ <span class="dropdown-text">R code</span></a>
+  </li>  
         <li>
     <a class="dropdown-item" href="./RunningCode.html">
  <span class="dropdown-text">Ways to Use Code</span></a>
@@ -156,6 +121,23 @@ window.Quarto = {
         <li>
     <a class="dropdown-item" href="./figFuns.html">
  <span class="dropdown-text">Code for Selected Figures</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="./blog.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-additional-notes" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Additional Notes</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-additional-notes">    
+        <li>
+    <a class="dropdown-item" href="https://jhmaindonald.github.io/PGRselected/">
+ <span class="dropdown-text">Answers to selected exercises</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="./bf.html">
@@ -180,21 +162,12 @@ window.Quarto = {
    
   <ul>
   <li><a href="#resources-made-available-here-primarily-relate-to" id="toc-resources-made-available-here-primarily-relate-to" class="nav-link active" data-scroll-target="#resources-made-available-here-primarily-relate-to">Resources made available here primarily relate to:</a></li>
-  <li><a href="#scroll-down-to-see-corrections" id="toc-scroll-down-to-see-corrections" class="nav-link" data-scroll-target="#scroll-down-to-see-corrections">Scroll down to see Corrections</a></li>
   <li><a href="#solutions-to-selected-exercises" id="toc-solutions-to-selected-exercises" class="nav-link" data-scroll-target="#solutions-to-selected-exercises">Solutions to selected exercises</a></li>
   <li><a href="#pdfs-drafts-for-chapters-1-2-and-3" id="toc-pdfs-drafts-for-chapters-1-2-and-3" class="nav-link" data-scroll-target="#pdfs-drafts-for-chapters-1-2-and-3">PDFs (drafts) for chapters 1, 2, and 3</a></li>
   <li><a href="#items-of-related-interest" id="toc-items-of-related-interest" class="nav-link" data-scroll-target="#items-of-related-interest">Items of Related interest</a>
   <ul class="collapse">
   <li><a href="#updated-version-of-early-2000s-booklet-on-r" id="toc-updated-version-of-early-2000s-booklet-on-r" class="nav-link" data-scroll-target="#updated-version-of-early-2000s-booklet-on-r">Updated version of early 2000s booklet on R</a></li>
   <li><a href="#what-does-the-data-say-traps-to-avoid" id="toc-what-does-the-data-say-traps-to-avoid" class="nav-link" data-scroll-target="#what-does-the-data-say-traps-to-avoid">What does the data say? – Traps to Avoid</a></li>
-  <li><a href="#corrections" id="toc-corrections" class="nav-link" data-scroll-target="#corrections">Corrections</a></li>
-  </ul></li>
-  <li><a href="#corrections-1" id="toc-corrections-1" class="nav-link" data-scroll-target="#corrections-1">Corrections</a>
-  <ul class="collapse">
-  <li><a href="#page-63-lines--8-to--6" id="toc-page-63-lines--8-to--6" class="nav-link" data-scroll-target="#page-63-lines--8-to--6">Page 63, lines -8 to -6</a></li>
-  <li><a href="#page-132-first-line-in-subsection-2.9.2" id="toc-page-132-first-line-in-subsection-2.9.2" class="nav-link" data-scroll-target="#page-132-first-line-in-subsection-2.9.2">Page 132, first line in Subsection 2.9.2</a></li>
-  <li><a href="#page-316-exercise-6.10" id="toc-page-316-exercise-6.10" class="nav-link" data-scroll-target="#page-316-exercise-6.10">Page 316, Exercise 6.10</a></li>
-  <li><a href="#page-396-exercise-8.3" id="toc-page-396-exercise-8.3" class="nav-link" data-scroll-target="#page-396-exercise-8.3">Page 396, Exercise 8.3</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -204,7 +177,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Code and Supplements – A Practical Guide . . .</h1>
+<h1 class="title">A Practical Guide . . . – Code and Supplements</h1>
 </div>
 
 
@@ -228,9 +201,6 @@ window.Quarto = {
 by John H Maindonald, W John Braun, and Jeffrey L Andrews<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a><br>
 published by Cambridge University Press in 2024.</p>
 </section>
-<section id="scroll-down-to-see-corrections" class="level3">
-<h3 class="anchored" data-anchor-id="scroll-down-to-see-corrections">Scroll down to see <a href="#corrections">Corrections</a></h3>
-</section>
 <section id="solutions-to-selected-exercises" class="level3">
 <h3 class="anchored" data-anchor-id="solutions-to-selected-exercises"><a href="https://jhmaindonald.github.io/PGRselected">Solutions to selected exercises</a></h3>
 <p>(These can also be accessed from the menu)</p>
@@ -249,38 +219,6 @@ published by Cambridge University Press in 2024.</p>
 <h3 class="anchored" data-anchor-id="what-does-the-data-say-traps-to-avoid"><a href="https://bookdown.org/jhmaindonald/datathoughts/">What does the data say? – Traps to Avoid</a></h3>
 <p>This collection of “examples that inform and educate”, taken from the media and from the published literature, is used to illustrate some of the ready traps to which data analysts can readily fall. The booklet is in the style of what Kahneman (2013), in his book <em>Thinking Fast and Slow</em>, calls “educating gossip”. Its examples may be used to supplement, or in a few cases offer a further perspective on, those in <em>A Practical Guide to R</em>. The source files are all available from</p>
 <p><a href="../dataThoughts/">Source files</a></p>
-</section>
-<section id="corrections" class="level3">
-<h3 class="anchored" data-anchor-id="corrections">Corrections</h3>
-</section>
-</section>
-<section id="corrections-1" class="level1">
-<h1>Corrections</h1>
-<section id="page-63-lines--8-to--6" class="level3">
-<h3 class="anchored" data-anchor-id="page-63-lines--8-to--6">Page 63, lines -8 to -6</h3>
-<p>The statement “which applies for a wide class of priors . . . with densities that tail off in much the same manner as for the normal” is a mis-characterization. The assumptions on which the inequality depends do not, for commonly used families of priors, hold in general. The ‘bound’ is best treated as giving a useful rough ballpark indication of what to expect when degrees of freedom are ‘small’. As degrees of freedom increase, a much smaller Bayes Factor can be expected.</p>
-<p>In line -6, “. . . <span class="math inline">\(p\)</span>-value equal to 0” should be “. . . <span class="math inline">\(p\)</span>-value equal to 0.00283”.</p>
-</section>
-<section id="page-132-first-line-in-subsection-2.9.2" class="level3">
-<h3 class="anchored" data-anchor-id="page-132-first-line-in-subsection-2.9.2">Page 132, first line in Subsection 2.9.2</h3>
-<p>“The statement”. . . applying to a wide class of priors” misses the point. Refer back to the page 63 correction.</p>
-</section>
-<section id="page-316-exercise-6.10" class="level3">
-<h3 class="anchored" data-anchor-id="page-316-exercise-6.10">Page 316, Exercise 6.10</h3>
-<p>_datasets_ should of course be <em>datasets</em>.</p>
-</section>
-<section id="page-396-exercise-8.3" class="level3">
-<h3 class="anchored" data-anchor-id="page-396-exercise-8.3">Page 396, Exercise 8.3</h3>
-<p>The second&nbsp;sentence refers to a non-existent Chapter 3 model fit. The following is offered as a replacement for the complete exercise:</p>
-<blockquote class="blockquote">
-<p>8.3. Use <code>qqnorm()</code> to check differences from normality in <code>nsw74psid1::re78</code>. What do&nbsp;you notice? Use tree-based regression to predict <code>re78</code>, and check differences from normality in the distribution of residuals.<br>
-What do&nbsp;you notice about the tails of the distribution?</p>
-</blockquote>
-<ol type="a">
-<li><p>Use the function <code>car::powerTransform()</code> with <code>family='bcnPower'</code> to search for a transformation that will bring the distribution of <code>re78</code> closer to normality. Run summary on the output to get values (suitably rounded values are usually preferred) of <code>lambda</code> and <code>gamma</code> that you can then supply as arguments to <code>car::bcnPower()</code> to obtain transformed values <code>tran78</code> of <code>re78</code>. Use <code>qqnorm()</code> with the transformed data to compare its distribution with a normal distribution. The distribution should now be much closer to normal, making the choice of splits that maximize the between-groups sum-of-squares sums of squares about the mean a more optimal procedure.</p></li>
-<li><p>Use tree-based regression to predict <code>tran78</code>, and check differences from normality in the distribution of residuals. What do&nbsp;you now notice about the tails of the distribution? What are the variable importance ranks i) if the tree is chosen that gives the minimum cross-validated error; ii) if the tree is chosen following the one standard error criterion? In each case, calculate the cross-validated relative error.</p></li>
-<li><p>Do a random forest fit to the transformed data, and compare the bootstrap error with then cross-validated error from the <code>rpart</code> fits.</p></li>
-</ol>
 
 
 </section>

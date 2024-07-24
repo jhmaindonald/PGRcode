@@ -1,5 +1,5 @@
 ---
-title: "Code and Supplements -- A Practical Guide . . ."
+title: "A Practical Guide . . . -- Code and Supplements"
 ---
 
 ![](images/frontcover.png) 
@@ -11,8 +11,6 @@ by John H Maindonald, W John Braun, and Jeffrey L Andrews[^1]
 published by Cambridge University Press in 2024.
 
 [^1]: The text builds on "Data Analysis and Graphics Using R" (Maindonald and Braun, CUP, 3rd edn, 2010.)
-
-### Scroll down to see [Corrections]
 
 ### [Solutions to selected exercises](https://jhmaindonald.github.io/PGRselected)
 (These can also be accessed from the menu)
@@ -34,48 +32,6 @@ from the media and from the published literature, is used to illustrate some of 
 
 [Source files](../dataThoughts/)
 
-### Corrections
-
-# Corrections
-### Page 63, lines -8 to -6
-
-The statement "which applies for a wide class of priors
-. . . with densities that tail off in much the same 
-manner as for the normal" is a mis-characterization.
-The assumptions on which the inequality depends do not,
-for commonly used families of priors, hold in general.
-The 'bound' is best treated as giving a useful rough 
-ballpark indication of what to expect when degrees of 
-freedom are 'small'.  As degrees of freedom increase, 
-a much smaller Bayes Factor can be expected.
-
-In line -6, ". . . $p$-value equal to 0" should be
-". . . $p$-value equal to 0.00283".
-
-### Page 132, first line in Subsection 2.9.2
-
-"The statement ". . . applying to a wide class of priors" 
-misses the point. Refer back to the page 63 correction.
-
-### Page 316, Exercise 6.10
-
-\_datasets\_ should of course be _datasets_.
-
-### Page 396, Exercise 8.3
-
-The second sentence refers to a non-existent Chapter 3 model
-fit.  The following is offered as a replacement for the
-complete exercise:
-
-
-> 8.3. Use `qqnorm()` to check differences from normality in `nsw74psid1::re78`. What do you notice? Use tree-based regression to predict `re78`, and check differences from normality in the distribution of residuals.\
-> What do you notice about the tails of the distribution?
-
-a.  Use the function `car::powerTransform()` with `family='bcnPower'` to search for a transformation that will bring the distribution of `re78` closer to normality. Run summary on the output to get values (suitably rounded values are usually preferred) of `lambda` and `gamma` that you can then supply as arguments to `car::bcnPower()` to obtain transformed values `tran78` of `re78`. Use `qqnorm()` with the transformed data to compare its distribution with a normal distribution. The distribution should now be much closer to normal, making the choice of splits that maximize the between-groups sum-of-squares sums of squares about the mean a more optimal procedure.
-
-b.  Use tree-based regression to predict `tran78`, and check differences from normality in the distribution of residuals. What do you now notice about the tails of the distribution? What are the variable importance ranks i) if the tree is chosen that gives the minimum cross-validated error; ii) if the tree is chosen following the one standard error criterion? In each case, calculate the cross-validated relative error.
-
-c.  Do a random forest fit to the transformed data, and compare the bootstrap error with then cross-validated error from the `rpart` fits.
 
 
 

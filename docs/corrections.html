@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>A Practical Guide . . . – Code and Supplements - xtras</title>
+<title>A Practical Guide . . . – Code and Supplements - Corrections</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,40 +19,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -100,6 +66,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -195,7 +190,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#quarto" id="toc-quarto" class="nav-link active" data-scroll-target="#quarto">Quarto</a></li>
+  <li><a href="#page-63-lines--8-to--6" id="toc-page-63-lines--8-to--6" class="nav-link active" data-scroll-target="#page-63-lines--8-to--6">Page 63, lines -8 to -6</a></li>
+  <li><a href="#page-132-first-line-in-subsection-2.9.2" id="toc-page-132-first-line-in-subsection-2.9.2" class="nav-link" data-scroll-target="#page-132-first-line-in-subsection-2.9.2">Page 132, first line in Subsection 2.9.2</a></li>
+  <li><a href="#page-316-exercise-6.10" id="toc-page-316-exercise-6.10" class="nav-link" data-scroll-target="#page-316-exercise-6.10">Page 316, Exercise 6.10</a></li>
+  <li><a href="#page-396-exercise-8.3" id="toc-page-396-exercise-8.3" class="nav-link" data-scroll-target="#page-396-exercise-8.3">Page 396, Exercise 8.3</a></li>
   </ul>
 </nav>
     </div>
@@ -204,7 +202,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">xtras</h1>
+<h1 class="title">Corrections</h1>
 </div>
 
 
@@ -221,15 +219,32 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="quarto" class="level2">
-<h2 class="anchored" data-anchor-id="quarto">Quarto</h2>
-<p>Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <a href="https://quarto.org" class="uri">https://quarto.org</a>.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">+</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 2</code></pre>
-</div>
-</div>
+<section id="page-63-lines--8-to--6" class="level3">
+<h3 class="anchored" data-anchor-id="page-63-lines--8-to--6">Page 63, lines -8 to -6</h3>
+<p>The statement “which applies for a wide class of priors . . . with densities that tail off in much the same manner as for the normal” is a mis-characterization. The assumptions on which the inequality depends do not, for commonly used families of priors, hold in general. The ‘bound’ is best treated as giving a useful rough ballpark indication of what to expect when degrees of freedom are ‘small’. As degrees of freedom increase, a much smaller Bayes Factor can be expected.</p>
+<p>In line -6, “. . . <span class="math inline">\(p\)</span>-value equal to 0” should be “. . . <span class="math inline">\(p\)</span>-value equal to 0.00283”.</p>
+</section>
+<section id="page-132-first-line-in-subsection-2.9.2" class="level3">
+<h3 class="anchored" data-anchor-id="page-132-first-line-in-subsection-2.9.2">Page 132, first line in Subsection 2.9.2</h3>
+<p>“The statement”. . . applying to a wide class of priors” misses the point. Refer back to the page 63 correction.</p>
+</section>
+<section id="page-316-exercise-6.10" class="level3">
+<h3 class="anchored" data-anchor-id="page-316-exercise-6.10">Page 316, Exercise 6.10</h3>
+<p>_datasets_ should of course be <em>datasets</em>.</p>
+</section>
+<section id="page-396-exercise-8.3" class="level3">
+<h3 class="anchored" data-anchor-id="page-396-exercise-8.3">Page 396, Exercise 8.3</h3>
+<p>The second&nbsp;sentence refers to a non-existent Chapter 3 model fit. The following is offered as a replacement for the complete exercise:</p>
+<blockquote class="blockquote">
+<p>8.3. Use <code>qqnorm()</code> to check differences from normality in <code>nsw74psid1::re78</code>. What do&nbsp;you notice? Use tree-based regression to predict <code>re78</code>, and check differences from normality in the distribution of residuals.<br>
+What do&nbsp;you notice about the tails of the distribution?</p>
+</blockquote>
+<ol type="a">
+<li><p>Use the function <code>car::powerTransform()</code> with <code>family='bcnPower'</code> to search for a transformation that will bring the distribution of <code>re78</code> closer to normality. Run summary on the output to get values (suitably rounded values are usually preferred) of <code>lambda</code> and <code>gamma</code> that you can then supply as arguments to <code>car::bcnPower()</code> to obtain transformed values <code>tran78</code> of <code>re78</code>. Use <code>qqnorm()</code> with the transformed data to compare its distribution with a normal distribution. The distribution should now be much closer to normal, making the choice of splits that maximize the between-groups sum-of-squares sums of squares about the mean a more optimal procedure.</p></li>
+<li><p>Use tree-based regression to predict <code>tran78</code>, and check differences from normality in the distribution of residuals. What do&nbsp;you now notice about the tails of the distribution? What are the variable importance ranks i) if the tree is chosen that gives the minimum cross-validated error; ii) if the tree is chosen following the one standard error criterion? In each case, calculate the cross-validated relative error.</p></li>
+<li><p>Do a random forest fit to the transformed data, and compare the bootstrap error with the cross-validated error from the <code>rpart</code> fits.</p></li>
+</ol>
+<hr>
 
 
 </section>

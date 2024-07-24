@@ -2,10 +2,8 @@
 ```
 
 ---
-title: "A Practical Guide -- Supplementary Notes"
+title: "A brief summary of what the text covers"
 ---
-
-# A brief summary of what the text covers
 
 Chapter and appendix headings are:
 
@@ -61,6 +59,3 @@ Changes from the earlier text include:
 19. The CRAN (Comprehensive R Archive Network) repository contains, at the time of writing, close to 20,000 packages. Further packages are available on other repositories, with **Bioconductor** perhaps the most important. Several others are listed upon typing `setRepositories()` at the command line. The 20,000 contrasts with the around 2,000 packages that were on CRAN prior to 2010 when the third edition of "Data Analysis and Graphics Using R" was in preparation. We have tried to keep up to date with new packages that supplement or extend what was available, but some will undoubtedly have been missed.
 
 Reflections, looking back on the text in its published form, appear in "Afterword".
-
-
-

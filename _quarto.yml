@@ -3,34 +3,38 @@ project:
   output-dir: docs
 
 website:
-  title: "Code and Supplements"
+  title: "A Practical Guide . . . -- Code and Supplements"
   navbar:
     pinned: true
     title: false
     left:
       - text: "Main"
         menu: 
-          - text: "Code and Supplements"
+          - text: "Overview"
             href: index.qmd
-          - text: "Answers to selected exercises"
-            href: https://jhmaindonald.github.io/PGRselected/
+          - text: "Chapter contents -- Summary"
+            href: about.qmd
           - text: "Afterword"
             href: afterword.qmd
-            
-      - text: "Practical Guide"
-        href: about.qmd
-      - text: "Blog"
-        href: blog.qmd
-      - text: "R code"
-        href: https://jhmaindonald.github.io/Rcode/
-        
-    right: 
-      - text: "Resources"
+          - text: "Corrections"
+            href: corrections.qmd
+      - text: "R Code"   
         menu:
+          - text: "R code"
+            href: https://jhmaindonald.github.io/Rcode/
           - text: "Ways to Use Code"
             href: RunningCode.qmd
           - text: "Code for Selected Figures"
-            href: figFuns.qmd
+            href: figFuns.qmd    
+            
+      - text: "Blog"
+        href: blog.qmd
+        
+    right: 
+      - text: "Additional Notes"
+        menu:
+          - text: "Answers to selected exercises"
+            href: https://jhmaindonald.github.io/PGRselected/
           - text: "Bayes Factors & the BIC Statistic"
             href: bf.qmd
             

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>A Practical Guide . . . – Code and Supplements - Corrections</title>
+<title>A Practical Guide . . . – Code and Supplements - Corrections and Updates</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -150,6 +150,10 @@ window.Quarto = {
  <span class="dropdown-text">Answers to selected exercises</span></a>
   </li>  
         <li>
+    <a class="dropdown-item" href="./boostVSbag.html">
+ <span class="dropdown-text">Boosting vs Bagging – a Comparison</span></a>
+  </li>  
+        <li>
     <a class="dropdown-item" href="./bf.html">
  <span class="dropdown-text">Bayes Factors &amp; the BIC Statistic</span></a>
   </li>  
@@ -174,6 +178,7 @@ window.Quarto = {
   <li><a href="#page-63-lines--8-to--6" id="toc-page-63-lines--8-to--6" class="nav-link active" data-scroll-target="#page-63-lines--8-to--6">Page 63, lines -8 to -6</a></li>
   <li><a href="#page-132-first-line-in-subsection-2.9.2" id="toc-page-132-first-line-in-subsection-2.9.2" class="nav-link" data-scroll-target="#page-132-first-line-in-subsection-2.9.2">Page 132, first line in Subsection 2.9.2</a></li>
   <li><a href="#page-316-exercise-6.10" id="toc-page-316-exercise-6.10" class="nav-link" data-scroll-target="#page-316-exercise-6.10">Page 316, Exercise 6.10</a></li>
+  <li><a href="#pages-390-395-on-random-forests-sections-8.4-and-8.5" id="toc-pages-390-395-on-random-forests-sections-8.4-and-8.5" class="nav-link" data-scroll-target="#pages-390-395-on-random-forests-sections-8.4-and-8.5">Pages 390-395 on random forests, Sections 8.4 and 8.5</a></li>
   <li><a href="#page-396-exercise-8.3" id="toc-page-396-exercise-8.3" class="nav-link" data-scroll-target="#page-396-exercise-8.3">Page 396, Exercise 8.3</a></li>
   </ul>
 </nav>
@@ -183,7 +188,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Corrections</h1>
+<h1 class="title">Corrections and Updates</h1>
 </div>
 
 
@@ -202,7 +207,7 @@ window.Quarto = {
 
 <section id="page-63-lines--8-to--6" class="level3">
 <h3 class="anchored" data-anchor-id="page-63-lines--8-to--6">Page 63, lines -8 to -6</h3>
-<p>The statement “which applies for a wide class of priors . . . with densities that tail off in much the same manner as for the normal” is a mis-characterization. The assumptions on which the inequality depends do not, for commonly used families of priors, hold in general. The ‘bound’ is best treated as giving a useful rough ballpark indication of what to expect when degrees of freedom are ‘small’. As degrees of freedom increase, a much smaller Bayes Factor can be expected.</p>
+<p>The statement that the bound “applies for a wide class of priors . . .”with densities that tail off in much the same manner as for the normal does of course leave open the question of what is meant by tailing off “in much the same manner as for the normal.” See however Subsection 2.9.2. In practical use the bound is best treated as giving a ballpark indication of what might be a reasonable guess at a Bayes Factor when degrees of freedom are ‘small’. As degrees of freedom increase, a smaller Bayes Factor can be expected.</p>
 <p>In line -6, “. . . <span class="math inline">\(p\)</span>-value equal to 0” should be “. . . <span class="math inline">\(p\)</span>-value equal to 0.00283”.</p>
 </section>
 <section id="page-132-first-line-in-subsection-2.9.2" class="level3">
@@ -212,6 +217,10 @@ window.Quarto = {
 <section id="page-316-exercise-6.10" class="level3">
 <h3 class="anchored" data-anchor-id="page-316-exercise-6.10">Page 316, Exercise 6.10</h3>
 <p>_datasets_ should of course be <em>datasets</em>.</p>
+</section>
+<section id="pages-390-395-on-random-forests-sections-8.4-and-8.5" class="level3">
+<h3 class="anchored" data-anchor-id="pages-390-395-on-random-forests-sections-8.4-and-8.5">Pages 390-395 on random forests, Sections 8.4 and 8.5</h3>
+<p>The <em>ranger</em> package handles calculations with large datasets much more efficiently than <em>randomForest</em>, and is a preferred alternative. Thus, on an early 2015 Macbook Pro with 8MB of onboard memory, the <code>ranger()</code> function in the the <em>ranger</em> package takes around 20 seconds of elapsed time with the <code>ggplot2::diamonds</code> dataset (53940 rows by 10 columns), while calculations with <code>randomForest()</code> appear to hang.</p>
 </section>
 <section id="page-396-exercise-8.3" class="level3">
 <h3 class="anchored" data-anchor-id="page-396-exercise-8.3">Page 396, Exercise 8.3</h3>

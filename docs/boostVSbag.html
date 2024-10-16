@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.549">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="John Maindonald">
+<meta name="dcterms.date" content="2024-10-17">
+
+<title>A Practical Guide . . . – Code and Supplements - Boosting vs Bagging – a Comparison</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-r-code" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">R Code</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-r-code">    
+        <li>
+    <a class="dropdown-item" href="https://jhmaindonald.github.io/Rcode/">
+ <span class="dropdown-text">R code</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./RunningCode.html">
+ <span class="dropdown-text">Ways to Use Code</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./figFuns.html">
+ <span class="dropdown-text">Code for Selected Figures</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="./blog.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-additional-notes" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Additional Notes</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-additional-notes">    
+        <li>
+    <a class="dropdown-item" href="https://jhmaindonald.github.io/PGRselected/">
+ <span class="dropdown-text">Answers to selected exercises</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./boostVSbag.html">
+ <span class="dropdown-text">Boosting vs Bagging – a Comparison</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./bf.html">
+ <span class="dropdown-text">Bayes Factors &amp; the BIC Statistic</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#a-random-forest-fit-to-the-data-using-ranger-functions" id="toc-a-random-forest-fit-to-the-data-using-ranger-functions" class="nav-link active" data-scroll-target="#a-random-forest-fit-to-the-data-using-ranger-functions">A random forest fit to the data, using <em>ranger</em> functions</a></li>
+  <li><a href="#fit-using-xgboost-functions" id="toc-fit-using-xgboost-functions" class="nav-link" data-scroll-target="#fit-using-xgboost-functions">Fit using <em>xgboost</em> functions</a></li>
+  <li><a href="#a-more-conventional-tree-fit-using-rpartrpart" id="toc-a-more-conventional-tree-fit-using-rpartrpart" class="nav-link" data-scroll-target="#a-more-conventional-tree-fit-using-rpartrpart">A more conventional tree – fit using <code>rpart::rpart</code></a></li>
+  <li><a href="#the-diamonds-dataset-this-is-a-more-serious-challenge" id="toc-the-diamonds-dataset-this-is-a-more-serious-challenge" class="nav-link" data-scroll-target="#the-diamonds-dataset-this-is-a-more-serious-challenge">The <code>diamonds</code> dataset – this is a more serious challenge</a></li>
+  <li><a href="#keepfirst" id="toc-keepfirst" class="nav-link" data-scroll-target="#keepfirst">keepFirst</a></li>
+  <li><a href="#false-true" id="toc-false-true" class="nav-link" data-scroll-target="#false-true">FALSE TRUE</a></li>
+  <li><a href="#section" id="toc-section" class="nav-link" data-scroll-target="#section">0.2629588 0.7370412</a>
+  <ul class="collapse">
+  <li><a href="#fit-using-xgboostxgb.train" id="toc-fit-using-xgboostxgb.train" class="nav-link" data-scroll-target="#fit-using-xgboostxgb.train">Fit using <code>xgboost::xgb.train()</code></a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Boosting vs Bagging – a Comparison</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>John Maindonald </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">October 17, 2024</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>The random forest <em>bagging</em> approach takes bootstrap samples from the data, creates a tree for each bootstrap sample (‘bag’), and uses votes across all trees to determine predicted values. Among R packages that implement this approach, note in particular <em>randomForest</em> and <em>ranger</em>. The <em>ranger</em> package handles calculations much more efficiently than <em>randomForest</em>, and should be used in preference to <em>randomForest</em> with large datasets.</p>
+<p>The default number of trees, both for the <em>randomForest</em> function <code>randomForest()</code> and for the <em>ranger</em> function <code>ranger()</code>, is 500. Assuming that the sample data can be treated as a random sample from the population to&nbsp;which results will be applied, the ‘out-of-bag’ error estimate provides an unbiased estimate of the error rate.</p>
+<p>By contrast, the boosting approach that is implemented in the <em>xgboost</em> package starts by fitting one or perhaps a small number of trees. For each of the one or more trees, it then calculates the residuals, and fits a tree to the residuals. For details of the process by which each&nbsp;new tree is derived, designed to maximize the ‘gain’, see <a href="https://xgboost.readthedocs.io/en/stable/tutorials/model.html" class="uri">https://xgboost.readthedocs.io/en/stable/tutorials/model.html</a>. The parameter <code>eta</code>, with values greater than 0 and at most 1, controls the “learning rate”. It sets a factor by which the contribution of each new tree is scaled when it is added to the current approximation. The default is <code>eta</code>=0.3. Smaller values allow finer control over the learning rate, and provide a way to make the model more robust to overfitting, while slowing computations.</p>
+<p>Whereas the defaults for random forest parameters generally do a good job, and extensive tuning is not required, <em>xgboost</em> parameters do typically require tuning.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(data.table))</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(agaricus.train, <span class="at">package=</span><span class="st">'xgboost'</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>train <span class="ot">&lt;-</span> agaricus.train</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(agaricus.test, <span class="at">package=</span><span class="st">'xgboost'</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> agaricus.test</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="a-random-forest-fit-to-the-data-using-ranger-functions" class="level2">
+<h2 class="anchored" data-anchor-id="a-random-forest-fit-to-the-data-using-ranger-functions">A random forest fit to the data, using <em>ranger</em> functions</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ranger)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>rf1 <span class="ot">&lt;-</span> <span class="fu">ranger</span>(<span class="at">y=</span>train<span class="sc">$</span>label, <span class="at">x=</span><span class="fu">as.matrix</span>(train<span class="sc">$</span>data), <span class="at">importance=</span><span class="st">'impurity'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>imp <span class="ot">&lt;-</span> <span class="fu">importance</span>(rf1)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(imp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="boostVSbag_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The importance values are very widely spread. The number of columns (out of 126) that have some level of importance is 116. The 11 rated as having importance equal to zero either have all values the same, or (one column only) have just one value that differs from the rest.</p>
+<p>Now look at the predicted values. Values less than or equal to 0.5 will be treated as implying non-poisonous, with those greater than 0.5 implying poisonous of possibly poisonous:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(rf1, <span class="at">data=</span>test<span class="sc">$</span>data)<span class="sc">$</span>predictions</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(pred<span class="sc">&gt;</span><span class="fl">0.5</span>, test<span class="sc">$</span>label)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       
+          0   1
+  FALSE 835   0
+  TRUE    0 776</code></pre>
+</div>
+</div>
+<p>Now look at the strength of the separation between non-poisonous and poisonous of possibly poisonous mushrooms:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(pred, <span class="at">breaks=</span><span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="boostVSbag_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="fit-using-xgboost-functions" class="level2">
+<h2 class="anchored" data-anchor-id="fit-using-xgboost-functions">Fit using <em>xgboost</em> functions</h2>
+<p>We first do a simple fit, with no tuning, using the function <code>xgboost()</code>. (For more advanced features, including custom objective and evaluation functions and the facility for checking on performance on test data with each new round, the function <code>xgb.test()</code> will be required.)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(xgboost)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>bst <span class="ot">&lt;-</span> <span class="fu">xgboost</span>(<span class="at">data =</span> <span class="fu">as.matrix</span>(train<span class="sc">$</span>data), <span class="at">label =</span> train<span class="sc">$</span>label,  </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">max_depth =</span> <span class="dv">3</span>, <span class="at">eta =</span> <span class="dv">1</span>, <span class="at">nrounds =</span> <span class="dv">2</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">nthread =</span> <span class="dv">2</span>, <span class="at">objective =</span> <span class="st">"binary:logistic"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] train-logloss:0.161178 
+[2] train-logloss:0.064728 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Now calculate a measure of the probability that an</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="do">## observation belongs in the group with label=1, rather</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="do">## than label=0.</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(bst, <span class="at">newdata=</span>test<span class="sc">$</span>data)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(pred<span class="sc">&gt;</span><span class="fl">0.5</span>, test<span class="sc">$</span>label)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       
+          0   1
+  FALSE 835   0
+  TRUE    0 776</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(pred, <span class="at">breaks=</span><span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="boostVSbag_files/figure-html/test-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The histogram of values of <code>pred</code> indicates that the great majority of observations are very clearly separated into one group rather than the other.</p>
+<p>Or, and preferably, if we use <code>xgb.train()</code>, we can do</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>dtrain <span class="ot">&lt;-</span> <span class="fu">xgb.DMatrix</span>(train<span class="sc">$</span>data, <span class="at">label =</span> train<span class="sc">$</span>label, <span class="at">nthread =</span> <span class="dv">2</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>dtest <span class="ot">&lt;-</span> <span class="fu">xgb.DMatrix</span>(test<span class="sc">$</span>data, <span class="at">label =</span> test<span class="sc">$</span>label, <span class="at">nthread =</span> <span class="dv">2</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>watchlist <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">eval =</span> dtest, <span class="at">train =</span> dtrain)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>param <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">max_depth =</span> <span class="dv">3</span>, <span class="at">eta =</span> <span class="fl">0.75</span>, <span class="at">nthread =</span> <span class="dv">2</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>bst <span class="ot">&lt;-</span> <span class="fu">xgb.train</span>(param, dtrain, <span class="at">nrounds =</span> <span class="dv">4</span>, watchlist, </span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">objective =</span> <span class="st">"binary:logistic"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] eval-logloss:0.232339   train-logloss:0.230181 
+[2] eval-logloss:0.110409   train-logloss:0.113869 
+[3] eval-logloss:0.054348   train-logloss:0.055521 
+[4] eval-logloss:0.029359   train-logloss:0.030794 </code></pre>
+</div>
+</div>
+<p>What is unexpected here is that the root mean square error is, from the second round on, lower on the test data than on the training data, with the difference increasing with each successive round. This makes it doubtful whether the test data was genuinely a random sample from the total data. We therefore do a new random split of the total data into training and test subsets. Before proceeding, we will check for columns in the data that are constant. These are, in order to reduce the computational load, best removed:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>lab <span class="ot">&lt;-</span> <span class="fu">c</span>(train<span class="sc">$</span>label, test<span class="sc">$</span>label)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">rbind</span>(train<span class="sc">$</span>data,test<span class="sc">$</span>data)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>(rmcol <span class="ot">&lt;-</span> (<span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(dat))[<span class="fu">apply</span>(dat, <span class="dv">2</span>, <span class="cf">function</span>(x)<span class="fu">length</span>(<span class="fu">unique</span>(x))<span class="sc">==</span><span class="dv">1</span>)])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1]  33  35  38  57  59  88  89  97 103 104</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat[, <span class="sc">-</span>rmcol]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now create a new split into the training and test data, and hence new <code>xgb.DMatrix</code> objects.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">67</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>testrows <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(dat), <span class="at">size=</span><span class="fu">nrow</span>(test<span class="sc">$</span>data))</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>Dtrain <span class="ot">&lt;-</span> <span class="fu">xgb.DMatrix</span>(dat[<span class="sc">-</span>testrows, ], <span class="at">label =</span> lab[<span class="sc">-</span>testrows], </span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>                      <span class="at">nthread =</span> <span class="dv">2</span>)</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>Dtest <span class="ot">&lt;-</span> <span class="fu">xgb.DMatrix</span>(dat[testrows,], <span class="at">label =</span> lab[testrows], </span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>                      <span class="at">nthread =</span> <span class="dv">2</span>)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>watchlist <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">eval =</span> Dtest, <span class="at">train =</span> Dtrain)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>param <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">max_depth =</span> <span class="dv">3</span>, <span class="at">eta =</span> <span class="fl">0.75</span>, <span class="at">nthread =</span> <span class="dv">2</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>bst <span class="ot">&lt;-</span> <span class="fu">xgb.train</span>(param, Dtrain, <span class="at">nrounds =</span> <span class="dv">60</span>, watchlist, </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">print_every_n =</span> <span class="dv">3</span>, <span class="at">objective =</span> <span class="st">"binary:logistic"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] eval-logloss:0.230585   train-logloss:0.230804 
+[4] eval-logloss:0.030782   train-logloss:0.026497 
+[7] eval-logloss:0.008330   train-logloss:0.005590 
+[10]    eval-logloss:0.003945   train-logloss:0.002763 
+[13]    eval-logloss:0.001929   train-logloss:0.001375 
+[16]    eval-logloss:0.001350   train-logloss:0.000942 
+[19]    eval-logloss:0.001020   train-logloss:0.000759 
+[22]    eval-logloss:0.000907   train-logloss:0.000667 
+[25]    eval-logloss:0.000814   train-logloss:0.000615 
+[28]    eval-logloss:0.000791   train-logloss:0.000563 
+[31]    eval-logloss:0.000751   train-logloss:0.000539 
+[34]    eval-logloss:0.000745   train-logloss:0.000530 
+[37]    eval-logloss:0.000726   train-logloss:0.000522 
+[40]    eval-logloss:0.000729   train-logloss:0.000515 
+[43]    eval-logloss:0.000717   train-logloss:0.000508 
+[46]    eval-logloss:0.000699   train-logloss:0.000503 
+[49]    eval-logloss:0.000697   train-logloss:0.000498 
+[52]    eval-logloss:0.000693   train-logloss:0.000493 
+[55]    eval-logloss:0.000686   train-logloss:0.000490 
+[58]    eval-logloss:0.000678   train-logloss:0.000486 
+[60]    eval-logloss:0.000679   train-logloss:0.000484 </code></pre>
+</div>
+</div>
+<p>Thus, around 58 rounds appear required, in order to minimize logloss. For purposes of distinguishing between the two classes of mushrooms, this is gross overkill. Just one round is enough to give a very clear separation. Try:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>bst1 <span class="ot">&lt;-</span> <span class="fu">xgboost</span>(Dtrain, <span class="at">nrounds =</span> <span class="dv">1</span>, <span class="at">eta=</span>.<span class="dv">75</span>, </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">objective =</span> <span class="st">"binary:logistic"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] train-logloss:0.204290 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(<span class="fu">predict</span>(bst1, <span class="at">newdata=</span>Dtest))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="boostVSbag_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Now look at importance measures (1) from the single round fit (<code>bst1</code>), and (2) from the 64 rounds fit (<code>bst</code>):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>imbst1 <span class="ot">&lt;-</span> <span class="fu">xgb.importance</span>(<span class="at">model=</span>bst1)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>imbst <span class="ot">&lt;-</span> <span class="fu">xgb.importance</span>(<span class="at">model=</span>bst)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="st">"Importances identified"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Importances identified"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="st">"Simgle round fit"</span><span class="ot">=</span> <span class="fu">dim</span>(imbst1)[<span class="dv">1</span>], <span class="st">"64 round fit"</span><span class="ot">=</span> <span class="fu">dim</span>(imbst)[<span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Simgle round fit     64 round fit 
+               9               35 </code></pre>
+</div>
+</div>
+<p>The following plots the largest 10 importance values (the column is labeled <code>Gain</code> in the output) from the 64 round fit:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">xgb.plot.importance</span>(imbst, <span class="at">top_n=</span><span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="boostVSbag_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Just 35 of the 116 columns have been used, with most giving only a very slight gain. Consider carefully what this means. The implication is that after accounting for effects that can be accounted for using these 35 columns, other columns add nothing extra. This happens because of the correlation structure. The first tree that is chosen sets the scene for what follows. The variety of trees that are chosen by <code>ranger()</code> gives an indication of how different that initial tree might be. Each new bootstrap sample simulates the taking of a new random sample from the population from which the original sample was taken.</p>
+<p>By contrast, <code>ranger()</code> gives some level of importance to all features:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ranger)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>bag <span class="ot">&lt;-</span> <span class="fu">ranger</span>(<span class="at">y=</span>lab, <span class="at">x=</span>dat, <span class="at">importance=</span><span class="st">'impurity'</span>)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>imbag <span class="ot">&lt;-</span> <span class="fu">importance</span>(bag)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(imbag)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 116</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(imbag)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  0.000   1.453   3.818  17.366  16.181 233.530 </code></pre>
+</div>
+</div>
+<p>Look also at <em>ranger</em> predictions:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(bag, <span class="at">data=</span>test<span class="sc">$</span>data)<span class="sc">$</span>predictions</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(pred<span class="sc">&gt;</span><span class="fl">0.5</span>, test<span class="sc">$</span>label)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       
+          0   1
+  FALSE 835   0
+  TRUE    0 776</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(pred)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="boostVSbag_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Notice the very clear separation between values that round to 0 (not poisonous) and 1 (poisonous or possibly poisonous).</p>
+<p>What happens if we remove all the columns that were not given any level of importance in the <code>xgboost.train()</code> analysis, and then fit a random forest?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>rnam <span class="ot">&lt;-</span> <span class="fu">unlist</span>(imbst[,<span class="dv">1</span>])</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>datbst <span class="ot">&lt;-</span> dat[, rnam]</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>rfSome <span class="ot">&lt;-</span> <span class="fu">ranger</span>(<span class="at">y=</span>lab[<span class="sc">-</span>testrows], <span class="at">x=</span>datbst[<span class="sc">-</span>testrows, ], <span class="at">importance=</span><span class="st">'impurity'</span>)</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(rfSome, <span class="at">data=</span>dat[testrows,])<span class="sc">$</span>predictions</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(pred<span class="sc">&gt;</span><span class="fl">0.5</span>, lab[testrows])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       
+          0   1
+  FALSE 840   0
+  TRUE    0 771</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(pred, <span class="at">breaks=</span><span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="boostVSbag_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="a-more-conventional-tree-fit-using-rpartrpart" class="level2">
+<h2 class="anchored" data-anchor-id="a-more-conventional-tree-fit-using-rpartrpart">A more conventional tree – fit using <code>rpart::rpart</code></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rpart)</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>datt <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="at">label=</span>lab, <span class="fu">as.data.frame</span>(<span class="fu">as.matrix</span>(dat)))</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>rp <span class="ot">&lt;-</span> <span class="fu">rpart</span>(label<span class="sc">~</span>., <span class="at">data=</span>datt, <span class="at">method=</span><span class="st">"class"</span>, <span class="at">cp=</span><span class="fl">0.001</span>)</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>pr <span class="ot">&lt;-</span> <span class="fu">predict</span>(rp, <span class="at">type=</span><span class="st">'vector'</span>)</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(pr, datt<span class="sc">$</span>label)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   
+pr     0    1
+  1 4208    0
+  2    0 3916</code></pre>
+</div>
+</div>
+</section>
+<section id="the-diamonds-dataset-this-is-a-more-serious-challenge" class="level2">
+<h2 class="anchored" data-anchor-id="the-diamonds-dataset-this-is-a-more-serious-challenge">The <code>diamonds</code> dataset – this is a more serious challenge</h2>
+<p>For the <code>agaricus</code> dataset, distinguishing the two classes of mushroom was an easy task – all three methods that were tried did an effective job. For a more realistic comparison of the methodologies, we will use the <code>gplot2::diamonds</code> dataset.</p>
+<p>The website https://lorentzen.ch/index.php/2021/04/16/a-curious-fact-on-the-diamonds-dataset/ (Michael Mayer) points out that that more than 25% of the observations appear to be duplicates. For example, there are exactly six diamonds of 2.01 carat and a price of 16,778 USD that all have the same color, cut and clarity, with other measures showing different perspectives on the same data. Thus observe:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>diamonds <span class="ot">&lt;-</span> ggplot2<span class="sc">::</span>diamonds</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>id <span class="ot">&lt;-</span> <span class="fu">apply</span>(diamonds[,<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>,<span class="dv">7</span>)], <span class="dv">1</span>, paste0, <span class="at">collapse=</span><span class="st">'-'</span>)</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>keepFirst <span class="ot">&lt;-</span> <span class="sc">!</span><span class="fu">duplicated</span>(id) <span class="do">## all except the first</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="do">## keepLast &lt;- rev(!duplicated(rev(id)))</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>diamondA <span class="ot">&lt;-</span> diamonds[keepFirst, ]       <span class="do">## Retain only the first </span></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="fu">nrow</span>(diamondA),<span class="fu">nrow</span>(diamondA)<span class="sc">/</span><span class="dv">4</span>)      <span class="do">## 39756, 9939</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 39756  9939</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="do">## diamondZ &lt;- diamonds[keepLast, ]     ## Retain only the last </span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(keepFirst)<span class="sc">/</span><span class="fu">length</span>(id)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>keepFirst
+    FALSE      TRUE 
+0.2629588 0.7370412 </code></pre>
+</div>
+</div>
+</section>
+<section id="keepfirst" class="level2">
+<h2 class="anchored" data-anchor-id="keepfirst">keepFirst</h2>
+</section>
+<section id="false-true" class="level2">
+<h2 class="anchored" data-anchor-id="false-true">FALSE TRUE</h2>
+</section>
+<section id="section" class="level2">
+<h2 class="anchored" data-anchor-id="section">0.2629588 0.7370412</h2>
+<p>The ranger package is an alternative to randomForest that is much more efficient for working with large datasets. Working with the dataset that retains only the first of the ‘duplicates’, one finds:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">31</span>)</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ranger)</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">&lt;-</span> diamondA[,<span class="st">"price"</span>, drop<span class="ot">=</span>T]</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>samp50pc <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(diamondA), <span class="at">size=</span><span class="dv">9939</span><span class="sc">*</span><span class="dv">2</span>)</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>(diamond50pc.rf <span class="ot">&lt;-</span> <span class="fu">ranger</span>(<span class="at">x=</span>diamondA[samp50pc,<span class="sc">-</span><span class="dv">7</span>], <span class="at">y=</span><span class="fu">log</span>(Y[samp50pc])))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Ranger result
+
+Call:
+ ranger(x = diamondA[samp50pc, -7], y = log(Y[samp50pc])) 
+
+Type:                             Regression 
+Number of trees:                  500 
+Sample size:                      19878 
+Number of independent variables:  9 
+Mtry:                             3 
+Target node size:                 5 
+Variable importance mode:         none 
+Splitrule:                        variance 
+OOB prediction error (MSE):       0.0107198 
+R squared (OOB):                  0.9886767 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="do">## OOB prediction error (MSE):       0.0107198 </span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="do">## OOB prediction error (MSE):       0.01072289  ## Repeat  calculation</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(diamond50pc.rf,</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">data=</span>diamondA[<span class="sc">-</span>samp50pc,<span class="sc">-</span><span class="dv">7</span>])<span class="sc">$</span>predictions</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>((pred<span class="sc">-</span><span class="fu">log</span>(Y[<span class="sc">-</span>samp50pc]))<span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span><span class="fu">length</span>(pred)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.01141683</code></pre>
+</div>
+</div>
+<p>As expected this is very similar to the OOB mean square error.</p>
+<section id="fit-using-xgboostxgb.train" class="level3">
+<h3 class="anchored" data-anchor-id="fit-using-xgboostxgb.train">Fit using <code>xgboost::xgb.train()</code></h3>
+<p>The <code>diamonds</code> data includes some columns that are factors or ordered factors.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>diamondA[<span class="dv">1</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 10
+  carat cut   color clarity depth table price     x     y     z
+  &lt;dbl&gt; &lt;ord&gt; &lt;ord&gt; &lt;ord&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1  0.23 Ideal E     SI2      61.5    55   326  3.95  3.98  2.43</code></pre>
+</div>
+</div>
+<p>Observe that <code>color</code> is an ordered factor – there is an order of preference from <code>D</code> (best) to <code>J</code> (worst). The <em>xgboost</em> functions <code>xgboost()</code> and <code>xgb.DMatrix()</code> require a model matrix as input, rather than a dataframe that can include factors and ordered factors in its columns. The function <code>sparse.model.matrix()</code> from the <em>Matrix</em> package can be used to create the needed model matrix. The function <code>xgb.DMatrix()</code> goes on to create an <code>xgb.DMatrix</code> object of the type needed for use of the function <code>xgb.train()</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Matrix)</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>sparsem <span class="ot">&lt;-</span> <span class="fu">sparse.model.matrix</span>(price<span class="sc">~</span>., <span class="at">data=</span>diamondA)[,<span class="sc">-</span><span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Specifying <code>price</code> as the dependent variable ensures that the corresponding is excluded from the matrix that is created. Also, the initial column of 1’s serves no useful purpose for the tree-based calculations, and is removed.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>Dtrain <span class="ot">&lt;-</span> <span class="fu">xgb.DMatrix</span>(<span class="fu">as.matrix</span>(sparsem[samp50pc, ]), </span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">label =</span> <span class="fu">log</span>(Y[samp50pc]), <span class="at">nthread =</span> <span class="dv">2</span>)</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>Dtest <span class="ot">&lt;-</span> <span class="fu">xgb.DMatrix</span>(sparsem[<span class="sc">-</span>samp50pc,], </span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>                     <span class="at">label =</span> <span class="fu">log</span>(Y[<span class="sc">-</span>samp50pc]), <span class="at">nthread =</span> <span class="dv">2</span>)</span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>watchlist <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">eval =</span> Dtest, <span class="at">train =</span> Dtrain)</span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>param <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">max_depth =</span> <span class="dv">5</span>, <span class="at">eta =</span> <span class="fl">0.4</span>, <span class="at">nthread =</span> <span class="dv">2</span>)</span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>bst <span class="ot">&lt;-</span> <span class="fu">xgb.train</span>(param, Dtrain, <span class="at">nrounds =</span> <span class="dv">81</span>, watchlist, </span>
+<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a>                 <span class="at">print_every_n =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] eval-rmse:4.560709  train-rmse:4.563817 
+[4] eval-rmse:1.001089  train-rmse:1.000100 
+[7] eval-rmse:0.252409  train-rmse:0.248454 
+[10]    eval-rmse:0.132035  train-rmse:0.123515 
+[13]    eval-rmse:0.118572  train-rmse:0.108683 
+[16]    eval-rmse:0.115815  train-rmse:0.105641 
+[19]    eval-rmse:0.114015  train-rmse:0.102737 
+[22]    eval-rmse:0.112247  train-rmse:0.100619 
+[25]    eval-rmse:0.110841  train-rmse:0.098610 
+[28]    eval-rmse:0.109701  train-rmse:0.096937 
+[31]    eval-rmse:0.109257  train-rmse:0.096040 
+[34]    eval-rmse:0.108454  train-rmse:0.094530 
+[37]    eval-rmse:0.107567  train-rmse:0.093120 
+[40]    eval-rmse:0.106824  train-rmse:0.091683 
+[43]    eval-rmse:0.106709  train-rmse:0.091043 
+[46]    eval-rmse:0.105924  train-rmse:0.089707 
+[49]    eval-rmse:0.105779  train-rmse:0.089122 
+[52]    eval-rmse:0.105620  train-rmse:0.088774 
+[55]    eval-rmse:0.105428  train-rmse:0.088140 
+[58]    eval-rmse:0.104845  train-rmse:0.086958 
+[61]    eval-rmse:0.104801  train-rmse:0.086337 
+[64]    eval-rmse:0.104729  train-rmse:0.085900 
+[67]    eval-rmse:0.104302  train-rmse:0.084950 
+[70]    eval-rmse:0.104085  train-rmse:0.084115 
+[73]    eval-rmse:0.104079  train-rmse:0.083857 
+[76]    eval-rmse:0.103845  train-rmse:0.083048 
+[79]    eval-rmse:0.103723  train-rmse:0.082711 
+[81]    eval-rmse:0.103738  train-rmse:0.082495 </code></pre>
+</div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

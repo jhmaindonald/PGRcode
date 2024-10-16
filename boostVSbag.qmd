@@ -1,0 +1,247 @@
+---
+title: "Boosting vs Bagging -- a Comparison"
+author: "John Maindonald"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+The random forest *bagging* approach takes bootstrap samples from the data, creates a tree for each bootstrap sample ('bag'), and uses votes across all trees to determine predicted values. Among R packages that implement this approach, note in particular *randomForest* and *ranger*. The *ranger* package handles calculations much more efficiently than *randomForest*, and should be used in preference to *randomForest* with large datasets.
+
+The default number of trees, both for the *randomForest* function `randomForest()` and for the *ranger* function `ranger()`, is 500. Assuming that the sample data can be treated as a random sample from the population to which results will be applied, the 'out-of-bag' error estimate provides an unbiased estimate of the error rate.
+
+By contrast, the boosting approach that is implemented in the *xgboost* package starts by fitting one or perhaps a small number of trees. For each of the one or more trees, it then calculates the residuals, and fits a tree to the residuals. For details of the process by which each new tree is derived, designed to maximize the 'gain', see <https://xgboost.readthedocs.io/en/stable/tutorials/model.html>. The parameter `eta`, with values greater than 0 and at most 1, controls the "learning rate". It sets a factor by which the contribution of each new tree is scaled when it is added to the current approximation. The default is `eta`=0.3. Smaller values allow finer control over the learning rate, and provide a way to make the model more robust to overfitting, while slowing computations.
+
+Whereas the defaults for random forest parameters generally do a good job, and extensive tuning is not required, *xgboost* parameters do typically require tuning.
+
+```{r agaricus}
+suppressPackageStartupMessages(library(data.table))
+data(agaricus.train, package='xgboost')
+train <- agaricus.train
+data(agaricus.test, package='xgboost')
+test <- agaricus.test
+```
+
+## A random forest fit to the data, using *ranger* functions
+
+```{r rf}
+library(ranger)
+rf1 <- ranger(y=train$label, x=as.matrix(train$data), importance='impurity')
+```
+
+```{r}
+imp <- importance(rf1)
+hist(imp)
+```
+
+The importance values are very widely spread. The number of columns (out of 126) that have some level of importance is `r sum(imp>0)`. The 11 rated as having importance equal to zero either have all values the same, or (one column only) have just one value that differs from the rest.
+
+Now look at the predicted values. Values less than or equal to 0.5 will be treated as implying non-poisonous, with those greater than 0.5 implying poisonous of possibly poisonous:
+
+```{r}
+pred <- predict(rf1, data=test$data)$predictions
+table(pred>0.5, test$label)
+```
+
+Now look at the strength of the separation between non-poisonous and poisonous of possibly poisonous mushrooms:
+
+```{r}
+hist(pred, breaks=20)
+```
+
+## Fit using *xgboost* functions
+
+We first do a simple fit, with no tuning, using the function `xgboost()`. (For more advanced features, including custom objective and evaluation functions and the facility for checking on performance on test data with each new round, the function `xgb.test()` will be required.)
+
+```{r test}
+library(xgboost)
+bst <- xgboost(data = as.matrix(train$data), label = train$label,  
+               max_depth = 3, eta = 1, nrounds = 2,
+               nthread = 2, objective = "binary:logistic")
+## Now calculate a measure of the probability that an
+## observation belongs in the group with label=1, rather
+## than label=0.
+pred <- predict(bst, newdata=test$data)
+table(pred>0.5, test$label)
+hist(pred, breaks=20)
+```
+
+The histogram of values of `pred` indicates that the great majority of observations are very clearly separated into one group rather than the other.
+
+Or, and preferably, if we use `xgb.train()`, we can do
+
+```{r}
+dtrain <- xgb.DMatrix(train$data, label = train$label, nthread = 2)
+dtest <- xgb.DMatrix(test$data, label = test$label, nthread = 2)
+watchlist <- list(eval = dtest, train = dtrain)
+param <- list(max_depth = 3, eta = 0.75, nthread = 2)
+bst <- xgb.train(param, dtrain, nrounds = 4, watchlist, 
+                 objective = "binary:logistic")
+```
+
+What is unexpected here is that the root mean square error is, from the second round on, lower on the test data than on the training data, with the difference increasing with each successive round. This makes it doubtful whether the test data was genuinely a random sample from the total data. We therefore do a new random split of the total data into training and test subsets. Before proceeding, we will check for columns in the data that are constant. These are, in order to reduce the computational load, best removed:
+
+```{r}
+lab <- c(train$label, test$label)
+dat <- rbind(train$data,test$data)
+(rmcol <- (1:ncol(dat))[apply(dat, 2, function(x)length(unique(x))==1)])
+dat <- dat[, -rmcol]
+```
+
+Now create a new split into the training and test data, and hence new `xgb.DMatrix` objects.
+
+```{r}
+set.seed(67)
+testrows <- sample(1:nrow(dat), size=nrow(test$data))
+Dtrain <- xgb.DMatrix(dat[-testrows, ], label = lab[-testrows], 
+                      nthread = 2)
+Dtest <- xgb.DMatrix(dat[testrows,], label = lab[testrows], 
+                      nthread = 2)
+watchlist <- list(eval = Dtest, train = Dtrain)
+```
+
+```{r}
+param <- list(max_depth = 3, eta = 0.75, nthread = 2)
+bst <- xgb.train(param, Dtrain, nrounds = 60, watchlist, 
+                 print_every_n = 3, objective = "binary:logistic")
+```
+
+Thus, around 58 rounds appear required, in order to minimize logloss. For purposes of distinguishing between the two classes of mushrooms, this is gross overkill. Just one round is enough to give a very clear separation. Try:
+
+```{r}
+bst1 <- xgboost(Dtrain, nrounds = 1, eta=.75, 
+                 objective = "binary:logistic")
+hist(predict(bst1, newdata=Dtest))
+```
+
+Now look at importance measures (1) from the single round fit (`bst1`), and (2) from the 64 rounds fit (`bst`):
+
+```{r}
+imbst1 <- xgb.importance(model=bst1)
+imbst <- xgb.importance(model=bst)
+"Importances identified"
+c("Simgle round fit"= dim(imbst1)[1], "64 round fit"= dim(imbst)[1])
+```
+
+The following plots the largest 10 importance values (the column is labeled `Gain` in the output) from the 64 round fit:
+
+```{r}
+xgb.plot.importance(imbst, top_n=10)
+```
+
+Just `r dim(imbst)[1]` of the 116 columns have been used, with most giving only a very slight gain. Consider carefully what this means. The implication is that after accounting for effects that can be accounted for using these `r dim(imbst)[1]` columns, other columns add nothing extra. This happens because of the correlation structure. The first tree that is chosen sets the scene for what follows. The variety of trees that are chosen by `ranger()` gives an indication of how different that initial tree might be. Each new bootstrap sample simulates the taking of a new random sample from the population from which the original sample was taken.
+
+By contrast, `ranger()` gives some level of importance to all features:
+
+```{r}
+library(ranger)
+bag <- ranger(y=lab, x=dat, importance='impurity')
+imbag <- importance(bag)
+length(imbag)
+summary(imbag)
+```
+
+Look also at *ranger* predictions:
+
+```{r}
+pred <- predict(bag, data=test$data)$predictions
+table(pred>0.5, test$label)
+hist(pred)
+```
+
+Notice the very clear separation between values that round to 0 (not poisonous) and 1 (poisonous or possibly poisonous).
+
+What happens if we remove all the columns that were not given any level of importance in the `xgboost.train()` analysis, and then fit a random forest?
+
+```{r}
+rnam <- unlist(imbst[,1])
+datbst <- dat[, rnam]
+rfSome <- ranger(y=lab[-testrows], x=datbst[-testrows, ], importance='impurity')
+pred <- predict(rfSome, data=dat[testrows,])$predictions
+table(pred>0.5, lab[testrows])
+hist(pred, breaks=20)
+```
+
+## A more conventional tree -- fit using `rpart::rpart`
+
+```{r}
+library(rpart)
+datt <- cbind(label=lab, as.data.frame(as.matrix(dat)))
+rp <- rpart(label~., data=datt, method="class", cp=0.001)
+pr <- predict(rp, type='vector')
+table(pr, datt$label)
+```
+
+## The `diamonds` dataset -- this is a more serious challenge
+
+For the `agaricus` dataset, distinguishing the two classes of mushroom was an easy task -- all three methods that were tried did an effective job. For a more realistic comparison of the methodologies, we will use the `gplot2::diamonds` dataset.
+
+The website https://lorentzen.ch/index.php/2021/04/16/a-curious-fact-on-the-diamonds-dataset/ (Michael Mayer) points out that that more than 25% of the observations appear to be duplicates. For example, there are exactly six diamonds of 2.01 carat and a price of 16,778 USD that all have the same color, cut and clarity, with other measures showing different perspectives on the same data. Thus observe:
+
+```{r}
+diamonds <- ggplot2::diamonds
+id <- apply(diamonds[,c(1:4,7)], 1, paste0, collapse='-')
+keepFirst <- !duplicated(id) ## all except the first
+## keepLast <- rev(!duplicated(rev(id)))
+diamondA <- diamonds[keepFirst, ]       ## Retain only the first 
+c(nrow(diamondA),nrow(diamondA)/4)      ## 39756, 9939
+## diamondZ <- diamonds[keepLast, ]     ## Retain only the last 
+table(keepFirst)/length(id)
+```
+
+## keepFirst
+
+## FALSE TRUE
+
+## 0.2629588 0.7370412
+
+The ranger package is an alternative to randomForest that is much more efficient for working with large datasets. Working with the dataset that retains only the first of the 'duplicates', one finds:
+
+```{r}
+set.seed(31)
+library(ranger)
+Y <- diamondA[,"price", drop=T]
+samp50pc <- sample(1:nrow(diamondA), size=9939*2)
+(diamond50pc.rf <- ranger(x=diamondA[samp50pc,-7], y=log(Y[samp50pc])))
+## OOB prediction error (MSE):       0.0107198 
+## OOB prediction error (MSE):       0.01072289  ## Repeat  calculation
+```
+
+```{r}
+pred <- predict(diamond50pc.rf,
+                data=diamondA[-samp50pc,-7])$predictions
+sum((pred-log(Y[-samp50pc]))^2)/length(pred)
+```
+
+As expected this is very similar to the OOB mean square error.
+
+### Fit using `xgboost::xgb.train()`
+
+The `diamonds` data includes some columns that are factors or ordered factors.
+
+```{r}
+diamondA[1,]
+```
+
+Observe that `color` is an ordered factor -- there is an order of preference from `D` (best) to `J` (worst). The *xgboost* functions `xgboost()` and `xgb.DMatrix()` require a model matrix as input, rather than a dataframe that can include factors and ordered factors in its columns. The function `sparse.model.matrix()` from the *Matrix* package can be used to create the needed model matrix. The function `xgb.DMatrix()` goes on to create an `xgb.DMatrix` object of the type needed for use of the function `xgb.train()`.
+
+```{r}
+library(Matrix)
+sparsem <- sparse.model.matrix(price~., data=diamondA)[,-1]
+```
+
+Specifying `price` as the dependent variable ensures that the corresponding is excluded from the matrix that is created. Also, the initial column of 1's serves no useful purpose for the tree-based calculations, and is removed.
+
+```{r}
+Dtrain <- xgb.DMatrix(as.matrix(sparsem[samp50pc, ]), 
+                      label = log(Y[samp50pc]), nthread = 2)
+Dtest <- xgb.DMatrix(sparsem[-samp50pc,], 
+                     label = log(Y[-samp50pc]), nthread = 2)
+watchlist <- list(eval = Dtest, train = Dtrain)
+param <- list(max_depth = 5, eta = 0.4, nthread = 2)
+bst <- xgb.train(param, Dtrain, nrounds = 81, watchlist, 
+                 print_every_n = 3)
+```

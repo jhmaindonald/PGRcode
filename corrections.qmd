@@ -1,37 +1,42 @@
 ---
-title: "Corrections"
+title: "Corrections and Updates"
 ---
 
 ### Page 63, lines -8 to -6
 
-The statement "which applies for a wide class of priors
-. . . with densities that tail off in much the same 
-manner as for the normal" is a mis-characterization.
-The assumptions on which the inequality depends do not,
-for commonly used families of priors, hold in general.
-The 'bound' is best treated as giving a useful rough 
-ballpark indication of what to expect when degrees of 
+The statement that the bound "applies for a wide class 
+of priors . . . "with densities that tail off in much the same manner as for the normal does of course leave open
+the question of what is meant by tailing off "in much
+the same manner as for the normal."  See however
+Subsection 2.9.2. In practical use the bound is best
+treated as giving a ballpark indication of what might 
+be a reasonable guess at a Bayes Factor when degrees of
 freedom are 'small'.  As degrees of freedom increase, 
-a much smaller Bayes Factor can be expected.
+a smaller Bayes Factor can be expected.
 
-In line -6, ". . . $p$-value equal to 0" should be
-". . . $p$-value equal to 0.00283".
+In line -6, ". . . $p$-value equal to 0" should be ". . . $p$-value equal to 0.00283".
 
 ### Page 132, first line in Subsection 2.9.2
 
-"The statement ". . . applying to a wide class of priors" 
-misses the point. Refer back to the page 63 correction.
+"The statement ". . . applying to a wide class of priors" misses the point. Refer back to the page 63 correction.
 
 ### Page 316, Exercise 6.10
 
-\_datasets\_ should of course be _datasets_.
+\_datasets\_ should of course be *datasets*.
+
+### Pages 390-395 on random forests, Sections 8.4 and 8.5
+
+The _ranger_ package handles calculations with large datasets much more efficiently than _randomForest_,
+and is a preferred alternative.  Thus, on an early 2015
+Macbook Pro with 8MB of onboard memory, the `ranger()`
+function in the the _ranger_ package takes around 20
+seconds of elapsed time with the `ggplot2::diamonds`
+dataset (53940 rows by 10 columns), while calculations
+with `randomForest()` appear to hang.
 
 ### Page 396, Exercise 8.3
 
-The second sentence refers to a non-existent Chapter 3 model
-fit.  The following is offered as a replacement for the
-complete exercise:
-
+The second sentence refers to a non-existent Chapter 3 model fit. The following is offered as a replacement for the complete exercise:
 
 > 8.3. Use `qqnorm()` to check differences from normality in `nsw74psid1::re78`. What do you notice? Use tree-based regression to predict `re78`, and check differences from normality in the distribution of residuals.\
 > What do you notice about the tails of the distribution?
@@ -42,4 +47,4 @@ b.  Use tree-based regression to predict `tran78`, and check differences from no
 
 c.  Do a random forest fit to the transformed data, and compare the bootstrap error with the cross-validated error from the `rpart` fits.
 
----
+------------------------------------------------------------------------

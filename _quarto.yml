@@ -15,7 +15,7 @@ website:
             href: about.qmd
           - text: "Afterword"
             href: afterword.qmd
-          - text: "Corrections"
+          - text: "Corrections and updates"
             href: corrections.qmd
       - text: "R Code"   
         menu:
@@ -34,6 +34,8 @@ website:
         menu:
           - text: "Answers to selected exercises"
             href: https://jhmaindonald.github.io/PGRselected/
+          - text: "Boosting vs Bagging -- a Comparison"
+            href: boostVSbag.qmd
           - text: "Bayes Factors & the BIC Statistic"
             href: bf.qmd
             
